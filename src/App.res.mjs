@@ -64,48 +64,6 @@ function App(props) {
                               children: "Urgent",
                               className: "bg-white rounded  px-1 border"
                             }),
-                        JsxRuntime.jsx("div", {
-                              children: "Todo",
-                              className: "flex-none px-1 font-bold h-3 leading-none text-2xs flex flex-row items-center justify-center"
-                            }),
-                        JsxRuntime.jsxs("div", {
-                              children: [
-                                JsxRuntime.jsx("div", {
-                                      children: "High",
-                                      className: "flex-1 px-1 bg-white rounded border"
-                                    }),
-                                JsxRuntime.jsx("div", {
-                                      children: "Med",
-                                      className: "flex-1 px-1 bg-white rounded border"
-                                    }),
-                                JsxRuntime.jsx("div", {
-                                      children: "Low",
-                                      className: "flex-1 px-1 bg-white rounded border"
-                                    })
-                              ],
-                              className: "flex flex-row justify-between gap-1"
-                            }),
-                        JsxRuntime.jsx("div", {
-                              children: "Later",
-                              className: "flex-none px-1 font-bold h-3 leading-none text-2xs flex flex-row items-center justify-center"
-                            }),
-                        JsxRuntime.jsxs("div", {
-                              children: [
-                                JsxRuntime.jsx("div", {
-                                      children: "Will",
-                                      className: "flex-1 px-1 bg-white rounded border"
-                                    }),
-                                JsxRuntime.jsx("div", {
-                                      children: "Mabye",
-                                      className: "flex-1 px-1 bg-white rounded border"
-                                    }),
-                                JsxRuntime.jsx("div", {
-                                      children: "Unlikely",
-                                      className: "flex-1 px-1 bg-white rounded border"
-                                    })
-                              ],
-                              className: "flex flex-row justify-between gap-1"
-                            }),
                         JsxRuntime.jsxs("div", {
                               children: [
                                 JsxRuntime.jsxs("div", {
@@ -132,7 +90,7 @@ function App(props) {
                                               className: "flex flex-col gap-1 flex-1"
                                             })
                                       ],
-                                      className: "flex flex-row gap-1 flex-1  px-1"
+                                      className: "flex flex-row gap-1 flex-1 px-1"
                                     }),
                                 JsxRuntime.jsxs("div", {
                                       children: [
@@ -158,10 +116,10 @@ function App(props) {
                                               className: "flex flex-col gap-1 flex-1"
                                             })
                                       ],
-                                      className: "flex flex-row gap-1 flex-1  px-1"
+                                      className: "flex flex-row gap-1 flex-1 px-1"
                                     })
                               ],
-                              className: "flex flex-row justify-between gap-1"
+                              className: "flex flex-row justify-between gap-1 py-2"
                             }),
                         JsxRuntime.jsxs("div", {
                               children: [
@@ -189,7 +147,7 @@ function App(props) {
                                               className: "flex flex-col gap-1 flex-1"
                                             })
                                       ],
-                                      className: "flex flex-row gap-1 flex-1  px-1"
+                                      className: "flex flex-row gap-1 flex-1 px-1 pt-2"
                                     }),
                                 JsxRuntime.jsxs("div", {
                                       children: [
@@ -215,7 +173,7 @@ function App(props) {
                                               className: "flex flex-col gap-1 flex-1"
                                             })
                                       ],
-                                      className: "flex flex-row gap-1 flex-1 bg-slate-400 px-1"
+                                      className: "border-t border-l flex flex-row gap-1 flex-1 px-1 pt-2"
                                     })
                               ],
                               className: "flex flex-row justify-between gap-1"
