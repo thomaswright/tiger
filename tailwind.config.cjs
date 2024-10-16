@@ -2,7 +2,11 @@
 module.exports = {
   content: ["./index.html", "./src/**/*.res.mjs"],
   theme: {
-    extend: {},
+    extend: {
+      fontSize: {
+        "2xs": ["0.6rem", "0.75rem"],
+      },
+    },
   },
   plugins: [],
 };

@@ -41,6 +41,76 @@ let make = () => {
   })
 
   <div className="p-6">
+    <div className="text-xs w-[200px] bg-white p-2 flex flex-col gap-1">
+      <div className="bg-white rounded  px-1 border"> {"Urgent"->React.string} </div>
+      <div
+        className="flex-none px-1 font-bold h-3 leading-none text-2xs flex flex-row items-center justify-center">
+        {"Todo"->React.string}
+      </div>
+      <div className="flex flex-row justify-between gap-1">
+        <div className="flex-1 px-1 bg-white rounded border"> {"High"->React.string} </div>
+        <div className="flex-1 px-1 bg-white rounded border"> {"Med"->React.string} </div>
+        <div className="flex-1 px-1 bg-white rounded border"> {"Low"->React.string} </div>
+      </div>
+      <div
+        className="flex-none px-1 font-bold h-3 leading-none text-2xs flex flex-row items-center justify-center">
+        {"Later"->React.string}
+      </div>
+      <div className="flex flex-row justify-between gap-1">
+        <div className="flex-1 px-1 bg-white rounded border"> {"Will"->React.string} </div>
+        <div className="flex-1 px-1 bg-white rounded border"> {"Mabye"->React.string} </div>
+        <div className="flex-1 px-1 bg-white rounded border"> {"Unlikely"->React.string} </div>
+      </div>
+      <div className="flex flex-row justify-between gap-1">
+        <div className="flex flex-row gap-1 flex-1  px-1">
+          <div
+            className="flex-none px-1 font-bold w-2 leading-none text-2xs flex flex-row items-center justify-center -rotate-90">
+            {"Todo"->React.string}
+          </div>
+          <div className="flex flex-col gap-1 flex-1">
+            <div className="flex-1 px-1 bg-white rounded border"> {"High"->React.string} </div>
+            <div className="flex-1 px-1 bg-white rounded border"> {"Medium"->React.string} </div>
+            <div className="flex-1 px-1 bg-white rounded border"> {"Low"->React.string} </div>
+          </div>
+        </div>
+        <div className="flex flex-row gap-1 flex-1  px-1">
+          <div
+            className="flex-none px-1 font-bold w-2 leading-none text-2xs flex flex-row items-center justify-center -rotate-90">
+            {"Later"->React.string}
+          </div>
+          <div className="flex flex-col gap-1 flex-1">
+            <div className="flex-1 px-1 bg-white rounded border"> {"Will "->React.string} </div>
+            <div className="flex-1 px-1 bg-white rounded border"> {"Maybe"->React.string} </div>
+            <div className="flex-1 px-1 bg-white rounded border"> {"Unlikely"->React.string} </div>
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-row justify-between gap-1">
+        <div className="flex flex-row gap-1 flex-1  px-1">
+          <div
+            className="flex-none px-1 font-bold w-2 leading-none text-2xs flex flex-row items-center justify-center -rotate-90">
+            {"Resolve"->React.string}
+          </div>
+          <div className="flex flex-col gap-1 flex-1">
+            <div className="flex-1 px-1 bg-white rounded border"> {"Done"->React.string} </div>
+            <div className="flex-1 px-1 bg-white rounded border"> {"Wont Do"->React.string} </div>
+            <div className="flex-1 px-1 bg-white rounded border"> {"No Need"->React.string} </div>
+          </div>
+        </div>
+        <div className="flex flex-row gap-1 flex-1 bg-slate-400 px-1">
+          <div
+            className="flex-none px-1 font-bold w-2 leading-none text-2xs flex flex-row items-center justify-center -rotate-90">
+            {"Archive"->React.string}
+          </div>
+          <div className="flex flex-col gap-1 flex-1">
+            <div className="flex-1 px-1 bg-white rounded border"> {"Done"->React.string} </div>
+            <div className="flex-1 px-1 bg-white rounded border"> {"Wont Do"->React.string} </div>
+            <div className="flex-1 px-1 bg-white rounded border"> {"No Need"->React.string} </div>
+          </div>
+        </div>
+      </div>
+      <div className="bg-white rounded  px-1 border"> {"Trash"->React.string} </div>
+    </div>
     <div className="flex flex-row gap-2">
       <button
         onClick={_ => setProjectTab(_ => All)}

@@ -29,7 +29,7 @@ function Project(props) {
                             }),
                         JsxRuntime.jsx("button", {
                               children: project.isActive ? "Active" : "Not Active",
-                              className: "rounded bg-slate-200 w-20",
+                              className: "rounded bg-slate-200 w-20 text-xs h-fit",
                               onClick: (function (param) {
                                   updateProject(project.id, (function (p) {
                                           return {
@@ -41,7 +41,7 @@ function Project(props) {
                                 })
                             })
                       ],
-                      className: "flex flex-row justify-between bg-slate-300"
+                      className: "flex flex-row justify-between items-center bg-slate-300"
                     }),
                 JsxRuntime.jsxs("div", {
                       children: [
@@ -74,7 +74,7 @@ function Project(props) {
                                       className: "text-slate-500 text-xs"
                                     }),
                                 JsxRuntime.jsx("button", {
-                                      children: showArchive ? "Show" : "Hide",
+                                      children: showArchive ? "^" : "v",
                                       className: "text-xs rounded bg-slate-200 w-10",
                                       onClick: (function (param) {
                                           setShowArchive(function (v) {

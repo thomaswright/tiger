@@ -18,10 +18,10 @@ let make = (
   ~updateProject,
 ) => {
   <div className="border">
-    <div className="flex flex-row justify-between bg-slate-300">
+    <div className="flex flex-row justify-between items-center bg-slate-300">
       <div> {project.name->React.string} </div>
       <button
-        className="rounded bg-slate-200 w-20"
+        className="rounded bg-slate-200 w-20 text-xs h-fit"
         onClick={_ =>
           updateProject(project.id, p => {
             ...p,
@@ -55,7 +55,7 @@ let make = (
                 ? v->Array.filter(el => el != project.id)
                 : v->Array.concat([project.id])
             )}>
-          {(showArchive ? "Show" : "Hide")->React.string}
+          {(showArchive ? "^" : "v")->React.string}
         </button>
       </div>
       {if showArchive {
