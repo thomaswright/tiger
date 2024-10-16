@@ -1,39 +1,4 @@
-type keepStatus =
-  | Unsorted
-  | DoneKeep
-  | TodoUrgent
-  | TodoHigh
-  | TodoMedium
-  | TodoLow
-  | LaterWill
-  | LaterMaybe
-  | LaterUnlikely
-  | LaterWont
-
-type archiveStatus =
-  | DoneArchive
-  | Rejected
-  | Mitigated
-  | NotNeeded
-  | Duplicate
-
-type status = Archive(archiveStatus) | Keep(keepStatus)
-
-type todo = {
-  id: string,
-  text: string,
-  project: string,
-  isDone: bool,
-  status: status,
-}
-
-type project = {
-  id: string,
-  name: string,
-  isActive: bool,
-}
-
-type projectsTab = All | Active
+open Types
 
 let defaultProjects = [
   {
@@ -69,11 +34,11 @@ let defaultTodos = [
 let make = () => {
   let (projects, setProjects, _) = Common.useLocalStorage("projects", defaultProjects)
   let (todos, setTodos, _) = Common.useLocalStorage("todos", defaultTodos)
-  let (showArchiveProjects, setShowArchiveProjects, _) = Common.useLocalStorage(
-    "showArchiveProjects",
-    Set.fromArray([]),
-  )
+  let (showArchive, setShowArchive, _) = Common.useLocalStorage("showArchive", [])
   let (projectsTab, setProjectTab, _) = Common.useLocalStorage("projectsTab", All)
+  let updateProject = React.useCallback0((id, f) => {
+    setProjects(v => v->Array.map(project => project.id == id ? f(project) : project))
+  })
 
   <div className="p-6">
     <div className="flex flex-row gap-2">
@@ -96,9 +61,17 @@ let make = () => {
     </div>
     <div>
       {projects
-      ->Array.filter(v => v.isActive)
-      ->Array.map(v => <div> {v.name->Jsx.string} </div>)
-      ->Jsx.array}
+      ->Array.filter(project => projectsTab == Active ? project.isActive : true)
+      ->Array.map(project =>
+        <Project
+          showArchive={showArchive->Array.includes(project.id)}
+          setShowArchive={setShowArchive}
+          project
+          todos={todos->Array.filter(todo => todo.project == project.id)}
+          updateProject
+        />
+      )
+      ->React.array}
     </div>
   </div>
 }
