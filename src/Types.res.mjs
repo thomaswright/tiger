@@ -12,7 +12,109 @@ function isArchiveStatus(s) {
   }
 }
 
+function statusToFloat(s) {
+  switch (s) {
+    case "TodoUrgent" :
+        return 0;
+    case "TodoHigh" :
+        return 1;
+    case "TodoMedium" :
+        return 2;
+    case "TodoLow" :
+        return 3;
+    case "LaterWill" :
+        return 4;
+    case "LaterMaybe" :
+        return 5;
+    case "LaterUnlikely" :
+        return 6;
+    case "LaterUnsorted" :
+        return 7;
+    case "ResolveDone" :
+        return 8;
+    case "ResolveWont" :
+        return 9;
+    case "ResolveNoNeed" :
+        return 10;
+    case "ArchiveDone" :
+        return 11;
+    case "ArchiveWont" :
+        return 12;
+    case "ArchiveNoNeed" :
+        return 13;
+    
+  }
+}
+
+function statusString(s) {
+  switch (s) {
+    case "TodoUrgent" :
+        return "TodoUrgent";
+    case "TodoHigh" :
+        return "TodoHigh";
+    case "TodoMedium" :
+        return "TodoMedium";
+    case "TodoLow" :
+        return "TodoLow";
+    case "LaterWill" :
+        return "LaterWill";
+    case "LaterMaybe" :
+        return "LaterMaybe";
+    case "LaterUnlikely" :
+        return "LaterUnlikely";
+    case "LaterUnsorted" :
+        return "LaterUnsorted";
+    case "ResolveDone" :
+        return "ResolveDone";
+    case "ResolveWont" :
+        return "ResolveWont";
+    case "ResolveNoNeed" :
+        return "ResolveNoNeed";
+    case "ArchiveDone" :
+        return "ArchiveDone";
+    case "ArchiveWont" :
+        return "ArchiveWont";
+    case "ArchiveNoNeed" :
+        return "ArchiveNoNeed";
+    
+  }
+}
+
+function statusStringShort(s) {
+  switch (s) {
+    case "TodoUrgent" :
+        return "!";
+    case "TodoHigh" :
+        return "1";
+    case "TodoMedium" :
+        return "2";
+    case "TodoLow" :
+        return "3";
+    case "LaterWill" :
+        return "A";
+    case "LaterMaybe" :
+        return "B";
+    case "LaterUnlikely" :
+        return "C";
+    case "LaterUnsorted" :
+        return "-";
+    case "ResolveDone" :
+    case "ArchiveDone" :
+        return "✔︎";
+    case "ResolveWont" :
+    case "ArchiveWont" :
+        return "🞫";
+    case "ResolveNoNeed" :
+    case "ArchiveNoNeed" :
+        return "○";
+    
+  }
+}
+
 export {
   isArchiveStatus ,
+  statusToFloat ,
+  statusString ,
+  statusStringShort ,
 }
 /* No side effect */

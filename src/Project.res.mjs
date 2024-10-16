@@ -4,10 +4,18 @@ import * as Types from "./Types.res.mjs";
 import * as JsxRuntime from "react/jsx-runtime";
 
 function Project$Todo(props) {
-  return JsxRuntime.jsx("div", {
-              children: JsxRuntime.jsx("div", {
-                    children: props.todo.text
-                  })
+  var todo = props.todo;
+  return JsxRuntime.jsxs("div", {
+              children: [
+                JsxRuntime.jsx("div", {
+                      children: Types.statusStringShort(todo.status),
+                      className: "text-xs w-5 border rounded text-center"
+                    }),
+                JsxRuntime.jsx("div", {
+                      children: todo.text
+                    })
+              ],
+              className: "flex flex-row justify-start items-center gap-2 px-2"
             });
 }
 
@@ -19,7 +27,6 @@ function Project(props) {
   var updateProject = props.updateProject;
   var setShowArchive = props.setShowArchive;
   var showArchive = props.showArchive;
-  var todos = props.todos;
   var project = props.project;
   return JsxRuntime.jsxs("div", {
               children: [
@@ -40,60 +47,45 @@ function Project(props) {
                                                 };
                                         }));
                                 })
+                            }),
+                        JsxRuntime.jsx("button", {
+                              children: showArchive ? "^" : "v",
+                              className: "text-xs rounded h-3 w-10",
+                              onClick: (function (param) {
+                                  setShowArchive(function (v) {
+                                        if (v.includes(project.id)) {
+                                          return v.filter(function (el) {
+                                                      return el !== project.id;
+                                                    });
+                                        } else {
+                                          return v.concat([project.id]);
+                                        }
+                                      });
+                                })
                             })
                       ],
                       className: "flex flex-row justify-between items-center bg-slate-300"
                     }),
                 JsxRuntime.jsx("div", {
                       children: JsxRuntime.jsx("div", {
-                            children: todos.filter(function (todo) {
-                                    return !Types.isArchiveStatus(todo.status);
+                            children: props.todos.filter(function (todo) {
+                                      if (showArchive) {
+                                        return true;
+                                      } else {
+                                        return !Types.isArchiveStatus(todo.status);
+                                      }
+                                    }).toSorted(function (a, b) {
+                                    return Types.statusToFloat(a.status) - Types.statusToFloat(b.status);
                                   }).map(function (todo) {
                                   return JsxRuntime.jsx(Project$Todo, {
                                               todo: todo
                                             });
-                                })
+                                }),
+                            className: "flex flex-col divide-y "
                           })
-                    }),
-                JsxRuntime.jsxs("div", {
-                      children: [
-                        JsxRuntime.jsxs("div", {
-                              children: [
-                                JsxRuntime.jsx("div", {
-                                      children: "Archive",
-                                      className: "text-slate-500 text-xs"
-                                    }),
-                                JsxRuntime.jsx("button", {
-                                      children: showArchive ? "^" : "v",
-                                      className: "text-xs rounded h-3 w-10",
-                                      onClick: (function (param) {
-                                          setShowArchive(function (v) {
-                                                if (v.includes(project.id)) {
-                                                  return v.filter(function (el) {
-                                                              return el !== project.id;
-                                                            });
-                                                } else {
-                                                  return v.concat([project.id]);
-                                                }
-                                              });
-                                        })
-                                    })
-                              ],
-                              className: "flex flex-row justify-start items-center gap-2"
-                            }),
-                        showArchive ? JsxRuntime.jsx("div", {
-                                children: todos.filter(function (todo) {
-                                        return Types.isArchiveStatus(todo.status);
-                                      }).map(function (todo) {
-                                      return JsxRuntime.jsx(Project$Todo, {
-                                                  todo: todo
-                                                });
-                                    })
-                              }) : null
-                      ]
                     })
               ],
-              className: "border"
+              className: "border-y"
             });
 }
 

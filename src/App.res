@@ -91,6 +91,13 @@ module StatusSelector = {
   }
 }
 
+module Details = {
+  @react.component
+  let make = () => {
+    <div className=" border-l flex-1"> {"Details"->React.string} </div>
+  }
+}
+
 @react.component
 let make = () => {
   let (projects, setProjects, _) = Common.useLocalStorage("projects", defaultProjects)
@@ -101,39 +108,42 @@ let make = () => {
     setProjects(v => v->Array.map(project => project.id == id ? f(project) : project))
   })
 
-  <div className="">
-    <StatusSelector />
-    <div className="flex flex-row gap-2">
-      <button
-        onClick={_ => setProjectTab(_ => All)}
-        className={[
-          "w-20  border-b-2",
-          projectsTab == All ? "border-red-500 text-red-500" : "border-transparent ",
-        ]->Array.join(" ")}>
-        {"All"->React.string}
-      </button>
-      <button
-        onClick={_ => setProjectTab(_ => Active)}
-        className={[
-          "w-20  border-b-2",
-          projectsTab == Active ? "border-red-500 text-red-500" : "border-transparent ",
-        ]->Array.join(" ")}>
-        {"Active"->React.string}
-      </button>
+  <div className="flex flex-row h-dvh">
+    // <StatusSelector />
+    <div className="flex-1">
+      <div className="flex flex-row gap-2">
+        <button
+          onClick={_ => setProjectTab(_ => All)}
+          className={[
+            "w-20  border-b-2",
+            projectsTab == All ? "border-red-500 text-red-500" : "border-transparent ",
+          ]->Array.join(" ")}>
+          {"All"->React.string}
+        </button>
+        <button
+          onClick={_ => setProjectTab(_ => Active)}
+          className={[
+            "w-20  border-b-2",
+            projectsTab == Active ? "border-red-500 text-red-500" : "border-transparent ",
+          ]->Array.join(" ")}>
+          {"Active"->React.string}
+        </button>
+      </div>
+      <div>
+        {projects
+        ->Array.filter(project => projectsTab == Active ? project.isActive : true)
+        ->Array.map(project =>
+          <Project
+            showArchive={showArchive->Array.includes(project.id)}
+            setShowArchive={setShowArchive}
+            project
+            todos={todos->Array.filter(todo => todo.project == project.id)}
+            updateProject
+          />
+        )
+        ->React.array}
+      </div>
     </div>
-    <div>
-      {projects
-      ->Array.filter(project => projectsTab == Active ? project.isActive : true)
-      ->Array.map(project =>
-        <Project
-          showArchive={showArchive->Array.includes(project.id)}
-          setShowArchive={setShowArchive}
-          project
-          todos={todos->Array.filter(todo => todo.project == project.id)}
-          updateProject
-        />
-      )
-      ->React.array}
-    </div>
+    <Details />
   </div>
 }
