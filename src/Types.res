@@ -1,18 +1,18 @@
 type status =
-  | TodoUrgent
-  | TodoHigh
-  | TodoMedium
-  | TodoLow
-  | LaterWill
-  | LaterMaybe
-  | LaterUnlikely
-  | LaterUnsorted
-  | ResolveDone
-  | ResolveWont
-  | ResolveNoNeed
-  | ArchiveDone
-  | ArchiveWont
-  | ArchiveNoNeed
+  | @as("TodoUrgent") TodoUrgent
+  | @as("TodoHigh") TodoHigh
+  | @as("TodoMedium") TodoMedium
+  | @as("TodoLow") TodoLow
+  | @as("LaterWill") LaterWill
+  | @as("LaterMaybe") LaterMaybe
+  | @as("LaterUnlikely") LaterUnlikely
+  | @as("LaterUnsorted") LaterUnsorted
+  | @as("ResolveDone") ResolveDone
+  | @as("ResolveWont") ResolveWont
+  | @as("ResolveNoNeed") ResolveNoNeed
+  | @as("ArchiveDone") ArchiveDone
+  | @as("ArchiveWont") ArchiveWont
+  | @as("ArchiveNoNeed") ArchiveNoNeed
 
 type todo = {
   id: string,

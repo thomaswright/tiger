@@ -1,12 +1,22 @@
 open Types
 
+module StatusSelect = {
+  @react.component @module("./StatusSelect.jsx")
+  external make: (~status: status, ~setStatus: status => unit) => React.element = "default"
+}
+
 module Todo = {
   @react.component
-  let make = (~todo: todo) => {
+  let make = (~todo: todo, ~updateTodo) => {
     <div className="flex flex-row justify-start items-center gap-2 px-2">
-      <div className="text-xs w-5 border rounded text-center">
-        {todo.status->statusStringShort->React.string}
-      </div>
+      <StatusSelect
+        status={todo.status}
+        setStatus={newStatus =>
+          updateTodo(todo.id, todo => {
+            ...todo,
+            status: newStatus,
+          })}
+      />
       <div> {todo.text->React.string} </div>
     </div>
   }
@@ -19,6 +29,7 @@ let make = (
   ~showArchive,
   ~setShowArchive,
   ~updateProject,
+  ~updateTodo,
 ) => {
   <div className="border-y">
     <div className="flex flex-row justify-between items-center bg-slate-300">
@@ -48,7 +59,7 @@ let make = (
         {todos
         ->Array.filter(todo => showArchive ? true : !isArchiveStatus(todo.status))
         ->Array.toSorted((a, b) => a.status->statusToFloat -. b.status->statusToFloat)
-        ->Array.map(todo => <Todo todo />)
+        ->Array.map(todo => <Todo todo updateTodo />)
         ->React.array}
       </div>
     </div>

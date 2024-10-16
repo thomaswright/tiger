@@ -39,6 +39,7 @@ function App(props) {
   var match = Common.useLocalStorage("projects", defaultProjects);
   var setProjects = match[1];
   var match$1 = Common.useLocalStorage("todos", defaultTodos);
+  var setTodos = match$1[1];
   var todos = match$1[0];
   var match$2 = Common.useLocalStorage("showArchive", []);
   var setShowArchive = match$2[1];
@@ -53,6 +54,17 @@ function App(props) {
                               return f(project);
                             } else {
                               return project;
+                            }
+                          });
+              });
+        }), []);
+  var updateTodo = React.useCallback((function (id, f) {
+          setTodos(function (v) {
+                return v.map(function (todo) {
+                            if (todo.id === id) {
+                              return f(todo);
+                            } else {
+                              return todo;
                             }
                           });
               });
@@ -105,7 +117,8 @@ function App(props) {
                                                     }),
                                                 showArchive: showArchive.includes(project.id),
                                                 setShowArchive: setShowArchive,
-                                                updateProject: updateProject
+                                                updateProject: updateProject,
+                                                updateTodo: updateTodo
                                               });
                                   })
                             })

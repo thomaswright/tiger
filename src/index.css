@@ -1,3 +1,35 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+  background-color: white;
+  color: black;
+  --background: white;
+  --foreground: black;
+  --foreground-900: #101010;
+  --foreground-800: #202020;
+  --foreground-700: #404040;
+  --foreground-600: #606060;
+  --foreground-500: #808080;
+  --foreground-400: #a0a0a0;
+  --foreground-300: #c0c0c0;
+  --foreground-200: #e0e0e0;
+  --foreground-100: #f0f0f0;
+}
+
+.dark {
+  background-color: black;
+  color: white;
+  --background: black;
+  --foreground: white;
+  --foreground-100: #101010;
+  --foreground-200: #202020;
+  --foreground-300: #404040;
+  --foreground-400: #606060;
+  --foreground-500: #808080;
+  --foreground-600: #a0a0a0;
+  --foreground-700: #c0c0c0;
+  --foreground-800: #e0e0e0;
+  --foreground-900: #f0f0f0;
+}

@@ -107,6 +107,9 @@ let make = () => {
   let updateProject = React.useCallback0((id, f) => {
     setProjects(v => v->Array.map(project => project.id == id ? f(project) : project))
   })
+  let updateTodo = React.useCallback0((id, f) => {
+    setTodos(v => v->Array.map(todo => todo.id == id ? f(todo) : todo))
+  })
 
   <div className="flex flex-row h-dvh">
     // <StatusSelector />
@@ -139,6 +142,7 @@ let make = () => {
             project
             todos={todos->Array.filter(todo => todo.project == project.id)}
             updateProject
+            updateTodo
           />
         )
         ->React.array}

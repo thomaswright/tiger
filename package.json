@@ -12,6 +12,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@radix-ui/react-dropdown-menu": "^2.1.2",
     "@rescript/core": "^1.6.0",
     "@rescript/react": "^0.12.1",
     "react": "^18.2.0",

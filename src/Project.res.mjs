@@ -2,14 +2,32 @@
 
 import * as Types from "./Types.res.mjs";
 import * as JsxRuntime from "react/jsx-runtime";
+import StatusSelectJsx from "./StatusSelect.jsx";
+
+var make = StatusSelectJsx;
+
+var StatusSelect = {
+  make: make
+};
 
 function Project$Todo(props) {
+  var updateTodo = props.updateTodo;
   var todo = props.todo;
   return JsxRuntime.jsxs("div", {
               children: [
-                JsxRuntime.jsx("div", {
-                      children: Types.statusStringShort(todo.status),
-                      className: "text-xs w-5 border rounded text-center"
+                JsxRuntime.jsx(make, {
+                      status: todo.status,
+                      setStatus: (function (newStatus) {
+                          updateTodo(todo.id, (function (todo) {
+                                  return {
+                                          id: todo.id,
+                                          text: todo.text,
+                                          project: todo.project,
+                                          isDone: todo.isDone,
+                                          status: newStatus
+                                        };
+                                }));
+                        })
                     }),
                 JsxRuntime.jsx("div", {
                       children: todo.text
@@ -24,6 +42,7 @@ var Todo = {
 };
 
 function Project(props) {
+  var updateTodo = props.updateTodo;
   var updateProject = props.updateProject;
   var setShowArchive = props.setShowArchive;
   var showArchive = props.showArchive;
@@ -78,7 +97,8 @@ function Project(props) {
                                     return Types.statusToFloat(a.status) - Types.statusToFloat(b.status);
                                   }).map(function (todo) {
                                   return JsxRuntime.jsx(Project$Todo, {
-                                              todo: todo
+                                              todo: todo,
+                                              updateTodo: updateTodo
                                             });
                                 }),
                             className: "flex flex-col divide-y "
@@ -89,10 +109,11 @@ function Project(props) {
             });
 }
 
-var make = Project;
+var make$1 = Project;
 
 export {
+  StatusSelect ,
   Todo ,
-  make ,
+  make$1 as make,
 }
-/* react/jsx-runtime Not a pure module */
+/* make Not a pure module */
