@@ -17,22 +17,153 @@ var defaultTodos = [
     text: "Do Something",
     project: "1",
     isDone: false,
-    status: {
-      TAG: "Keep",
-      _0: "LaterWill"
-    }
+    status: "LaterUnsorted"
   },
   {
     id: "2",
     text: "Do Something Else",
     project: "1",
     isDone: false,
-    status: {
-      TAG: "Archive",
-      _0: "Rejected"
-    }
+    status: "ArchiveNoNeed"
   }
 ];
+
+function App$StatusSelector(props) {
+  return JsxRuntime.jsxs("div", {
+              children: [
+                JsxRuntime.jsxs("div", {
+                      children: [
+                        JsxRuntime.jsxs("div", {
+                              children: [
+                                JsxRuntime.jsx("div", {
+                                      children: "Todo",
+                                      className: "flex-none px-1 font-bold w-2 leading-none text-2xs flex flex-row items-center justify-center -rotate-90"
+                                    }),
+                                JsxRuntime.jsxs("div", {
+                                      children: [
+                                        JsxRuntime.jsx("div", {
+                                              children: "Urgent",
+                                              className: "flex-1 px-1 bg-white "
+                                            }),
+                                        JsxRuntime.jsx("div", {
+                                              children: "High",
+                                              className: "flex-1 px-1 bg-white "
+                                            }),
+                                        JsxRuntime.jsx("div", {
+                                              children: "Medium",
+                                              className: "flex-1 px-1 bg-white "
+                                            }),
+                                        JsxRuntime.jsx("div", {
+                                              children: "Low",
+                                              className: "flex-1 px-1 bg-white "
+                                            })
+                                      ],
+                                      className: "flex flex-col flex-1 divide-y border rounded overflow-hidden"
+                                    })
+                              ],
+                              className: "flex flex-row gap-1 flex-1 px-1"
+                            }),
+                        JsxRuntime.jsxs("div", {
+                              children: [
+                                JsxRuntime.jsx("div", {
+                                      children: "Later",
+                                      className: "flex-none px-1 font-bold w-2 leading-none text-2xs flex flex-row items-center justify-center -rotate-90"
+                                    }),
+                                JsxRuntime.jsxs("div", {
+                                      children: [
+                                        JsxRuntime.jsx("div", {
+                                              children: "Will ",
+                                              className: "flex-1 px-1 bg-white "
+                                            }),
+                                        JsxRuntime.jsx("div", {
+                                              children: "Maybe",
+                                              className: "flex-1 px-1 bg-white "
+                                            }),
+                                        JsxRuntime.jsx("div", {
+                                              children: "Unlikely",
+                                              className: "flex-1 px-1 bg-white "
+                                            }),
+                                        JsxRuntime.jsx("div", {
+                                              children: "Unsorted",
+                                              className: "flex-1 px-1 bg-white "
+                                            })
+                                      ],
+                                      className: "flex flex-col flex-1 divide-y border rounded overflow-hidden"
+                                    })
+                              ],
+                              className: "flex flex-row gap-1 flex-1 px-1"
+                            })
+                      ],
+                      className: "flex flex-row justify-between gap-1 py-1"
+                    }),
+                JsxRuntime.jsxs("div", {
+                      children: [
+                        JsxRuntime.jsxs("div", {
+                              children: [
+                                JsxRuntime.jsx("div", {
+                                      children: "Resolve",
+                                      className: "flex-none px-1 font-bold w-2 leading-none text-2xs flex flex-row items-center justify-center -rotate-90"
+                                    }),
+                                JsxRuntime.jsxs("div", {
+                                      children: [
+                                        JsxRuntime.jsx("div", {
+                                              children: "Done",
+                                              className: "flex-1 px-1 bg-white "
+                                            }),
+                                        JsxRuntime.jsx("div", {
+                                              children: "Wont Do",
+                                              className: "flex-1 px-1 bg-white "
+                                            }),
+                                        JsxRuntime.jsx("div", {
+                                              children: "No Need",
+                                              className: "flex-1 px-1 bg-white "
+                                            })
+                                      ],
+                                      className: "flex flex-col flex-1 divide-y border rounded overflow-hidden"
+                                    })
+                              ],
+                              className: "flex flex-row gap-1 flex-1 px-1 "
+                            }),
+                        JsxRuntime.jsxs("div", {
+                              children: [
+                                JsxRuntime.jsx("div", {
+                                      children: "Archive",
+                                      className: "flex-none px-1 font-bold w-2 leading-none text-2xs flex flex-row items-center justify-center -rotate-90"
+                                    }),
+                                JsxRuntime.jsxs("div", {
+                                      children: [
+                                        JsxRuntime.jsx("div", {
+                                              children: "Done",
+                                              className: "flex-1 px-1 bg-white "
+                                            }),
+                                        JsxRuntime.jsx("div", {
+                                              children: "Wont Do",
+                                              className: "flex-1 px-1 bg-white "
+                                            }),
+                                        JsxRuntime.jsx("div", {
+                                              children: "No Need",
+                                              className: "flex-1 px-1 bg-white "
+                                            })
+                                      ],
+                                      className: "flex flex-col flex-1 divide-y border rounded overflow-hidden"
+                                    })
+                              ],
+                              className: " flex flex-row gap-1 flex-1 px-1 "
+                            })
+                      ],
+                      className: "flex flex-row justify-between gap-1 py-1"
+                    }),
+                JsxRuntime.jsx("div", {
+                      children: JsxRuntime.jsx("div", {
+                            children: "Trash",
+                            className: "bg-white rounded  px-1 border flex-1"
+                          }),
+                      className: "flex flex-row justify-between gap-1  pl-4 pr-1"
+                    })
+              ],
+              className: "text-xs w-[200px] bg-white p-2 flex flex-col gap-1 border rounded-lg "
+            });
+}
 
 function App(props) {
   var match = Common.useLocalStorage("projects", defaultProjects);
@@ -58,140 +189,14 @@ function App(props) {
         }), []);
   return JsxRuntime.jsxs("div", {
               children: [
-                JsxRuntime.jsxs("div", {
-                      children: [
-                        JsxRuntime.jsx("div", {
-                              children: "Urgent",
-                              className: "bg-white rounded  px-1 border"
-                            }),
-                        JsxRuntime.jsxs("div", {
-                              children: [
-                                JsxRuntime.jsxs("div", {
-                                      children: [
-                                        JsxRuntime.jsx("div", {
-                                              children: "Todo",
-                                              className: "flex-none px-1 font-bold w-2 leading-none text-2xs flex flex-row items-center justify-center -rotate-90"
-                                            }),
-                                        JsxRuntime.jsxs("div", {
-                                              children: [
-                                                JsxRuntime.jsx("div", {
-                                                      children: "High",
-                                                      className: "flex-1 px-1 bg-white rounded border"
-                                                    }),
-                                                JsxRuntime.jsx("div", {
-                                                      children: "Medium",
-                                                      className: "flex-1 px-1 bg-white rounded border"
-                                                    }),
-                                                JsxRuntime.jsx("div", {
-                                                      children: "Low",
-                                                      className: "flex-1 px-1 bg-white rounded border"
-                                                    })
-                                              ],
-                                              className: "flex flex-col gap-1 flex-1"
-                                            })
-                                      ],
-                                      className: "flex flex-row gap-1 flex-1 px-1"
-                                    }),
-                                JsxRuntime.jsxs("div", {
-                                      children: [
-                                        JsxRuntime.jsx("div", {
-                                              children: "Later",
-                                              className: "flex-none px-1 font-bold w-2 leading-none text-2xs flex flex-row items-center justify-center -rotate-90"
-                                            }),
-                                        JsxRuntime.jsxs("div", {
-                                              children: [
-                                                JsxRuntime.jsx("div", {
-                                                      children: "Will ",
-                                                      className: "flex-1 px-1 bg-white rounded border"
-                                                    }),
-                                                JsxRuntime.jsx("div", {
-                                                      children: "Maybe",
-                                                      className: "flex-1 px-1 bg-white rounded border"
-                                                    }),
-                                                JsxRuntime.jsx("div", {
-                                                      children: "Unlikely",
-                                                      className: "flex-1 px-1 bg-white rounded border"
-                                                    })
-                                              ],
-                                              className: "flex flex-col gap-1 flex-1"
-                                            })
-                                      ],
-                                      className: "flex flex-row gap-1 flex-1 px-1"
-                                    })
-                              ],
-                              className: "flex flex-row justify-between gap-1 py-2"
-                            }),
-                        JsxRuntime.jsxs("div", {
-                              children: [
-                                JsxRuntime.jsxs("div", {
-                                      children: [
-                                        JsxRuntime.jsx("div", {
-                                              children: "Resolve",
-                                              className: "flex-none px-1 font-bold w-2 leading-none text-2xs flex flex-row items-center justify-center -rotate-90"
-                                            }),
-                                        JsxRuntime.jsxs("div", {
-                                              children: [
-                                                JsxRuntime.jsx("div", {
-                                                      children: "Done",
-                                                      className: "flex-1 px-1 bg-white rounded border"
-                                                    }),
-                                                JsxRuntime.jsx("div", {
-                                                      children: "Wont Do",
-                                                      className: "flex-1 px-1 bg-white rounded border"
-                                                    }),
-                                                JsxRuntime.jsx("div", {
-                                                      children: "No Need",
-                                                      className: "flex-1 px-1 bg-white rounded border"
-                                                    })
-                                              ],
-                                              className: "flex flex-col gap-1 flex-1"
-                                            })
-                                      ],
-                                      className: "flex flex-row gap-1 flex-1 px-1 pt-2"
-                                    }),
-                                JsxRuntime.jsxs("div", {
-                                      children: [
-                                        JsxRuntime.jsx("div", {
-                                              children: "Archive",
-                                              className: "flex-none px-1 font-bold w-2 leading-none text-2xs flex flex-row items-center justify-center -rotate-90"
-                                            }),
-                                        JsxRuntime.jsxs("div", {
-                                              children: [
-                                                JsxRuntime.jsx("div", {
-                                                      children: "Done",
-                                                      className: "flex-1 px-1 bg-white rounded border"
-                                                    }),
-                                                JsxRuntime.jsx("div", {
-                                                      children: "Wont Do",
-                                                      className: "flex-1 px-1 bg-white rounded border"
-                                                    }),
-                                                JsxRuntime.jsx("div", {
-                                                      children: "No Need",
-                                                      className: "flex-1 px-1 bg-white rounded border"
-                                                    })
-                                              ],
-                                              className: "flex flex-col gap-1 flex-1"
-                                            })
-                                      ],
-                                      className: "border-t border-l flex flex-row gap-1 flex-1 px-1 pt-2"
-                                    })
-                              ],
-                              className: "flex flex-row justify-between gap-1"
-                            }),
-                        JsxRuntime.jsx("div", {
-                              children: "Trash",
-                              className: "bg-white rounded  px-1 border"
-                            })
-                      ],
-                      className: "text-xs w-[200px] bg-white p-2 flex flex-col gap-1"
-                    }),
+                JsxRuntime.jsx(App$StatusSelector, {}),
                 JsxRuntime.jsxs("div", {
                       children: [
                         JsxRuntime.jsx("button", {
                               children: "All",
                               className: [
-                                  "w-20 rounded",
-                                  projectsTab === "All" ? "bg-slate-800 text-white" : "bg-slate-200 text-black"
+                                  "w-20  border-b-2",
+                                  projectsTab === "All" ? "border-red-500 text-red-500" : "border-transparent "
                                 ].join(" "),
                               onClick: (function (param) {
                                   setProjectTab(function (param) {
@@ -202,8 +207,8 @@ function App(props) {
                         JsxRuntime.jsx("button", {
                               children: "Active",
                               className: [
-                                  "w-20 rounded",
-                                  projectsTab === "Active" ? "bg-slate-800 text-white" : "bg-slate-200 text-black"
+                                  "w-20  border-b-2",
+                                  projectsTab === "Active" ? "border-red-500 text-red-500" : "border-transparent "
                                 ].join(" "),
                               onClick: (function (param) {
                                   setProjectTab(function (param) {
@@ -234,7 +239,7 @@ function App(props) {
                           })
                     })
               ],
-              className: "p-6"
+              className: ""
             });
 }
 

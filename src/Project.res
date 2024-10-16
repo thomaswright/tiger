@@ -31,24 +31,18 @@ let make = (
       </button>
     </div>
     <div>
-      <div className="text-slate-500 text-xs"> {"Keep"->React.string} </div>
       <div>
         {todos
-        ->Array.filter(todo =>
-          switch todo.status {
-          | Keep(_) => true
-          | _ => false
-          }
-        )
+        ->Array.filter(todo => !isArchiveStatus(todo.status))
         ->Array.map(todo => <Todo todo />)
         ->React.array}
       </div>
     </div>
     <div>
-      <div className="flex flex-row justify-between">
+      <div className="flex flex-row justify-start items-center gap-2">
         <div className="text-slate-500 text-xs"> {"Archive"->React.string} </div>
         <button
-          className="text-xs rounded bg-slate-200 w-10"
+          className="text-xs rounded h-3 w-10"
           onClick={_ =>
             setShowArchive(v =>
               v->Array.includes(project.id)
@@ -61,12 +55,7 @@ let make = (
       {if showArchive {
         <div>
           {todos
-          ->Array.filter(todo =>
-            switch todo.status {
-            | Archive(_) => true
-            | _ => false
-            }
-          )
+          ->Array.filter(todo => isArchiveStatus(todo.status))
           ->Array.map(todo => <Todo todo />)
           ->React.array}
         </div>

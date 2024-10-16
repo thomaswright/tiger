@@ -1,6 +1,4 @@
-type keepStatus =
-  | Unsorted
-  | DoneKeep
+type status =
   | TodoUrgent
   | TodoHigh
   | TodoMedium
@@ -8,16 +6,13 @@ type keepStatus =
   | LaterWill
   | LaterMaybe
   | LaterUnlikely
-  | LaterWont
-
-type archiveStatus =
-  | DoneArchive
-  | Rejected
-  | Mitigated
-  | NotNeeded
-  | Duplicate
-
-type status = Archive(archiveStatus) | Keep(keepStatus)
+  | LaterUnsorted
+  | ResolveDone
+  | ResolveWont
+  | ResolveNoNeed
+  | ArchiveDone
+  | ArchiveWont
+  | ArchiveNoNeed
 
 type todo = {
   id: string,
@@ -34,3 +29,9 @@ type project = {
 }
 
 type projectsTab = | @as("All") All | @as("Active") Active
+
+let isArchiveStatus = s =>
+  switch s {
+  | ArchiveDone | ArchiveWont | ArchiveNoNeed => true
+  | _ => false
+  }
