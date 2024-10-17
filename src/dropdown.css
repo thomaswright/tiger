@@ -63,8 +63,8 @@ button {
 }
 
 .IconButton {
-  @apply text-inherit flex flex-row items-center justify-center w-5 h-5 border border-solid rounded;
-  border-color: var(--foreground-300);
+  @apply text-inherit flex flex-row items-center justify-center w-5 h-5 text-white rounded;
+  /* border-color: var(--foreground-300); */
 }
 
 .IconButton:hover {

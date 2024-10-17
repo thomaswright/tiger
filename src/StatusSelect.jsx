@@ -5,6 +5,7 @@ import {
   statusStringShort,
   statusString,
   isArchiveStatus,
+  statusColor,
 } from "./Types.res.mjs";
 
 const Dropdown = ({ status, setStatus, removeTodo }) => {
@@ -34,7 +35,13 @@ const Dropdown = ({ status, setStatus, removeTodo }) => {
   return (
     <DropdownMenu.Root modal={false}>
       <DropdownMenu.Trigger asChild>
-        <button className="IconButton" aria-label="Customise options">
+        <button
+          style={{
+            backgroundColor: statusColor(status),
+          }}
+          className="IconButton"
+          aria-label="Customise options"
+        >
           {statusStringShort(status)}
         </button>
       </DropdownMenu.Trigger>

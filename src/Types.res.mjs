@@ -118,6 +118,34 @@ function statusStringShort(s) {
   }
 }
 
+function statusColor(s) {
+  switch (s) {
+    case "TodoUrgent" :
+        return "var(--todoU)";
+    case "TodoHigh" :
+        return "var(--todo1)";
+    case "TodoMedium" :
+        return "var(--todo2)";
+    case "TodoLow" :
+        return "var(--todo3)";
+    case "LaterWill" :
+    case "LaterMaybe" :
+    case "LaterUnlikely" :
+    case "LaterUnsorted" :
+        return "var(--later)";
+    case "ResolveDone" :
+    case "ResolveReject" :
+    case "ResolveNoNeed" :
+        return "var(--resolve)";
+    case "ArchiveDone" :
+    case "ArchiveReject" :
+    case "ArchiveNoNeed" :
+    case "Trash" :
+        return "var(--archive)";
+    
+  }
+}
+
 function getProjectId(s) {
   return "project-" + s;
 }
@@ -139,6 +167,7 @@ export {
   statusToFloat ,
   statusString ,
   statusStringShort ,
+  statusColor ,
   getProjectId ,
   getTodoId ,
   getTodoInputId ,

@@ -16,6 +16,15 @@ html {
   --foreground-300: #c0c0c0;
   --foreground-200: #e0e0e0;
   --foreground-100: #f0f0f0;
+
+  --todoU: hsl(350, 100%, 40%);
+  --todo1: hsl(15, 100%, 50%);
+  --todo2: hsl(25, 100%, 50%);
+  --todo3: hsl(35, 100%, 50%);
+
+  --later: hsl(99, 99%, 32%);
+  --resolve: hsl(209, 100%, 36%);
+  --archive: hsl(0, 0%, 49%);
 }
 
 .dark {
