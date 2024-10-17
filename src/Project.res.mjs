@@ -258,7 +258,6 @@ function Project(props) {
   var setSelectElement = props.setSelectElement;
   var selectElement = props.selectElement;
   var updateTodo = props.updateTodo;
-  var updateProject = props.updateProject;
   var setShowArchive = props.setShowArchive;
   var showArchive = props.showArchive;
   var project = props.project;
@@ -311,19 +310,6 @@ function Project(props) {
                             }),
                         JsxRuntime.jsx("div", {
                               className: "flex-1"
-                            }),
-                        JsxRuntime.jsx("button", {
-                              children: project.isActive ? "Active" : "Not Active",
-                              className: "rounded bg-slate-200 px-1 text-xs h-fit flex-none",
-                              onClick: (function (param) {
-                                  updateProject(project.id, (function (p) {
-                                          return {
-                                                  id: p.id,
-                                                  name: p.name,
-                                                  isActive: !p.isActive
-                                                };
-                                        }));
-                                })
                             }),
                         JsxRuntime.jsx("button", {
                               children: showArchive ? "^" : "v",

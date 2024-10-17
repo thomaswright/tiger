@@ -229,6 +229,15 @@ let make = () => {
               className={["bg-slate-200 px-2 rounded"]->Array.join(" ")}>
               {"Delete Project"->React.string}
             </button>
+            <button
+              className="rounded bg-slate-200 px-1 text-xs h-fit flex-none"
+              onClick={_ =>
+                updateProject(project.id, p => {
+                  ...p,
+                  isActive: !p.isActive,
+                })}>
+              {(project.isActive ? "Active" : "Not Active")->React.string}
+            </button>
           </div>
         })
       | _ => React.null

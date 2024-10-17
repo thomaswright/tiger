@@ -208,6 +208,19 @@ function App(props) {
                                                       });
                                           });
                                     })
+                                }),
+                            JsxRuntime.jsx("button", {
+                                  children: project.isActive ? "Active" : "Not Active",
+                                  className: "rounded bg-slate-200 px-1 text-xs h-fit flex-none",
+                                  onClick: (function (param) {
+                                      updateProject(project.id, (function (p) {
+                                              return {
+                                                      id: p.id,
+                                                      name: p.name,
+                                                      isActive: !p.isActive
+                                                    };
+                                            }));
+                                    })
                                 })
                           ]
                         });

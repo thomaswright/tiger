@@ -279,15 +279,6 @@ let make = (
       <div className=" flex-none px-2"> {project.name->React.string} </div>
       <div className="flex-1" />
       <button
-        className="rounded bg-slate-200 px-1 text-xs h-fit flex-none"
-        onClick={_ =>
-          updateProject(project.id, p => {
-            ...p,
-            isActive: !p.isActive,
-          })}>
-        {(project.isActive ? "Active" : "Not Active")->React.string}
-      </button>
-      <button
         className="text-xs rounded h-3 w-4 flex-none"
         onClick={_ =>
           setShowArchive(v =>
