@@ -100,3 +100,4 @@ let statusStringShort = s => {
 }
 
 let getProjectId = s => "project-" ++ s
+let getTodoId = s => "todo-" ++ s

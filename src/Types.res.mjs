@@ -122,11 +122,16 @@ function getProjectId(s) {
   return "project-" + s;
 }
 
+function getTodoId(s) {
+  return "todo-" + s;
+}
+
 export {
   isArchiveStatus ,
   statusToFloat ,
   statusString ,
   statusStringShort ,
   getProjectId ,
+  getTodoId ,
 }
 /* No side effect */

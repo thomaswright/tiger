@@ -55,8 +55,16 @@ function App(props) {
       });
   var setDisplayElement = match$5[1];
   var displayElement = match$5[0];
-  var focusClassNextRef = React.useRef(undefined);
-  var focusIdNextRef = React.useRef(undefined);
+  var match$6 = React.useState(function () {
+        
+      });
+  var setFocusClassNext = match$6[1];
+  var focusClassNext = match$6[0];
+  var match$7 = React.useState(function () {
+        
+      });
+  var setFocusIdNext = match$7[1];
+  var focusIdNext = match$7[0];
   var updateProject = React.useCallback((function (id, f) {
           setProjects(function (v) {
                 return v.map(function (project) {
@@ -80,18 +88,23 @@ function App(props) {
               });
         }), []);
   React.useEffect(function () {
-        Core__Option.mapOr(Core__Option.flatMap(focusClassNextRef.current, (function (x) {
+        Core__Option.mapOr(Core__Option.flatMap(focusClassNext, (function (x) {
                     return Array.prototype.slice.call(document.getElementsByClassName(x))[0];
                   })), undefined, (function (element) {
                 element.focus();
-                focusClassNextRef.current = undefined;
+                setFocusClassNext(function (param) {
+                      
+                    });
               }));
-        Core__Option.mapOr(Core__Option.flatMap(focusIdNextRef.current, (function (x) {
+        console.log(focusIdNext);
+        Core__Option.mapOr(Core__Option.flatMap(focusIdNext, (function (x) {
                     return Caml_option.nullable_to_opt(document.getElementById(x));
                   })), undefined, (function (element) {
                 console.log(element);
                 element.focus();
-                focusIdNextRef.current = undefined;
+                setFocusIdNext(function (param) {
+                      
+                    });
               }));
       });
   var tmp;
@@ -108,6 +121,14 @@ function App(props) {
                                 placeholder: "Todo Text",
                                 type: "text",
                                 value: todo.text,
+                                onKeyDown: (function (e) {
+                                    if (e.key === "Escape") {
+                                      return setFocusIdNext(function (param) {
+                                                  return Types.getTodoId(todo.id);
+                                                });
+                                    }
+                                    
+                                  }),
                                 onChange: (function (e) {
                                     updateTodo(todo.id, (function (t) {
                                             return {
@@ -129,17 +150,16 @@ function App(props) {
               }), null, (function (project) {
               return JsxRuntime.jsx("div", {
                           children: JsxRuntime.jsx("input", {
-                                className: [
-                                    "class-display-title px-2",
-                                    " flex-1 bg-inherit text-[--foreground] w-full outline-none \n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500"
-                                  ].join(" "),
+                                className: [" flex-1 bg-inherit text-[--foreground] w-full outline-none \n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500"].join(" "),
+                                id: "id-display-title",
                                 placeholder: "Project Name",
                                 type: "text",
                                 value: project.name,
                                 onKeyDown: (function (e) {
                                     if (e.key === "Escape") {
-                                      focusIdNextRef.current = Types.getProjectId(project.id);
-                                      return ;
+                                      return setFocusIdNext(function (param) {
+                                                  return Types.getProjectId(project.id);
+                                                });
                                     }
                                     
                                   }),
@@ -218,7 +238,9 @@ function App(props) {
                                                         _0: newProjectId
                                                       };
                                               });
-                                          focusClassNextRef.current = "class-display-title";
+                                          setFocusClassNext(function (param) {
+                                                return "class-display-title";
+                                              });
                                         })
                                     })
                               ],
@@ -245,9 +267,8 @@ function App(props) {
                                                 setSelectElement: setSelectElement,
                                                 displayElement: displayElement,
                                                 setDisplayElement: setDisplayElement,
-                                                focusClassNextRef: focusClassNextRef,
-                                                focusIdNextRef: focusIdNextRef
-                                              });
+                                                setFocusIdNext: setFocusIdNext
+                                              }, Types.getProjectId(project.id));
                                   })
                             })
                       ],

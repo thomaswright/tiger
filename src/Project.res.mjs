@@ -161,6 +161,7 @@ function Project$Todo(props) {
                   "flex flex-row justify-start items-center gap-2 px-2",
                   isSelected ? "bg-slate-100 outline outline-1 -outline-offset-1" : ""
                 ].join(" "),
+              id: Types.getTodoId(todo.id),
               tabIndex: 0,
               onKeyDown: onKeyDownContainer,
               onFocus: (function (param) {
@@ -190,7 +191,7 @@ var Todo = {
 };
 
 function Project(props) {
-  var focusIdNextRef = props.focusIdNextRef;
+  var setFocusIdNext = props.setFocusIdNext;
   var setDisplayElement = props.setDisplayElement;
   var displayElement = props.displayElement;
   var setSelectElement = props.setSelectElement;
@@ -208,7 +209,9 @@ function Project(props) {
   var onKeyDownProject = function (e) {
     if (isSelected) {
       if (e.key === "Enter") {
-        focusIdNextRef.current = "id-display-title";
+        setFocusIdNext(function (param) {
+              return "id-display-title";
+            });
       }
       return Core__Option.mapOr(Caml_option.nullable_to_opt(projectRef.current), undefined, (function (dom) {
                     if (e.key === "ArrowUp") {
@@ -309,7 +312,7 @@ function Project(props) {
                                               setSelectElement: setSelectElement,
                                               displayElement: displayElement,
                                               setDisplayElement: setDisplayElement
-                                            });
+                                            }, Types.getTodoId(todo.id));
                                 }),
                             className: "flex flex-col divide-y "
                           })

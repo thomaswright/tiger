@@ -106,6 +106,7 @@ module Todo = {
     }
 
     <div
+      id={getTodoId(todo.id)}
       tabIndex={0}
       ref={ReactDOM.Ref.domRef(containerRef)}
       onBlur={_ => setSelectElement(_ => None)}
@@ -168,8 +169,7 @@ let make = (
   ~setSelectElement,
   ~displayElement,
   ~setDisplayElement,
-  ~focusClassNextRef: React.ref<option<string>>,
-  ~focusIdNextRef: React.ref<option<string>>,
+  ~setFocusIdNext,
 ) => {
   let projectRef = React.useRef(Nullable.null)
 
@@ -178,7 +178,7 @@ let make = (
   let onKeyDownProject = e => {
     if isSelected {
       if e->ReactEvent.Keyboard.key == "Enter" {
-        focusIdNextRef.current = Some("id-display-title")
+        setFocusIdNext(_ => Some("id-display-title"))
       }
 
       projectRef.current
@@ -241,6 +241,7 @@ let make = (
         ->Array.toSorted((a, b) => a.status->statusToFloat -. b.status->statusToFloat)
         ->Array.map(todo =>
           <Todo
+            key={getTodoId(todo.id)}
             todo
             updateTodo
             isSelected={selectElement == Some(Todo(todo.id))}
