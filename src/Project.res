@@ -154,7 +154,7 @@ module Todo = {
         listItemClass,
         "flex flex-row justify-start items-center gap-2 px-2",
         stagedForDelete
-          ? "bg-red-500 outline outline-1 -outline-offset-1"
+          ? "bg-red-200 outline outline-1 -outline-offset-1"
           : isSelected
           ? "bg-var(--t1) outline outline-1 -outline-offset-1"
           : "",
@@ -257,7 +257,7 @@ let make = (
     }
   }
 
-  <div className="border-b">
+  <div className="">
     <div
       id={getProjectId(project.id)}
       tabIndex={0}
@@ -270,8 +270,8 @@ let make = (
       }}
       className={[
         listItemClass,
-        "h-6 flex flex-row justify-between items-center bg-[var(--t3)]",
-        isSelected ? "outline outline-1 -outline-offset-1" : "",
+        "h-6 flex flex-row justify-between items-center bg-[var(--t2)] ",
+        isSelected ? "outline outline-1 -outline-offset-1 " : "",
       ]->Array.join(" ")}>
       <div className=" flex-none px-2"> {project.name->React.string} </div>
       <div className="flex-1" />

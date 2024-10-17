@@ -3,8 +3,8 @@ button {
 }
 
 .DropdownMenuContent {
-  @apply text-xs w-[140px] bg-white flex flex-col gap-1 border rounded-lg shadow mx-2;
-  background-color: var(--background);
+  @apply text-xs w-[140px] flex flex-col gap-1 border rounded-lg shadow mx-2;
+  background-color: var(--t0);
   border-color: var(--t2);
   animation-duration: 400ms;
   animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
@@ -63,8 +63,9 @@ button {
 }
 
 .IconButton {
-  @apply text-inherit flex flex-row items-center justify-center w-5 h-5 text-white rounded;
+  @apply text-inherit flex flex-row items-center justify-center w-5 h-5  rounded;
   /* border-color: var(--t3); */
+  color: var(--t0);
 }
 
 .IconButton:hover {

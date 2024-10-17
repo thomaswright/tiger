@@ -213,7 +213,7 @@ function Project$Todo(props) {
               className: [
                   Types.listItemClass,
                   "flex flex-row justify-start items-center gap-2 px-2",
-                  stagedForDelete ? "bg-red-500 outline outline-1 -outline-offset-1" : (
+                  stagedForDelete ? "bg-red-200 outline outline-1 -outline-offset-1" : (
                       isSelected ? "bg-var(--t1) outline outline-1 -outline-offset-1" : ""
                     )
                 ].join(" "),
@@ -330,8 +330,8 @@ function Project(props) {
                       ref: Caml_option.some(projectRef),
                       className: [
                           Types.listItemClass,
-                          "h-6 flex flex-row justify-between items-center bg-[var(--t3)]",
-                          isSelected ? "outline outline-1 -outline-offset-1" : ""
+                          "h-6 flex flex-row justify-between items-center bg-[var(--t2)] ",
+                          isSelected ? "outline outline-1 -outline-offset-1 " : ""
                         ].join(" "),
                       id: Types.getProjectId(project.id),
                       tabIndex: 0,
@@ -385,7 +385,7 @@ function Project(props) {
                           })
                     })
               ],
-              className: "border-b"
+              className: ""
             });
 }
 
