@@ -64,7 +64,7 @@ function Project$Todo(props) {
                                     e.stopPropagation();
                                     if (cursorPosition === 0) {
                                       e.preventDefault();
-                                      Common.focusPreviousClass(todoInputClass);
+                                      Common.focusPreviousClass(todoInputClass, dom);
                                     }
                                     
                                   }
@@ -72,7 +72,7 @@ function Project$Todo(props) {
                                     e.stopPropagation();
                                     if (cursorPosition === inputValueLength) {
                                       e.preventDefault();
-                                      return Common.focusNextClass(todoInputClass);
+                                      return Common.focusNextClass(todoInputClass, dom);
                                     } else {
                                       return ;
                                     }
@@ -86,11 +86,6 @@ function Project$Todo(props) {
                                         TAG: "Todo",
                                         _0: todo.id
                                       };
-                              });
-                        }),
-                      onBlur: (function (param) {
-                          setSelectElement(function (param) {
-                                
                               });
                         }),
                       onChange: (function (e) {
@@ -109,19 +104,22 @@ function Project$Todo(props) {
               ref: Caml_option.some(containerRef),
               className: [
                   todoClass,
-                  "flex flex-row justify-start items-center gap-2 px-2\n        focus:bg-slate-100 focus:outline focus:outline-1 focus:-outline-offset-1\n        focus-within:bg-slate-100 focus-within:outline focus-within:outline-1 focus-within:-outline-offset-1\n        "
+                  "flex flex-row justify-start items-center gap-2 px-2",
+                  props.isSelected ? "bg-slate-100 outline outline-1 -outline-offset-1" : ""
                 ].join(" "),
               tabIndex: 0,
               onKeyDown: (function (e) {
-                  if (e.key === "ArrowUp") {
-                    e.preventDefault();
-                    Common.focusPreviousClass(todoClass);
-                  }
-                  if (e.key === "ArrowDown") {
-                    e.preventDefault();
-                    return Common.focusNextClass(todoClass);
-                  }
-                  
+                  Core__Option.mapOr(Caml_option.nullable_to_opt(containerRef.current), undefined, (function (dom) {
+                          if (e.key === "ArrowUp") {
+                            e.preventDefault();
+                            Common.focusPreviousClass(todoClass, dom);
+                          }
+                          if (e.key === "ArrowDown") {
+                            e.preventDefault();
+                            return Common.focusNextClass(todoClass, dom);
+                          }
+                          
+                        }));
                 }),
               onFocus: (function (param) {
                   setSelectElement(function (param) {
@@ -129,11 +127,6 @@ function Project$Todo(props) {
                                 TAG: "Todo",
                                 _0: todo.id
                               };
-                      });
-                }),
-              onBlur: (function (param) {
-                  setSelectElement(function (param) {
-                        
                       });
                 })
             });

@@ -17,26 +17,29 @@ module Todo = {
     <div
       tabIndex={0}
       ref={ReactDOM.Ref.domRef(containerRef)}
-      onBlur={_ => setSelectElement(_ => None)}
+      // onBlur={_ => setSelectElement(_ => None)}
       onFocus={_ => setSelectElement(_ => Some(Todo(todo.id)))}
       onKeyDown={e => {
-        if e->ReactEvent.Keyboard.key == "ArrowUp" {
-          e->ReactEvent.Keyboard.preventDefault
-          Common.focusPreviousClass(todoClass)
-        }
+        containerRef.current
+        ->Nullable.toOption
+        ->Option.mapOr((), dom => {
+          if e->ReactEvent.Keyboard.key == "ArrowUp" {
+            e->ReactEvent.Keyboard.preventDefault
+            Common.focusPreviousClass(todoClass, dom)
+          }
 
-        if e->ReactEvent.Keyboard.key == "ArrowDown" {
-          e->ReactEvent.Keyboard.preventDefault
-          Common.focusNextClass(todoClass)
-        }
+          if e->ReactEvent.Keyboard.key == "ArrowDown" {
+            e->ReactEvent.Keyboard.preventDefault
+            Common.focusNextClass(todoClass, dom)
+          }
+        })
       }}
       className={[
         todoClass,
-        "flex flex-row justify-start items-center gap-2 px-2
-        focus:bg-slate-100 focus:outline focus:outline-1 focus:-outline-offset-1
-        focus-within:bg-slate-100 focus-within:outline focus-within:outline-1 focus-within:-outline-offset-1
-        ",
-        // isSelected ? "" : "",
+        "flex flex-row justify-start items-center gap-2 px-2",
+        // "focus:bg-slate-100 focus:outline focus:outline-1 focus:-outline-offset-1",
+        // "focus-within:bg-slate-100 focus-within:outline focus-within:outline-1 focus-within:-outline-offset-1",
+        isSelected ? "bg-slate-100 outline outline-1 -outline-offset-1" : "",
       ]->Array.join(" ")}>
       <StatusSelect
         status={todo.status}
@@ -56,7 +59,7 @@ module Todo = {
         ]->Array.join(" ")}
         placeholder={""}
         value={todo.text}
-        onBlur={_ => setSelectElement(_ => None)}
+        // onBlur={_ => setSelectElement(_ => None)}
         onFocus={_ => setSelectElement(_ => Some(Todo(todo.id)))}
         onKeyDown={e => {
           if e->ReactEvent.Keyboard.key == "Escape" {
@@ -79,7 +82,7 @@ module Todo = {
               e->ReactEvent.Keyboard.stopPropagation
               if cursorPosition == 0 {
                 e->ReactEvent.Keyboard.preventDefault
-                Common.focusPreviousClass(todoInputClass)
+                Common.focusPreviousClass(todoInputClass, dom)
               }
             }
 
@@ -87,7 +90,7 @@ module Todo = {
               e->ReactEvent.Keyboard.stopPropagation
               if cursorPosition == inputValueLength {
                 e->ReactEvent.Keyboard.preventDefault
-                Common.focusNextClass(todoInputClass)
+                Common.focusNextClass(todoInputClass, dom)
               }
             }
           })

@@ -12,12 +12,12 @@ function useLocalStorageListener(prim0, prim1) {
   return UseLocalStorageJs.useLocalStorageListener(prim0, prim1);
 }
 
-function focusPreviousClass(prim) {
-  OtherJs.focusPreviousClass(prim);
+function focusPreviousClass(prim0, prim1) {
+  OtherJs.focusPreviousClass(prim0, prim1);
 }
 
-function focusNextClass(prim) {
-  OtherJs.focusNextClass(prim);
+function focusNextClass(prim0, prim1) {
+  OtherJs.focusNextClass(prim0, prim1);
 }
 
 export {

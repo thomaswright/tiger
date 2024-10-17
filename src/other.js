@@ -1,6 +1,6 @@
-export function focusPreviousClass(className) {
+export function focusPreviousClass(className, activeElement) {
   const elements = document.querySelectorAll(`.${className}`);
-  const activeElement = document.activeElement;
+  // const activeElement = document.activeElement;
 
   let currentIndex = -1;
   elements.forEach((el, index) => {
@@ -16,9 +16,9 @@ export function focusPreviousClass(className) {
   }
 }
 
-export function focusNextClass(className) {
+export function focusNextClass(className, activeElement) {
   const elements = document.querySelectorAll(`.${className}`);
-  const activeElement = document.activeElement;
+  // const activeElement = document.activeElement;
 
   let currentIndex = -1;
   elements.forEach((el, index) => {
