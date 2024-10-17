@@ -21,6 +21,7 @@ var todoInputClass = "class-list-todo-input";
 
 function Project$Todo(props) {
   var setSelectElement = props.setSelectElement;
+  var isSelected = props.isSelected;
   var updateTodo = props.updateTodo;
   var todo = props.todo;
   var inputRef = React.useRef(null);
@@ -51,34 +52,37 @@ function Project$Todo(props) {
                       type: "text",
                       value: todo.text,
                       onKeyDown: (function (e) {
-                          if (e.key === "Escape") {
-                            e.preventDefault();
-                            Core__Option.mapOr(Caml_option.nullable_to_opt(containerRef.current), undefined, (function (dom) {
-                                    dom.focus();
-                                  }));
+                          if (isSelected) {
+                            if (e.key === "Escape") {
+                              e.preventDefault();
+                              Core__Option.mapOr(Caml_option.nullable_to_opt(containerRef.current), undefined, (function (dom) {
+                                      dom.focus();
+                                    }));
+                            }
+                            return Core__Option.mapOr(Caml_option.nullable_to_opt(inputRef.current), undefined, (function (dom) {
+                                          var cursorPosition = Core__Option.getOr(Caml_option.nullable_to_opt(dom.selectionStart), 0);
+                                          var inputValueLength = dom.value.length;
+                                          if (e.key === "ArrowUp") {
+                                            e.stopPropagation();
+                                            if (cursorPosition === 0) {
+                                              e.preventDefault();
+                                              Common.focusPreviousClass(todoInputClass, dom);
+                                            }
+                                            
+                                          }
+                                          if (e.key === "ArrowDown") {
+                                            e.stopPropagation();
+                                            if (cursorPosition === inputValueLength) {
+                                              e.preventDefault();
+                                              return Common.focusNextClass(todoInputClass, dom);
+                                            } else {
+                                              return ;
+                                            }
+                                          }
+                                          
+                                        }));
                           }
-                          Core__Option.mapOr(Caml_option.nullable_to_opt(inputRef.current), undefined, (function (dom) {
-                                  var cursorPosition = Core__Option.getOr(Caml_option.nullable_to_opt(dom.selectionStart), 0);
-                                  var inputValueLength = dom.value.length;
-                                  if (e.key === "ArrowUp") {
-                                    e.stopPropagation();
-                                    if (cursorPosition === 0) {
-                                      e.preventDefault();
-                                      Common.focusPreviousClass(todoInputClass, dom);
-                                    }
-                                    
-                                  }
-                                  if (e.key === "ArrowDown") {
-                                    e.stopPropagation();
-                                    if (cursorPosition === inputValueLength) {
-                                      e.preventDefault();
-                                      return Common.focusNextClass(todoInputClass, dom);
-                                    } else {
-                                      return ;
-                                    }
-                                  }
-                                  
-                                }));
+                          
                         }),
                       onFocus: (function (param) {
                           setSelectElement(function (param) {
@@ -105,21 +109,31 @@ function Project$Todo(props) {
               className: [
                   todoClass,
                   "flex flex-row justify-start items-center gap-2 px-2",
-                  props.isSelected ? "bg-slate-100 outline outline-1 -outline-offset-1" : ""
+                  isSelected ? "bg-slate-100 outline outline-1 -outline-offset-1" : ""
                 ].join(" "),
               tabIndex: 0,
               onKeyDown: (function (e) {
-                  Core__Option.mapOr(Caml_option.nullable_to_opt(containerRef.current), undefined, (function (dom) {
-                          if (e.key === "ArrowUp") {
-                            e.preventDefault();
-                            Common.focusPreviousClass(todoClass, dom);
-                          }
-                          if (e.key === "ArrowDown") {
-                            e.preventDefault();
-                            return Common.focusNextClass(todoClass, dom);
-                          }
-                          
-                        }));
+                  if (isSelected) {
+                    return Core__Option.mapOr(Caml_option.nullable_to_opt(containerRef.current), undefined, (function (dom) {
+                                  if (e.key === "ArrowUp") {
+                                    e.preventDefault();
+                                    Common.focusPreviousClass(todoClass, dom);
+                                  }
+                                  if (e.key === "ArrowDown") {
+                                    e.preventDefault();
+                                    Common.focusNextClass(todoClass, dom);
+                                  }
+                                  if (e.key === "Enter") {
+                                    e.preventDefault();
+                                    return Core__Option.mapOr(Caml_option.nullable_to_opt(inputRef.current), undefined, (function (inputEl) {
+                                                  inputEl.focus();
+                                                  inputEl.selectionStart = Caml_option.nullable_to_opt(inputEl.selectionEnd);
+                                                }));
+                                  }
+                                  
+                                }));
+                  }
+                  
                 }),
               onFocus: (function (param) {
                   setSelectElement(function (param) {

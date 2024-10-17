@@ -1,5 +1,5 @@
 open Types
-
+open Webapi.Dom
 module StatusSelect = {
   @react.component @module("./StatusSelect.jsx")
   external make: (~status: status, ~setStatus: status => unit) => React.element = "default"
@@ -20,19 +20,32 @@ module Todo = {
       // onBlur={_ => setSelectElement(_ => None)}
       onFocus={_ => setSelectElement(_ => Some(Todo(todo.id)))}
       onKeyDown={e => {
-        containerRef.current
-        ->Nullable.toOption
-        ->Option.mapOr((), dom => {
-          if e->ReactEvent.Keyboard.key == "ArrowUp" {
-            e->ReactEvent.Keyboard.preventDefault
-            Common.focusPreviousClass(todoClass, dom)
-          }
+        if isSelected {
+          containerRef.current
+          ->Nullable.toOption
+          ->Option.mapOr((), dom => {
+            if e->ReactEvent.Keyboard.key == "ArrowUp" {
+              e->ReactEvent.Keyboard.preventDefault
+              Common.focusPreviousClass(todoClass, dom)
+            }
 
-          if e->ReactEvent.Keyboard.key == "ArrowDown" {
-            e->ReactEvent.Keyboard.preventDefault
-            Common.focusNextClass(todoClass, dom)
-          }
-        })
+            if e->ReactEvent.Keyboard.key == "ArrowDown" {
+              e->ReactEvent.Keyboard.preventDefault
+              Common.focusNextClass(todoClass, dom)
+            }
+
+            if e->ReactEvent.Keyboard.key == "Enter" {
+              e->ReactEvent.Keyboard.preventDefault
+              inputRef.current
+              ->Nullable.toOption
+              ->Option.mapOr((), inputEl => {
+                let inputEl = inputEl->Obj.magic
+                inputEl->HtmlElement.focus
+                inputEl->HtmlInputElement.setSelectionStart(inputEl->HtmlInputElement.selectionEnd)
+              })
+            }
+          })
+        }
       }}
       className={[
         todoClass,
@@ -62,38 +75,39 @@ module Todo = {
         // onBlur={_ => setSelectElement(_ => None)}
         onFocus={_ => setSelectElement(_ => Some(Todo(todo.id)))}
         onKeyDown={e => {
-          if e->ReactEvent.Keyboard.key == "Escape" {
-            e->ReactEvent.Keyboard.preventDefault
-            containerRef.current
+          if isSelected {
+            if e->ReactEvent.Keyboard.key == "Escape" {
+              e->ReactEvent.Keyboard.preventDefault
+              containerRef.current
+              ->Nullable.toOption
+              ->Option.mapOr((), dom => {
+                dom->Obj.magic->HtmlElement.focus
+              })
+            }
+
+            inputRef.current
             ->Nullable.toOption
             ->Option.mapOr((), dom => {
-              dom->Obj.magic->Webapi.Dom.HtmlElement.focus
+              let cursorPosition = dom->Obj.magic->HtmlInputElement.selectionStart->Option.getOr(0)
+              let inputValueLength = dom->Obj.magic->HtmlInputElement.value->String.length
+
+              if e->ReactEvent.Keyboard.key == "ArrowUp" {
+                e->ReactEvent.Keyboard.stopPropagation
+                if cursorPosition == 0 {
+                  e->ReactEvent.Keyboard.preventDefault
+                  Common.focusPreviousClass(todoInputClass, dom)
+                }
+              }
+
+              if e->ReactEvent.Keyboard.key == "ArrowDown" {
+                e->ReactEvent.Keyboard.stopPropagation
+                if cursorPosition == inputValueLength {
+                  e->ReactEvent.Keyboard.preventDefault
+                  Common.focusNextClass(todoInputClass, dom)
+                }
+              }
             })
           }
-
-          inputRef.current
-          ->Nullable.toOption
-          ->Option.mapOr((), dom => {
-            let cursorPosition =
-              dom->Obj.magic->Webapi.Dom.HtmlInputElement.selectionStart->Option.getOr(0)
-            let inputValueLength = dom->Obj.magic->Webapi.Dom.HtmlInputElement.value->String.length
-
-            if e->ReactEvent.Keyboard.key == "ArrowUp" {
-              e->ReactEvent.Keyboard.stopPropagation
-              if cursorPosition == 0 {
-                e->ReactEvent.Keyboard.preventDefault
-                Common.focusPreviousClass(todoInputClass, dom)
-              }
-            }
-
-            if e->ReactEvent.Keyboard.key == "ArrowDown" {
-              e->ReactEvent.Keyboard.stopPropagation
-              if cursorPosition == inputValueLength {
-                e->ReactEvent.Keyboard.preventDefault
-                Common.focusNextClass(todoInputClass, dom)
-              }
-            }
-          })
         }}
         onChange={e => {
           updateTodo(todo.id, t => {
