@@ -15,7 +15,7 @@ const Dropdown = ({ status, setStatus, removeTodo }) => {
       <DropdownMenu.Item
         key={s}
         className={[
-          isArchiveStatus(s) ? "bg-[var(--foreground-200)]" : "",
+          isArchiveStatus(s) ? "bg-[var(--t2)]" : "",
           status === s ? "DropdownMenuItemSelected" : "DropdownMenuItem",
         ].join(" ")}
         onSelect={(_) =>

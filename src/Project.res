@@ -153,13 +153,10 @@ module Todo = {
       className={[
         listItemClass,
         "flex flex-row justify-start items-center gap-2 px-2",
-        // "focus:bg-slate-100 focus:outline focus:outline-1 focus:-outline-offset-1",
-        // "focus-within:bg-slate-100 focus-within:outline focus-within:outline-1 focus-within:-outline-offset-1",
-
         stagedForDelete
-          ? "bg-red-200 outline outline-1 -outline-offset-1"
+          ? "bg-red-500 outline outline-1 -outline-offset-1"
           : isSelected
-          ? "bg-slate-100 outline outline-1 -outline-offset-1"
+          ? "bg-var(--t1) outline outline-1 -outline-offset-1"
           : "",
       ]->Array.join(" ")}>
       <StatusSelect
@@ -176,7 +173,7 @@ module Todo = {
         type_="text"
         className={[
           todoInputClass,
-          " flex-1 bg-inherit text-[--foreground] w-full outline-none 
+          " flex-1 bg-inherit text-[--t10] w-full outline-none 
           leading-none padding-none border-none h-5 -my-1 focus:text-blue-500",
         ]->Array.join(" ")}
         placeholder={""}
@@ -273,7 +270,7 @@ let make = (
       }}
       className={[
         listItemClass,
-        "h-6 flex flex-row justify-between items-center bg-slate-300",
+        "h-6 flex flex-row justify-between items-center bg-[var(--t3)]",
         isSelected ? "outline outline-1 -outline-offset-1" : "",
       ]->Array.join(" ")}>
       <div className=" flex-none px-2"> {project.name->React.string} </div>

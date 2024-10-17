@@ -170,7 +170,7 @@ function Project$Todo(props) {
                       ref: Caml_option.some(inputRef),
                       className: [
                           Types.todoInputClass,
-                          " flex-1 bg-inherit text-[--foreground] w-full outline-none \n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500"
+                          " flex-1 bg-inherit text-[--t10] w-full outline-none \n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500"
                         ].join(" "),
                       id: Types.getTodoInputId(todo.id),
                       placeholder: "",
@@ -213,8 +213,8 @@ function Project$Todo(props) {
               className: [
                   Types.listItemClass,
                   "flex flex-row justify-start items-center gap-2 px-2",
-                  stagedForDelete ? "bg-red-200 outline outline-1 -outline-offset-1" : (
-                      isSelected ? "bg-slate-100 outline outline-1 -outline-offset-1" : ""
+                  stagedForDelete ? "bg-red-500 outline outline-1 -outline-offset-1" : (
+                      isSelected ? "bg-var(--t1) outline outline-1 -outline-offset-1" : ""
                     )
                 ].join(" "),
               id: Types.getTodoId(todo.id),
@@ -330,7 +330,7 @@ function Project(props) {
                       ref: Caml_option.some(projectRef),
                       className: [
                           Types.listItemClass,
-                          "h-6 flex flex-row justify-between items-center bg-slate-300",
+                          "h-6 flex flex-row justify-between items-center bg-[var(--t3)]",
                           isSelected ? "outline outline-1 -outline-offset-1" : ""
                         ].join(" "),
                       id: Types.getProjectId(project.id),

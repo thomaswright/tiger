@@ -119,7 +119,7 @@ let make = () => {
             setDisplayElement(_ => Some(Project(newProjectId)))
             setFocusClassNext(_ => Some("class-display-title"))
           }}
-          className={["bg-slate-200 px-2 rounded"]->Array.join(" ")}>
+          className={["bg-[var(--t2)] px-2 rounded"]->Array.join(" ")}>
           {"Add Project"->React.string}
         </button>
       </div>
@@ -158,7 +158,7 @@ let make = () => {
               type_="text"
               id="id-display-title"
               className={[
-                "px-2 flex-1 bg-inherit text-[--foreground] w-full outline-none 
+                "px-2 flex-1 bg-inherit text-[--t10] w-full outline-none 
           leading-none padding-none border-none h-5 -my-1 focus:text-blue-500",
               ]->Array.join(" ")}
               placeholder={"Todo Text"}
@@ -183,7 +183,7 @@ let make = () => {
 
                 setTodos(v => v->Array.filter(t => t.id != todoId))
               }}
-              className={["bg-slate-200 px-2 rounded"]->Array.join(" ")}>
+              className={["bg-[var(--t2)] px-2 rounded"]->Array.join(" ")}>
               {"Delete Todo"->React.string}
             </button>
           </div>
@@ -197,7 +197,7 @@ let make = () => {
               type_="text"
               id="id-display-title"
               className={[
-                " flex-1 bg-inherit text-[--foreground] w-full outline-none 
+                " flex-1 bg-inherit text-[--t10] w-full outline-none 
           leading-none padding-none border-none h-5 -my-1 focus:text-blue-500",
               ]->Array.join(" ")}
               placeholder={"Project Name"}
@@ -226,11 +226,11 @@ let make = () => {
                 setProjects(v => v->Array.filter(p => p.id != projectId))
                 setTodos(v => v->Array.filter(p => p.project != projectId))
               }}
-              className={["bg-slate-200 px-2 rounded"]->Array.join(" ")}>
+              className={["bg-[var(--t2)] px-2 rounded"]->Array.join(" ")}>
               {"Delete Project"->React.string}
             </button>
             <button
-              className="rounded bg-slate-200 px-1 text-xs h-fit flex-none"
+              className="rounded bg-[var(--t2)] px-1 text-xs h-fit flex-none"
               onClick={_ =>
                 updateProject(project.id, p => {
                   ...p,

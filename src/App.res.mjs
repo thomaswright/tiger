@@ -116,7 +116,7 @@ function App(props) {
               return JsxRuntime.jsxs("div", {
                           children: [
                             JsxRuntime.jsx("input", {
-                                  className: ["px-2 flex-1 bg-inherit text-[--foreground] w-full outline-none \n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500"].join(" "),
+                                  className: ["px-2 flex-1 bg-inherit text-[--t10] w-full outline-none \n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500"].join(" "),
                                   id: "id-display-title",
                                   placeholder: "Todo Text",
                                   type: "text",
@@ -143,7 +143,7 @@ function App(props) {
                                 }),
                             JsxRuntime.jsx("button", {
                                   children: "Delete Todo",
-                                  className: ["bg-slate-200 px-2 rounded"].join(" "),
+                                  className: ["bg-[var(--t2)] px-2 rounded"].join(" "),
                                   onClick: (function (param) {
                                       Core__Option.mapOr(Caml_option.nullable_to_opt(document.getElementById(Types.getTodoId(todoId))), undefined, (function (todoEl) {
                                               Common.focusPreviousClass(Types.listItemClass, todoEl);
@@ -166,7 +166,7 @@ function App(props) {
               return JsxRuntime.jsxs("div", {
                           children: [
                             JsxRuntime.jsx("input", {
-                                  className: [" flex-1 bg-inherit text-[--foreground] w-full outline-none \n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500"].join(" "),
+                                  className: [" flex-1 bg-inherit text-[--t10] w-full outline-none \n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500"].join(" "),
                                   id: "id-display-title",
                                   placeholder: "Project Name",
                                   type: "text",
@@ -191,7 +191,7 @@ function App(props) {
                                 }),
                             JsxRuntime.jsx("button", {
                                   children: "Delete Project",
-                                  className: ["bg-slate-200 px-2 rounded"].join(" "),
+                                  className: ["bg-[var(--t2)] px-2 rounded"].join(" "),
                                   onClick: (function (param) {
                                       Core__Option.mapOr(Caml_option.nullable_to_opt(document.getElementById(Types.getProjectId(projectId))), undefined, (function (projectEl) {
                                               console.log(projectEl);
@@ -211,7 +211,7 @@ function App(props) {
                                 }),
                             JsxRuntime.jsx("button", {
                                   children: project.isActive ? "Active" : "Not Active",
-                                  className: "rounded bg-slate-200 px-1 text-xs h-fit flex-none",
+                                  className: "rounded bg-[var(--t2)] px-1 text-xs h-fit flex-none",
                                   onClick: (function (param) {
                                       updateProject(project.id, (function (p) {
                                               return {
@@ -266,7 +266,7 @@ function App(props) {
                                     }),
                                 JsxRuntime.jsx("button", {
                                       children: "Add Project",
-                                      className: ["bg-slate-200 px-2 rounded"].join(" "),
+                                      className: ["bg-[var(--t2)] px-2 rounded"].join(" "),
                                       onClick: (function (param) {
                                           var newProjectId = Uuid.v4();
                                           setProjects(function (v) {
