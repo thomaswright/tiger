@@ -33,7 +33,7 @@ type projectsTab = | @as("All") All | @as("Active") Active
 
 let isArchiveStatus = s =>
   switch s {
-  | ArchiveDone | ArchiveReject | ArchiveNoNeed => true
+  | ArchiveDone | ArchiveReject | ArchiveNoNeed | Trash => true
   | _ => false
   }
 
@@ -59,21 +59,21 @@ let statusToFloat = s => {
 
 let statusString = s => {
   switch s {
-  | TodoUrgent => "Urgent"
-  | TodoHigh => "High"
-  | TodoMedium => "Medium"
-  | TodoLow => "Low"
-  | LaterWill => "Will Do"
-  | LaterMaybe => "Maybe"
-  | LaterUnlikely => "Unlikely"
-  | LaterUnsorted => "Unsorted"
-  | ResolveDone => "Done"
-  | ResolveReject => "Reject"
-  | ResolveNoNeed => "No Need"
-  | ArchiveDone => "Done"
-  | ArchiveReject => "Reject"
-  | ArchiveNoNeed => "No Need"
-  | Trash => "Delete"
+  | TodoUrgent => "Todo: Urgent"
+  | TodoHigh => "Todo: High"
+  | TodoMedium => "Todo: Medium"
+  | TodoLow => "Todo: Low"
+  | LaterWill => "Later: Will Do"
+  | LaterMaybe => "Later: Maybe"
+  | LaterUnlikely => "Later: Unlikely"
+  | LaterUnsorted => "Later: Unsorted"
+  | ResolveDone => "Resolve: Done"
+  | ResolveReject => "Resolve: Reject"
+  | ResolveNoNeed => "Resolve: No Need"
+  | ArchiveDone => "Archive: Done"
+  | ArchiveReject => "Archive: Reject"
+  | ArchiveNoNeed => "Archive: No Need"
+  | Trash => "Trash"
   }
 }
 
@@ -93,6 +93,6 @@ let statusStringShort = s => {
   | ArchiveDone => "✔︎"
   | ArchiveReject => "🞫"
   | ArchiveNoNeed => "○"
-  | Trash => "D"
+  | Trash => "T"
   }
 }

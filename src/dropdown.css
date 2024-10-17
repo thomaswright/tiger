@@ -3,7 +3,7 @@ button {
 }
 
 .DropdownMenuContent {
-  @apply text-xs  bg-white p-1 flex flex-col gap-1 border rounded-lg shadow;
+  @apply text-xs w-[140px] bg-white flex flex-col gap-1 border rounded-lg shadow mx-2;
   background-color: var(--background);
   border-color: var(--foreground-200);
   animation-duration: 400ms;
@@ -24,12 +24,12 @@ button {
 }
 
 .DropdownMenuItem {
-  @apply w-6 font-bold flex flex-row items-center justify-center relative h-5 select-none px-2;
+  @apply border-t border-t-[var(--foreground-300)] w-full font-bold flex flex-row items-center justify-center relative h-6 select-none px-2;
   color: var(--foreground);
 }
 
 .DropdownMenuItemSelected {
-  @apply w-6 font-bold flex flex-row items-center justify-center relative h-5 select-none px-2 bg-blue-600;
+  @apply w-full font-bold flex flex-row items-center justify-center relative h-6 select-none px-2 bg-blue-600;
   color: var(--background);
 }
 

@@ -6,6 +6,7 @@ function isArchiveStatus(s) {
     case "ArchiveDone" :
     case "ArchiveReject" :
     case "ArchiveNoNeed" :
+    case "Trash" :
         return true;
     default:
       return false;
@@ -51,32 +52,35 @@ function statusToFloat(s) {
 function statusString(s) {
   switch (s) {
     case "TodoUrgent" :
-        return "Urgent";
+        return "Todo: Urgent";
     case "TodoHigh" :
-        return "High";
+        return "Todo: High";
     case "TodoMedium" :
-        return "Medium";
+        return "Todo: Medium";
     case "TodoLow" :
-        return "Low";
+        return "Todo: Low";
     case "LaterWill" :
-        return "Will Do";
+        return "Later: Will Do";
     case "LaterMaybe" :
-        return "Maybe";
+        return "Later: Maybe";
     case "LaterUnlikely" :
-        return "Unlikely";
+        return "Later: Unlikely";
     case "LaterUnsorted" :
-        return "Unsorted";
+        return "Later: Unsorted";
     case "ResolveDone" :
-    case "ArchiveDone" :
-        return "Done";
+        return "Resolve: Done";
     case "ResolveReject" :
-    case "ArchiveReject" :
-        return "Reject";
+        return "Resolve: Reject";
     case "ResolveNoNeed" :
+        return "Resolve: No Need";
+    case "ArchiveDone" :
+        return "Archive: Done";
+    case "ArchiveReject" :
+        return "Archive: Reject";
     case "ArchiveNoNeed" :
-        return "No Need";
+        return "Archive: No Need";
     case "Trash" :
-        return "Delete";
+        return "Trash";
     
   }
 }
@@ -109,7 +113,7 @@ function statusStringShort(s) {
     case "ArchiveNoNeed" :
         return "○";
     case "Trash" :
-        return "D";
+        return "T";
     
   }
 }
