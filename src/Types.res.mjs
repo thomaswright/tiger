@@ -130,6 +130,10 @@ function getTodoInputId(s) {
   return "todo-input-" + s;
 }
 
+var listItemClass = "class-list-item";
+
+var todoInputClass = "class-list-todo-input";
+
 export {
   isArchiveStatus ,
   statusToFloat ,
@@ -138,5 +142,7 @@ export {
   getProjectId ,
   getTodoId ,
   getTodoInputId ,
+  listItemClass ,
+  todoInputClass ,
 }
 /* No side effect */

@@ -17,10 +17,6 @@ var StatusSelect = {
   make: make
 };
 
-var listItemClass = "class-list-item";
-
-var todoInputClass = "class-list-todo-input";
-
 function mapNullable(n, f) {
   Core__Option.mapOr((n == null) ? undefined : Caml_option.some(n), undefined, f);
 }
@@ -46,11 +42,11 @@ function Project$Todo(props) {
       return mapNullable(containerRef.current, (function (dom) {
                     if (e.key === "ArrowUp") {
                       e.preventDefault();
-                      Common.focusPreviousClass(listItemClass, dom);
+                      Common.focusPreviousClass(Types.listItemClass, dom);
                     }
                     if (e.key === "ArrowDown") {
                       e.preventDefault();
-                      Common.focusNextClass(listItemClass, dom);
+                      Common.focusNextClass(Types.listItemClass, dom);
                     }
                     if (e.key === "Backspace" && e.metaKey) {
                       setTodos(function (todos) {
@@ -59,7 +55,7 @@ function Project$Todo(props) {
                                       });
                           });
                       Core__Option.mapOr(Caml_option.nullable_to_opt(containerRef.current), undefined, (function (containerEl) {
-                              Common.focusPreviousClass(listItemClass, containerEl);
+                              Common.focusPreviousClass(Types.listItemClass, containerEl);
                             }));
                     }
                     if (e.key === "Enter" && e.metaKey) {
@@ -133,7 +129,7 @@ function Project$Todo(props) {
                                         });
                             });
                         mapNullable(containerRef.current, (function (containerEl) {
-                                Common.focusPreviousClass(listItemClass, containerEl);
+                                Common.focusPreviousClass(Types.listItemClass, containerEl);
                               }));
                       } else {
                         setStagedForDelete(function (param) {
@@ -173,7 +169,7 @@ function Project$Todo(props) {
                 JsxRuntime.jsx("input", {
                       ref: Caml_option.some(inputRef),
                       className: [
-                          todoInputClass,
+                          Types.todoInputClass,
                           " flex-1 bg-inherit text-[--foreground] w-full outline-none \n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500"
                         ].join(" "),
                       id: Types.getTodoInputId(todo.id),
@@ -215,7 +211,7 @@ function Project$Todo(props) {
               ],
               ref: Caml_option.some(containerRef),
               className: [
-                  listItemClass,
+                  Types.listItemClass,
                   "flex flex-row justify-start items-center gap-2 px-2",
                   stagedForDelete ? "bg-red-200 outline outline-1 -outline-offset-1" : (
                       isSelected ? "bg-slate-100 outline outline-1 -outline-offset-1" : ""
@@ -294,11 +290,11 @@ function Project(props) {
       return mapNullable(projectRef.current, (function (dom) {
                     if (e.key === "ArrowUp") {
                       e.preventDefault();
-                      Common.focusPreviousClass(listItemClass, dom);
+                      Common.focusPreviousClass(Types.listItemClass, dom);
                     }
                     if (e.key === "ArrowDown") {
                       e.preventDefault();
-                      return Common.focusNextClass(listItemClass, dom);
+                      return Common.focusNextClass(Types.listItemClass, dom);
                     }
                     
                   }));
@@ -347,7 +343,7 @@ function Project(props) {
                       ],
                       ref: Caml_option.some(projectRef),
                       className: [
-                          listItemClass,
+                          Types.listItemClass,
                           "h-6 flex flex-row justify-between items-center bg-slate-300",
                           isSelected ? "outline outline-1 -outline-offset-1" : ""
                         ].join(" "),
@@ -406,8 +402,6 @@ var make$1 = Project;
 
 export {
   StatusSelect ,
-  listItemClass ,
-  todoInputClass ,
   mapNullable ,
   Todo ,
   make$1 as make,

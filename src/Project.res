@@ -5,9 +5,6 @@ module StatusSelect = {
   external make: (~status: status, ~setStatus: status => unit) => React.element = "default"
 }
 
-let listItemClass = "class-list-item"
-let todoInputClass = "class-list-todo-input"
-
 let mapNullable = (n, f) =>
   n
   ->Nullable.toOption

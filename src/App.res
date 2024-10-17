@@ -175,6 +175,17 @@ let make = () => {
                 })
               }}
             />
+            <button
+              onClick={_ => {
+                document
+                ->Document.getElementById(getTodoId(todoId))
+                ->Option.mapOr((), todoEl => Common.focusPreviousClass(listItemClass, todoEl))
+
+                setTodos(v => v->Array.filter(t => t.id != todoId))
+              }}
+              className={["bg-slate-200 px-2 rounded"]->Array.join(" ")}>
+              {"Delete Todo"->React.string}
+            </button>
           </div>
         })
       | Some(Project(projectId)) =>
@@ -203,6 +214,21 @@ let make = () => {
                 })
               }}
             />
+            <button
+              onClick={_ => {
+                document
+                ->Document.getElementById(getProjectId(projectId))
+                ->Option.mapOr((), projectEl => {
+                  Console.log(projectEl)
+                  Common.focusPreviousClass(listItemClass, projectEl)
+                })
+
+                setProjects(v => v->Array.filter(p => p.id != projectId))
+                setTodos(v => v->Array.filter(p => p.project != projectId))
+              }}
+              className={["bg-slate-200 px-2 rounded"]->Array.join(" ")}>
+              {"Delete Project"->React.string}
+            </button>
           </div>
         })
       | _ => React.null

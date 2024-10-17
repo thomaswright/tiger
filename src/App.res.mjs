@@ -113,33 +113,49 @@ function App(props) {
       tmp = Core__Option.mapOr(todos.find(function (t) {
                 return t.id === todoId;
               }), null, (function (todo) {
-              return JsxRuntime.jsx("div", {
-                          children: JsxRuntime.jsx("input", {
-                                className: ["px-2 flex-1 bg-inherit text-[--foreground] w-full outline-none \n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500"].join(" "),
-                                id: "id-display-title",
-                                placeholder: "Todo Text",
-                                type: "text",
-                                value: todo.text,
-                                onKeyDown: (function (e) {
-                                    if (e.key === "Escape") {
-                                      return setFocusIdNext(function (param) {
-                                                  return Types.getTodoId(todo.id);
-                                                });
-                                    }
-                                    
-                                  }),
-                                onChange: (function (e) {
-                                    updateTodo(todo.id, (function (t) {
-                                            return {
-                                                    id: t.id,
-                                                    text: e.target.value,
-                                                    project: t.project,
-                                                    isDone: t.isDone,
-                                                    status: t.status
-                                                  };
-                                          }));
-                                  })
-                              })
+              return JsxRuntime.jsxs("div", {
+                          children: [
+                            JsxRuntime.jsx("input", {
+                                  className: ["px-2 flex-1 bg-inherit text-[--foreground] w-full outline-none \n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500"].join(" "),
+                                  id: "id-display-title",
+                                  placeholder: "Todo Text",
+                                  type: "text",
+                                  value: todo.text,
+                                  onKeyDown: (function (e) {
+                                      if (e.key === "Escape") {
+                                        return setFocusIdNext(function (param) {
+                                                    return Types.getTodoId(todo.id);
+                                                  });
+                                      }
+                                      
+                                    }),
+                                  onChange: (function (e) {
+                                      updateTodo(todo.id, (function (t) {
+                                              return {
+                                                      id: t.id,
+                                                      text: e.target.value,
+                                                      project: t.project,
+                                                      isDone: t.isDone,
+                                                      status: t.status
+                                                    };
+                                            }));
+                                    })
+                                }),
+                            JsxRuntime.jsx("button", {
+                                  children: "Delete Todo",
+                                  className: ["bg-slate-200 px-2 rounded"].join(" "),
+                                  onClick: (function (param) {
+                                      Core__Option.mapOr(Caml_option.nullable_to_opt(document.getElementById(Types.getTodoId(todoId))), undefined, (function (todoEl) {
+                                              Common.focusPreviousClass(Types.listItemClass, todoEl);
+                                            }));
+                                      setTodos(function (v) {
+                                            return v.filter(function (t) {
+                                                        return t.id !== todoId;
+                                                      });
+                                          });
+                                    })
+                                })
+                          ]
                         });
             }));
     } else {
@@ -147,31 +163,53 @@ function App(props) {
       tmp = Core__Option.mapOr(projects.find(function (p) {
                 return p.id === projectId;
               }), null, (function (project) {
-              return JsxRuntime.jsx("div", {
-                          children: JsxRuntime.jsx("input", {
-                                className: [" flex-1 bg-inherit text-[--foreground] w-full outline-none \n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500"].join(" "),
-                                id: "id-display-title",
-                                placeholder: "Project Name",
-                                type: "text",
-                                value: project.name,
-                                onKeyDown: (function (e) {
-                                    if (e.key === "Escape") {
-                                      return setFocusIdNext(function (param) {
-                                                  return Types.getProjectId(project.id);
-                                                });
-                                    }
-                                    
-                                  }),
-                                onChange: (function (e) {
-                                    updateProject(project.id, (function (p) {
-                                            return {
-                                                    id: p.id,
-                                                    name: e.target.value,
-                                                    isActive: p.isActive
-                                                  };
-                                          }));
-                                  })
-                              })
+              return JsxRuntime.jsxs("div", {
+                          children: [
+                            JsxRuntime.jsx("input", {
+                                  className: [" flex-1 bg-inherit text-[--foreground] w-full outline-none \n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500"].join(" "),
+                                  id: "id-display-title",
+                                  placeholder: "Project Name",
+                                  type: "text",
+                                  value: project.name,
+                                  onKeyDown: (function (e) {
+                                      if (e.key === "Escape") {
+                                        return setFocusIdNext(function (param) {
+                                                    return Types.getProjectId(project.id);
+                                                  });
+                                      }
+                                      
+                                    }),
+                                  onChange: (function (e) {
+                                      updateProject(project.id, (function (p) {
+                                              return {
+                                                      id: p.id,
+                                                      name: e.target.value,
+                                                      isActive: p.isActive
+                                                    };
+                                            }));
+                                    })
+                                }),
+                            JsxRuntime.jsx("button", {
+                                  children: "Delete Project",
+                                  className: ["bg-slate-200 px-2 rounded"].join(" "),
+                                  onClick: (function (param) {
+                                      Core__Option.mapOr(Caml_option.nullable_to_opt(document.getElementById(Types.getProjectId(projectId))), undefined, (function (projectEl) {
+                                              console.log(projectEl);
+                                              Common.focusPreviousClass(Types.listItemClass, projectEl);
+                                            }));
+                                      setProjects(function (v) {
+                                            return v.filter(function (p) {
+                                                        return p.id !== projectId;
+                                                      });
+                                          });
+                                      setTodos(function (v) {
+                                            return v.filter(function (p) {
+                                                        return p.project !== projectId;
+                                                      });
+                                          });
+                                    })
+                                })
+                          ]
                         });
             }));
     }
