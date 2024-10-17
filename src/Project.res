@@ -266,6 +266,7 @@ let make = (
       tabIndex={0}
       ref={ReactDOM.Ref.domRef(projectRef)}
       onKeyDown={onKeyDownProject}
+      onBlur={_ => setSelectElement(_ => None)}
       onFocus={_ => {
         setSelectElement(_ => Some(Project(project.id)))
         setDisplayElement(_ => Some(Project(project.id)))

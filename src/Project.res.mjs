@@ -363,6 +363,11 @@ function Project(props) {
                                         _0: project.id
                                       };
                               });
+                        }),
+                      onBlur: (function (param) {
+                          setSelectElement(function (param) {
+                                
+                              });
                         })
                     }),
                 JsxRuntime.jsx("div", {
