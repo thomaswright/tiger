@@ -15,7 +15,7 @@ var StatusSelect = {
   make: make
 };
 
-var todoClass = "class-list-todo";
+var listItemClass = "class-list-item";
 
 var todoInputClass = "class-list-todo-input";
 
@@ -31,11 +31,11 @@ function Project$Todo(props) {
       return Core__Option.mapOr(Caml_option.nullable_to_opt(containerRef.current), undefined, (function (dom) {
                     if (e.key === "ArrowUp") {
                       e.preventDefault();
-                      Common.focusPreviousClass(todoClass, dom);
+                      Common.focusPreviousClass(listItemClass, dom);
                     }
                     if (e.key === "ArrowDown") {
                       e.preventDefault();
-                      Common.focusNextClass(todoClass, dom);
+                      Common.focusNextClass(listItemClass, dom);
                     }
                     if (e.key === "Enter") {
                       e.preventDefault();
@@ -131,7 +131,7 @@ function Project$Todo(props) {
               ],
               ref: Caml_option.some(containerRef),
               className: [
-                  todoClass,
+                  listItemClass,
                   "flex flex-row justify-start items-center gap-2 px-2",
                   isSelected ? "bg-slate-100 outline outline-1 -outline-offset-1" : ""
                 ].join(" "),
@@ -149,8 +149,6 @@ function Project$Todo(props) {
 }
 
 var Todo = {
-  todoClass: todoClass,
-  todoInputClass: todoInputClass,
   make: Project$Todo
 };
 
@@ -162,6 +160,10 @@ function Project(props) {
   var setShowArchive = props.setShowArchive;
   var showArchive = props.showArchive;
   var project = props.project;
+  var isSelected = Caml_obj.equal(selectElement, {
+        TAG: "Project",
+        _0: project.id
+      });
   return JsxRuntime.jsxs("div", {
               children: [
                 JsxRuntime.jsxs("div", {
@@ -198,7 +200,20 @@ function Project(props) {
                                 })
                             })
                       ],
-                      className: "flex flex-row justify-between items-center bg-slate-300"
+                      className: [
+                          listItemClass,
+                          "flex flex-row justify-between items-center bg-slate-300",
+                          isSelected ? "outline outline-1 -outline-offset-1" : ""
+                        ].join(" "),
+                      tabIndex: 0,
+                      onFocus: (function (param) {
+                          setSelectElement(function (param) {
+                                return {
+                                        TAG: "Project",
+                                        _0: project.id
+                                      };
+                              });
+                        })
                     }),
                 JsxRuntime.jsx("div", {
                       children: JsxRuntime.jsx("div", {
@@ -233,6 +248,8 @@ var make$1 = Project;
 
 export {
   StatusSelect ,
+  listItemClass ,
+  todoInputClass ,
   Todo ,
   make$1 as make,
 }

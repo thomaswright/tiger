@@ -5,10 +5,10 @@ module StatusSelect = {
   external make: (~status: status, ~setStatus: status => unit) => React.element = "default"
 }
 
-module Todo = {
-  let todoClass = "class-list-todo"
-  let todoInputClass = "class-list-todo-input"
+let listItemClass = "class-list-item"
+let todoInputClass = "class-list-todo-input"
 
+module Todo = {
   @react.component
   let make = (~todo: todo, ~updateTodo, ~isSelected, ~setSelectElement) => {
     let inputRef = React.useRef(Nullable.null)
@@ -21,12 +21,12 @@ module Todo = {
         ->Option.mapOr((), dom => {
           if e->ReactEvent.Keyboard.key == "ArrowUp" {
             e->ReactEvent.Keyboard.preventDefault
-            Common.focusPreviousClass(todoClass, dom)
+            Common.focusPreviousClass(listItemClass, dom)
           }
 
           if e->ReactEvent.Keyboard.key == "ArrowDown" {
             e->ReactEvent.Keyboard.preventDefault
-            Common.focusNextClass(todoClass, dom)
+            Common.focusNextClass(listItemClass, dom)
           }
 
           if e->ReactEvent.Keyboard.key == "Enter" {
@@ -86,7 +86,7 @@ module Todo = {
       onFocus={_ => setSelectElement(_ => Some(Todo(todo.id)))}
       onKeyDown={onKeyDownContainer}
       className={[
-        todoClass,
+        listItemClass,
         "flex flex-row justify-start items-center gap-2 px-2",
         // "focus:bg-slate-100 focus:outline focus:outline-1 focus:-outline-offset-1",
         // "focus-within:bg-slate-100 focus-within:outline focus-within:outline-1 focus-within:-outline-offset-1",
@@ -135,8 +135,16 @@ let make = (
   ~selectElement,
   ~setSelectElement,
 ) => {
+  let isSelected = selectElement == Some(Project(project.id))
   <div className="border-y">
-    <div className="flex flex-row justify-between items-center bg-slate-300">
+    <div
+      tabIndex={0}
+      onFocus={_ => setSelectElement(_ => Some(Project(project.id)))}
+      className={[
+        listItemClass,
+        "flex flex-row justify-between items-center bg-slate-300",
+        isSelected ? "outline outline-1 -outline-offset-1" : "",
+      ]->Array.join(" ")}>
       <div> {project.name->React.string} </div>
       <button
         className="rounded bg-slate-200 w-20 text-xs h-fit"
