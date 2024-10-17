@@ -20,6 +20,7 @@ var listItemClass = "class-list-item";
 var todoInputClass = "class-list-todo-input";
 
 function Project$Todo(props) {
+  var setDisplayElement = props.setDisplayElement;
   var setSelectElement = props.setSelectElement;
   var isSelected = props.isSelected;
   var updateTodo = props.updateTodo;
@@ -39,10 +40,20 @@ function Project$Todo(props) {
                     }
                     if (e.key === "Enter") {
                       e.preventDefault();
-                      return Core__Option.mapOr(Caml_option.nullable_to_opt(inputRef.current), undefined, (function (inputEl) {
-                                    inputEl.focus();
-                                    inputEl.selectionStart = Caml_option.nullable_to_opt(inputEl.selectionEnd);
-                                  }));
+                      Core__Option.mapOr(Caml_option.nullable_to_opt(inputRef.current), undefined, (function (inputEl) {
+                              inputEl.focus();
+                              inputEl.selectionStart = Caml_option.nullable_to_opt(inputEl.selectionEnd);
+                            }));
+                    }
+                    if (e.key === "Escape") {
+                      setSelectElement(function (param) {
+                            
+                          });
+                      setDisplayElement(function (param) {
+                            
+                          });
+                      dom.blur();
+                      return ;
                     }
                     
                   }));
@@ -52,7 +63,7 @@ function Project$Todo(props) {
   var onKeyDownInput = function (e) {
     if (isSelected) {
       if (e.key === "Escape") {
-        e.preventDefault();
+        e.stopPropagation();
         Core__Option.mapOr(Caml_option.nullable_to_opt(containerRef.current), undefined, (function (dom) {
                 dom.focus();
               }));
@@ -115,6 +126,17 @@ function Project$Todo(props) {
                                         _0: todo.id
                                       };
                               });
+                          setDisplayElement(function (param) {
+                                return {
+                                        TAG: "Todo",
+                                        _0: todo.id
+                                      };
+                              });
+                        }),
+                      onBlur: (function (param) {
+                          setSelectElement(function (param) {
+                                
+                              });
                         }),
                       onChange: (function (e) {
                           updateTodo(todo.id, (function (t) {
@@ -144,6 +166,17 @@ function Project$Todo(props) {
                                 _0: todo.id
                               };
                       });
+                  setDisplayElement(function (param) {
+                        return {
+                                TAG: "Todo",
+                                _0: todo.id
+                              };
+                      });
+                }),
+              onBlur: (function (param) {
+                  setSelectElement(function (param) {
+                        
+                      });
                 })
             });
 }
@@ -153,6 +186,8 @@ var Todo = {
 };
 
 function Project(props) {
+  var setDisplayElement = props.setDisplayElement;
+  var displayElement = props.displayElement;
   var setSelectElement = props.setSelectElement;
   var selectElement = props.selectElement;
   var updateTodo = props.updateTodo;
@@ -168,7 +203,6 @@ function Project(props) {
   var onKeyDownProject = function (e) {
     if (isSelected) {
       return Core__Option.mapOr(Caml_option.nullable_to_opt(projectRef.current), undefined, (function (dom) {
-                    console.log("k");
                     if (e.key === "ArrowUp") {
                       e.preventDefault();
                       Common.focusPreviousClass(listItemClass, dom);
@@ -233,6 +267,12 @@ function Project(props) {
                                         _0: project.id
                                       };
                               });
+                          setDisplayElement(function (param) {
+                                return {
+                                        TAG: "Project",
+                                        _0: project.id
+                                      };
+                              });
                         })
                     }),
                 JsxRuntime.jsx("div", {
@@ -253,7 +293,9 @@ function Project(props) {
                                                     TAG: "Todo",
                                                     _0: todo.id
                                                   }),
-                                              setSelectElement: setSelectElement
+                                              setSelectElement: setSelectElement,
+                                              displayElement: displayElement,
+                                              setDisplayElement: setDisplayElement
                                             });
                                 }),
                             className: "flex flex-col divide-y "

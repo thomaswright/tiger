@@ -44,6 +44,7 @@ let make = () => {
   let (showArchive, setShowArchive, _) = Common.useLocalStorage("showArchive", [])
   let (projectsTab, setProjectTab, _) = Common.useLocalStorage("projectsTab", All)
   let (selectElement, setSelectElement) = React.useState(_ => None)
+  let (displayElement, setDisplayElement) = React.useState(_ => None)
 
   let updateProject = React.useCallback0((id, f) => {
     setProjects(v => v->Array.map(project => project.id == id ? f(project) : project))
@@ -86,15 +87,59 @@ let make = () => {
             updateTodo
             selectElement
             setSelectElement
+            displayElement
+            setDisplayElement
           />
         )
         ->React.array}
       </div>
     </div>
     <div className=" border-l flex-1">
-      {switch selectElement {
-      | Some(Todo(todoId)) => todoId->React.string
-      | Some(Project(projectId)) => projectId->React.string
+      {switch displayElement {
+      | Some(Todo(todoId)) =>
+        todos
+        ->Array.find(t => t.id == todoId)
+        ->Option.mapOr(React.null, todo => {
+          <div>
+            <input
+              type_="text"
+              className={[
+                " flex-1 bg-inherit text-[--foreground] w-full outline-none 
+          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500",
+              ]->Array.join(" ")}
+              placeholder={""}
+              value={todo.text}
+              onChange={e => {
+                updateTodo(todo.id, t => {
+                  ...t,
+                  text: ReactEvent.Form.target(e)["value"],
+                })
+              }}
+            />
+          </div>
+        })
+      | Some(Project(projectId)) =>
+        projects
+        ->Array.find(p => p.id == projectId)
+        ->Option.mapOr(React.null, project => {
+          <div>
+            <input
+              type_="text"
+              className={[
+                " flex-1 bg-inherit text-[--foreground] w-full outline-none 
+          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500",
+              ]->Array.join(" ")}
+              placeholder={""}
+              value={project.name}
+              onChange={e => {
+                updateProject(project.id, p => {
+                  ...p,
+                  name: ReactEvent.Form.target(e)["value"],
+                })
+              }}
+            />
+          </div>
+        })
       | _ => React.null
       }}
     </div>

@@ -10,7 +10,14 @@ let todoInputClass = "class-list-todo-input"
 
 module Todo = {
   @react.component
-  let make = (~todo: todo, ~updateTodo, ~isSelected, ~setSelectElement) => {
+  let make = (
+    ~todo: todo,
+    ~updateTodo,
+    ~isSelected,
+    ~setSelectElement,
+    ~displayElement,
+    ~setDisplayElement,
+  ) => {
     let inputRef = React.useRef(Nullable.null)
     let containerRef = React.useRef(Nullable.null)
 
@@ -39,6 +46,14 @@ module Todo = {
               inputEl->HtmlInputElement.setSelectionStart(inputEl->HtmlInputElement.selectionEnd)
             })
           }
+
+          if e->ReactEvent.Keyboard.key == "Escape" {
+            // e->ReactEvent.Keyboard.preventDefault // ?
+            setSelectElement(_ => None)
+            setDisplayElement(_ => None)
+
+            dom->Obj.magic->HtmlElement.blur
+          }
         })
       }
     }
@@ -46,7 +61,8 @@ module Todo = {
     let onKeyDownInput = e => {
       if isSelected {
         if e->ReactEvent.Keyboard.key == "Escape" {
-          e->ReactEvent.Keyboard.preventDefault
+          // e->ReactEvent.Keyboard.preventDefault // ?
+          e->ReactEvent.Keyboard.stopPropagation
           containerRef.current
           ->Nullable.toOption
           ->Option.mapOr((), dom => {
@@ -82,8 +98,11 @@ module Todo = {
     <div
       tabIndex={0}
       ref={ReactDOM.Ref.domRef(containerRef)}
-      // onBlur={_ => setSelectElement(_ => None)}
-      onFocus={_ => setSelectElement(_ => Some(Todo(todo.id)))}
+      onBlur={_ => setSelectElement(_ => None)}
+      onFocus={_ => {
+        setSelectElement(_ => Some(Todo(todo.id)))
+        setDisplayElement(_ => Some(Todo(todo.id)))
+      }}
       onKeyDown={onKeyDownContainer}
       className={[
         listItemClass,
@@ -110,8 +129,11 @@ module Todo = {
         ]->Array.join(" ")}
         placeholder={""}
         value={todo.text}
-        // onBlur={_ => setSelectElement(_ => None)}
-        onFocus={_ => setSelectElement(_ => Some(Todo(todo.id)))}
+        onBlur={_ => setSelectElement(_ => None)}
+        onFocus={_ => {
+          setSelectElement(_ => Some(Todo(todo.id)))
+          setDisplayElement(_ => Some(Todo(todo.id)))
+        }}
         onKeyDown={onKeyDownInput}
         onChange={e => {
           updateTodo(todo.id, t => {
@@ -134,6 +156,8 @@ let make = (
   ~updateTodo,
   ~selectElement,
   ~setSelectElement,
+  ~displayElement,
+  ~setDisplayElement,
 ) => {
   let projectRef = React.useRef(Nullable.null)
 
@@ -144,7 +168,6 @@ let make = (
       projectRef.current
       ->Nullable.toOption
       ->Option.mapOr((), dom => {
-        Console.log("k")
         if e->ReactEvent.Keyboard.key == "ArrowUp" {
           e->ReactEvent.Keyboard.preventDefault
           Common.focusPreviousClass(listItemClass, dom)
@@ -163,7 +186,10 @@ let make = (
       tabIndex={0}
       ref={ReactDOM.Ref.domRef(projectRef)}
       onKeyDown={onKeyDownProject}
-      onFocus={_ => setSelectElement(_ => Some(Project(project.id)))}
+      onFocus={_ => {
+        setSelectElement(_ => Some(Project(project.id)))
+        setDisplayElement(_ => Some(Project(project.id)))
+      }}
       className={[
         listItemClass,
         "flex flex-row justify-between items-center bg-slate-300",
@@ -197,7 +223,12 @@ let make = (
         ->Array.toSorted((a, b) => a.status->statusToFloat -. b.status->statusToFloat)
         ->Array.map(todo =>
           <Todo
-            todo updateTodo isSelected={selectElement == Some(Todo(todo.id))} setSelectElement
+            todo
+            updateTodo
+            isSelected={selectElement == Some(Todo(todo.id))}
+            setSelectElement
+            displayElement
+            setDisplayElement
           />
         )
         ->React.array}

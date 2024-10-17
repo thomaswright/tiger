@@ -3,6 +3,7 @@
 import * as React from "react";
 import * as Common from "./Common.res.mjs";
 import * as Project from "./Project.res.mjs";
+import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as JsxRuntime from "react/jsx-runtime";
 
 var defaultProjects = [{
@@ -31,6 +32,7 @@ var defaultTodos = [
 function App(props) {
   var match = Common.useLocalStorage("projects", defaultProjects);
   var setProjects = match[1];
+  var projects = match[0];
   var match$1 = Common.useLocalStorage("todos", defaultTodos);
   var setTodos = match$1[1];
   var todos = match$1[0];
@@ -45,6 +47,11 @@ function App(props) {
       });
   var setSelectElement = match$4[1];
   var selectElement = match$4[0];
+  var match$5 = React.useState(function () {
+        
+      });
+  var setDisplayElement = match$5[1];
+  var displayElement = match$5[0];
   var updateProject = React.useCallback((function (id, f) {
           setProjects(function (v) {
                 return v.map(function (project) {
@@ -67,6 +74,60 @@ function App(props) {
                           });
               });
         }), []);
+  var tmp;
+  if (displayElement !== undefined) {
+    if (displayElement.TAG === "Todo") {
+      var todoId = displayElement._0;
+      tmp = Core__Option.mapOr(todos.find(function (t) {
+                return t.id === todoId;
+              }), null, (function (todo) {
+              return JsxRuntime.jsx("div", {
+                          children: JsxRuntime.jsx("input", {
+                                className: [" flex-1 bg-inherit text-[--foreground] w-full outline-none \n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500"].join(" "),
+                                placeholder: "",
+                                type: "text",
+                                value: todo.text,
+                                onChange: (function (e) {
+                                    updateTodo(todo.id, (function (t) {
+                                            return {
+                                                    id: t.id,
+                                                    text: e.target.value,
+                                                    project: t.project,
+                                                    isDone: t.isDone,
+                                                    status: t.status
+                                                  };
+                                          }));
+                                  })
+                              })
+                        });
+            }));
+    } else {
+      var projectId = displayElement._0;
+      tmp = Core__Option.mapOr(projects.find(function (p) {
+                return p.id === projectId;
+              }), null, (function (project) {
+              return JsxRuntime.jsx("div", {
+                          children: JsxRuntime.jsx("input", {
+                                className: [" flex-1 bg-inherit text-[--foreground] w-full outline-none \n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500"].join(" "),
+                                placeholder: "",
+                                type: "text",
+                                value: project.name,
+                                onChange: (function (e) {
+                                    updateProject(project.id, (function (p) {
+                                            return {
+                                                    id: p.id,
+                                                    name: e.target.value,
+                                                    isActive: p.isActive
+                                                  };
+                                          }));
+                                  })
+                              })
+                        });
+            }));
+    }
+  } else {
+    tmp = null;
+  }
   return JsxRuntime.jsxs("div", {
               children: [
                 JsxRuntime.jsxs("div", {
@@ -101,7 +162,7 @@ function App(props) {
                               className: "flex flex-row gap-2"
                             }),
                         JsxRuntime.jsx("div", {
-                              children: match[0].filter(function (project) {
+                              children: projects.filter(function (project) {
                                       if (projectsTab === "Active") {
                                         return project.isActive;
                                       } else {
@@ -118,7 +179,9 @@ function App(props) {
                                                 updateProject: updateProject,
                                                 updateTodo: updateTodo,
                                                 selectElement: selectElement,
-                                                setSelectElement: setSelectElement
+                                                setSelectElement: setSelectElement,
+                                                displayElement: displayElement,
+                                                setDisplayElement: setDisplayElement
                                               });
                                   })
                             })
@@ -126,7 +189,7 @@ function App(props) {
                       className: "flex-1"
                     }),
                 JsxRuntime.jsx("div", {
-                      children: selectElement !== undefined ? selectElement._0 : null,
+                      children: tmp,
                       className: " border-l flex-1"
                     })
               ],
