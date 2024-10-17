@@ -29,8 +29,9 @@ button {
 }
 
 .DropdownMenuItemSelected {
-  @apply w-full font-bold flex flex-row items-center justify-center relative h-6 select-none px-2 bg-blue-600;
+  @apply w-full font-bold flex flex-row items-center justify-center relative h-6 select-none px-2;
   color: var(--background);
+  background-color: blue !important;
 }
 
 .DropdownMenuItem[data-disabled] {
