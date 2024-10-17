@@ -32,7 +32,7 @@ let defaultTodos = [
 
 module Details = {
   @react.component
-  let make = () => {
+  let make = (~selectElement) => {
     <div className=" border-l flex-1"> {"Details"->React.string} </div>
   }
 }
@@ -91,6 +91,12 @@ let make = () => {
         ->React.array}
       </div>
     </div>
-    <Details />
+    <div className=" border-l flex-1">
+      {switch selectElement {
+      | Some(Todo(todoId)) => todoId->React.string
+      | Some(Project(projectId)) => projectId->React.string
+      | _ => React.null
+      }}
+    </div>
   </div>
 }

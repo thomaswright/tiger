@@ -80,6 +80,19 @@ function Project$Todo(props) {
                                   
                                 }));
                         }),
+                      onFocus: (function (param) {
+                          setSelectElement(function (param) {
+                                return {
+                                        TAG: "Todo",
+                                        _0: todo.id
+                                      };
+                              });
+                        }),
+                      onBlur: (function (param) {
+                          setSelectElement(function (param) {
+                                
+                              });
+                        }),
                       onChange: (function (e) {
                           updateTodo(todo.id, (function (t) {
                                   return {
@@ -116,6 +129,11 @@ function Project$Todo(props) {
                                 TAG: "Todo",
                                 _0: todo.id
                               };
+                      });
+                }),
+              onBlur: (function (param) {
+                  setSelectElement(function (param) {
+                        
                       });
                 })
             });

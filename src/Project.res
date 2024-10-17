@@ -17,6 +17,7 @@ module Todo = {
     <div
       tabIndex={0}
       ref={ReactDOM.Ref.domRef(containerRef)}
+      onBlur={_ => setSelectElement(_ => None)}
       onFocus={_ => setSelectElement(_ => Some(Todo(todo.id)))}
       onKeyDown={e => {
         if e->ReactEvent.Keyboard.key == "ArrowUp" {
@@ -55,6 +56,8 @@ module Todo = {
         ]->Array.join(" ")}
         placeholder={""}
         value={todo.text}
+        onBlur={_ => setSelectElement(_ => None)}
+        onFocus={_ => setSelectElement(_ => Some(Todo(todo.id)))}
         onKeyDown={e => {
           if e->ReactEvent.Keyboard.key == "Escape" {
             e->ReactEvent.Keyboard.preventDefault

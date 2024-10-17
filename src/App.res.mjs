@@ -28,13 +28,6 @@ var defaultTodos = [
   }
 ];
 
-function App$Details(props) {
-  return JsxRuntime.jsx("div", {
-              children: "Details",
-              className: " border-l flex-1"
-            });
-}
-
 function App(props) {
   var match = Common.useLocalStorage("projects", defaultProjects);
   var setProjects = match[1];
@@ -132,7 +125,10 @@ function App(props) {
                       ],
                       className: "flex-1"
                     }),
-                JsxRuntime.jsx(App$Details, {})
+                JsxRuntime.jsx("div", {
+                      children: selectElement !== undefined ? selectElement._0 : null,
+                      className: " border-l flex-1"
+                    })
               ],
               className: "flex flex-row h-dvh"
             });
