@@ -1,34 +1,30 @@
 import React, { useRef } from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-// import {
-//   TbChevronDown,
-//   TbEye,
-//   TbEyeClosed,
-//   TbLock,
-//   TbLockOpen2,
-//   TbSun,
-//   TbMoon,
-// } from "react-icons/tb";
 import "./dropdown.css";
-import { statusStringShort } from "./Types.res.mjs";
-const Dropdown = ({ status, setStatus }) => {
-  const item = (s, t) => {
+import { statusStringShort, statusString } from "./Types.res.mjs";
+
+const Dropdown = ({ status, setStatus, removeTodo }) => {
+  let [hoverStatus, setHoverStatus] = React.useState(status);
+  const item = (s) => {
     return (
       <DropdownMenu.Item
         key={s}
         className={[
           status === s ? "DropdownMenuItemSelected" : "DropdownMenuItem",
         ].join(" ")}
-        onSelect={(_) => setStatus(s)}
+        onSelect={(_) => (s === "Trash" ? removeTodo() : setStatus(s))}
+        onMouseEnter={(_) => setHoverStatus(s)}
+        onMouseLeave={(_) =>
+          setHoverStatus((current) => (current === s ? status : s))
+        }
       >
-        <span className="font-bold w-4">{statusStringShort(s)}</span>
-        {t}
+        {statusStringShort(s)}
       </DropdownMenu.Item>
     );
   };
 
   return (
-    <DropdownMenu.Root modal={false}>
+    <DropdownMenu.Root modal={false} open={true}>
       <DropdownMenu.Trigger asChild>
         <button className="IconButton" aria-label="Customise options">
           {statusStringShort(status)}
@@ -37,67 +33,70 @@ const Dropdown = ({ status, setStatus }) => {
 
       <DropdownMenu.Portal>
         <DropdownMenu.Content className="DropdownMenuContent" sideOffset={5}>
-          <div className="flex flex-row justify-between gap-1 py-1">
-            <div className="flex flex-row gap-1 flex-1 px-1">
+          <div className="flex flex-col justify-between gap-1 py-1">
+            <div className="h-5 font-bold flex flex-row items-center ">
+              <div className=" w-6 flex flex-row items-center justify-center">
+                {statusStringShort(hoverStatus)}
+              </div>
+              <div>{statusString(hoverStatus)}</div>
+            </div>
+            <div className="flex flex-row gap-1 flex-1 px-1 justify-start">
               <div
-                className="flex-none px-1 font-bold w-2 leading-none text-2xs
-               flex flex-row items-center justify-center -rotate-90"
+                className="flex-none font-bold w-12 leading-none text-xs
+               flex flex-row items-center justify-start "
               >
                 {"Todo"}
               </div>
-              <div className="flex flex-col flex-1 divide-y border rounded overflow-hidden">
-                {item("TodoUrgent", "Urgent")}
-                {item("TodoHigh", "High")}
-                {item("TodoMedium", "Medium")}
-                {item("TodoLow", "Low")}
+              <div className="flex flex-row flex-1 divide-x border rounded overflow-hidden w-fit">
+                {item("TodoUrgent")}
+                {item("TodoHigh")}
+                {item("TodoMedium")}
+                {item("TodoLow")}
               </div>
             </div>
-            <div className="flex flex-row gap-1 flex-1 px-1">
+            <div className="flex flex-row gap-1 flex-1 px-1 justify-start">
               <div
-                className="flex-none px-1 font-bold w-2 leading-none text-2xs 
-              flex flex-row items-center justify-center -rotate-90"
+                className="flex-none font-bold w-12 leading-none text-xs 
+              flex flex-row items-center justify-start "
               >
                 {"Later"}
               </div>
-              <div className="flex flex-col flex-1 divide-y border rounded overflow-hidden">
-                {item("LaterWill", "Will")}
-                {item("LaterMaybe", "Maybe")}
-                {item("LaterUnlikely", "Unlikely")}
-                {item("LaterUnsorted", "Unsorted")}
+              <div className="flex flex-row flex-1 divide-x border rounded overflow-hidden w-fit">
+                {item("LaterUnsorted")}
+                {item("LaterWill")}
+                {item("LaterMaybe")}
+                {item("LaterUnlikely")}
               </div>
             </div>
-          </div>
-          <div className="flex flex-row justify-between gap-1 py-1">
-            <div className="flex flex-row gap-1 flex-1 px-1 ">
+            <div className="flex flex-row gap-1 flex-1 px-1 justify-start ">
               <div
-                className="flex-none px-1 font-bold w-2 leading-none text-2xs 
-              flex flex-row items-center justify-center -rotate-90"
+                className="flex-none font-bold w-12 leading-none text-xs 
+              flex flex-row items-center justify-start "
               >
                 {"Resolve"}
               </div>
-              <div className="flex flex-col flex-1 divide-y border rounded overflow-hidden">
-                {item("ResolveDone", "Done")}
-                {item("ResolveWont", "Wont")}
-                {item("ResolveNoNeed", "NoNeed")}
+              <div className="flex flex-row  divide-x border rounded overflow-hidden w-fit">
+                {item("ResolveDone")}
+                {item("ResolveReject")}
+                {item("ResolveNoNeed")}
               </div>
             </div>
-            <div className=" flex flex-row gap-1 flex-1 px-1 ">
+            <div className=" flex flex-row gap-1 flex-1 px-1 justify-start ">
               <div
-                className="flex-none px-1 font-bold w-2 leading-none text-2xs 
-              flex flex-row items-center justify-center -rotate-90"
+                className="flex-none font-bold w-12 leading-none text-xs 
+              flex flex-row items-center justify-start "
               >
                 {"Archive"}
               </div>
-              <div className="flex flex-col flex-1 divide-y border rounded overflow-hidden">
-                {item("ArchiveDone", "Done")}
-                {item("ArchiveWont", "Wont")}
-                {item("ArchiveNoNeed", "NoNeed")}
+              <div className="flex flex-row  divide-x border rounded overflow-hidden w-fit">
+                {item("ArchiveDone")}
+                {item("ArchiveReject")}
+                {item("ArchiveNoNeed")}
               </div>
-            </div>
-          </div>
-          <div className="flex flex-row justify-between gap-1  pl-4 pr-1">
-            <div className="bg-white rounded  px-1 border flex-1">
-              {"Trash"}
+
+              <div className="bg-white rounded border flex-1 flex justify-center items-center">
+                {item("Trash")}
+              </div>
             </div>
           </div>
 

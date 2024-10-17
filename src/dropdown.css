@@ -3,8 +3,7 @@ button {
 }
 
 .DropdownMenuContent {
-  @apply text-xs w-[240px] bg-white p-2 flex flex-col gap-1 border rounded-lg shadow;
-  min-width: 160px;
+  @apply text-xs  bg-white p-1 flex flex-col gap-1 border rounded-lg shadow;
   background-color: var(--background);
   border-color: var(--foreground-200);
   animation-duration: 400ms;
@@ -25,12 +24,12 @@ button {
 }
 
 .DropdownMenuItem {
-  @apply flex items-center relative h-5 select-none px-2;
+  @apply w-6 font-bold flex flex-row items-center justify-center relative h-5 select-none px-2;
   color: var(--foreground);
 }
 
 .DropdownMenuItemSelected {
-  @apply flex items-center relative h-5 select-none px-2 bg-blue-600;
+  @apply w-6 font-bold flex flex-row items-center justify-center relative h-5 select-none px-2 bg-blue-600;
   color: var(--background);
 }
 
@@ -69,6 +68,36 @@ button {
 
 .IconButton:hover {
   background-color: var(--foreground-300);
+}
+
+.TooltipContent {
+  @apply shadow;
+  border-radius: 4px;
+  padding: 10px 15px;
+  font-size: 15px;
+  line-height: 1;
+  color: var(--foreground);
+  background-color: white;
+  user-select: none;
+  animation-duration: 400ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+.TooltipContent[data-state="delayed-open"][data-side="top"] {
+  animation-name: slideDownAndFade;
+}
+.TooltipContent[data-state="delayed-open"][data-side="right"] {
+  animation-name: slideLeftAndFade;
+}
+.TooltipContent[data-state="delayed-open"][data-side="bottom"] {
+  animation-name: slideUpAndFade;
+}
+.TooltipContent[data-state="delayed-open"][data-side="left"] {
+  animation-name: slideRightAndFade;
+}
+
+.TooltipArrow {
+  fill: white;
 }
 
 @keyframes slideUpAndFade {

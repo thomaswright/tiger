@@ -8,11 +8,12 @@ type status =
   | @as("LaterUnlikely") LaterUnlikely
   | @as("LaterUnsorted") LaterUnsorted
   | @as("ResolveDone") ResolveDone
-  | @as("ResolveWont") ResolveWont
+  | @as("ResolveReject") ResolveReject
   | @as("ResolveNoNeed") ResolveNoNeed
   | @as("ArchiveDone") ArchiveDone
-  | @as("ArchiveWont") ArchiveWont
+  | @as("ArchiveReject") ArchiveReject
   | @as("ArchiveNoNeed") ArchiveNoNeed
+  | @as("Trash") Trash
 
 type todo = {
   id: string,
@@ -32,7 +33,7 @@ type projectsTab = | @as("All") All | @as("Active") Active
 
 let isArchiveStatus = s =>
   switch s {
-  | ArchiveDone | ArchiveWont | ArchiveNoNeed => true
+  | ArchiveDone | ArchiveReject | ArchiveNoNeed => true
   | _ => false
   }
 
@@ -47,30 +48,32 @@ let statusToFloat = s => {
   | LaterUnlikely => 6.
   | LaterUnsorted => 7.
   | ResolveDone => 8.
-  | ResolveWont => 9.
+  | ResolveReject => 9.
   | ResolveNoNeed => 10.
   | ArchiveDone => 11.
-  | ArchiveWont => 12.
+  | ArchiveReject => 12.
   | ArchiveNoNeed => 13.
+  | Trash => 14.
   }
 }
 
 let statusString = s => {
   switch s {
-  | TodoUrgent => "TodoUrgent"
-  | TodoHigh => "TodoHigh"
-  | TodoMedium => "TodoMedium"
-  | TodoLow => "TodoLow"
-  | LaterWill => "LaterWill"
-  | LaterMaybe => "LaterMaybe"
-  | LaterUnlikely => "LaterUnlikely"
-  | LaterUnsorted => "LaterUnsorted"
-  | ResolveDone => "ResolveDone"
-  | ResolveWont => "ResolveWont"
-  | ResolveNoNeed => "ResolveNoNeed"
-  | ArchiveDone => "ArchiveDone"
-  | ArchiveWont => "ArchiveWont"
-  | ArchiveNoNeed => "ArchiveNoNeed"
+  | TodoUrgent => "Urgent"
+  | TodoHigh => "High"
+  | TodoMedium => "Medium"
+  | TodoLow => "Low"
+  | LaterWill => "Will Do"
+  | LaterMaybe => "Maybe"
+  | LaterUnlikely => "Unlikely"
+  | LaterUnsorted => "Unsorted"
+  | ResolveDone => "Done"
+  | ResolveReject => "Reject"
+  | ResolveNoNeed => "No Need"
+  | ArchiveDone => "Done"
+  | ArchiveReject => "Reject"
+  | ArchiveNoNeed => "No Need"
+  | Trash => "Delete"
   }
 }
 
@@ -85,10 +88,11 @@ let statusStringShort = s => {
   | LaterUnlikely => "C"
   | LaterUnsorted => "-"
   | ResolveDone => "✔︎"
-  | ResolveWont => "🞫"
+  | ResolveReject => "🞫"
   | ResolveNoNeed => "○"
   | ArchiveDone => "✔︎"
-  | ArchiveWont => "🞫"
+  | ArchiveReject => "🞫"
   | ArchiveNoNeed => "○"
+  | Trash => "D"
   }
 }
