@@ -57,21 +57,44 @@ let make = () => {
     // <StatusSelector />
     <div className="flex-1">
       <div className="flex flex-row gap-2">
+        <div className="flex flex-row gap-2">
+          <button
+            onClick={_ => setProjectTab(_ => All)}
+            className={[
+              "w-20  border-b-2",
+              projectsTab == All ? "border-red-500 text-red-500" : "border-transparent ",
+            ]->Array.join(" ")}>
+            {"All"->React.string}
+          </button>
+          <button
+            onClick={_ => setProjectTab(_ => Active)}
+            className={[
+              "w-20  border-b-2",
+              projectsTab == Active ? "border-red-500 text-red-500" : "border-transparent ",
+            ]->Array.join(" ")}>
+            {"Active"->React.string}
+          </button>
+        </div>
         <button
-          onClick={_ => setProjectTab(_ => All)}
-          className={[
-            "w-20  border-b-2",
-            projectsTab == All ? "border-red-500 text-red-500" : "border-transparent ",
-          ]->Array.join(" ")}>
-          {"All"->React.string}
-        </button>
-        <button
-          onClick={_ => setProjectTab(_ => Active)}
-          className={[
-            "w-20  border-b-2",
-            projectsTab == Active ? "border-red-500 text-red-500" : "border-transparent ",
-          ]->Array.join(" ")}>
-          {"Active"->React.string}
+          onClick={_ => {
+            let newProjectId = Common.uuid()
+            setProjects(v =>
+              Array.concat(
+                [
+                  {
+                    id: newProjectId,
+                    name: "",
+                    isActive: true,
+                  },
+                ],
+                v,
+              )
+            )
+            setSelectElement(_ => Some(Project(newProjectId)))
+            setDisplayElement(_ => Some(Project(newProjectId)))
+          }}
+          className={["bg-slate-200 px-2 rounded"]->Array.join(" ")}>
+          {"Add Project"->React.string}
         </button>
       </div>
       <div>
@@ -107,7 +130,7 @@ let make = () => {
                 " flex-1 bg-inherit text-[--foreground] w-full outline-none 
           leading-none padding-none border-none h-5 -my-1 focus:text-blue-500",
               ]->Array.join(" ")}
-              placeholder={""}
+              placeholder={"Todo Text"}
               value={todo.text}
               onChange={e => {
                 updateTodo(todo.id, t => {
@@ -129,7 +152,7 @@ let make = () => {
                 " flex-1 bg-inherit text-[--foreground] w-full outline-none 
           leading-none padding-none border-none h-5 -my-1 focus:text-blue-500",
               ]->Array.join(" ")}
-              placeholder={""}
+              placeholder={"Project Name"}
               value={project.name}
               onChange={e => {
                 updateProject(project.id, p => {

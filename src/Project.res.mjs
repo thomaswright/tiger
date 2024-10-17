@@ -75,7 +75,9 @@ function Project$Todo(props) {
                       e.stopPropagation();
                       if (cursorPosition === 0) {
                         e.preventDefault();
-                        Common.focusPreviousClass(todoInputClass, dom);
+                        Core__Option.mapOr(Caml_option.nullable_to_opt(containerRef.current), undefined, (function (dom) {
+                                dom.focus();
+                              }));
                       }
                       
                     }
@@ -83,7 +85,9 @@ function Project$Todo(props) {
                       e.stopPropagation();
                       if (cursorPosition === inputValueLength) {
                         e.preventDefault();
-                        return Common.focusNextClass(todoInputClass, dom);
+                        return Core__Option.mapOr(Caml_option.nullable_to_opt(containerRef.current), undefined, (function (dom) {
+                                      dom.focus();
+                                    }));
                       } else {
                         return ;
                       }
@@ -302,7 +306,7 @@ function Project(props) {
                           })
                     })
               ],
-              className: "border-y"
+              className: "border-b"
             });
 }
 

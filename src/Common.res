@@ -9,3 +9,5 @@ external focusPreviousClass: (string, Dom.element) => unit = "focusPreviousClass
 
 @module("./other.js")
 external focusNextClass: (string, Dom.element) => unit = "focusNextClass"
+
+@module("uuid") external uuid: unit => string = "v4"

@@ -80,7 +80,12 @@ module Todo = {
             e->ReactEvent.Keyboard.stopPropagation
             if cursorPosition == 0 {
               e->ReactEvent.Keyboard.preventDefault
-              Common.focusPreviousClass(todoInputClass, dom)
+              // Common.focusPreviousClass(todoInputClass, dom)
+              containerRef.current
+              ->Nullable.toOption
+              ->Option.mapOr((), dom => {
+                dom->Obj.magic->HtmlElement.focus
+              })
             }
           }
 
@@ -88,7 +93,12 @@ module Todo = {
             e->ReactEvent.Keyboard.stopPropagation
             if cursorPosition == inputValueLength {
               e->ReactEvent.Keyboard.preventDefault
-              Common.focusNextClass(todoInputClass, dom)
+              // Common.focusNextClass(todoInputClass, dom)
+              containerRef.current
+              ->Nullable.toOption
+              ->Option.mapOr((), dom => {
+                dom->Obj.magic->HtmlElement.focus
+              })
             }
           }
         })
@@ -181,7 +191,7 @@ let make = (
     }
   }
 
-  <div className="border-y">
+  <div className="border-b">
     <div
       tabIndex={0}
       ref={ReactDOM.Ref.domRef(projectRef)}
