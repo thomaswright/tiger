@@ -14,39 +14,77 @@ module Todo = {
     let inputRef = React.useRef(Nullable.null)
     let containerRef = React.useRef(Nullable.null)
 
+    let onKeyDownContainer = e => {
+      if isSelected {
+        containerRef.current
+        ->Nullable.toOption
+        ->Option.mapOr((), dom => {
+          if e->ReactEvent.Keyboard.key == "ArrowUp" {
+            e->ReactEvent.Keyboard.preventDefault
+            Common.focusPreviousClass(todoClass, dom)
+          }
+
+          if e->ReactEvent.Keyboard.key == "ArrowDown" {
+            e->ReactEvent.Keyboard.preventDefault
+            Common.focusNextClass(todoClass, dom)
+          }
+
+          if e->ReactEvent.Keyboard.key == "Enter" {
+            e->ReactEvent.Keyboard.preventDefault
+            inputRef.current
+            ->Nullable.toOption
+            ->Option.mapOr((), inputEl => {
+              let inputEl = inputEl->Obj.magic
+              inputEl->HtmlElement.focus
+              inputEl->HtmlInputElement.setSelectionStart(inputEl->HtmlInputElement.selectionEnd)
+            })
+          }
+        })
+      }
+    }
+
+    let onKeyDownInput = e => {
+      if isSelected {
+        if e->ReactEvent.Keyboard.key == "Escape" {
+          e->ReactEvent.Keyboard.preventDefault
+          containerRef.current
+          ->Nullable.toOption
+          ->Option.mapOr((), dom => {
+            dom->Obj.magic->HtmlElement.focus
+          })
+        }
+
+        inputRef.current
+        ->Nullable.toOption
+        ->Option.mapOr((), dom => {
+          let cursorPosition = dom->Obj.magic->HtmlInputElement.selectionStart->Option.getOr(0)
+          let inputValueLength = dom->Obj.magic->HtmlInputElement.value->String.length
+
+          if e->ReactEvent.Keyboard.key == "ArrowUp" {
+            e->ReactEvent.Keyboard.stopPropagation
+            if cursorPosition == 0 {
+              e->ReactEvent.Keyboard.preventDefault
+              Common.focusPreviousClass(todoInputClass, dom)
+            }
+          }
+
+          if e->ReactEvent.Keyboard.key == "ArrowDown" {
+            e->ReactEvent.Keyboard.stopPropagation
+            if cursorPosition == inputValueLength {
+              e->ReactEvent.Keyboard.preventDefault
+              Common.focusNextClass(todoInputClass, dom)
+            }
+          }
+        })
+      }
+    }
+
     <div
       tabIndex={0}
       ref={ReactDOM.Ref.domRef(containerRef)}
       // onBlur={_ => setSelectElement(_ => None)}
       onFocus={_ => setSelectElement(_ => Some(Todo(todo.id)))}
-      onKeyDown={e => {
-        if isSelected {
-          containerRef.current
-          ->Nullable.toOption
-          ->Option.mapOr((), dom => {
-            if e->ReactEvent.Keyboard.key == "ArrowUp" {
-              e->ReactEvent.Keyboard.preventDefault
-              Common.focusPreviousClass(todoClass, dom)
-            }
-
-            if e->ReactEvent.Keyboard.key == "ArrowDown" {
-              e->ReactEvent.Keyboard.preventDefault
-              Common.focusNextClass(todoClass, dom)
-            }
-
-            if e->ReactEvent.Keyboard.key == "Enter" {
-              e->ReactEvent.Keyboard.preventDefault
-              inputRef.current
-              ->Nullable.toOption
-              ->Option.mapOr((), inputEl => {
-                let inputEl = inputEl->Obj.magic
-                inputEl->HtmlElement.focus
-                inputEl->HtmlInputElement.setSelectionStart(inputEl->HtmlInputElement.selectionEnd)
-              })
-            }
-          })
-        }
-      }}
+      onKeyDown={onKeyDownContainer}
       className={[
         todoClass,
         "flex flex-row justify-start items-center gap-2 px-2",
@@ -74,41 +112,7 @@ module Todo = {
         value={todo.text}
         // onBlur={_ => setSelectElement(_ => None)}
         onFocus={_ => setSelectElement(_ => Some(Todo(todo.id)))}
-        onKeyDown={e => {
-          if isSelected {
-            if e->ReactEvent.Keyboard.key == "Escape" {
-              e->ReactEvent.Keyboard.preventDefault
-              containerRef.current
-              ->Nullable.toOption
-              ->Option.mapOr((), dom => {
-                dom->Obj.magic->HtmlElement.focus
-              })
-            }
-
-            inputRef.current
-            ->Nullable.toOption
-            ->Option.mapOr((), dom => {
-              let cursorPosition = dom->Obj.magic->HtmlInputElement.selectionStart->Option.getOr(0)
-              let inputValueLength = dom->Obj.magic->HtmlInputElement.value->String.length
-
-              if e->ReactEvent.Keyboard.key == "ArrowUp" {
-                e->ReactEvent.Keyboard.stopPropagation
-                if cursorPosition == 0 {
-                  e->ReactEvent.Keyboard.preventDefault
-                  Common.focusPreviousClass(todoInputClass, dom)
-                }
-              }
-
-              if e->ReactEvent.Keyboard.key == "ArrowDown" {
-                e->ReactEvent.Keyboard.stopPropagation
-                if cursorPosition == inputValueLength {
-                  e->ReactEvent.Keyboard.preventDefault
-                  Common.focusNextClass(todoInputClass, dom)
-                }
-              }
-            })
-          }
-        }}
+        onKeyDown={onKeyDownInput}
         onChange={e => {
           updateTodo(todo.id, t => {
             ...t,
