@@ -140,6 +140,7 @@ let make = () => {
             displayElement
             setDisplayElement
             setFocusIdNext
+            setTodos
           />
         )
         ->React.array}

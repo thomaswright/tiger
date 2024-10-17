@@ -265,7 +265,8 @@ function App(props) {
                                                 setSelectElement: setSelectElement,
                                                 displayElement: displayElement,
                                                 setDisplayElement: setDisplayElement,
-                                                setFocusIdNext: setFocusIdNext
+                                                setFocusIdNext: setFocusIdNext,
+                                                setTodos: setTodos
                                               }, Types.getProjectId(project.id));
                                   })
                             })

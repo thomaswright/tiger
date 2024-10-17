@@ -126,6 +126,10 @@ function getTodoId(s) {
   return "todo-" + s;
 }
 
+function getTodoInputId(s) {
+  return "todo-input-" + s;
+}
+
 export {
   isArchiveStatus ,
   statusToFloat ,
@@ -133,5 +137,6 @@ export {
   statusStringShort ,
   getProjectId ,
   getTodoId ,
+  getTodoInputId ,
 }
 /* No side effect */
