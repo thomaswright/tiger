@@ -15,13 +15,16 @@ var StatusSelect = {
   make: make
 };
 
-var todoClass = "class-list-todo-text";
+var todoClass = "class-list-todo";
+
+var todoInputClass = "class-list-todo-input";
 
 function Project$Todo(props) {
   var setSelectElement = props.setSelectElement;
   var updateTodo = props.updateTodo;
   var todo = props.todo;
-  var ref = React.useRef(null);
+  var inputRef = React.useRef(null);
+  var containerRef = React.useRef(null);
   return JsxRuntime.jsxs("div", {
               children: [
                 JsxRuntime.jsx(make, {
@@ -39,25 +42,40 @@ function Project$Todo(props) {
                         })
                     }),
                 JsxRuntime.jsx("input", {
-                      ref: Caml_option.some(ref),
+                      ref: Caml_option.some(inputRef),
                       className: [
-                          todoClass,
-                          " flex-1 bg-inherit text-[--foreground] w-full outline-none \n          leading-none padding-none border-none h-5 -my-1"
+                          todoInputClass,
+                          " flex-1 bg-inherit text-[--foreground] w-full outline-none \n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500"
                         ].join(" "),
                       placeholder: "",
                       type: "text",
                       value: todo.text,
                       onKeyDown: (function (e) {
-                          Core__Option.mapOr(Caml_option.nullable_to_opt(ref.current), undefined, (function (dom) {
+                          if (e.key === "Escape") {
+                            e.preventDefault();
+                            Core__Option.mapOr(Caml_option.nullable_to_opt(containerRef.current), undefined, (function (dom) {
+                                    dom.focus();
+                                  }));
+                          }
+                          Core__Option.mapOr(Caml_option.nullable_to_opt(inputRef.current), undefined, (function (dom) {
                                   var cursorPosition = Core__Option.getOr(Caml_option.nullable_to_opt(dom.selectionStart), 0);
                                   var inputValueLength = dom.value.length;
-                                  if (e.keyCode === 38 && cursorPosition === 0) {
-                                    e.preventDefault();
-                                    Common.focusPreviousClass(todoClass);
+                                  if (e.key === "ArrowUp") {
+                                    e.stopPropagation();
+                                    if (cursorPosition === 0) {
+                                      e.preventDefault();
+                                      Common.focusPreviousClass(todoInputClass);
+                                    }
+                                    
                                   }
-                                  if (e.keyCode === 40 && cursorPosition === inputValueLength) {
-                                    e.preventDefault();
-                                    return Common.focusNextClass(todoClass);
+                                  if (e.key === "ArrowDown") {
+                                    e.stopPropagation();
+                                    if (cursorPosition === inputValueLength) {
+                                      e.preventDefault();
+                                      return Common.focusNextClass(todoInputClass);
+                                    } else {
+                                      return ;
+                                    }
                                   }
                                   
                                 }));
@@ -75,10 +93,23 @@ function Project$Todo(props) {
                         })
                     })
               ],
+              ref: Caml_option.some(containerRef),
               className: [
-                  "flex flex-row justify-start items-center gap-2 px-2",
-                  props.isSelected ? "bg-slate-100 outline outline-1 -outline-offset-1" : ""
+                  todoClass,
+                  "flex flex-row justify-start items-center gap-2 px-2\n        focus:bg-slate-100 focus:outline focus:outline-1 focus:-outline-offset-1\n        focus-within:bg-slate-100 focus-within:outline focus-within:outline-1 focus-within:-outline-offset-1\n        "
                 ].join(" "),
+              tabIndex: 0,
+              onKeyDown: (function (e) {
+                  if (e.key === "ArrowUp") {
+                    e.preventDefault();
+                    Common.focusPreviousClass(todoClass);
+                  }
+                  if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    return Common.focusNextClass(todoClass);
+                  }
+                  
+                }),
               onFocus: (function (param) {
                   setSelectElement(function (param) {
                         return {
@@ -92,6 +123,7 @@ function Project$Todo(props) {
 
 var Todo = {
   todoClass: todoClass,
+  todoInputClass: todoInputClass,
   make: Project$Todo
 };
 

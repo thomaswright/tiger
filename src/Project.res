@@ -6,17 +6,36 @@ module StatusSelect = {
 }
 
 module Todo = {
-  let todoClass = "class-list-todo-text"
+  let todoClass = "class-list-todo"
+  let todoInputClass = "class-list-todo-input"
 
   @react.component
   let make = (~todo: todo, ~updateTodo, ~isSelected, ~setSelectElement) => {
-    let ref = React.useRef(Nullable.null)
+    let inputRef = React.useRef(Nullable.null)
+    let containerRef = React.useRef(Nullable.null)
 
     <div
+      tabIndex={0}
+      ref={ReactDOM.Ref.domRef(containerRef)}
       onFocus={_ => setSelectElement(_ => Some(Todo(todo.id)))}
+      onKeyDown={e => {
+        if e->ReactEvent.Keyboard.key == "ArrowUp" {
+          e->ReactEvent.Keyboard.preventDefault
+          Common.focusPreviousClass(todoClass)
+        }
+
+        if e->ReactEvent.Keyboard.key == "ArrowDown" {
+          e->ReactEvent.Keyboard.preventDefault
+          Common.focusNextClass(todoClass)
+        }
+      }}
       className={[
-        "flex flex-row justify-start items-center gap-2 px-2",
-        isSelected ? "bg-slate-100 outline outline-1 -outline-offset-1" : "",
+        todoClass,
+        "flex flex-row justify-start items-center gap-2 px-2
+        focus:bg-slate-100 focus:outline focus:outline-1 focus:-outline-offset-1
+        focus-within:bg-slate-100 focus-within:outline focus-within:outline-1 focus-within:-outline-offset-1
+        ",
+        // isSelected ? "" : "",
       ]->Array.join(" ")}>
       <StatusSelect
         status={todo.status}
@@ -27,31 +46,46 @@ module Todo = {
           })}
       />
       <input
-        ref={ReactDOM.Ref.domRef(ref)}
+        ref={ReactDOM.Ref.domRef(inputRef)}
         type_="text"
         className={[
-          todoClass,
+          todoInputClass,
           " flex-1 bg-inherit text-[--foreground] w-full outline-none 
-          leading-none padding-none border-none h-5 -my-1",
+          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500",
         ]->Array.join(" ")}
         placeholder={""}
         value={todo.text}
         onKeyDown={e => {
-          ref.current
+          if e->ReactEvent.Keyboard.key == "Escape" {
+            e->ReactEvent.Keyboard.preventDefault
+            containerRef.current
+            ->Nullable.toOption
+            ->Option.mapOr((), dom => {
+              dom->Obj.magic->Webapi.Dom.HtmlElement.focus
+            })
+          }
+
+          inputRef.current
           ->Nullable.toOption
           ->Option.mapOr((), dom => {
             let cursorPosition =
               dom->Obj.magic->Webapi.Dom.HtmlInputElement.selectionStart->Option.getOr(0)
             let inputValueLength = dom->Obj.magic->Webapi.Dom.HtmlInputElement.value->String.length
 
-            if e->ReactEvent.Keyboard.keyCode == 38 && cursorPosition == 0 {
-              e->ReactEvent.Keyboard.preventDefault
-              Common.focusPreviousClass(todoClass)
+            if e->ReactEvent.Keyboard.key == "ArrowUp" {
+              e->ReactEvent.Keyboard.stopPropagation
+              if cursorPosition == 0 {
+                e->ReactEvent.Keyboard.preventDefault
+                Common.focusPreviousClass(todoInputClass)
+              }
             }
 
-            if e->ReactEvent.Keyboard.keyCode == 40 && cursorPosition == inputValueLength {
-              e->ReactEvent.Keyboard.preventDefault
-              Common.focusNextClass(todoClass)
+            if e->ReactEvent.Keyboard.key == "ArrowDown" {
+              e->ReactEvent.Keyboard.stopPropagation
+              if cursorPosition == inputValueLength {
+                e->ReactEvent.Keyboard.preventDefault
+                Common.focusNextClass(todoInputClass)
+              }
             }
           })
         }}
