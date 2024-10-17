@@ -135,10 +135,34 @@ let make = (
   ~selectElement,
   ~setSelectElement,
 ) => {
+  let projectRef = React.useRef(Nullable.null)
+
   let isSelected = selectElement == Some(Project(project.id))
+
+  let onKeyDownProject = e => {
+    if isSelected {
+      projectRef.current
+      ->Nullable.toOption
+      ->Option.mapOr((), dom => {
+        Console.log("k")
+        if e->ReactEvent.Keyboard.key == "ArrowUp" {
+          e->ReactEvent.Keyboard.preventDefault
+          Common.focusPreviousClass(listItemClass, dom)
+        }
+
+        if e->ReactEvent.Keyboard.key == "ArrowDown" {
+          e->ReactEvent.Keyboard.preventDefault
+          Common.focusNextClass(listItemClass, dom)
+        }
+      })
+    }
+  }
+
   <div className="border-y">
     <div
       tabIndex={0}
+      ref={ReactDOM.Ref.domRef(projectRef)}
+      onKeyDown={onKeyDownProject}
       onFocus={_ => setSelectElement(_ => Some(Project(project.id)))}
       className={[
         listItemClass,

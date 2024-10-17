@@ -160,10 +160,28 @@ function Project(props) {
   var setShowArchive = props.setShowArchive;
   var showArchive = props.showArchive;
   var project = props.project;
+  var projectRef = React.useRef(null);
   var isSelected = Caml_obj.equal(selectElement, {
         TAG: "Project",
         _0: project.id
       });
+  var onKeyDownProject = function (e) {
+    if (isSelected) {
+      return Core__Option.mapOr(Caml_option.nullable_to_opt(projectRef.current), undefined, (function (dom) {
+                    console.log("k");
+                    if (e.key === "ArrowUp") {
+                      e.preventDefault();
+                      Common.focusPreviousClass(listItemClass, dom);
+                    }
+                    if (e.key === "ArrowDown") {
+                      e.preventDefault();
+                      return Common.focusNextClass(listItemClass, dom);
+                    }
+                    
+                  }));
+    }
+    
+  };
   return JsxRuntime.jsxs("div", {
               children: [
                 JsxRuntime.jsxs("div", {
@@ -200,12 +218,14 @@ function Project(props) {
                                 })
                             })
                       ],
+                      ref: Caml_option.some(projectRef),
                       className: [
                           listItemClass,
                           "flex flex-row justify-between items-center bg-slate-300",
                           isSelected ? "outline outline-1 -outline-offset-1" : ""
                         ].join(" "),
                       tabIndex: 0,
+                      onKeyDown: onKeyDownProject,
                       onFocus: (function (param) {
                           setSelectElement(function (param) {
                                 return {
