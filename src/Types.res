@@ -98,3 +98,5 @@ let statusStringShort = s => {
   | Trash => "T"
   }
 }
+
+let getProjectId = s => "project-" ++ s

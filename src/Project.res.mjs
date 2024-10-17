@@ -190,6 +190,7 @@ var Todo = {
 };
 
 function Project(props) {
+  var focusIdNextRef = props.focusIdNextRef;
   var setDisplayElement = props.setDisplayElement;
   var displayElement = props.displayElement;
   var setSelectElement = props.setSelectElement;
@@ -206,6 +207,9 @@ function Project(props) {
       });
   var onKeyDownProject = function (e) {
     if (isSelected) {
+      if (e.key === "Enter") {
+        focusIdNextRef.current = "id-display-title";
+      }
       return Core__Option.mapOr(Caml_option.nullable_to_opt(projectRef.current), undefined, (function (dom) {
                     if (e.key === "ArrowUp") {
                       e.preventDefault();
@@ -225,11 +229,15 @@ function Project(props) {
                 JsxRuntime.jsxs("div", {
                       children: [
                         JsxRuntime.jsx("div", {
-                              children: project.name
+                              children: project.name,
+                              className: " flex-none px-2"
+                            }),
+                        JsxRuntime.jsx("div", {
+                              className: "flex-1"
                             }),
                         JsxRuntime.jsx("button", {
                               children: project.isActive ? "Active" : "Not Active",
-                              className: "rounded bg-slate-200 w-20 text-xs h-fit",
+                              className: "rounded bg-slate-200 px-1 text-xs h-fit flex-none",
                               onClick: (function (param) {
                                   updateProject(project.id, (function (p) {
                                           return {
@@ -242,7 +250,7 @@ function Project(props) {
                             }),
                         JsxRuntime.jsx("button", {
                               children: showArchive ? "^" : "v",
-                              className: "text-xs rounded h-3 w-10",
+                              className: "text-xs rounded h-3 w-4 flex-none",
                               onClick: (function (param) {
                                   setShowArchive(function (v) {
                                         if (v.includes(project.id)) {
@@ -259,9 +267,10 @@ function Project(props) {
                       ref: Caml_option.some(projectRef),
                       className: [
                           listItemClass,
-                          "flex flex-row justify-between items-center bg-slate-300",
+                          "h-6 flex flex-row justify-between items-center bg-slate-300",
                           isSelected ? "outline outline-1 -outline-offset-1" : ""
                         ].join(" "),
+                      id: Types.getProjectId(project.id),
                       tabIndex: 0,
                       onKeyDown: onKeyDownProject,
                       onFocus: (function (param) {

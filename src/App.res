@@ -1,5 +1,5 @@
 open Types
-
+open Webapi.Dom
 let defaultProjects = [
   {
     id: "1",
@@ -45,12 +45,40 @@ let make = () => {
   let (projectsTab, setProjectTab, _) = Common.useLocalStorage("projectsTab", All)
   let (selectElement, setSelectElement) = React.useState(_ => None)
   let (displayElement, setDisplayElement) = React.useState(_ => None)
+  let focusClassNextRef = React.useRef(None)
+  let focusIdNextRef = React.useRef(None)
 
   let updateProject = React.useCallback0((id, f) => {
     setProjects(v => v->Array.map(project => project.id == id ? f(project) : project))
   })
   let updateTodo = React.useCallback0((id, f) => {
     setTodos(v => v->Array.map(todo => todo.id == id ? f(todo) : todo))
+  })
+
+  React.useEffectOnEveryRender(() => {
+    focusClassNextRef.current
+    ->Option.flatMap(x =>
+      document
+      ->Document.getElementsByClassName(x)
+      ->HtmlCollection.toArray
+      ->Array.get(0)
+    )
+    ->Option.mapOr((), element => {
+      element->Obj.magic->HtmlElement.focus
+
+      focusClassNextRef.current = None
+    })
+
+    focusIdNextRef.current
+    ->Option.flatMap(x => document->Document.getElementById(x))
+    ->Option.mapOr((), element => {
+      Console.log(element)
+      element->Obj.magic->HtmlElement.focus
+
+      focusIdNextRef.current = None
+    })
+
+    None
   })
 
   <div className="flex flex-row h-dvh">
@@ -92,6 +120,7 @@ let make = () => {
             )
             setSelectElement(_ => Some(Project(newProjectId)))
             setDisplayElement(_ => Some(Project(newProjectId)))
+            focusClassNextRef.current = Some("class-display-title")
           }}
           className={["bg-slate-200 px-2 rounded"]->Array.join(" ")}>
           {"Add Project"->React.string}
@@ -112,6 +141,8 @@ let make = () => {
             setSelectElement
             displayElement
             setDisplayElement
+            focusClassNextRef
+            focusIdNextRef
           />
         )
         ->React.array}
@@ -126,8 +157,9 @@ let make = () => {
           <div>
             <input
               type_="text"
+              id="id-display-title"
               className={[
-                " flex-1 bg-inherit text-[--foreground] w-full outline-none 
+                "px-2 flex-1 bg-inherit text-[--foreground] w-full outline-none 
           leading-none padding-none border-none h-5 -my-1 focus:text-blue-500",
               ]->Array.join(" ")}
               placeholder={"Todo Text"}
@@ -149,11 +181,17 @@ let make = () => {
             <input
               type_="text"
               className={[
+                "class-display-title px-2",
                 " flex-1 bg-inherit text-[--foreground] w-full outline-none 
           leading-none padding-none border-none h-5 -my-1 focus:text-blue-500",
               ]->Array.join(" ")}
               placeholder={"Project Name"}
               value={project.name}
+              onKeyDown={e => {
+                if e->ReactEvent.Keyboard.key == "Escape" {
+                  focusIdNextRef.current = Some(getProjectId(project.id))
+                }
+              }}
               onChange={e => {
                 updateProject(project.id, p => {
                   ...p,

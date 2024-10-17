@@ -168,6 +168,8 @@ let make = (
   ~setSelectElement,
   ~displayElement,
   ~setDisplayElement,
+  ~focusClassNextRef: React.ref<option<string>>,
+  ~focusIdNextRef: React.ref<option<string>>,
 ) => {
   let projectRef = React.useRef(Nullable.null)
 
@@ -175,6 +177,10 @@ let make = (
 
   let onKeyDownProject = e => {
     if isSelected {
+      if e->ReactEvent.Keyboard.key == "Enter" {
+        focusIdNextRef.current = Some("id-display-title")
+      }
+
       projectRef.current
       ->Nullable.toOption
       ->Option.mapOr((), dom => {
@@ -193,6 +199,7 @@ let make = (
 
   <div className="border-b">
     <div
+      id={getProjectId(project.id)}
       tabIndex={0}
       ref={ReactDOM.Ref.domRef(projectRef)}
       onKeyDown={onKeyDownProject}
@@ -202,12 +209,13 @@ let make = (
       }}
       className={[
         listItemClass,
-        "flex flex-row justify-between items-center bg-slate-300",
+        "h-6 flex flex-row justify-between items-center bg-slate-300",
         isSelected ? "outline outline-1 -outline-offset-1" : "",
       ]->Array.join(" ")}>
-      <div> {project.name->React.string} </div>
+      <div className=" flex-none px-2"> {project.name->React.string} </div>
+      <div className="flex-1" />
       <button
-        className="rounded bg-slate-200 w-20 text-xs h-fit"
+        className="rounded bg-slate-200 px-1 text-xs h-fit flex-none"
         onClick={_ =>
           updateProject(project.id, p => {
             ...p,
@@ -216,7 +224,7 @@ let make = (
         {(project.isActive ? "Active" : "Not Active")->React.string}
       </button>
       <button
-        className="text-xs rounded h-3 w-10"
+        className="text-xs rounded h-3 w-4 flex-none"
         onClick={_ =>
           setShowArchive(v =>
             v->Array.includes(project.id)

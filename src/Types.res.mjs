@@ -118,10 +118,15 @@ function statusStringShort(s) {
   }
 }
 
+function getProjectId(s) {
+  return "project-" + s;
+}
+
 export {
   isArchiveStatus ,
   statusToFloat ,
   statusString ,
   statusStringShort ,
+  getProjectId ,
 }
 /* No side effect */
