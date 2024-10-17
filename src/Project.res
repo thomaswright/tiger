@@ -7,8 +7,13 @@ module StatusSelect = {
 
 module Todo = {
   @react.component
-  let make = (~todo: todo, ~updateTodo) => {
-    <div className="flex flex-row justify-start items-center gap-2 px-2">
+  let make = (~todo: todo, ~updateTodo, ~isSelected, ~setSelectElement) => {
+    <div
+      onFocus={_ => setSelectElement(_ => Some(Todo(todo.id)))}
+      className={[
+        "flex flex-row justify-start items-center gap-2 px-2",
+        isSelected ? "bg-slate-100 outline outline-1 -outline-offset-1" : "",
+      ]->Array.join(" ")}>
       <StatusSelect
         status={todo.status}
         setStatus={newStatus =>
@@ -17,7 +22,18 @@ module Todo = {
             status: newStatus,
           })}
       />
-      <div> {todo.text->React.string} </div>
+      <input
+        type_="text"
+        className={"flex-1 bg-inherit text-[--foreground] w-full outline-none leading-none padding-none border-none h-5 -my-1"}
+        placeholder={""}
+        value={todo.text}
+        onChange={e => {
+          updateTodo(todo.id, t => {
+            ...t,
+            text: ReactEvent.Form.target(e)["value"],
+          })
+        }}
+      />
     </div>
   }
 }
@@ -30,6 +46,8 @@ let make = (
   ~setShowArchive,
   ~updateProject,
   ~updateTodo,
+  ~selectElement,
+  ~setSelectElement,
 ) => {
   <div className="border-y">
     <div className="flex flex-row justify-between items-center bg-slate-300">
@@ -59,7 +77,11 @@ let make = (
         {todos
         ->Array.filter(todo => showArchive ? true : !isArchiveStatus(todo.status))
         ->Array.toSorted((a, b) => a.status->statusToFloat -. b.status->statusToFloat)
-        ->Array.map(todo => <Todo todo updateTodo />)
+        ->Array.map(todo =>
+          <Todo
+            todo updateTodo isSelected={selectElement == Some(Todo(todo.id))} setSelectElement
+          />
+        )
         ->React.array}
       </div>
     </div>

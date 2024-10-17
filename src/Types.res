@@ -31,6 +31,8 @@ type project = {
 
 type projectsTab = | @as("All") All | @as("Active") Active
 
+type selectElement = Todo(string) | Project(string)
+
 let isArchiveStatus = s =>
   switch s {
   | ArchiveDone | ArchiveReject | ArchiveNoNeed | Trash => true

@@ -30,67 +30,6 @@ let defaultTodos = [
 // let mapToArray = m => m ->
 // Map.entries -> Array.fromIterator
 
-module StatusSelector = {
-  @react.component
-  let make = () => {
-    <div className="text-xs w-[200px] bg-white p-2 flex flex-col gap-1 border rounded-lg ">
-      <div className="flex flex-row justify-between gap-1 py-1">
-        <div className="flex flex-row gap-1 flex-1 px-1">
-          <div
-            className="flex-none px-1 font-bold w-2 leading-none text-2xs flex flex-row items-center justify-center -rotate-90">
-            {"Todo"->React.string}
-          </div>
-          <div className="flex flex-col flex-1 divide-y border rounded overflow-hidden">
-            <div className="flex-1 px-1 bg-white "> {"Urgent"->React.string} </div>
-            <div className="flex-1 px-1 bg-white "> {"High"->React.string} </div>
-            <div className="flex-1 px-1 bg-white "> {"Medium"->React.string} </div>
-            <div className="flex-1 px-1 bg-white "> {"Low"->React.string} </div>
-          </div>
-        </div>
-        <div className="flex flex-row gap-1 flex-1 px-1">
-          <div
-            className="flex-none px-1 font-bold w-2 leading-none text-2xs flex flex-row items-center justify-center -rotate-90">
-            {"Later"->React.string}
-          </div>
-          <div className="flex flex-col flex-1 divide-y border rounded overflow-hidden">
-            <div className="flex-1 px-1 bg-white "> {"Will "->React.string} </div>
-            <div className="flex-1 px-1 bg-white "> {"Maybe"->React.string} </div>
-            <div className="flex-1 px-1 bg-white "> {"Unlikely"->React.string} </div>
-            <div className="flex-1 px-1 bg-white "> {"Unsorted"->React.string} </div>
-          </div>
-        </div>
-      </div>
-      <div className="flex flex-row justify-between gap-1 py-1">
-        <div className="flex flex-row gap-1 flex-1 px-1 ">
-          <div
-            className="flex-none px-1 font-bold w-2 leading-none text-2xs flex flex-row items-center justify-center -rotate-90">
-            {"Resolve"->React.string}
-          </div>
-          <div className="flex flex-col flex-1 divide-y border rounded overflow-hidden">
-            <div className="flex-1 px-1 bg-white "> {"Done"->React.string} </div>
-            <div className="flex-1 px-1 bg-white "> {"Wont Do"->React.string} </div>
-            <div className="flex-1 px-1 bg-white "> {"No Need"->React.string} </div>
-          </div>
-        </div>
-        <div className=" flex flex-row gap-1 flex-1 px-1 ">
-          <div
-            className="flex-none px-1 font-bold w-2 leading-none text-2xs flex flex-row items-center justify-center -rotate-90">
-            {"Archive"->React.string}
-          </div>
-          <div className="flex flex-col flex-1 divide-y border rounded overflow-hidden">
-            <div className="flex-1 px-1 bg-white "> {"Done"->React.string} </div>
-            <div className="flex-1 px-1 bg-white "> {"Wont Do"->React.string} </div>
-            <div className="flex-1 px-1 bg-white "> {"No Need"->React.string} </div>
-          </div>
-        </div>
-      </div>
-      <div className="flex flex-row justify-between gap-1  pl-4 pr-1">
-        <div className="bg-white rounded  px-1 border flex-1"> {"Trash"->React.string} </div>
-      </div>
-    </div>
-  }
-}
-
 module Details = {
   @react.component
   let make = () => {
@@ -104,6 +43,8 @@ let make = () => {
   let (todos, setTodos, _) = Common.useLocalStorage("todos", defaultTodos)
   let (showArchive, setShowArchive, _) = Common.useLocalStorage("showArchive", [])
   let (projectsTab, setProjectTab, _) = Common.useLocalStorage("projectsTab", All)
+  let (selectElement, setSelectElement) = React.useState(_ => None)
+
   let updateProject = React.useCallback0((id, f) => {
     setProjects(v => v->Array.map(project => project.id == id ? f(project) : project))
   })
@@ -143,6 +84,8 @@ let make = () => {
             todos={todos->Array.filter(todo => todo.project == project.id)}
             updateProject
             updateTodo
+            selectElement
+            setSelectElement
           />
         )
         ->React.array}
