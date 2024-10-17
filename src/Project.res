@@ -6,8 +6,12 @@ module StatusSelect = {
 }
 
 module Todo = {
+  let todoClass = "class-list-todo-text"
+
   @react.component
   let make = (~todo: todo, ~updateTodo, ~isSelected, ~setSelectElement) => {
+    let ref = React.useRef(Nullable.null)
+
     <div
       onFocus={_ => setSelectElement(_ => Some(Todo(todo.id)))}
       className={[
@@ -23,10 +27,34 @@ module Todo = {
           })}
       />
       <input
+        ref={ReactDOM.Ref.domRef(ref)}
         type_="text"
-        className={"flex-1 bg-inherit text-[--foreground] w-full outline-none leading-none padding-none border-none h-5 -my-1"}
+        className={[
+          todoClass,
+          " flex-1 bg-inherit text-[--foreground] w-full outline-none 
+          leading-none padding-none border-none h-5 -my-1",
+        ]->Array.join(" ")}
         placeholder={""}
         value={todo.text}
+        onKeyDown={e => {
+          ref.current
+          ->Nullable.toOption
+          ->Option.mapOr((), dom => {
+            let cursorPosition =
+              dom->Obj.magic->Webapi.Dom.HtmlInputElement.selectionStart->Option.getOr(0)
+            let inputValueLength = dom->Obj.magic->Webapi.Dom.HtmlInputElement.value->String.length
+
+            if e->ReactEvent.Keyboard.keyCode == 38 && cursorPosition == 0 {
+              e->ReactEvent.Keyboard.preventDefault
+              Common.focusPreviousClass(todoClass)
+            }
+
+            if e->ReactEvent.Keyboard.keyCode == 40 && cursorPosition == inputValueLength {
+              e->ReactEvent.Keyboard.preventDefault
+              Common.focusNextClass(todoClass)
+            }
+          })
+        }}
         onChange={e => {
           updateTodo(todo.id, t => {
             ...t,
