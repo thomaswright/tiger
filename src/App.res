@@ -40,7 +40,7 @@ module Details = {
 @react.component
 let make = () => {
   let (projects, setProjects, _) = Common.useLocalStorage("projects", defaultProjects)
-  let (todos, setTodos, _) = Common.useLocalStorage("todos", defaultTodos)
+  let (todos, setTodos, getTodos) = Common.useLocalStorage("todos", defaultTodos)
   let (showArchive, setShowArchive, _) = Common.useLocalStorage("showArchive", [])
   let (projectsTab, setProjectTab, _) = Common.useLocalStorage("projectsTab", All)
   let (selectElement, setSelectElement) = React.useState(_ => None)
@@ -141,6 +141,7 @@ let make = () => {
             setDisplayElement
             setFocusIdNext
             setTodos
+            getTodos
           />
         )
         ->React.array}

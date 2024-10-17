@@ -8,6 +8,11 @@ module StatusSelect = {
 let listItemClass = "class-list-item"
 let todoInputClass = "class-list-todo-input"
 
+let mapNullable = (n, f) =>
+  n
+  ->Nullable.toOption
+  ->Option.mapOr((), f)
+
 module Todo = {
   @react.component
   let make = (
@@ -19,6 +24,8 @@ module Todo = {
     ~setDisplayElement,
     ~setTodos: (array<Types.todo> => array<Types.todo>) => unit,
     ~setFocusIdNext,
+    ~newTodoAfter,
+    ~getTodos: unit => array<todo>,
   ) => {
     let inputRef = React.useRef(Nullable.null)
     let containerRef = React.useRef(Nullable.null)
@@ -26,9 +33,7 @@ module Todo = {
 
     let onKeyDownContainer = e => {
       if isSelected {
-        containerRef.current
-        ->Nullable.toOption
-        ->Option.mapOr((), dom => {
+        containerRef.current->mapNullable(dom => {
           if e->ReactEvent.Keyboard.key == "ArrowUp" {
             e->ReactEvent.Keyboard.preventDefault
             Common.focusPreviousClass(listItemClass, dom)
@@ -49,47 +54,14 @@ module Todo = {
           }
 
           if e->ReactEvent.Keyboard.key == "Enter" && e->ReactEvent.Keyboard.metaKey {
-            let newId = Common.uuid()
-            setTodos(v =>
-              v
-              ->Array.findIndexOpt(t => t.id == todo.id)
-              ->Option.mapOr(
-                v,
-                i => {
-                  v->Array.toSpliced(
-                    ~start=i + 1,
-                    ~remove=0,
-                    ~insert=[
-                      {
-                        id: newId,
-                        text: "",
-                        project: todo.project,
-                        isDone: false,
-                        status: LaterUnsorted,
-                      },
-                    ],
-                  )
-                },
-              )
-            )
-
-            setFocusIdNext(_ => Some(getTodoInputId(newId)))
-
-            e->ReactEvent.Keyboard.preventDefault
-            inputRef.current
-            ->Nullable.toOption
-            ->Option.mapOr((), inputEl => {
-              let inputEl = inputEl->Obj.magic
-              inputEl->HtmlElement.focus
-              inputEl->HtmlInputElement.setSelectionStart(inputEl->HtmlInputElement.selectionEnd)
-            })
+            getTodos()
+            ->Array.findIndexOpt(v => v.id == todo.id)
+            ->Option.mapOr((), todoIndex => newTodoAfter(todoIndex))
           }
 
           if e->ReactEvent.Keyboard.key == "Enter" {
             e->ReactEvent.Keyboard.preventDefault
-            inputRef.current
-            ->Nullable.toOption
-            ->Option.mapOr((), inputEl => {
+            inputRef.current->mapNullable(inputEl => {
               let inputEl = inputEl->Obj.magic
               inputEl->HtmlElement.focus
               inputEl->HtmlInputElement.setSelectionStart(inputEl->HtmlInputElement.selectionEnd)
@@ -121,9 +93,7 @@ module Todo = {
           })
         }
 
-        inputRef.current
-        ->Nullable.toOption
-        ->Option.mapOr((), dom => {
+        inputRef.current->mapNullable(dom => {
           let cursorPosition = dom->Obj.magic->HtmlInputElement.selectionStart->Option.getOr(0)
           let inputValueLength = dom->Obj.magic->HtmlInputElement.value->String.length
 
@@ -132,9 +102,7 @@ module Todo = {
             if cursorPosition == 0 {
               e->ReactEvent.Keyboard.preventDefault
               // Common.focusPreviousClass(todoInputClass, dom)
-              containerRef.current
-              ->Nullable.toOption
-              ->Option.mapOr((), dom => {
+              containerRef.current->mapNullable(dom => {
                 dom->Obj.magic->HtmlElement.focus
               })
             }
@@ -145,9 +113,7 @@ module Todo = {
             if cursorPosition == inputValueLength {
               e->ReactEvent.Keyboard.preventDefault
               // Common.focusNextClass(todoInputClass, dom)
-              containerRef.current
-              ->Nullable.toOption
-              ->Option.mapOr((), dom => {
+              containerRef.current->mapNullable(dom => {
                 dom->Obj.magic->HtmlElement.focus
               })
             }
@@ -156,9 +122,7 @@ module Todo = {
           if e->ReactEvent.Keyboard.key == "Backspace" && inputValueLength == 0 {
             if stagedForDelete {
               setTodos(todos => todos->Array.filter(t => t.id != todo.id))
-              containerRef.current
-              ->Nullable.toOption
-              ->Option.mapOr((), containerEl => {
+              containerRef.current->mapNullable(containerEl => {
                 Common.focusPreviousClass(listItemClass, containerEl)
               })
             } else {
@@ -167,42 +131,10 @@ module Todo = {
           }
 
           if e->ReactEvent.Keyboard.key == "Enter" && cursorPosition == inputValueLength {
-            Console.log("next")
             e->ReactEvent.Keyboard.stopPropagation
-            let newId = Common.uuid()
-            setTodos(v =>
-              v
-              ->Array.findIndexOpt(t => t.id == todo.id)
-              ->Option.mapOr(
-                v,
-                i => {
-                  v->Array.toSpliced(
-                    ~start=i + 1,
-                    ~remove=0,
-                    ~insert=[
-                      {
-                        id: newId,
-                        text: "",
-                        project: todo.project,
-                        isDone: false,
-                        status: LaterUnsorted,
-                      },
-                    ],
-                  )
-                },
-              )
-            )
-
-            setFocusIdNext(_ => Some(getTodoInputId(newId)))
-
-            e->ReactEvent.Keyboard.preventDefault
-            inputRef.current
-            ->Nullable.toOption
-            ->Option.mapOr((), inputEl => {
-              let inputEl = inputEl->Obj.magic
-              inputEl->HtmlElement.focus
-              inputEl->HtmlInputElement.setSelectionStart(inputEl->HtmlInputElement.selectionEnd)
-            })
+            getTodos()
+            ->Array.findIndexOpt(v => v.id == todo.id)
+            ->Option.mapOr((), todoIndex => newTodoAfter(todoIndex))
           }
         })
       }
@@ -282,21 +214,42 @@ let make = (
   ~displayElement,
   ~setDisplayElement,
   ~setFocusIdNext,
-  ~setTodos,
+  ~setTodos: (array<Types.todo> => array<Types.todo>) => unit,
+  ~getTodos,
 ) => {
   let projectRef = React.useRef(Nullable.null)
 
   let isSelected = selectElement == Some(Project(project.id))
 
+  let newTodoAfter = i => {
+    let newId = Common.uuid()
+    setTodos(v => {
+      v->Array.toSpliced(
+        ~start=i + 1,
+        ~remove=0,
+        ~insert=[
+          {
+            id: newId,
+            text: "",
+            project: project.id,
+            isDone: false,
+            status: LaterUnsorted,
+          },
+        ],
+      )
+    })
+
+    setFocusIdNext(_ => Some(getTodoInputId(newId)))
+  }
+
   let onKeyDownProject = e => {
     if isSelected {
-      // if e->ReactEvent.Keyboard.key == "Enter" {
-      //   setFocusIdNext(_ => Some("id-display-title"))
-      // }
+      if e->ReactEvent.Keyboard.key == "Enter" {
+        // setFocusIdNext(_ => Some("id-display-title"))
+        newTodoAfter(-1)
+      }
 
-      projectRef.current
-      ->Nullable.toOption
-      ->Option.mapOr((), dom => {
+      projectRef.current->mapNullable(dom => {
         if e->ReactEvent.Keyboard.key == "ArrowUp" {
           e->ReactEvent.Keyboard.preventDefault
           Common.focusPreviousClass(listItemClass, dom)
@@ -363,6 +316,8 @@ let make = (
             setDisplayElement
             setTodos
             setFocusIdNext
+            newTodoAfter
+            getTodos
           />
         )
         ->React.array}

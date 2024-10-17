@@ -21,8 +21,13 @@ var listItemClass = "class-list-item";
 
 var todoInputClass = "class-list-todo-input";
 
+function mapNullable(n, f) {
+  Core__Option.mapOr((n == null) ? undefined : Caml_option.some(n), undefined, f);
+}
+
 function Project$Todo(props) {
-  var setFocusIdNext = props.setFocusIdNext;
+  var getTodos = props.getTodos;
+  var newTodoAfter = props.newTodoAfter;
   var setTodos = props.setTodos;
   var setDisplayElement = props.setDisplayElement;
   var setSelectElement = props.setSelectElement;
@@ -38,7 +43,7 @@ function Project$Todo(props) {
   var stagedForDelete = match[0];
   var onKeyDownContainer = function (e) {
     if (isSelected) {
-      return Core__Option.mapOr(Caml_option.nullable_to_opt(containerRef.current), undefined, (function (dom) {
+      return mapNullable(containerRef.current, (function (dom) {
                     if (e.key === "ArrowUp") {
                       e.preventDefault();
                       Common.focusPreviousClass(listItemClass, dom);
@@ -58,32 +63,15 @@ function Project$Todo(props) {
                             }));
                     }
                     if (e.key === "Enter" && e.metaKey) {
-                      var newId = Uuid.v4();
-                      setTodos(function (v) {
-                            return Core__Option.mapOr(Core__Array.findIndexOpt(v, (function (t) {
-                                              return t.id === todo.id;
-                                            })), v, (function (i) {
-                                          return v.toSpliced(i + 1 | 0, 0, {
-                                                      id: newId,
-                                                      text: "",
-                                                      project: todo.project,
-                                                      isDone: false,
-                                                      status: "LaterUnsorted"
-                                                    });
-                                        }));
-                          });
-                      setFocusIdNext(function (param) {
-                            return Types.getTodoInputId(newId);
-                          });
-                      e.preventDefault();
-                      Core__Option.mapOr(Caml_option.nullable_to_opt(inputRef.current), undefined, (function (inputEl) {
-                              inputEl.focus();
-                              inputEl.selectionStart = Caml_option.nullable_to_opt(inputEl.selectionEnd);
+                      Core__Option.mapOr(Core__Array.findIndexOpt(getTodos(), (function (v) {
+                                  return v.id === todo.id;
+                                })), undefined, (function (todoIndex) {
+                              newTodoAfter(todoIndex);
                             }));
                     }
                     if (e.key === "Enter") {
                       e.preventDefault();
-                      Core__Option.mapOr(Caml_option.nullable_to_opt(inputRef.current), undefined, (function (inputEl) {
+                      mapNullable(inputRef.current, (function (inputEl) {
                               inputEl.focus();
                               inputEl.selectionStart = Caml_option.nullable_to_opt(inputEl.selectionEnd);
                             }));
@@ -114,14 +102,14 @@ function Project$Todo(props) {
                 dom.focus();
               }));
       }
-      return Core__Option.mapOr(Caml_option.nullable_to_opt(inputRef.current), undefined, (function (dom) {
+      return mapNullable(inputRef.current, (function (dom) {
                     var cursorPosition = Core__Option.getOr(Caml_option.nullable_to_opt(dom.selectionStart), 0);
                     var inputValueLength = dom.value.length;
                     if (e.key === "ArrowUp") {
                       e.stopPropagation();
                       if (cursorPosition === 0) {
                         e.preventDefault();
-                        Core__Option.mapOr(Caml_option.nullable_to_opt(containerRef.current), undefined, (function (dom) {
+                        mapNullable(containerRef.current, (function (dom) {
                                 dom.focus();
                               }));
                       }
@@ -131,7 +119,7 @@ function Project$Todo(props) {
                       e.stopPropagation();
                       if (cursorPosition === inputValueLength) {
                         e.preventDefault();
-                        Core__Option.mapOr(Caml_option.nullable_to_opt(containerRef.current), undefined, (function (dom) {
+                        mapNullable(containerRef.current, (function (dom) {
                                 dom.focus();
                               }));
                       }
@@ -144,7 +132,7 @@ function Project$Todo(props) {
                                           return t.id !== todo.id;
                                         });
                             });
-                        Core__Option.mapOr(Caml_option.nullable_to_opt(containerRef.current), undefined, (function (containerEl) {
+                        mapNullable(containerRef.current, (function (containerEl) {
                                 Common.focusPreviousClass(listItemClass, containerEl);
                               }));
                       } else {
@@ -153,33 +141,15 @@ function Project$Todo(props) {
                             });
                       }
                     }
-                    if (!(e.key === "Enter" && cursorPosition === inputValueLength)) {
-                      return ;
+                    if (e.key === "Enter" && cursorPosition === inputValueLength) {
+                      e.stopPropagation();
+                      return Core__Option.mapOr(Core__Array.findIndexOpt(getTodos(), (function (v) {
+                                        return v.id === todo.id;
+                                      })), undefined, (function (todoIndex) {
+                                    newTodoAfter(todoIndex);
+                                  }));
                     }
-                    console.log("next");
-                    e.stopPropagation();
-                    var newId = Uuid.v4();
-                    setTodos(function (v) {
-                          return Core__Option.mapOr(Core__Array.findIndexOpt(v, (function (t) {
-                                            return t.id === todo.id;
-                                          })), v, (function (i) {
-                                        return v.toSpliced(i + 1 | 0, 0, {
-                                                    id: newId,
-                                                    text: "",
-                                                    project: todo.project,
-                                                    isDone: false,
-                                                    status: "LaterUnsorted"
-                                                  });
-                                      }));
-                        });
-                    setFocusIdNext(function (param) {
-                          return Types.getTodoInputId(newId);
-                        });
-                    e.preventDefault();
-                    Core__Option.mapOr(Caml_option.nullable_to_opt(inputRef.current), undefined, (function (inputEl) {
-                            inputEl.focus();
-                            inputEl.selectionStart = Caml_option.nullable_to_opt(inputEl.selectionEnd);
-                          }));
+                    
                   }));
     }
     
@@ -284,6 +254,7 @@ var Todo = {
 };
 
 function Project(props) {
+  var getTodos = props.getTodos;
   var setTodos = props.setTodos;
   var setFocusIdNext = props.setFocusIdNext;
   var setDisplayElement = props.setDisplayElement;
@@ -300,9 +271,27 @@ function Project(props) {
         TAG: "Project",
         _0: project.id
       });
+  var newTodoAfter = function (i) {
+    var newId = Uuid.v4();
+    setTodos(function (v) {
+          return v.toSpliced(i + 1 | 0, 0, {
+                      id: newId,
+                      text: "",
+                      project: project.id,
+                      isDone: false,
+                      status: "LaterUnsorted"
+                    });
+        });
+    setFocusIdNext(function (param) {
+          return Types.getTodoInputId(newId);
+        });
+  };
   var onKeyDownProject = function (e) {
     if (isSelected) {
-      return Core__Option.mapOr(Caml_option.nullable_to_opt(projectRef.current), undefined, (function (dom) {
+      if (e.key === "Enter") {
+        newTodoAfter(-1);
+      }
+      return mapNullable(projectRef.current, (function (dom) {
                     if (e.key === "ArrowUp") {
                       e.preventDefault();
                       Common.focusPreviousClass(listItemClass, dom);
@@ -400,7 +389,9 @@ function Project(props) {
                                               displayElement: displayElement,
                                               setDisplayElement: setDisplayElement,
                                               setTodos: setTodos,
-                                              setFocusIdNext: setFocusIdNext
+                                              setFocusIdNext: setFocusIdNext,
+                                              newTodoAfter: newTodoAfter,
+                                              getTodos: getTodos
                                             }, Types.getTodoId(todo.id));
                                 }),
                             className: "flex flex-col divide-y "
@@ -417,6 +408,7 @@ export {
   StatusSelect ,
   listItemClass ,
   todoInputClass ,
+  mapNullable ,
   Todo ,
   make$1 as make,
 }

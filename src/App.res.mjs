@@ -37,6 +37,7 @@ function App(props) {
   var setProjects = match[1];
   var projects = match[0];
   var match$1 = Common.useLocalStorage("todos", defaultTodos);
+  var getTodos = match$1[2];
   var setTodos = match$1[1];
   var todos = match$1[0];
   var match$2 = Common.useLocalStorage("showArchive", []);
@@ -266,7 +267,8 @@ function App(props) {
                                                 displayElement: displayElement,
                                                 setDisplayElement: setDisplayElement,
                                                 setFocusIdNext: setFocusIdNext,
-                                                setTodos: setTodos
+                                                setTodos: setTodos,
+                                                getTodos: getTodos
                                               }, Types.getProjectId(project.id));
                                   })
                             })
