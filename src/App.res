@@ -67,12 +67,10 @@ let make = () => {
       element->Obj.magic->HtmlElement.focus
       setFocusClassNext(_ => None)
     })
-    Console.log(focusIdNext)
 
     focusIdNext
     ->Option.flatMap(x => document->Document.getElementById(x))
     ->Option.mapOr((), element => {
-      Console.log(element)
       element->Obj.magic->HtmlElement.focus
       setFocusIdNext(_ => None)
     })

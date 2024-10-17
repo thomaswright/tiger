@@ -96,11 +96,9 @@ function App(props) {
                       
                     });
               }));
-        console.log(focusIdNext);
         Core__Option.mapOr(Core__Option.flatMap(focusIdNext, (function (x) {
                     return Caml_option.nullable_to_opt(document.getElementById(x));
                   })), undefined, (function (element) {
-                console.log(element);
                 element.focus();
                 setFocusIdNext(function (param) {
                       
