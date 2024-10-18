@@ -21,7 +21,7 @@ function statusToFloat(s) {
             });
 }
 
-function statusString(s) {
+function statusStringShort(s) {
   switch (s) {
     case "Underway" :
         return "Underway";
@@ -49,6 +49,38 @@ function statusString(s) {
         return "Scrap";
     case "Unsorted" :
         return "";
+    
+  }
+}
+
+function statusString(s) {
+  switch (s) {
+    case "Underway" :
+        return "Underway";
+    case "UnderwayHalfDone" :
+        return "Underway: Half Done";
+    case "UnderwayWrapUp" :
+        return "Underway: Wrap Up";
+    case "NowUrgent" :
+        return "Now: Urgent";
+    case "NowWillDo" :
+        return "Now: Will Do";
+    case "NowIfTime" :
+        return "Now: If Time";
+    case "FutureSoon" :
+        return "Future: Soon";
+    case "FutureWillDo" :
+        return "Future";
+    case "FutureConsider" :
+        return "Future: Consider";
+    case "ResolveDone" :
+        return "Resolved: Done";
+    case "ResolveNo" :
+        return "Resolved: No";
+    case "ResolveScrap" :
+        return "Resolved: Scrap";
+    case "Unsorted" :
+        return "No Status";
     
   }
 }
@@ -129,16 +161,14 @@ function getTodoInputId(s) {
   return "todo-input-" + s;
 }
 
-var statusStringShort = statusString;
-
 var listItemClass = "class-list-item";
 
 var todoInputClass = "class-list-todo-input";
 
 export {
   statusToFloat ,
-  statusString ,
   statusStringShort ,
+  statusString ,
   statusColor ,
   statusColorText ,
   getProjectId ,

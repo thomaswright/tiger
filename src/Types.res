@@ -63,7 +63,7 @@ let statusToFloat = s => {
   ->Int.toFloat
 }
 
-let statusString = s => {
+let statusStringShort = s => {
   switch s {
   | Unsorted => ""
   | Underway => "Underway"
@@ -81,59 +81,23 @@ let statusString = s => {
   }
 }
 
-let statusStringShort = statusString
-
-// = s => {
-//   switch s {
-//   | Urgent => "!"
-//   | High => "High"
-//   | Medium => "Med"
-//   | Low => "Low"
-//   | Will => "Will"
-//   | Maybe => "May"
-//   | Unlikely => "Slim"
-//   | Unsorted => ""
-//   | Done => "✔︎"
-//   | Rejected => "🞫"
-//   | Closed => "-"
-
-//   // | TodoUrgent => "!"
-//   // | TodoHigh => "High"
-//   // | TodoMedium => "Med"
-//   // | TodoLow => "Low"
-//   // | LaterWill => "Will"
-//   // | LaterMaybe => "May"
-//   // | LaterUnlikely => "Slim"
-//   // | LaterUnsorted => ""
-//   // | ResolveDone => "✔︎"
-//   // | ResolveReject => "🞫"
-//   // | ResolveNoNeed => "-"
-//   // | ArchiveDone => "✔︎"
-//   // | ArchiveReject => "🞫"
-//   // | ArchiveNoNeed => "-"
-//   // | Trash => "T"
-//   }
-// }
-
-// let statusIcon = s => {
-//   switch s {
-//   | TodoUrgent => "!"->React.string
-//   | TodoHigh => "1"->React.string
-//   | TodoMedium => "2"->React.string
-//   | TodoLow => "3"->React.string
-//   | LaterWill => "A"->React.string
-//   | LaterMaybe => "B"->React.string
-//   | LaterUnlikely => "C"->React.string
-//   | LaterUnsorted => <Icons.Minus />
-//   | ResolveDone => <Icons.Check />
-//   | ResolveReject => <Icons.X />
-//   | ResolveNoNeed => <Icons.Slash />
-//   | ArchiveDone => <Icons.Check />
-//   | ArchiveReject => <Icons.X />
-//   | ArchiveNoNeed => <Icons.Slash />
-//   | Trash => <Icons.Trash />
-//   }
-// }
+let statusString = s => {
+  switch s {
+  | Unsorted => "No Status"
+  | Underway => "Underway"
+  | UnderwayHalfDone => "Underway: Half Done"
+  | UnderwayWrapUp => "Underway: Wrap Up"
+  | NowUrgent => "Now: Urgent"
+  | NowWillDo => "Now: Will Do"
+  | NowIfTime => "Now: If Time"
+  | FutureSoon => "Future: Soon"
+  | FutureWillDo => "Future"
+  | FutureConsider => "Future: Consider"
+  | ResolveDone => "Resolved: Done"
+  | ResolveNo => "Resolved: No"
+  | ResolveScrap => "Resolved: Scrap"
+  }
+}
 
 let statusColor = s =>
   switch s {

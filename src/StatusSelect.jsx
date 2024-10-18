@@ -78,20 +78,24 @@ const Dropdown = ({ status, setStatus, removeTodo, focusTodo }) => {
       <DropdownMenu.Portal>
         <DropdownMenu.Content className="DropdownMenuContent" sideOffset={5}>
           <div>
-            <div className="flex flex-row gap-1 items-center pt-2 pb-1 flex-wrap">
-              {item("Unsorted")}
-              {item("Underway")}
-              {item("UnderwayHalfDone")}
-              {item("UnderwayWrapUp")}
-              {item("NowUrgent")}
-              {item("NowWillDo")}
-              {item("NowIfTime")}
+            <div className="grid grid-cols-3 gap-1 p-2 ">
               {item("FutureSoon")}
               {item("FutureWillDo")}
               {item("FutureConsider")}
+
+              {item("NowUrgent")}
+              {item("NowWillDo")}
+              {item("NowIfTime")}
+
+              {item("Underway")}
+              {item("UnderwayHalfDone")}
+              {item("UnderwayWrapUp")}
+
               {item("ResolveDone")}
               {item("ResolveNo")}
               {item("ResolveScrap")}
+
+              {item("Unsorted")}
             </div>
             <div className="h-6 font-bold flex flex-row items-center justify-center">
               {/* <div className=" w-6 flex flex-row items-center justify-center">

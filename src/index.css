@@ -20,10 +20,10 @@ html {
   --t1: oklch(from var(--tBase) 0.97 c h);
   --t0: white;
 
-  --underway: oklch(0.93 0.07 127.33);
-  --now: oklch(0.93 0.07 90.6);
-  --future: oklch(0.93 0.07 232.51);
-  --resolve: oklch(0.93 0.07 309.92);
+  --underway: oklch(0.93 0.07 127);
+  --now: oklch(0.93 0.07 90);
+  --future: oklch(0.93 0.07 232);
+  --resolve: oklch(0.93 0.07 310);
 
   --underwayText: #0d6000;
   --nowText: #ff6200;
@@ -31,12 +31,12 @@ html {
   --resolveText: #3f146f;
 
   --NowUrgent: #ffd5cf;
+  --Unsorted: oklch(0.93 0.02 230);
   --Underway: var(--underway);
   --UnderwayHalfDone: var(--underway);
   --UnderwayWrapUp: var(--underway);
   --NowWillDo: var(--now);
   --NowIfTime: var(--now);
-  --Unsorted: var(--future);
   --FutureSoon: var(--future);
   --FutureWillDo: var(--future);
   --FutureConsider: var(--future);
@@ -45,12 +45,12 @@ html {
   --ResolveScrap: var(--resolve);
 
   --NowUrgentText: #be001a;
+  --UnsortedText: oklch(0.44 0.02 230);
   --UnderwayText: var(--underwayText);
   --UnderwayHalfDoneText: var(--underwayText);
   --UnderwayWrapUpText: var(--underwayText);
   --NowWillDoText: var(--nowText);
   --NowIfTimeText: var(--nowText);
-  --UnsortedText: var(--futureText);
   --FutureSoonText: var(--futureText);
   --FutureWillDoText: var(--futureText);
   --FutureConsiderText: var(--futureText);
