@@ -8,6 +8,7 @@ import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
+import * as Tb from "react-icons/tb";
 import * as JsxRuntime from "react/jsx-runtime";
 import StatusSelectJsx from "./StatusSelect.jsx";
 
@@ -312,7 +313,7 @@ function Project(props) {
                               className: "flex-1"
                             }),
                         JsxRuntime.jsx("button", {
-                              children: showArchive ? "^" : "v",
+                              children: showArchive ? JsxRuntime.jsx(Tb.TbEye, {}) : JsxRuntime.jsx(Tb.TbEyeClosed, {}),
                               className: "text-xs rounded h-3 w-4 flex-none",
                               onClick: (function (param) {
                                   setShowArchive(function (v) {

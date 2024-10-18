@@ -283,7 +283,7 @@ let make = (
               ? v->Array.filter(el => el != project.id)
               : v->Array.concat([project.id])
           )}>
-        {(showArchive ? "^" : "v")->React.string}
+        {showArchive ? <Icons.Eye /> : <Icons.EyeClosed />}
       </button>
     </div>
     <div>
