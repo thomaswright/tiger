@@ -134,14 +134,19 @@ function statusColor(s) {
     case "LaterUnsorted" :
         return "var(--later)";
     case "ResolveDone" :
+        return "var(--resolveDone)";
     case "ResolveReject" :
+        return "var(--resolveReject)";
     case "ResolveNoNeed" :
-        return "var(--resolve)";
+        return "var(--resolveNoNeed)";
     case "ArchiveDone" :
+        return "var(--archiveDone)";
     case "ArchiveReject" :
+        return "var(--archiveReject)";
     case "ArchiveNoNeed" :
+        return "var(--archiveNoNeed)";
     case "Trash" :
-        return "var(--archive)";
+        return "var(--trash)";
     
   }
 }

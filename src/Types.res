@@ -109,13 +109,13 @@ let statusColor = s =>
   | LaterMaybe => "var(--later)"
   | LaterUnlikely => "var(--later)"
   | LaterUnsorted => "var(--later)"
-  | ResolveDone => "var(--resolve)"
-  | ResolveReject => "var(--resolve)"
-  | ResolveNoNeed => "var(--resolve)"
-  | ArchiveDone => "var(--archive)"
-  | ArchiveReject => "var(--archive)"
-  | ArchiveNoNeed => "var(--archive)"
-  | Trash => "var(--archive)"
+  | ResolveDone => "var(--resolveDone)"
+  | ResolveReject => "var(--resolveReject)"
+  | ResolveNoNeed => "var(--resolveNoNeed)"
+  | ArchiveDone => "var(--archiveDone)"
+  | ArchiveReject => "var(--archiveReject)"
+  | ArchiveNoNeed => "var(--archiveNoNeed)"
+  | Trash => "var(--trash)"
   }
 
 let getProjectId = s => "project-" ++ s
