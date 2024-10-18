@@ -26,9 +26,9 @@ html {
 
   --later: hsl(217, 100%, 38%);
   --resolveDone: hsl(118, 100%, 27%);
-  --resolveReject: hsl(118, 36%, 24%);
+  --resolveReject: hsl(268, 55%, 33%);
   --resolveNoNeed: var(--resolveReject);
-  --archiveDone: hsl(0, 0%, 55%);
+  --archiveDone: hsl(0, 0%, 40%);
   --archiveReject: hsl(0, 0%, 40%);
   --archiveNoNeed: var(--archiveReject);
   --trash: hsl(0, 0%, 31%);

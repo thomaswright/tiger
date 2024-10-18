@@ -23,32 +23,6 @@ button {
   animation-name: slideRightAndFade;
 }
 
-.DropdownMenuItem {
-  @apply border-t border-t-[var(--t3)] w-full font-bold flex flex-row items-center justify-center relative h-6 select-none px-2;
-  color: var(--t10);
-}
-
-.DropdownMenuItemSelected {
-  @apply w-full font-bold flex flex-row items-center justify-center relative h-6 select-none px-2;
-  color: var(--background);
-  background-color: blue !important;
-}
-
-.DropdownMenuItem[data-disabled] {
-  color: var(--blue-8);
-  pointer-events: none;
-}
-
-.DropdownMenuItem[data-highlighted] {
-  @apply outline-none;
-  background-color: var(--t3);
-  color: var(--t10);
-}
-
-.DropdownMenuItemSelected[data-highlighted] {
-  @apply outline-none;
-}
-
 .DropdownMenuItemIndicator {
   position: absolute;
   left: 0;
@@ -60,36 +34,6 @@ button {
 
 .DropdownMenuArrow {
   fill: var(--t6);
-}
-
-.TooltipContent {
-  @apply shadow;
-  border-radius: 4px;
-  padding: 10px 15px;
-  font-size: 15px;
-  line-height: 1;
-  color: var(--t10);
-  background-color: white;
-  user-select: none;
-  animation-duration: 400ms;
-  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform, opacity;
-}
-.TooltipContent[data-state="delayed-open"][data-side="top"] {
-  animation-name: slideDownAndFade;
-}
-.TooltipContent[data-state="delayed-open"][data-side="right"] {
-  animation-name: slideLeftAndFade;
-}
-.TooltipContent[data-state="delayed-open"][data-side="bottom"] {
-  animation-name: slideUpAndFade;
-}
-.TooltipContent[data-state="delayed-open"][data-side="left"] {
-  animation-name: slideRightAndFade;
-}
-
-.TooltipArrow {
-  fill: white;
 }
 
 @keyframes slideUpAndFade {
