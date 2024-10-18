@@ -171,7 +171,7 @@ function Project$Todo(props) {
                       ref: Caml_option.some(inputRef),
                       className: [
                           Types.todoInputClass,
-                          " flex-1 bg-inherit text-[--t10] w-full outline-none \n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500"
+                          " flex-1 bg-inherit text-[--t10] w-full outline-none  text-sm font-medium\n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500"
                         ].join(" "),
                       id: Types.getTodoInputId(todo.id),
                       placeholder: "",
@@ -213,7 +213,7 @@ function Project$Todo(props) {
               ref: Caml_option.some(containerRef),
               className: [
                   Types.listItemClass,
-                  "flex flex-row justify-start items-center gap-2 px-2",
+                  "flex flex-row justify-start items-center gap-2 px-2 h-6",
                   stagedForDelete ? "bg-red-200 outline outline-1 -outline-offset-1" : (
                       isSelected ? "bg-var(--t1) outline outline-1 -outline-offset-1" : ""
                     )

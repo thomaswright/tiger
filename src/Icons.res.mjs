@@ -5,8 +5,26 @@ var EyeClosed = {};
 
 var Eye = {};
 
+var Slash = {};
+
+var CircleSlash = {};
+
+var X = {};
+
+var Check = {};
+
+var Minus = {};
+
+var Trash = {};
+
 export {
   EyeClosed ,
   Eye ,
+  Slash ,
+  CircleSlash ,
+  X ,
+  Check ,
+  Minus ,
+  Trash ,
 }
 /* No side effect */

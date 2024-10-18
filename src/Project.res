@@ -152,7 +152,7 @@ module Todo = {
       onKeyDown={onKeyDownContainer}
       className={[
         listItemClass,
-        "flex flex-row justify-start items-center gap-2 px-2",
+        "flex flex-row justify-start items-center gap-2 px-2 h-6",
         stagedForDelete
           ? "bg-red-200 outline outline-1 -outline-offset-1"
           : isSelected
@@ -173,7 +173,7 @@ module Todo = {
         type_="text"
         className={[
           todoInputClass,
-          " flex-1 bg-inherit text-[--t10] w-full outline-none 
+          " flex-1 bg-inherit text-[--t10] w-full outline-none  text-sm font-medium
           leading-none padding-none border-none h-5 -my-1 focus:text-blue-500",
         ]->Array.join(" ")}
         placeholder={""}

@@ -6,6 +6,7 @@ import {
   statusString,
   isArchiveStatus,
   statusColor,
+  statusIcon,
 } from "./Types.res.mjs";
 
 const Dropdown = ({ status, setStatus, removeTodo }) => {
@@ -15,6 +16,7 @@ const Dropdown = ({ status, setStatus, removeTodo }) => {
       <DropdownMenu.Item
         key={s}
         className={[
+          "font-black",
           isArchiveStatus(s) ? "bg-[var(--t2)]" : "",
           status === s ? "DropdownMenuItemSelected" : "DropdownMenuItem",
         ].join(" ")}
@@ -39,7 +41,7 @@ const Dropdown = ({ status, setStatus, removeTodo }) => {
           style={{
             backgroundColor: statusColor(status),
           }}
-          className="IconButton"
+          className=" flex flex-row items-center text-sm justify-center w-5 h-5 font-bold rounded text-[var(--t0)]"
           aria-label="Customise options"
         >
           {statusStringShort(status)}

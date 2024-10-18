@@ -62,16 +62,6 @@ button {
   fill: var(--t6);
 }
 
-.IconButton {
-  @apply text-inherit flex flex-row items-center justify-center w-5 h-5  rounded;
-  /* border-color: var(--t3); */
-  color: var(--t0);
-}
-
-.IconButton:hover {
-  background-color: var(--t3);
-}
-
 .TooltipContent {
   @apply shadow;
   border-radius: 4px;

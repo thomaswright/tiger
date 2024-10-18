@@ -99,6 +99,26 @@ let statusStringShort = s => {
   }
 }
 
+let statusIcon = s => {
+  switch s {
+  | TodoUrgent => "!"->React.string
+  | TodoHigh => "1"->React.string
+  | TodoMedium => "2"->React.string
+  | TodoLow => "3"->React.string
+  | LaterWill => "A"->React.string
+  | LaterMaybe => "B"->React.string
+  | LaterUnlikely => "C"->React.string
+  | LaterUnsorted => <Icons.Minus />
+  | ResolveDone => <Icons.Check />
+  | ResolveReject => <Icons.X />
+  | ResolveNoNeed => <Icons.Slash />
+  | ArchiveDone => <Icons.Check />
+  | ArchiveReject => <Icons.X />
+  | ArchiveNoNeed => <Icons.Slash />
+  | Trash => <Icons.Trash />
+  }
+}
+
 let statusColor = s =>
   switch s {
   | TodoUrgent => "var(--todoU)"
