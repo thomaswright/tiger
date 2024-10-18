@@ -155,7 +155,8 @@ module Todo = {
       onKeyDown={onKeyDownContainer}
       className={[
         listItemClass,
-        "focus:bg-blue-300 focus-within:bg-green-200 flex flex-row justify-start items-center gap-2 px-2 h-6",
+        // "focus:bg-blue-300 focus-within:bg-green-200", // helpful for debug
+        " flex flex-row justify-start items-center gap-2 px-2 h-6",
         stagedForDelete
           ? "bg-red-200 outline outline-1 -outline-offset-1"
           : isSelected

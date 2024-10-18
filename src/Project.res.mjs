@@ -220,7 +220,7 @@ function Project$Todo(props) {
               ref: Caml_option.some(containerRef),
               className: [
                   Types.listItemClass,
-                  "focus:bg-blue-300 focus-within:bg-green-200 flex flex-row justify-start items-center gap-2 px-2 h-6",
+                  " flex flex-row justify-start items-center gap-2 px-2 h-6",
                   stagedForDelete ? "bg-red-200 outline outline-1 -outline-offset-1" : (
                       isSelected ? "bg-var(--t1) outline outline-1 -outline-offset-1" : ""
                     )
