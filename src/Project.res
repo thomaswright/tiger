@@ -2,7 +2,11 @@ open Types
 open Webapi.Dom
 module StatusSelect = {
   @react.component @module("./StatusSelect.jsx")
-  external make: (~status: status, ~setStatus: status => unit) => React.element = "default"
+  external make: (
+    ~status: status,
+    ~setStatus: status => unit,
+    ~focusTodo: unit => unit,
+  ) => React.element = "default"
 }
 
 let mapNullable = (n, f) =>
@@ -29,7 +33,7 @@ module Todo = {
     let (stagedForDelete, setStagedForDelete) = React.useState(_ => false)
 
     let onKeyDownContainer = e => {
-      if isSelected {
+      if isSelected && containerRef.current->Nullable.toOption == document->Document.activeElement {
         containerRef.current->mapNullable(dom => {
           if e->ReactEvent.Keyboard.key == "ArrowUp" {
             e->ReactEvent.Keyboard.preventDefault
@@ -43,9 +47,7 @@ module Todo = {
 
           if e->ReactEvent.Keyboard.key == "Backspace" && e->ReactEvent.Keyboard.metaKey {
             setTodos(todos => todos->Array.filter(t => t.id != todo.id))
-            containerRef.current
-            ->Nullable.toOption
-            ->Option.mapOr((), containerEl => {
+            containerRef.current->mapNullable(containerEl => {
               Common.focusPreviousClass(listItemClass, containerEl)
             })
           }
@@ -57,6 +59,7 @@ module Todo = {
           }
 
           if e->ReactEvent.Keyboard.key == "Enter" {
+            Console.log("on enter")
             e->ReactEvent.Keyboard.preventDefault
             inputRef.current->mapNullable(inputEl => {
               let inputEl = inputEl->Obj.magic
@@ -152,7 +155,7 @@ module Todo = {
       onKeyDown={onKeyDownContainer}
       className={[
         listItemClass,
-        "flex flex-row justify-start items-center gap-2 px-2 h-6",
+        "focus:bg-blue-300 focus-within:bg-green-200 flex flex-row justify-start items-center gap-2 px-2 h-6",
         stagedForDelete
           ? "bg-red-200 outline outline-1 -outline-offset-1"
           : isSelected
@@ -161,6 +164,12 @@ module Todo = {
       ]->Array.join(" ")}>
       <StatusSelect
         status={todo.status}
+        focusTodo={() => {
+          // this isn't set directly because the "Enter"
+          // will then fire on the container then focusing
+          // the input *shrugs*
+          setFocusIdNext(_ => Some(getTodoId(todo.id)))
+        }}
         setStatus={newStatus =>
           updateTodo(todo.id, todo => {
             ...todo,
@@ -174,7 +183,7 @@ module Todo = {
         className={[
           todoInputClass,
           " flex-1 bg-inherit text-[--t10] w-full outline-none  text-sm font-medium
-          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500",
+          leading-none padding-none border-none h-5 -my-1 focus:text-blue-600",
         ]->Array.join(" ")}
         placeholder={""}
         value={todo.text}

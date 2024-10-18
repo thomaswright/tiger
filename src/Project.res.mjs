@@ -25,6 +25,7 @@ function mapNullable(n, f) {
 function Project$Todo(props) {
   var getTodos = props.getTodos;
   var newTodoAfter = props.newTodoAfter;
+  var setFocusIdNext = props.setFocusIdNext;
   var setTodos = props.setTodos;
   var setDisplayElement = props.setDisplayElement;
   var setSelectElement = props.setSelectElement;
@@ -39,7 +40,7 @@ function Project$Todo(props) {
   var setStagedForDelete = match[1];
   var stagedForDelete = match[0];
   var onKeyDownContainer = function (e) {
-    if (isSelected) {
+    if (isSelected && Caml_obj.equal(Caml_option.nullable_to_opt(containerRef.current), Caml_option.nullable_to_opt(document.activeElement))) {
       return mapNullable(containerRef.current, (function (dom) {
                     if (e.key === "ArrowUp") {
                       e.preventDefault();
@@ -55,7 +56,7 @@ function Project$Todo(props) {
                                         return t.id !== todo.id;
                                       });
                           });
-                      Core__Option.mapOr(Caml_option.nullable_to_opt(containerRef.current), undefined, (function (containerEl) {
+                      mapNullable(containerRef.current, (function (containerEl) {
                               Common.focusPreviousClass(Types.listItemClass, containerEl);
                             }));
                     }
@@ -67,6 +68,7 @@ function Project$Todo(props) {
                             }));
                     }
                     if (e.key === "Enter") {
+                      console.log("on enter");
                       e.preventDefault();
                       mapNullable(inputRef.current, (function (inputEl) {
                               inputEl.focus();
@@ -165,13 +167,18 @@ function Project$Todo(props) {
                                           status: newStatus
                                         };
                                 }));
+                        }),
+                      focusTodo: (function () {
+                          setFocusIdNext(function (param) {
+                                return Types.getTodoId(todo.id);
+                              });
                         })
                     }),
                 JsxRuntime.jsx("input", {
                       ref: Caml_option.some(inputRef),
                       className: [
                           Types.todoInputClass,
-                          " flex-1 bg-inherit text-[--t10] w-full outline-none  text-sm font-medium\n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500"
+                          " flex-1 bg-inherit text-[--t10] w-full outline-none  text-sm font-medium\n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-600"
                         ].join(" "),
                       id: Types.getTodoInputId(todo.id),
                       placeholder: "",
@@ -213,7 +220,7 @@ function Project$Todo(props) {
               ref: Caml_option.some(containerRef),
               className: [
                   Types.listItemClass,
-                  "flex flex-row justify-start items-center gap-2 px-2 h-6",
+                  "focus:bg-blue-300 focus-within:bg-green-200 flex flex-row justify-start items-center gap-2 px-2 h-6",
                   stagedForDelete ? "bg-red-200 outline outline-1 -outline-offset-1" : (
                       isSelected ? "bg-var(--t1) outline outline-1 -outline-offset-1" : ""
                     )

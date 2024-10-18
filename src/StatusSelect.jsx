@@ -9,7 +9,7 @@ import {
   statusIcon,
 } from "./Types.res.mjs";
 
-const Dropdown = ({ status, setStatus, removeTodo }) => {
+const Dropdown = ({ status, setStatus, removeTodo, focusTodo }) => {
   let [hoverStatus, setHoverStatus] = React.useState(status);
   const item = (s) => {
     return (
@@ -22,21 +22,30 @@ const Dropdown = ({ status, setStatus, removeTodo }) => {
           //     ? statusColor(s)
           //     : `oklch(from ${statusColor(s)} 0.95 calc(c / 3) h)`,
           // color: status === s ? "var(--t0)" : statusColor(s),
-          color: "var(--t0)",
-          backgroundColor:
-            status === s
-              ? statusColor(s)
-              : `oklch(from ${statusColor(s)} 0.85 calc(c / 1.5) h)`,
+          // color: "var(--t0)",
+          // backgroundColor:
+          //   status === s
+          //     ? statusColor(s)
+          //     : `oklch(from ${statusColor(s)} 0.85 calc(c / 1.5) h)`,
+          color: statusColor(s),
+          backgroundColor: `oklch(from ${statusColor(s)} 0.95 calc(c / 3) h)`,
         }}
         className={[
-          status === s ? "" : "",
+          status === s ? "outline outline-2 outline-blue-600" : "",
           ` rounded font-bold flex flex-row items-center justify-center 
           relative h-6 w-6 select-none `,
           isArchiveStatus(s) ? "bg-[var(--t2)]" : "",
         ].join(" ")}
-        onSelect={(_) =>
-          s === "" ? {} : s === "Trash" ? removeTodo() : setStatus(s)
-        }
+        onSelect={(_) => {
+          if (s !== "") {
+            if (s === "Trash") {
+              removeTodo();
+            } else {
+              setStatus(s);
+              focusTodo();
+            }
+          }
+        }}
         onFocus={(_) => setHoverStatus(s)}
         onMouseEnter={(_) => setHoverStatus(s)}
         onMouseLeave={(_) =>
