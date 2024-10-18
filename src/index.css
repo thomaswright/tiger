@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "@radix-ui/colors";
 
 html {
   background-color: white;
@@ -19,17 +20,43 @@ html {
   --t1: oklch(from var(--tBase) 0.97 c h);
   --t0: white;
 
-  --urgent: hsl(350, 100%, 40%);
-  --high: hsl(35, 100%, 50%);
-  --medium: hsl(35, 100%, 50%);
-  --low: hsl(35, 100%, 50%);
-  --will: hsl(240, 100%, 38%);
-  --maybe: hsl(240, 100%, 38%);
-  --unlikely: hsl(240, 100%, 38%);
-  --unsorted: hsl(240, 100%, 38%);
-  --done: hsl(118, 100%, 27%);
-  --rejected: hsl(50, 100%, 22%);
-  --closed: hsl(50, 100%, 22%);
+  --underway: oklch(0.93 0.07 127.33);
+  --now: oklch(0.93 0.07 90.6);
+  --future: oklch(0.93 0.07 232.51);
+  --resolve: oklch(0.93 0.07 309.92);
+
+  --underwayText: #0d6000;
+  --nowText: #ff6200;
+  --futureText: #0332b5;
+  --resolveText: #3f146f;
+
+  --NowUrgent: #ffd5cf;
+  --Underway: var(--underway);
+  --UnderwayHalfDone: var(--underway);
+  --UnderwayWrapUp: var(--underway);
+  --NowWillDo: var(--now);
+  --NowIfTime: var(--now);
+  --Unsorted: var(--future);
+  --FutureSoon: var(--future);
+  --FutureWillDo: var(--future);
+  --FutureConsider: var(--future);
+  --ResolveDone: var(--resolve);
+  --ResolveNo: var(--resolve);
+  --ResolveScrap: var(--resolve);
+
+  --NowUrgentText: #be001a;
+  --UnderwayText: var(--underwayText);
+  --UnderwayHalfDoneText: var(--underwayText);
+  --UnderwayWrapUpText: var(--underwayText);
+  --NowWillDoText: var(--nowText);
+  --NowIfTimeText: var(--nowText);
+  --UnsortedText: var(--futureText);
+  --FutureSoonText: var(--futureText);
+  --FutureWillDoText: var(--futureText);
+  --FutureConsiderText: var(--futureText);
+  --ResolveDoneText: var(--resolveText);
+  --ResolveNoText: var(--resolveText);
+  --ResolveScrapText: var(--resolveText);
 }
 
 .dark {

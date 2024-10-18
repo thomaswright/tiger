@@ -1,28 +1,17 @@
-// "Must"
-// "If Have Time"
-// "Maybe Do"
-// "Will Do"
-// "Unlikely"
-// "Think About"
-// "Future"
-// "Half Done"
-// "In Progress"
-// "No"
-// "Scrap"
-// "Done"
-
 type status =
-  | @as("Urgent") Urgent
-  | @as("High") High
-  | @as("Medium") Medium
-  | @as("Low") Low
-  | @as("Will") Will
-  | @as("Maybe") Maybe
-  | @as("Unlikely") Unlikely
+  | @as("Underway") Underway
+  | @as("UnderwayHalfDone") UnderwayHalfDone
+  | @as("UnderwayWrapUp") UnderwayWrapUp
+  | @as("NowUrgent") NowUrgent
+  | @as("NowWillDo") NowWillDo
+  | @as("NowIfTime") NowIfTime
+  | @as("FutureSoon") FutureSoon
+  | @as("FutureWillDo") FutureWillDo
+  | @as("FutureConsider") FutureConsider
+  | @as("ResolveDone") ResolveDone
+  | @as("ResolveNo") ResolveNo
+  | @as("ResolveScrap") ResolveScrap
   | @as("Unsorted") Unsorted
-  | @as("Done") Done
-  | @as("Rejected") Rejected
-  | @as("Closed") Closed
 
 type box =
   | @as("Working") Working
@@ -55,68 +44,76 @@ type selectElement = Todo(string) | Project(string)
 //   }
 
 let statusToFloat = s => {
-  switch s {
-  | Urgent => 0.
-  | High => 1.
-  | Medium => 2.
-  | Low => 3.
-  | Will => 4.
-  | Maybe => 5.
-  | Unlikely => 6.
-  | Unsorted => 7.
-  | Done => 8.
-  | Rejected => 9.
-  | Closed => 10.
-  }
+  [
+    Unsorted,
+    Underway,
+    UnderwayHalfDone,
+    UnderwayWrapUp,
+    NowUrgent,
+    NowWillDo,
+    NowIfTime,
+    FutureSoon,
+    FutureWillDo,
+    FutureConsider,
+    ResolveDone,
+    ResolveNo,
+    ResolveScrap,
+  ]
+  ->Array.findIndex(a => a == s)
+  ->Int.toFloat
 }
 
 let statusString = s => {
   switch s {
-  | Urgent => "Todo: Urgent"
-  | High => "Todo: High"
-  | Medium => "Todo: Medium"
-  | Low => "Todo: Low"
-  | Will => "Later: Will"
-  | Maybe => "Later: Maybe"
-  | Unlikely => "Later: Unlikely"
-  | Unsorted => "Later: Unsorted"
-  | Done => "Resolve: Done"
-  | Rejected => "Resolve: Reject"
-  | Closed => "Resolve: Close"
-  }
-}
-
-let statusStringShort = s => {
-  switch s {
-  | Urgent => "!"
-  | High => "High"
-  | Medium => "Med"
-  | Low => "Low"
-  | Will => "Will"
-  | Maybe => "May"
-  | Unlikely => "Slim"
   | Unsorted => ""
-  | Done => "✔︎"
-  | Rejected => "🞫"
-  | Closed => "-"
-
-  // | TodoUrgent => "!"
-  // | TodoHigh => "High"
-  // | TodoMedium => "Med"
-  // | TodoLow => "Low"
-  // | LaterWill => "Will"
-  // | LaterMaybe => "May"
-  // | LaterUnlikely => "Slim"
-  // | LaterUnsorted => ""
-  // | ResolveDone => "✔︎"
-  // | ResolveReject => "🞫"
-  // | ResolveNoNeed => "-"
-  // | ArchiveDone => "✔︎"
-  // | ArchiveReject => "🞫"
-  // | ArchiveNoNeed => "-"
-  // | Trash => "T"
+  | Underway => "Underway"
+  | UnderwayHalfDone => "Half Done"
+  | UnderwayWrapUp => "Wrap Up"
+  | NowUrgent => "Urgent"
+  | NowWillDo => "Will Do"
+  | NowIfTime => "If Time"
+  | FutureSoon => "Soon"
+  | FutureWillDo => "Future"
+  | FutureConsider => "Consider"
+  | ResolveDone => "Done"
+  | ResolveNo => "No"
+  | ResolveScrap => "Scrap"
   }
 }
+
+let statusStringShort = statusString
+
+// = s => {
+//   switch s {
+//   | Urgent => "!"
+//   | High => "High"
+//   | Medium => "Med"
+//   | Low => "Low"
+//   | Will => "Will"
+//   | Maybe => "May"
+//   | Unlikely => "Slim"
+//   | Unsorted => ""
+//   | Done => "✔︎"
+//   | Rejected => "🞫"
+//   | Closed => "-"
+
+//   // | TodoUrgent => "!"
+//   // | TodoHigh => "High"
+//   // | TodoMedium => "Med"
+//   // | TodoLow => "Low"
+//   // | LaterWill => "Will"
+//   // | LaterMaybe => "May"
+//   // | LaterUnlikely => "Slim"
+//   // | LaterUnsorted => ""
+//   // | ResolveDone => "✔︎"
+//   // | ResolveReject => "🞫"
+//   // | ResolveNoNeed => "-"
+//   // | ArchiveDone => "✔︎"
+//   // | ArchiveReject => "🞫"
+//   // | ArchiveNoNeed => "-"
+//   // | Trash => "T"
+//   }
+// }
 
 // let statusIcon = s => {
 //   switch s {
@@ -140,17 +137,36 @@ let statusStringShort = s => {
 
 let statusColor = s =>
   switch s {
-  | Urgent => "var(--urgent)"
-  | High => "var(--high)"
-  | Medium => "var(--medium)"
-  | Low => "var(--low)"
-  | Will => "var(--will)"
-  | Maybe => "var(--maybe)"
-  | Unlikely => "var(--unlikely)"
-  | Unsorted => "var(--unsorted)"
-  | Done => "var(--done)"
-  | Rejected => "var(--rejected)"
-  | Closed => "var(--closed)"
+  | Unsorted => "var(--Unsorted)"
+  | Underway => "var(--Underway)"
+  | UnderwayHalfDone => "var(--UnderwayHalfDone)"
+  | UnderwayWrapUp => "var(--UnderwayWrapUp)"
+  | NowUrgent => "var(--NowUrgent)"
+  | NowWillDo => "var(--NowWillDo)"
+  | NowIfTime => "var(--NowIfTime)"
+  | FutureSoon => "var(--FutureSoon)"
+  | FutureWillDo => "var(--FutureWillDo)"
+  | FutureConsider => "var(--FutureConsider)"
+  | ResolveDone => "var(--ResolveDone)"
+  | ResolveNo => "var(--ResolveNo)"
+  | ResolveScrap => "var(--ResolveScrap)"
+  }
+
+let statusColorText = s =>
+  switch s {
+  | Unsorted => "var(--UnsortedText)"
+  | Underway => "var(--UnderwayText)"
+  | UnderwayHalfDone => "var(--UnderwayHalfDoneText)"
+  | UnderwayWrapUp => "var(--UnderwayWrapUpText)"
+  | NowUrgent => "var(--NowUrgentText)"
+  | NowWillDo => "var(--NowWillDoText)"
+  | NowIfTime => "var(--NowIfTimeText)"
+  | FutureSoon => "var(--FutureSoonText)"
+  | FutureWillDo => "var(--FutureWillDoText)"
+  | FutureConsider => "var(--FutureConsiderText)"
+  | ResolveDone => "var(--ResolveDoneText)"
+  | ResolveNo => "var(--ResolveNoText)"
+  | ResolveScrap => "var(--ResolveScrapText)"
   }
 
 let getProjectId = s => "project-" ++ s

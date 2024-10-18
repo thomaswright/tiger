@@ -29,7 +29,7 @@ var defaultTodos = [
     text: "Do Something Else",
     project: "1",
     isDone: false,
-    status: "Closed",
+    status: "Unsorted",
     box: "Archive"
   }
 ];

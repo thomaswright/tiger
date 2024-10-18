@@ -5,6 +5,7 @@ import {
   statusStringShort,
   statusString,
   statusColor,
+  statusColorText,
   // statusIcon,
 } from "./Types.res.mjs";
 
@@ -27,13 +28,13 @@ const Dropdown = ({ status, setStatus, removeTodo, focusTodo }) => {
           //   status === s
           //     ? statusColor(s)
           //     : `oklch(from ${statusColor(s)} 0.85 calc(c / 1.5) h)`,
-          color: statusColor(s),
-          backgroundColor: `oklch(from ${statusColor(s)} 0.95 calc(c / 3) h)`,
+          color: statusColorText(s),
+          backgroundColor: statusColor(s),
         }}
         className={[
           status === s ? "outline outline-2 outline-blue-600" : "",
           ` rounded font-bold flex flex-row items-center justify-center 
-          relative h-5 w-10 select-none `,
+          relative h-5 w-20 select-none `,
           // isArchiveStatus(s) ? "bg-[var(--t2)]" : "",
         ].join(" ")}
         onSelect={(_) => {
@@ -63,13 +64,11 @@ const Dropdown = ({ status, setStatus, removeTodo, focusTodo }) => {
         <button
           style={{
             // backgroundColor: statusColor(status),
-
-            color: statusColor(status),
-            backgroundColor: `oklch(from ${statusColor(
-              status
-            )} 0.95 calc(c / 3) h)`,
+            // color: "var(--t10)",
+            backgroundColor: statusColor(status),
+            color: statusColorText(status),
           }}
-          className=" flex flex-row items-center text-sm justify-center w-10 h-5 font-bold rounded text-[var(--t0)]"
+          className=" flex flex-row items-center text-sm justify-center w-20 h-5 font-bold rounded text-[var(--t0)]"
           aria-label="Customise options"
         >
           {statusStringShort(status)}
@@ -79,26 +78,20 @@ const Dropdown = ({ status, setStatus, removeTodo, focusTodo }) => {
       <DropdownMenu.Portal>
         <DropdownMenu.Content className="DropdownMenuContent" sideOffset={5}>
           <div>
-            <div className="flex flex-col gap-1 items-center pt-2 pb-1">
-              <div className="flex flex-row gap-1">
-                {item("Urgent")}
-                {item("High")}
-                {item("Medium")}
-                {item("Low")}
-              </div>
-              <div className="flex flex-row gap-1">
-                {item("Unsorted")}
-                {item("Will")}
-                {item("Maybe")}
-                {item("Unlikely")}
-              </div>
-
-              <div className="flex flex-row gap-1">
-                {item("Done")}
-                {item("Rejected")}
-                {item("Closed")}
-                {item("")}
-              </div>
+            <div className="flex flex-row gap-1 items-center pt-2 pb-1 flex-wrap">
+              {item("Unsorted")}
+              {item("Underway")}
+              {item("UnderwayHalfDone")}
+              {item("UnderwayWrapUp")}
+              {item("NowUrgent")}
+              {item("NowWillDo")}
+              {item("NowIfTime")}
+              {item("FutureSoon")}
+              {item("FutureWillDo")}
+              {item("FutureConsider")}
+              {item("ResolveDone")}
+              {item("ResolveNo")}
+              {item("ResolveScrap")}
             </div>
             <div className="h-6 font-bold flex flex-row items-center justify-center">
               {/* <div className=" w-6 flex flex-row items-center justify-center">

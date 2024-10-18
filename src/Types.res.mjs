@@ -2,113 +2,117 @@
 
 
 function statusToFloat(s) {
-  switch (s) {
-    case "Urgent" :
-        return 0;
-    case "High" :
-        return 1;
-    case "Medium" :
-        return 2;
-    case "Low" :
-        return 3;
-    case "Will" :
-        return 4;
-    case "Maybe" :
-        return 5;
-    case "Unlikely" :
-        return 6;
-    case "Unsorted" :
-        return 7;
-    case "Done" :
-        return 8;
-    case "Rejected" :
-        return 9;
-    case "Closed" :
-        return 10;
-    
-  }
+  return [
+            "Unsorted",
+            "Underway",
+            "UnderwayHalfDone",
+            "UnderwayWrapUp",
+            "NowUrgent",
+            "NowWillDo",
+            "NowIfTime",
+            "FutureSoon",
+            "FutureWillDo",
+            "FutureConsider",
+            "ResolveDone",
+            "ResolveNo",
+            "ResolveScrap"
+          ].findIndex(function (a) {
+              return a === s;
+            });
 }
 
 function statusString(s) {
   switch (s) {
-    case "Urgent" :
-        return "Todo: Urgent";
-    case "High" :
-        return "Todo: High";
-    case "Medium" :
-        return "Todo: Medium";
-    case "Low" :
-        return "Todo: Low";
-    case "Will" :
-        return "Later: Will";
-    case "Maybe" :
-        return "Later: Maybe";
-    case "Unlikely" :
-        return "Later: Unlikely";
-    case "Unsorted" :
-        return "Later: Unsorted";
-    case "Done" :
-        return "Resolve: Done";
-    case "Rejected" :
-        return "Resolve: Reject";
-    case "Closed" :
-        return "Resolve: Close";
-    
-  }
-}
-
-function statusStringShort(s) {
-  switch (s) {
-    case "Urgent" :
-        return "!";
-    case "High" :
-        return "High";
-    case "Medium" :
-        return "Med";
-    case "Low" :
-        return "Low";
-    case "Will" :
-        return "Will";
-    case "Maybe" :
-        return "May";
-    case "Unlikely" :
-        return "Slim";
+    case "Underway" :
+        return "Underway";
+    case "UnderwayHalfDone" :
+        return "Half Done";
+    case "UnderwayWrapUp" :
+        return "Wrap Up";
+    case "NowUrgent" :
+        return "Urgent";
+    case "NowWillDo" :
+        return "Will Do";
+    case "NowIfTime" :
+        return "If Time";
+    case "FutureSoon" :
+        return "Soon";
+    case "FutureWillDo" :
+        return "Future";
+    case "FutureConsider" :
+        return "Consider";
+    case "ResolveDone" :
+        return "Done";
+    case "ResolveNo" :
+        return "No";
+    case "ResolveScrap" :
+        return "Scrap";
     case "Unsorted" :
         return "";
-    case "Done" :
-        return "✔︎";
-    case "Rejected" :
-        return "🞫";
-    case "Closed" :
-        return "-";
     
   }
 }
 
 function statusColor(s) {
   switch (s) {
-    case "Urgent" :
-        return "var(--urgent)";
-    case "High" :
-        return "var(--high)";
-    case "Medium" :
-        return "var(--medium)";
-    case "Low" :
-        return "var(--low)";
-    case "Will" :
-        return "var(--will)";
-    case "Maybe" :
-        return "var(--maybe)";
-    case "Unlikely" :
-        return "var(--unlikely)";
+    case "Underway" :
+        return "var(--Underway)";
+    case "UnderwayHalfDone" :
+        return "var(--UnderwayHalfDone)";
+    case "UnderwayWrapUp" :
+        return "var(--UnderwayWrapUp)";
+    case "NowUrgent" :
+        return "var(--NowUrgent)";
+    case "NowWillDo" :
+        return "var(--NowWillDo)";
+    case "NowIfTime" :
+        return "var(--NowIfTime)";
+    case "FutureSoon" :
+        return "var(--FutureSoon)";
+    case "FutureWillDo" :
+        return "var(--FutureWillDo)";
+    case "FutureConsider" :
+        return "var(--FutureConsider)";
+    case "ResolveDone" :
+        return "var(--ResolveDone)";
+    case "ResolveNo" :
+        return "var(--ResolveNo)";
+    case "ResolveScrap" :
+        return "var(--ResolveScrap)";
     case "Unsorted" :
-        return "var(--unsorted)";
-    case "Done" :
-        return "var(--done)";
-    case "Rejected" :
-        return "var(--rejected)";
-    case "Closed" :
-        return "var(--closed)";
+        return "var(--Unsorted)";
+    
+  }
+}
+
+function statusColorText(s) {
+  switch (s) {
+    case "Underway" :
+        return "var(--UnderwayText)";
+    case "UnderwayHalfDone" :
+        return "var(--UnderwayHalfDoneText)";
+    case "UnderwayWrapUp" :
+        return "var(--UnderwayWrapUpText)";
+    case "NowUrgent" :
+        return "var(--NowUrgentText)";
+    case "NowWillDo" :
+        return "var(--NowWillDoText)";
+    case "NowIfTime" :
+        return "var(--NowIfTimeText)";
+    case "FutureSoon" :
+        return "var(--FutureSoonText)";
+    case "FutureWillDo" :
+        return "var(--FutureWillDoText)";
+    case "FutureConsider" :
+        return "var(--FutureConsiderText)";
+    case "ResolveDone" :
+        return "var(--ResolveDoneText)";
+    case "ResolveNo" :
+        return "var(--ResolveNoText)";
+    case "ResolveScrap" :
+        return "var(--ResolveScrapText)";
+    case "Unsorted" :
+        return "var(--UnsortedText)";
     
   }
 }
@@ -125,6 +129,8 @@ function getTodoInputId(s) {
   return "todo-input-" + s;
 }
 
+var statusStringShort = statusString;
+
 var listItemClass = "class-list-item";
 
 var todoInputClass = "class-list-todo-input";
@@ -134,6 +140,7 @@ export {
   statusString ,
   statusStringShort ,
   statusColor ,
+  statusColorText ,
   getProjectId ,
   getTodoId ,
   getTodoInputId ,

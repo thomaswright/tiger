@@ -21,7 +21,7 @@ let defaultTodos = [
     project: "1",
     id: "2",
     isDone: false,
-    status: Closed,
+    status: Unsorted,
     box: Archive,
   },
 ]
