@@ -64,9 +64,9 @@ function statusString(s) {
     case "LaterWill" :
         return "Later: Will Do";
     case "LaterMaybe" :
-        return "Later: Maybe";
+        return "Later: May Do";
     case "LaterUnlikely" :
-        return "Later: Unlikely";
+        return "Later: Unlikely to Do";
     case "LaterUnsorted" :
         return "Later: Unsorted";
     case "ResolveDone" :
@@ -92,19 +92,19 @@ function statusStringShort(s) {
     case "TodoUrgent" :
         return "!";
     case "TodoHigh" :
-        return "1";
+        return "High";
     case "TodoMedium" :
-        return "2";
+        return "Med";
     case "TodoLow" :
-        return "3";
+        return "Low";
     case "LaterWill" :
-        return "A";
+        return "Will";
     case "LaterMaybe" :
-        return "B";
+        return "May";
     case "LaterUnlikely" :
-        return "C";
+        return "Slim";
     case "LaterUnsorted" :
-        return "-";
+        return "";
     case "ResolveDone" :
     case "ArchiveDone" :
         return "✔︎";
@@ -113,7 +113,7 @@ function statusStringShort(s) {
         return "🞫";
     case "ResolveNoNeed" :
     case "ArchiveNoNeed" :
-        return "○";
+        return "-";
     case "Trash" :
         return "T";
     

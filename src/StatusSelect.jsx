@@ -33,7 +33,7 @@ const Dropdown = ({ status, setStatus, removeTodo, focusTodo }) => {
         className={[
           status === s ? "outline outline-2 outline-blue-600" : "",
           ` rounded font-bold flex flex-row items-center justify-center 
-          relative h-6 w-6 select-none `,
+          relative h-5 w-10 select-none `,
           isArchiveStatus(s) ? "bg-[var(--t2)]" : "",
         ].join(" ")}
         onSelect={(_) => {
@@ -69,7 +69,7 @@ const Dropdown = ({ status, setStatus, removeTodo, focusTodo }) => {
               status
             )} 0.95 calc(c / 3) h)`,
           }}
-          className=" flex flex-row items-center text-sm justify-center w-5 h-5 font-bold rounded text-[var(--t0)]"
+          className=" flex flex-row items-center text-sm justify-center w-10 h-5 font-bold rounded text-[var(--t0)]"
           aria-label="Customise options"
         >
           {statusStringShort(status)}
@@ -79,13 +79,7 @@ const Dropdown = ({ status, setStatus, removeTodo, focusTodo }) => {
       <DropdownMenu.Portal>
         <DropdownMenu.Content className="DropdownMenuContent" sideOffset={5}>
           <div>
-            <div className="h-6 font-bold flex flex-row items-center justify-center">
-              {/* <div className=" w-6 flex flex-row items-center justify-center">
-                {statusStringShort(hoverStatus)}
-              </div> */}
-              <div>{statusString(hoverStatus)}</div>
-            </div>
-            <div className="flex flex-col gap-2 items-center pb-2 pt-1">
+            <div className="flex flex-col gap-1 items-center pt-2 pb-1">
               <div className="flex flex-row gap-1">
                 {item("TodoUrgent")}
                 {item("TodoHigh")}
@@ -112,6 +106,12 @@ const Dropdown = ({ status, setStatus, removeTodo, focusTodo }) => {
                 {item("ArchiveNoNeed")}
                 {item("Trash")}
               </div>
+            </div>
+            <div className="h-6 font-bold flex flex-row items-center justify-center">
+              {/* <div className=" w-6 flex flex-row items-center justify-center">
+                {statusStringShort(hoverStatus)}
+              </div> */}
+              <div>{statusString(hoverStatus)}</div>
             </div>
           </div>
 
