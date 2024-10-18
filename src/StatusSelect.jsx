@@ -4,14 +4,14 @@ import "./dropdown.css";
 import {
   statusStringShort,
   statusString,
-  isArchiveStatus,
   statusColor,
-  statusIcon,
+  // statusIcon,
 } from "./Types.res.mjs";
 
 const Dropdown = ({ status, setStatus, removeTodo, focusTodo }) => {
   let [hoverStatus, setHoverStatus] = React.useState(status);
   const item = (s) => {
+    console.log(s, statusColor(s));
     return (
       <DropdownMenu.Item
         key={s}
@@ -34,7 +34,7 @@ const Dropdown = ({ status, setStatus, removeTodo, focusTodo }) => {
           status === s ? "outline outline-2 outline-blue-600" : "",
           ` rounded font-bold flex flex-row items-center justify-center 
           relative h-5 w-10 select-none `,
-          isArchiveStatus(s) ? "bg-[var(--t2)]" : "",
+          // isArchiveStatus(s) ? "bg-[var(--t2)]" : "",
         ].join(" ")}
         onSelect={(_) => {
           if (s !== "") {
@@ -81,30 +81,23 @@ const Dropdown = ({ status, setStatus, removeTodo, focusTodo }) => {
           <div>
             <div className="flex flex-col gap-1 items-center pt-2 pb-1">
               <div className="flex flex-row gap-1">
-                {item("TodoUrgent")}
-                {item("TodoHigh")}
-                {item("TodoMedium")}
-                {item("TodoLow")}
+                {item("Urgent")}
+                {item("High")}
+                {item("Medium")}
+                {item("Low")}
               </div>
               <div className="flex flex-row gap-1">
-                {item("LaterUnsorted")}
-                {item("LaterWill")}
-                {item("LaterMaybe")}
-                {item("LaterUnlikely")}
+                {item("Unsorted")}
+                {item("Will")}
+                {item("Maybe")}
+                {item("Unlikely")}
               </div>
 
               <div className="flex flex-row gap-1">
-                {item("ResolveDone")}
-                {item("ResolveReject")}
-                {item("ResolveNoNeed")}
+                {item("Done")}
+                {item("Rejected")}
+                {item("Closed")}
                 {item("")}
-              </div>
-
-              <div className="flex flex-row gap-1">
-                {item("ArchiveDone")}
-                {item("ArchiveReject")}
-                {item("ArchiveNoNeed")}
-                {item("Trash")}
               </div>
             </div>
             <div className="h-6 font-bold flex flex-row items-center justify-center">

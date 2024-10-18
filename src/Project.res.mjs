@@ -164,7 +164,8 @@ function Project$Todo(props) {
                                           text: todo.text,
                                           project: todo.project,
                                           isDone: todo.isDone,
-                                          status: newStatus
+                                          status: newStatus,
+                                          box: todo.box
                                         };
                                 }));
                         }),
@@ -211,7 +212,8 @@ function Project$Todo(props) {
                                           text: e.target.value,
                                           project: t.project,
                                           isDone: t.isDone,
-                                          status: t.status
+                                          status: t.status,
+                                          box: t.box
                                         };
                                 }));
                         })
@@ -282,7 +284,8 @@ function Project(props) {
                       text: "",
                       project: project.id,
                       isDone: false,
-                      status: "LaterUnsorted"
+                      status: "Unsorted",
+                      box: "Working"
                     });
         });
     setFocusIdNext(function (param) {
@@ -370,7 +373,7 @@ function Project(props) {
                                     if (showArchive) {
                                       return true;
                                     } else {
-                                      return !Types.isArchiveStatus(todo.status);
+                                      return todo.box === "Archive";
                                     }
                                   }).map(function (todo) {
                                   return JsxRuntime.jsx(Project$Todo, {

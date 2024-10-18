@@ -21,14 +21,16 @@ var defaultTodos = [
     text: "Do Something",
     project: "1",
     isDone: false,
-    status: "LaterUnsorted"
+    status: "Unsorted",
+    box: "Working"
   },
   {
     id: "2",
     text: "Do Something Else",
     project: "1",
     isDone: false,
-    status: "ArchiveNoNeed"
+    status: "Closed",
+    box: "Archive"
   }
 ];
 
@@ -136,7 +138,8 @@ function App(props) {
                                                       text: e.target.value,
                                                       project: t.project,
                                                       isDone: t.isDone,
-                                                      status: t.status
+                                                      status: t.status,
+                                                      box: t.box
                                                     };
                                             }));
                                     })

@@ -237,7 +237,8 @@ let make = (
             text: "",
             project: project.id,
             isDone: false,
-            status: LaterUnsorted,
+            status: Unsorted,
+            box: Working,
           },
         ],
       )
@@ -299,7 +300,7 @@ let make = (
     <div>
       <div className="flex flex-col divide-y ">
         {todos
-        ->Array.filter(todo => showArchive ? true : !isArchiveStatus(todo.status))
+        ->Array.filter(todo => showArchive ? true : todo.box == Archive)
         // ->Array.toSorted((a, b) => a.status->statusToFloat -. b.status->statusToFloat)
         ->Array.map(todo =>
           <Todo

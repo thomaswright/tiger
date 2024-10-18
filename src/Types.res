@@ -1,19 +1,33 @@
+// "Must"
+// "If Have Time"
+// "Maybe Do"
+// "Will Do"
+// "Unlikely"
+// "Think About"
+// "Future"
+// "Half Done"
+// "In Progress"
+// "No"
+// "Scrap"
+// "Done"
+
 type status =
-  | @as("TodoUrgent") TodoUrgent
-  | @as("TodoHigh") TodoHigh
-  | @as("TodoMedium") TodoMedium
-  | @as("TodoLow") TodoLow
-  | @as("LaterWill") LaterWill
-  | @as("LaterMaybe") LaterMaybe
-  | @as("LaterUnlikely") LaterUnlikely
-  | @as("LaterUnsorted") LaterUnsorted
-  | @as("ResolveDone") ResolveDone
-  | @as("ResolveReject") ResolveReject
-  | @as("ResolveNoNeed") ResolveNoNeed
-  | @as("ArchiveDone") ArchiveDone
-  | @as("ArchiveReject") ArchiveReject
-  | @as("ArchiveNoNeed") ArchiveNoNeed
-  | @as("Trash") Trash
+  | @as("Urgent") Urgent
+  | @as("High") High
+  | @as("Medium") Medium
+  | @as("Low") Low
+  | @as("Will") Will
+  | @as("Maybe") Maybe
+  | @as("Unlikely") Unlikely
+  | @as("Unsorted") Unsorted
+  | @as("Done") Done
+  | @as("Rejected") Rejected
+  | @as("Closed") Closed
+
+type box =
+  | @as("Working") Working
+  | @as("Pinned") Pinned
+  | @as("Archive") Archive
 
 type todo = {
   id: string,
@@ -21,6 +35,7 @@ type todo = {
   project: string,
   isDone: bool,
   status: status,
+  box: box,
 }
 
 type project = {
@@ -33,109 +48,109 @@ type projectsTab = | @as("All") All | @as("Active") Active
 
 type selectElement = Todo(string) | Project(string)
 
-let isArchiveStatus = s =>
-  switch s {
-  | ArchiveDone | ArchiveReject | ArchiveNoNeed | Trash => true
-  | _ => false
-  }
+// let isArchiveStatus = s =>
+//   switch s {
+//   | ArchiveDone | ArchiveReject | ArchiveNoNeed | Trash => true
+//   | _ => false
+//   }
 
 let statusToFloat = s => {
   switch s {
-  | TodoUrgent => 0.
-  | TodoHigh => 1.
-  | TodoMedium => 2.
-  | TodoLow => 3.
-  | LaterWill => 4.
-  | LaterMaybe => 5.
-  | LaterUnlikely => 6.
-  | LaterUnsorted => 7.
-  | ResolveDone => 8.
-  | ResolveReject => 9.
-  | ResolveNoNeed => 10.
-  | ArchiveDone => 11.
-  | ArchiveReject => 12.
-  | ArchiveNoNeed => 13.
-  | Trash => 14.
+  | Urgent => 0.
+  | High => 1.
+  | Medium => 2.
+  | Low => 3.
+  | Will => 4.
+  | Maybe => 5.
+  | Unlikely => 6.
+  | Unsorted => 7.
+  | Done => 8.
+  | Rejected => 9.
+  | Closed => 10.
   }
 }
 
 let statusString = s => {
   switch s {
-  | TodoUrgent => "Todo: Urgent"
-  | TodoHigh => "Todo: High"
-  | TodoMedium => "Todo: Medium"
-  | TodoLow => "Todo: Low"
-  | LaterWill => "Later: Will Do"
-  | LaterMaybe => "Later: May Do"
-  | LaterUnlikely => "Later: Unlikely to Do"
-  | LaterUnsorted => "Later: Unsorted"
-  | ResolveDone => "Resolve: Done"
-  | ResolveReject => "Resolve: Reject"
-  | ResolveNoNeed => "Resolve: No Need"
-  | ArchiveDone => "Archive: Done"
-  | ArchiveReject => "Archive: Reject"
-  | ArchiveNoNeed => "Archive: No Need"
-  | Trash => "Trash"
+  | Urgent => "Todo: Urgent"
+  | High => "Todo: High"
+  | Medium => "Todo: Medium"
+  | Low => "Todo: Low"
+  | Will => "Later: Will"
+  | Maybe => "Later: Maybe"
+  | Unlikely => "Later: Unlikely"
+  | Unsorted => "Later: Unsorted"
+  | Done => "Resolve: Done"
+  | Rejected => "Resolve: Reject"
+  | Closed => "Resolve: Close"
   }
 }
 
 let statusStringShort = s => {
   switch s {
-  | TodoUrgent => "!"
-  | TodoHigh => "High"
-  | TodoMedium => "Med"
-  | TodoLow => "Low"
-  | LaterWill => "Will"
-  | LaterMaybe => "May"
-  | LaterUnlikely => "Slim"
-  | LaterUnsorted => ""
-  | ResolveDone => "✔︎"
-  | ResolveReject => "🞫"
-  | ResolveNoNeed => "-"
-  | ArchiveDone => "✔︎"
-  | ArchiveReject => "🞫"
-  | ArchiveNoNeed => "-"
-  | Trash => "T"
+  | Urgent => "!"
+  | High => "High"
+  | Medium => "Med"
+  | Low => "Low"
+  | Will => "Will"
+  | Maybe => "May"
+  | Unlikely => "Slim"
+  | Unsorted => ""
+  | Done => "✔︎"
+  | Rejected => "🞫"
+  | Closed => "-"
+
+  // | TodoUrgent => "!"
+  // | TodoHigh => "High"
+  // | TodoMedium => "Med"
+  // | TodoLow => "Low"
+  // | LaterWill => "Will"
+  // | LaterMaybe => "May"
+  // | LaterUnlikely => "Slim"
+  // | LaterUnsorted => ""
+  // | ResolveDone => "✔︎"
+  // | ResolveReject => "🞫"
+  // | ResolveNoNeed => "-"
+  // | ArchiveDone => "✔︎"
+  // | ArchiveReject => "🞫"
+  // | ArchiveNoNeed => "-"
+  // | Trash => "T"
   }
 }
 
-let statusIcon = s => {
-  switch s {
-  | TodoUrgent => "!"->React.string
-  | TodoHigh => "1"->React.string
-  | TodoMedium => "2"->React.string
-  | TodoLow => "3"->React.string
-  | LaterWill => "A"->React.string
-  | LaterMaybe => "B"->React.string
-  | LaterUnlikely => "C"->React.string
-  | LaterUnsorted => <Icons.Minus />
-  | ResolveDone => <Icons.Check />
-  | ResolveReject => <Icons.X />
-  | ResolveNoNeed => <Icons.Slash />
-  | ArchiveDone => <Icons.Check />
-  | ArchiveReject => <Icons.X />
-  | ArchiveNoNeed => <Icons.Slash />
-  | Trash => <Icons.Trash />
-  }
-}
+// let statusIcon = s => {
+//   switch s {
+//   | TodoUrgent => "!"->React.string
+//   | TodoHigh => "1"->React.string
+//   | TodoMedium => "2"->React.string
+//   | TodoLow => "3"->React.string
+//   | LaterWill => "A"->React.string
+//   | LaterMaybe => "B"->React.string
+//   | LaterUnlikely => "C"->React.string
+//   | LaterUnsorted => <Icons.Minus />
+//   | ResolveDone => <Icons.Check />
+//   | ResolveReject => <Icons.X />
+//   | ResolveNoNeed => <Icons.Slash />
+//   | ArchiveDone => <Icons.Check />
+//   | ArchiveReject => <Icons.X />
+//   | ArchiveNoNeed => <Icons.Slash />
+//   | Trash => <Icons.Trash />
+//   }
+// }
 
 let statusColor = s =>
   switch s {
-  | TodoUrgent => "var(--todoU)"
-  | TodoHigh => "var(--todo1)"
-  | TodoMedium => "var(--todo2)"
-  | TodoLow => "var(--todo3)"
-  | LaterWill => "var(--later)"
-  | LaterMaybe => "var(--later)"
-  | LaterUnlikely => "var(--later)"
-  | LaterUnsorted => "var(--later)"
-  | ResolveDone => "var(--resolveDone)"
-  | ResolveReject => "var(--resolveReject)"
-  | ResolveNoNeed => "var(--resolveNoNeed)"
-  | ArchiveDone => "var(--archiveDone)"
-  | ArchiveReject => "var(--archiveReject)"
-  | ArchiveNoNeed => "var(--archiveNoNeed)"
-  | Trash => "var(--trash)"
+  | Urgent => "var(--urgent)"
+  | High => "var(--high)"
+  | Medium => "var(--medium)"
+  | Low => "var(--low)"
+  | Will => "var(--will)"
+  | Maybe => "var(--maybe)"
+  | Unlikely => "var(--unlikely)"
+  | Unsorted => "var(--unsorted)"
+  | Done => "var(--done)"
+  | Rejected => "var(--rejected)"
+  | Closed => "var(--closed)"
   }
 
 let getProjectId = s => "project-" ++ s

@@ -13,14 +13,16 @@ let defaultTodos = [
     project: "1",
     id: "1",
     isDone: false,
-    status: LaterUnsorted,
+    status: Unsorted,
+    box: Working,
   },
   {
     text: "Do Something Else",
     project: "1",
     id: "2",
     isDone: false,
-    status: ArchiveNoNeed,
+    status: Closed,
+    box: Archive,
   },
 ]
 

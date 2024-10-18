@@ -19,19 +19,17 @@ html {
   --t1: oklch(from var(--tBase) 0.97 c h);
   --t0: white;
 
-  --todoU: hsl(350, 100%, 40%);
-  --todo1: hsl(15, 100%, 50%);
-  --todo2: hsl(25, 100%, 50%);
-  --todo3: hsl(35, 100%, 50%);
-
-  --later: hsl(217, 100%, 38%);
-  --resolveDone: hsl(118, 100%, 27%);
-  --resolveReject: hsl(268, 55%, 33%);
-  --resolveNoNeed: var(--resolveReject);
-  --archiveDone: hsl(0, 0%, 40%);
-  --archiveReject: hsl(0, 0%, 40%);
-  --archiveNoNeed: var(--archiveReject);
-  --trash: hsl(0, 0%, 31%);
+  --urgent: hsl(350, 100%, 40%);
+  --high: hsl(35, 100%, 50%);
+  --medium: hsl(35, 100%, 50%);
+  --low: hsl(35, 100%, 50%);
+  --will: hsl(240, 100%, 38%);
+  --maybe: hsl(240, 100%, 38%);
+  --unlikely: hsl(240, 100%, 38%);
+  --unsorted: hsl(240, 100%, 38%);
+  --done: hsl(118, 100%, 27%);
+  --rejected: hsl(50, 100%, 22%);
+  --closed: hsl(50, 100%, 22%);
 }
 
 .dark {
