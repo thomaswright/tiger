@@ -32,7 +32,9 @@ const Dropdown = ({ status, setStatus, removeTodo, focusTodo }) => {
           backgroundColor: statusColor(s),
         }}
         className={[
-          status === s ? "outline outline-2 outline-blue-600" : "",
+          status === s
+            ? "outline outline-1 outline-inherit focus:outline-2 "
+            : "focus:outline-2 focus:outline-inherit",
           ` rounded font-bold flex flex-row items-center justify-center 
           relative h-5 w-20 select-none `,
           // isArchiveStatus(s) ? "bg-[var(--t2)]" : "",
