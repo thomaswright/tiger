@@ -1,5 +1,6 @@
 open Types
 open Webapi.Dom
+
 let defaultProjects = [
   {
     id: "1",
@@ -37,6 +38,11 @@ module Details = {
   let make = (~selectElement) => {
     <div className=" border-l flex-1"> {"Details"->React.string} </div>
   }
+}
+
+module Switch = {
+  @module("./Switch.jsx") @react.component
+  external make: (~checked: bool, ~onCheckedChange: unit => unit) => React.element = "Switch"
 }
 
 @react.component
@@ -83,24 +89,13 @@ let make = () => {
   <div className="flex flex-row h-dvh">
     // <StatusSelector />
     <div className="flex-1">
-      <div className="flex flex-row gap-2">
-        <div className="flex flex-row gap-2">
-          <button
-            onClick={_ => setProjectTab(_ => All)}
-            className={[
-              "w-20  border-b-2",
-              projectsTab == All ? "border-red-500 text-red-500" : "border-transparent ",
-            ]->Array.join(" ")}>
-            {"All"->React.string}
-          </button>
-          <button
-            onClick={_ => setProjectTab(_ => Active)}
-            className={[
-              "w-20  border-b-2",
-              projectsTab == Active ? "border-red-500 text-red-500" : "border-transparent ",
-            ]->Array.join(" ")}>
-            {"Active"->React.string}
-          </button>
+      <div className="flex flex-row gap-2 justify-between w-full p-1">
+        <div className="flex flex-row gap-2 ">
+          <div className="text-sm"> {"Show Archived"->React.string} </div>
+          <Switch
+            checked={projectsTab == All}
+            onCheckedChange={() => setProjectTab(v => v == All ? Active : All)}
+          />
         </div>
         <button
           onClick={_ => {
@@ -121,7 +116,7 @@ let make = () => {
             setDisplayElement(_ => Some(Project(newProjectId)))
             setFocusClassNext(_ => Some("class-display-title"))
           }}
-          className={["bg-[var(--t2)] px-2 rounded"]->Array.join(" ")}>
+          className={["bg-[var(--t2)] px-2 rounded text-sm"]->Array.join(" ")}>
           {"Add Project"->React.string}
         </button>
       </div>

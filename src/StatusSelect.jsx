@@ -79,8 +79,8 @@ const Dropdown = ({ status, setStatus, removeTodo, focusTodo }) => {
 
       <DropdownMenu.Portal>
         <DropdownMenu.Content className="DropdownMenuContent" sideOffset={5}>
-          <div>
-            <div className="grid grid-cols-3 gap-1 p-2 ">
+          <div className="p-1.5 pb-1">
+            <div className="grid grid-cols-3 gap-1 ">
               {item("FutureSoon")}
               {item("FutureWillDo")}
               {item("FutureConsider")}
@@ -99,7 +99,7 @@ const Dropdown = ({ status, setStatus, removeTodo, focusTodo }) => {
 
               {item("Unsorted")}
             </div>
-            <div className="h-6 font-bold flex flex-row items-center justify-center">
+            <div className="h-5 font-bold flex flex-row items-center justify-center">
               {/* <div className=" w-6 flex flex-row items-center justify-center">
                 {statusStringShort(hoverStatus)}
               </div> */}
@@ -107,7 +107,7 @@ const Dropdown = ({ status, setStatus, removeTodo, focusTodo }) => {
             </div>
           </div>
 
-          <DropdownMenu.Arrow className="DropdownMenuArrow" />
+          {/* <DropdownMenu.Arrow className="DropdownMenuArrow" /> */}
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>

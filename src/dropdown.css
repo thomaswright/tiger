@@ -3,7 +3,7 @@ button {
 }
 
 .DropdownMenuContent {
-  @apply text-xs flex flex-col gap-1 border rounded-lg shadow mx-2;
+  @apply text-xs flex flex-col gap-1 border rounded-lg shadow-lg mx-2;
   background-color: var(--t0);
   border-color: var(--t2);
   animation-duration: 400ms;

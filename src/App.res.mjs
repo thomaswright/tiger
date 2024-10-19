@@ -6,6 +6,7 @@ import * as React from "react";
 import * as Common from "./Common.res.mjs";
 import * as Project from "./Project.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
+import * as SwitchJsx from "./Switch.jsx";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as JsxRuntime from "react/jsx-runtime";
 
@@ -33,6 +34,8 @@ var defaultTodos = [
     box: "Archive"
   }
 ];
+
+var make = SwitchJsx.Switch;
 
 function App(props) {
   var match = Common.useLocalStorage("projects", defaultProjects);
@@ -240,36 +243,28 @@ function App(props) {
                               children: [
                                 JsxRuntime.jsxs("div", {
                                       children: [
-                                        JsxRuntime.jsx("button", {
-                                              children: "All",
-                                              className: [
-                                                  "w-20  border-b-2",
-                                                  projectsTab === "All" ? "border-red-500 text-red-500" : "border-transparent "
-                                                ].join(" "),
-                                              onClick: (function (param) {
-                                                  setProjectTab(function (param) {
-                                                        return "All";
-                                                      });
-                                                })
+                                        JsxRuntime.jsx("div", {
+                                              children: "Show Archived",
+                                              className: "text-sm"
                                             }),
-                                        JsxRuntime.jsx("button", {
-                                              children: "Active",
-                                              className: [
-                                                  "w-20  border-b-2",
-                                                  projectsTab === "Active" ? "border-red-500 text-red-500" : "border-transparent "
-                                                ].join(" "),
-                                              onClick: (function (param) {
-                                                  setProjectTab(function (param) {
-                                                        return "Active";
+                                        JsxRuntime.jsx(make, {
+                                              checked: projectsTab === "All",
+                                              onCheckedChange: (function () {
+                                                  setProjectTab(function (v) {
+                                                        if (v === "All") {
+                                                          return "Active";
+                                                        } else {
+                                                          return "All";
+                                                        }
                                                       });
                                                 })
                                             })
                                       ],
-                                      className: "flex flex-row gap-2"
+                                      className: "flex flex-row gap-2 "
                                     }),
                                 JsxRuntime.jsx("button", {
                                       children: "Add Project",
-                                      className: ["bg-[var(--t2)] px-2 rounded"].join(" "),
+                                      className: ["bg-[var(--t2)] px-2 rounded text-sm"].join(" "),
                                       onClick: (function (param) {
                                           var newProjectId = Uuid.v4();
                                           setProjects(function (v) {
@@ -297,7 +292,7 @@ function App(props) {
                                         })
                                     })
                               ],
-                              className: "flex flex-row gap-2"
+                              className: "flex flex-row gap-2 justify-between w-full p-1"
                             }),
                         JsxRuntime.jsx("div", {
                               children: projects.filter(function (project) {
@@ -338,9 +333,9 @@ function App(props) {
             });
 }
 
-var make = App;
+var make$1 = App;
 
 export {
-  make ,
+  make$1 as make,
 }
-/* uuid Not a pure module */
+/* make Not a pure module */
