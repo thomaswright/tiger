@@ -32,7 +32,7 @@ html {
 
   --NowUrgent: #ffd5cf;
   --Unsorted: oklch(0.93 0.02 230);
-  --Suspended: oklch(0.93 0.07 110);
+  --Suspended: oklch(0.93 0.07 100);
   --Underway: var(--underway);
   --UnderwayWrapUp: var(--underway);
   --NowWillDo: var(--now);
@@ -46,7 +46,7 @@ html {
 
   --NowUrgentText: #be001a;
   --UnsortedText: oklch(0.44 0.02 230);
-  --SuspendedText: #436000;
+  --SuspendedText: #494a01;
   --UnderwayText: var(--underwayText);
   --UnderwayWrapUpText: var(--underwayText);
   --NowWillDoText: var(--nowText);
