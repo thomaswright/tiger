@@ -33,18 +33,20 @@ let make = (
         })
       }}
     />
-    <button
-      onClick={_ => {
-        document
-        ->Document.getElementById(getTodoId(todo.id))
-        ->Option.mapOr((), todoEl => Common.focusPreviousClass(listItemClass, todoEl))
-
-        setTodos(v => v->Array.filter(t => t.id != todo.id))
-      }}
-      className={["bg-[var(--t2)] px-2 rounded"]->Array.join(" ")}>
-      {"Delete Todo"->React.string}
-    </button>
-    <div>
+    <div className="flex flex-row border-y items-center gap-3">
+      <Common.StatusSelect
+        isOpen={statusSelectIsOpen}
+        onOpenChange={v => {
+          setStatusSelectIsOpen(_ => v)
+        }}
+        status={todo.status}
+        focusTodo={() => ()}
+        setStatus={newStatus =>
+          updateTodo(todo.id, todo => {
+            ...todo,
+            status: newStatus,
+          })}
+      />
       <button
         onClick={_ => {
           setTodos(v =>
@@ -59,47 +61,56 @@ let make = (
           )
         }}
         className={[
-          " px-2 rounded",
+          " px-1 h-6 flex flex-row items-center justify-center rounded border-[var(--t3)]
+          hover:text-blue-600
+          ",
           todo.box == Pinned ? "text-blue-600" : "text-[var(--t4)]",
         ]->Array.join(" ")}>
         <Icons.Pin />
       </button>
+      {todo.status->statusIsResolved
+        ? <button
+            onClick={_ => {
+              setTodos(v =>
+                v->Array.map(t =>
+                  t.id == todo.id
+                    ? {
+                        ...t,
+                        box: t.box != Archive ? Archive : Working,
+                        status: t.status->statusIsResolved ? t.status : ResolveScrap,
+                      }
+                    : t
+                )
+              )
+            }}
+            className={[
+              " px-1 h-6 flex flex-row items-center justify-center rounded border-[var(--t3)] gap-1
+          hover:text-blue-600
+          ",
+              todo.box == Archive ? "text-blue-600" : "text-[var(--t4)]",
+            ]->Array.join(" ")}>
+            // {!(todo.status->statusIsResolved) && todo.box != Archive
+            //   ? "Scrap &"->React.string
+            //   : React.null}
+            <Icons.Archive />
+          </button>
+        : React.null}
       <button
         onClick={_ => {
-          setTodos(v =>
-            v->Array.map(t =>
-              t.id == todo.id
-                ? {
-                    ...t,
-                    box: t.box != Archive ? Archive : Working,
-                    status: t.status->statusIsResolved ? t.status : ResolveScrap,
-                  }
-                : t
-            )
-          )
+          document
+          ->Document.getElementById(getTodoId(todo.id))
+          ->Option.mapOr((), todoEl => Common.focusPreviousClass(listItemClass, todoEl))
+
+          setTodos(v => v->Array.filter(t => t.id != todo.id))
         }}
         className={[
-          " px-2 rounded flex flex-row items-center gap-1",
-          todo.box == Archive ? "text-blue-600" : "text-[var(--t4)]",
+          "
+          text-[var(--t4)] px-1 h-6 flex flex-row items-center justify-center rounded border-[var(--t3)]
+          hover:text-blue-600
+        ",
         ]->Array.join(" ")}>
-        <Icons.Archive />
-        {!(todo.status->statusIsResolved) && todo.box != Archive
-          ? "& Scrap"->React.string
-          : React.null}
+        <Icons.Trash />
       </button>
     </div>
-    <Common.StatusSelect
-      isOpen={statusSelectIsOpen}
-      onOpenChange={v => {
-        setStatusSelectIsOpen(_ => v)
-      }}
-      status={todo.status}
-      focusTodo={() => ()}
-      setStatus={newStatus =>
-        updateTodo(todo.id, todo => {
-          ...todo,
-          status: newStatus,
-        })}
-    />
   </div>
 }

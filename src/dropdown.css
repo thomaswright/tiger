@@ -1,6 +1,6 @@
-button {
+/* button {
   all: unset;
-}
+} */
 
 .DropdownMenuContent {
   @apply text-xs flex flex-col gap-1 border rounded-lg shadow-lg mx-2;
