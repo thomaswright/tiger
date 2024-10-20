@@ -9,10 +9,17 @@ import {
   // statusIcon,
 } from "./Types.res.mjs";
 
-const Dropdown = ({ status, setStatus, removeTodo, focusTodo }) => {
+const Dropdown = ({
+  status,
+  setStatus,
+  removeTodo,
+  focusTodo,
+  isOpen,
+  onOpenChange,
+  containerRef,
+}) => {
   let [hoverStatus, setHoverStatus] = React.useState(status);
   const item = (s) => {
-    console.log(s, statusColor(s));
     return (
       <DropdownMenu.Item
         key={s}
@@ -61,7 +68,7 @@ const Dropdown = ({ status, setStatus, removeTodo, focusTodo }) => {
   };
 
   return (
-    <DropdownMenu.Root modal={false}>
+    <DropdownMenu.Root modal={false} open={isOpen} onOpenChange={onOpenChange}>
       <DropdownMenu.Trigger asChild>
         <button
           style={{

@@ -32,16 +32,26 @@ function Project$Todo(props) {
   var isSelected = props.isSelected;
   var updateTodo = props.updateTodo;
   var todo = props.todo;
-  var inputRef = React.useRef(null);
-  var containerRef = React.useRef(null);
   var match = React.useState(function () {
         return false;
       });
-  var setStagedForDelete = match[1];
-  var stagedForDelete = match[0];
+  var setStatusSelectIsOpen = match[1];
+  var inputRef = React.useRef(null);
+  var containerRef = React.useRef(null);
+  var match$1 = React.useState(function () {
+        return false;
+      });
+  var setStagedForDelete = match$1[1];
+  var stagedForDelete = match$1[0];
   var onKeyDownContainer = function (e) {
     if (isSelected && Caml_obj.equal(Caml_option.nullable_to_opt(containerRef.current), Caml_option.nullable_to_opt(document.activeElement))) {
       return mapNullable(containerRef.current, (function (dom) {
+                    if (e.key === "s") {
+                      e.preventDefault();
+                      setStatusSelectIsOpen(function (param) {
+                            return true;
+                          });
+                    }
                     if (e.key === "ArrowUp") {
                       e.preventDefault();
                       Common.focusPreviousClass(Types.listItemClass, dom);
@@ -68,7 +78,6 @@ function Project$Todo(props) {
                             }));
                     }
                     if (e.key === "Enter") {
-                      console.log("on enter");
                       e.preventDefault();
                       mapNullable(inputRef.current, (function (inputEl) {
                               inputEl.focus();
@@ -172,6 +181,12 @@ function Project$Todo(props) {
                       focusTodo: (function () {
                           setFocusIdNext(function (param) {
                                 return Types.getTodoId(todo.id);
+                              });
+                        }),
+                      isOpen: match[0],
+                      onOpenChange: (function (v) {
+                          setStatusSelectIsOpen(function (param) {
+                                return v;
                               });
                         })
                     }),

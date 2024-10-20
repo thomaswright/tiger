@@ -6,6 +6,8 @@ module StatusSelect = {
     ~status: status,
     ~setStatus: status => unit,
     ~focusTodo: unit => unit,
+    ~isOpen: bool,
+    ~onOpenChange: bool => unit,
   ) => React.element = "default"
 }
 
@@ -28,13 +30,20 @@ module Todo = {
     ~newTodoAfter,
     ~getTodos: unit => array<todo>,
   ) => {
+    let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
     let inputRef = React.useRef(Nullable.null)
     let containerRef = React.useRef(Nullable.null)
+
     let (stagedForDelete, setStagedForDelete) = React.useState(_ => false)
 
     let onKeyDownContainer = e => {
       if isSelected && containerRef.current->Nullable.toOption == document->Document.activeElement {
         containerRef.current->mapNullable(dom => {
+          if e->ReactEvent.Keyboard.key == "s" {
+            e->ReactEvent.Keyboard.preventDefault
+            setStatusSelectIsOpen(_ => true)
+          }
+
           if e->ReactEvent.Keyboard.key == "ArrowUp" {
             e->ReactEvent.Keyboard.preventDefault
             Common.focusPreviousClass(listItemClass, dom)
@@ -59,7 +68,6 @@ module Todo = {
           }
 
           if e->ReactEvent.Keyboard.key == "Enter" {
-            Console.log("on enter")
             e->ReactEvent.Keyboard.preventDefault
             inputRef.current->mapNullable(inputEl => {
               let inputEl = inputEl->Obj.magic
@@ -164,6 +172,8 @@ module Todo = {
           : "",
       ]->Array.join(" ")}>
       <StatusSelect
+        isOpen={statusSelectIsOpen}
+        onOpenChange={v => setStatusSelectIsOpen(_ => v)}
         status={todo.status}
         focusTodo={() => {
           // this isn't set directly because the "Enter"
