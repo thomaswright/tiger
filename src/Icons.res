@@ -27,6 +27,11 @@ module Check = {
   external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "TbCheck"
 }
 
+module Plus = {
+  @react.component @module("react-icons/tb")
+  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "TbPlus"
+}
+
 module Minus = {
   @react.component @module("react-icons/tb")
   external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "TbMinus"

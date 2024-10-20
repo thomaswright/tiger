@@ -304,7 +304,14 @@ let make = (
       <div className=" flex-none px-2"> {project.name->React.string} </div>
       <div className="flex-1" />
       <button
-        className="text-xs rounded h-3 w-4 flex-none"
+        onClick={_ => {
+          newTodoAfter(-1)
+        }}
+        className="text-xs rounded h-4 w-4 flex-none mr-2">
+        <Icons.Plus />
+      </button>
+      <button
+        className="text-xs rounded h-4 w-4 flex-none"
         onClick={_ =>
           setShowArchive(v =>
             v->Array.includes(project.id)

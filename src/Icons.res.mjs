@@ -13,6 +13,8 @@ var X = {};
 
 var Check = {};
 
+var Plus = {};
+
 var Minus = {};
 
 var Trash = {};
@@ -24,6 +26,7 @@ export {
   CircleSlash ,
   X ,
   Check ,
+  Plus ,
   Minus ,
   Trash ,
 }

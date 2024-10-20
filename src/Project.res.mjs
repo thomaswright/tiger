@@ -347,8 +347,15 @@ function Project(props) {
                               className: "flex-1"
                             }),
                         JsxRuntime.jsx("button", {
+                              children: JsxRuntime.jsx(Tb.TbPlus, {}),
+                              className: "text-xs rounded h-4 w-4 flex-none mr-2",
+                              onClick: (function (param) {
+                                  newTodoAfter(-1);
+                                })
+                            }),
+                        JsxRuntime.jsx("button", {
                               children: showArchive ? JsxRuntime.jsx(Tb.TbEye, {}) : JsxRuntime.jsx(Tb.TbEyeClosed, {}),
-                              className: "text-xs rounded h-3 w-4 flex-none",
+                              className: "text-xs rounded h-4 w-4 flex-none",
                               onClick: (function (param) {
                                   setShowArchive(function (v) {
                                         if (v.includes(project.id)) {
