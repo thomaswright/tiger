@@ -19,6 +19,10 @@ var Minus = {};
 
 var Trash = {};
 
+var Pin = {};
+
+var Archive = {};
+
 export {
   EyeClosed ,
   Eye ,
@@ -29,5 +33,7 @@ export {
   Plus ,
   Minus ,
   Trash ,
+  Pin ,
+  Archive ,
 }
 /* No side effect */

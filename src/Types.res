@@ -133,6 +133,14 @@ let statusColorText = s =>
   | ResolveScrap => "var(--ResolveScrapText)"
   }
 
+let statusIsResolved = s =>
+  switch s {
+  | ResolveDone
+  | ResolveNo
+  | ResolveScrap => true
+  | _ => false
+  }
+
 let getProjectId = s => "project-" ++ s
 let getTodoId = s => "todo-" ++ s
 let getTodoInputId = s => "todo-input-" ++ s

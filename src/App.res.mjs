@@ -8,6 +8,7 @@ import * as Project from "./Project.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as SwitchJsx from "./Switch.jsx";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
+import * as Tb from "react-icons/tb";
 import * as JsxRuntime from "react/jsx-runtime";
 
 var defaultProjects = [{
@@ -160,6 +161,63 @@ function App(props) {
                                                       });
                                           });
                                     })
+                                }),
+                            JsxRuntime.jsxs("div", {
+                                  children: [
+                                    JsxRuntime.jsx("button", {
+                                          children: JsxRuntime.jsx(Tb.TbPin, {}),
+                                          className: [
+                                              " px-2 rounded",
+                                              todo.box === "Pinned" ? "text-blue-600" : "text-[var(--t4)]"
+                                            ].join(" "),
+                                          onClick: (function (param) {
+                                              setTodos(function (v) {
+                                                    return v.map(function (t) {
+                                                                if (t.id === todoId) {
+                                                                  return {
+                                                                          id: t.id,
+                                                                          text: t.text,
+                                                                          project: t.project,
+                                                                          isDone: t.isDone,
+                                                                          status: t.status,
+                                                                          box: t.box !== "Pinned" ? "Pinned" : "Working"
+                                                                        };
+                                                                } else {
+                                                                  return t;
+                                                                }
+                                                              });
+                                                  });
+                                            })
+                                        }),
+                                    JsxRuntime.jsxs("button", {
+                                          children: [
+                                            JsxRuntime.jsx(Tb.TbArchive, {}),
+                                            !Types.statusIsResolved(todo.status) && todo.box !== "Archive" ? "& Scrap" : null
+                                          ],
+                                          className: [
+                                              " px-2 rounded flex flex-row items-center gap-1",
+                                              todo.box === "Archive" ? "text-blue-600" : "text-[var(--t4)]"
+                                            ].join(" "),
+                                          onClick: (function (param) {
+                                              setTodos(function (v) {
+                                                    return v.map(function (t) {
+                                                                if (t.id === todoId) {
+                                                                  return {
+                                                                          id: t.id,
+                                                                          text: t.text,
+                                                                          project: t.project,
+                                                                          isDone: t.isDone,
+                                                                          status: Types.statusIsResolved(t.status) ? t.status : "ResolveScrap",
+                                                                          box: t.box !== "Archive" ? "Archive" : "Working"
+                                                                        };
+                                                                } else {
+                                                                  return t;
+                                                                }
+                                                              });
+                                                  });
+                                            })
+                                        })
+                                  ]
                                 })
                           ]
                         });
@@ -244,7 +302,7 @@ function App(props) {
                                 JsxRuntime.jsxs("div", {
                                       children: [
                                         JsxRuntime.jsx("div", {
-                                              children: "Show Archived",
+                                              children: "Show NonActive",
                                               className: "text-sm"
                                             }),
                                         JsxRuntime.jsx(make, {

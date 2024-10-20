@@ -149,6 +149,17 @@ function statusColorText(s) {
   }
 }
 
+function statusIsResolved(s) {
+  switch (s) {
+    case "ResolveDone" :
+    case "ResolveNo" :
+    case "ResolveScrap" :
+        return true;
+    default:
+      return false;
+  }
+}
+
 function getProjectId(s) {
   return "project-" + s;
 }
@@ -171,6 +182,7 @@ export {
   statusString ,
   statusColor ,
   statusColorText ,
+  statusIsResolved ,
   getProjectId ,
   getTodoId ,
   getTodoInputId ,

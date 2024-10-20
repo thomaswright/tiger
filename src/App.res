@@ -91,7 +91,7 @@ let make = () => {
     <div className="flex-1">
       <div className="flex flex-row gap-2 justify-between w-full p-1">
         <div className="flex flex-row gap-2 ">
-          <div className="text-sm"> {"Show Archived"->React.string} </div>
+          <div className="text-sm"> {"Show NonActive"->React.string} </div>
           <Switch
             checked={projectsTab == All}
             onCheckedChange={() => setProjectTab(v => v == All ? Active : All)}
@@ -183,6 +183,52 @@ let make = () => {
               className={["bg-[var(--t2)] px-2 rounded"]->Array.join(" ")}>
               {"Delete Todo"->React.string}
             </button>
+            <div>
+              <button
+                onClick={_ => {
+                  setTodos(v =>
+                    v->Array.map(
+                      t =>
+                        t.id == todoId
+                          ? {
+                              ...t,
+                              box: t.box != Pinned ? Pinned : Working,
+                            }
+                          : t,
+                    )
+                  )
+                }}
+                className={[
+                  " px-2 rounded",
+                  todo.box == Pinned ? "text-blue-600" : "text-[var(--t4)]",
+                ]->Array.join(" ")}>
+                <Icons.Pin />
+              </button>
+              <button
+                onClick={_ => {
+                  setTodos(v =>
+                    v->Array.map(
+                      t =>
+                        t.id == todoId
+                          ? {
+                              ...t,
+                              box: t.box != Archive ? Archive : Working,
+                              status: t.status->statusIsResolved ? t.status : ResolveScrap,
+                            }
+                          : t,
+                    )
+                  )
+                }}
+                className={[
+                  " px-2 rounded flex flex-row items-center gap-1",
+                  todo.box == Archive ? "text-blue-600" : "text-[var(--t4)]",
+                ]->Array.join(" ")}>
+                <Icons.Archive />
+                {!(todo.status->statusIsResolved) && todo.box != Archive
+                  ? "& Scrap"->React.string
+                  : React.null}
+              </button>
+            </div>
           </div>
         })
       | Some(Project(projectId)) =>

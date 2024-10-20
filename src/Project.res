@@ -218,6 +218,11 @@ module Todo = {
           })
         }}
       />
+      {switch todo.box {
+      | Working => React.null
+      | Archive => <Icons.Archive />
+      | Pinned => <Icons.Pin />
+      }}
     </div>
   }
 }
@@ -324,7 +329,7 @@ let make = (
     <div>
       <div className="flex flex-col divide-y ">
         {todos
-        ->Array.filter(todo => showArchive ? true : todo.box == Archive)
+        ->Array.filter(todo => showArchive ? true : todo.box != Archive)
         // ->Array.toSorted((a, b) => a.status->statusToFloat -. b.status->statusToFloat)
         ->Array.map(todo =>
           <Todo
