@@ -1,3 +1,5 @@
+open Types
+
 @module("./useLocalStorage.js")
 external useLocalStorage: (string, 'a) => ('a, ('a => 'a) => unit, unit => 'a) = "default"
 
@@ -11,3 +13,19 @@ external focusPreviousClass: (string, Dom.element) => unit = "focusPreviousClass
 external focusNextClass: (string, Dom.element) => unit = "focusNextClass"
 
 @module("uuid") external uuid: unit => string = "v4"
+
+module StatusSelect = {
+  @react.component @module("./StatusSelect.jsx")
+  external make: (
+    ~status: status,
+    ~setStatus: status => unit,
+    ~focusTodo: unit => unit,
+    ~isOpen: bool,
+    ~onOpenChange: bool => unit,
+  ) => React.element = "default"
+}
+
+let mapNullable = (n, f) =>
+  n
+  ->Nullable.toOption
+  ->Option.mapOr((), f)

@@ -6,9 +6,9 @@ import * as React from "react";
 import * as Common from "./Common.res.mjs";
 import * as Project from "./Project.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
+import * as DisplayTodo from "./DisplayTodo.res.mjs";
 import * as SwitchJsx from "./Switch.jsx";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
-import * as Tb from "react-icons/tb";
 import * as JsxRuntime from "react/jsx-runtime";
 
 var defaultProjects = [{
@@ -119,107 +119,11 @@ function App(props) {
       tmp = Core__Option.mapOr(todos.find(function (t) {
                 return t.id === todoId;
               }), null, (function (todo) {
-              return JsxRuntime.jsxs("div", {
-                          children: [
-                            JsxRuntime.jsx("input", {
-                                  className: ["px-2 flex-1 bg-inherit text-[--t10] w-full outline-none \n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500"].join(" "),
-                                  id: "id-display-title",
-                                  placeholder: "Todo Text",
-                                  type: "text",
-                                  value: todo.text,
-                                  onKeyDown: (function (e) {
-                                      if (e.key === "Escape") {
-                                        return setFocusIdNext(function (param) {
-                                                    return Types.getTodoId(todo.id);
-                                                  });
-                                      }
-                                      
-                                    }),
-                                  onChange: (function (e) {
-                                      updateTodo(todo.id, (function (t) {
-                                              return {
-                                                      id: t.id,
-                                                      text: e.target.value,
-                                                      project: t.project,
-                                                      isDone: t.isDone,
-                                                      status: t.status,
-                                                      box: t.box
-                                                    };
-                                            }));
-                                    })
-                                }),
-                            JsxRuntime.jsx("button", {
-                                  children: "Delete Todo",
-                                  className: ["bg-[var(--t2)] px-2 rounded"].join(" "),
-                                  onClick: (function (param) {
-                                      Core__Option.mapOr(Caml_option.nullable_to_opt(document.getElementById(Types.getTodoId(todoId))), undefined, (function (todoEl) {
-                                              Common.focusPreviousClass(Types.listItemClass, todoEl);
-                                            }));
-                                      setTodos(function (v) {
-                                            return v.filter(function (t) {
-                                                        return t.id !== todoId;
-                                                      });
-                                          });
-                                    })
-                                }),
-                            JsxRuntime.jsxs("div", {
-                                  children: [
-                                    JsxRuntime.jsx("button", {
-                                          children: JsxRuntime.jsx(Tb.TbPin, {}),
-                                          className: [
-                                              " px-2 rounded",
-                                              todo.box === "Pinned" ? "text-blue-600" : "text-[var(--t4)]"
-                                            ].join(" "),
-                                          onClick: (function (param) {
-                                              setTodos(function (v) {
-                                                    return v.map(function (t) {
-                                                                if (t.id === todoId) {
-                                                                  return {
-                                                                          id: t.id,
-                                                                          text: t.text,
-                                                                          project: t.project,
-                                                                          isDone: t.isDone,
-                                                                          status: t.status,
-                                                                          box: t.box !== "Pinned" ? "Pinned" : "Working"
-                                                                        };
-                                                                } else {
-                                                                  return t;
-                                                                }
-                                                              });
-                                                  });
-                                            })
-                                        }),
-                                    JsxRuntime.jsxs("button", {
-                                          children: [
-                                            JsxRuntime.jsx(Tb.TbArchive, {}),
-                                            !Types.statusIsResolved(todo.status) && todo.box !== "Archive" ? "& Scrap" : null
-                                          ],
-                                          className: [
-                                              " px-2 rounded flex flex-row items-center gap-1",
-                                              todo.box === "Archive" ? "text-blue-600" : "text-[var(--t4)]"
-                                            ].join(" "),
-                                          onClick: (function (param) {
-                                              setTodos(function (v) {
-                                                    return v.map(function (t) {
-                                                                if (t.id === todoId) {
-                                                                  return {
-                                                                          id: t.id,
-                                                                          text: t.text,
-                                                                          project: t.project,
-                                                                          isDone: t.isDone,
-                                                                          status: Types.statusIsResolved(t.status) ? t.status : "ResolveScrap",
-                                                                          box: t.box !== "Archive" ? "Archive" : "Working"
-                                                                        };
-                                                                } else {
-                                                                  return t;
-                                                                }
-                                                              });
-                                                  });
-                                            })
-                                        })
-                                  ]
-                                })
-                          ]
+              return JsxRuntime.jsx(DisplayTodo.make, {
+                          todo: todo,
+                          setFocusIdNext: setFocusIdNext,
+                          updateTodo: updateTodo,
+                          setTodos: setTodos
                         });
             }));
     } else {

@@ -1,20 +1,6 @@
 open Types
 open Webapi.Dom
-module StatusSelect = {
-  @react.component @module("./StatusSelect.jsx")
-  external make: (
-    ~status: status,
-    ~setStatus: status => unit,
-    ~focusTodo: unit => unit,
-    ~isOpen: bool,
-    ~onOpenChange: bool => unit,
-  ) => React.element = "default"
-}
-
-let mapNullable = (n, f) =>
-  n
-  ->Nullable.toOption
-  ->Option.mapOr((), f)
+open Common
 
 module Todo = {
   @react.component
@@ -169,7 +155,7 @@ module Todo = {
           ? "bg-var(--t1) outline outline-1 -outline-offset-1"
           : "",
       ]->Array.join(" ")}>
-      <StatusSelect
+      <Common.StatusSelect
         isOpen={statusSelectIsOpen}
         onOpenChange={v => {
           if !v {

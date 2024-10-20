@@ -10,17 +10,6 @@ import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as Tb from "react-icons/tb";
 import * as JsxRuntime from "react/jsx-runtime";
-import StatusSelectJsx from "./StatusSelect.jsx";
-
-var make = StatusSelectJsx;
-
-var StatusSelect = {
-  make: make
-};
-
-function mapNullable(n, f) {
-  Core__Option.mapOr((n == null) ? undefined : Caml_option.some(n), undefined, f);
-}
 
 function Project$Todo(props) {
   var getTodos = props.getTodos;
@@ -45,7 +34,7 @@ function Project$Todo(props) {
   var stagedForDelete = match$1[0];
   var onKeyDownContainer = function (e) {
     if (isSelected && Caml_obj.equal(Caml_option.nullable_to_opt(containerRef.current), Caml_option.nullable_to_opt(document.activeElement))) {
-      return mapNullable(containerRef.current, (function (dom) {
+      return Common.mapNullable(containerRef.current, (function (dom) {
                     if (e.key === "s") {
                       e.preventDefault();
                       setStatusSelectIsOpen(function (param) {
@@ -66,7 +55,7 @@ function Project$Todo(props) {
                                         return t.id !== todo.id;
                                       });
                           });
-                      mapNullable(containerRef.current, (function (containerEl) {
+                      Common.mapNullable(containerRef.current, (function (containerEl) {
                               Common.focusPreviousClass(Types.listItemClass, containerEl);
                             }));
                     }
@@ -79,7 +68,7 @@ function Project$Todo(props) {
                     }
                     if (e.key === "Enter") {
                       e.preventDefault();
-                      mapNullable(inputRef.current, (function (inputEl) {
+                      Common.mapNullable(inputRef.current, (function (inputEl) {
                               inputEl.focus();
                               inputEl.selectionStart = Caml_option.nullable_to_opt(inputEl.selectionEnd);
                             }));
@@ -106,18 +95,18 @@ function Project$Todo(props) {
     if (isSelected) {
       if (e.key === "Escape") {
         e.stopPropagation();
-        mapNullable(containerRef.current, (function (dom) {
+        Common.mapNullable(containerRef.current, (function (dom) {
                 dom.focus();
               }));
       }
-      return mapNullable(inputRef.current, (function (dom) {
+      return Common.mapNullable(inputRef.current, (function (dom) {
                     var cursorPosition = Core__Option.getOr(Caml_option.nullable_to_opt(dom.selectionStart), 0);
                     var inputValueLength = dom.value.length;
                     if (e.key === "ArrowUp") {
                       e.stopPropagation();
                       if (cursorPosition === 0) {
                         e.preventDefault();
-                        mapNullable(containerRef.current, (function (dom) {
+                        Common.mapNullable(containerRef.current, (function (dom) {
                                 dom.focus();
                               }));
                       }
@@ -127,7 +116,7 @@ function Project$Todo(props) {
                       e.stopPropagation();
                       if (cursorPosition === inputValueLength) {
                         e.preventDefault();
-                        mapNullable(containerRef.current, (function (dom) {
+                        Common.mapNullable(containerRef.current, (function (dom) {
                                 dom.focus();
                               }));
                       }
@@ -140,7 +129,7 @@ function Project$Todo(props) {
                                           return t.id !== todo.id;
                                         });
                             });
-                        mapNullable(containerRef.current, (function (containerEl) {
+                        Common.mapNullable(containerRef.current, (function (containerEl) {
                                 Common.focusPreviousClass(Types.listItemClass, containerEl);
                               }));
                       } else {
@@ -178,7 +167,7 @@ function Project$Todo(props) {
   }
   return JsxRuntime.jsxs("div", {
               children: [
-                JsxRuntime.jsx(make, {
+                JsxRuntime.jsx(Common.StatusSelect.make, {
                       status: todo.status,
                       setStatus: (function (newStatus) {
                           updateTodo(todo.id, (function (todo) {
@@ -204,7 +193,7 @@ function Project$Todo(props) {
                                         return v;
                                       });
                           } else {
-                            mapNullable(containerRef.current, (function (dom) {
+                            Common.mapNullable(containerRef.current, (function (dom) {
                                     dom.focus();
                                   }));
                             return setStatusSelectIsOpen(function (param) {
@@ -336,7 +325,7 @@ function Project(props) {
       if (e.key === "Enter") {
         newTodoAfter(-1);
       }
-      return mapNullable(projectRef.current, (function (dom) {
+      return Common.mapNullable(projectRef.current, (function (dom) {
                     if (e.key === "ArrowUp") {
                       e.preventDefault();
                       Common.focusPreviousClass(Types.listItemClass, dom);
@@ -446,12 +435,10 @@ function Project(props) {
             });
 }
 
-var make$1 = Project;
+var make = Project;
 
 export {
-  StatusSelect ,
-  mapNullable ,
   Todo ,
-  make$1 as make,
+  make ,
 }
-/* make Not a pure module */
+/* uuid Not a pure module */
