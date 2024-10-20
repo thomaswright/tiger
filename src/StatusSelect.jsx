@@ -76,7 +76,7 @@ const Dropdown = ({
             backgroundColor: statusColor(status),
             color: statusColorText(status),
           }}
-          className=" flex flex-row items-center text-sm justify-center w-20 h-5 font-bold rounded text-[var(--t0)]"
+          className=" flex flex-row items-center text-xs justify-center w-20 h-5 font-bold rounded text-[var(--t0)]"
           aria-label="Customise options"
         >
           {statusStringShort(status)}
@@ -96,8 +96,8 @@ const Dropdown = ({
               {item("NowIfTime")}
 
               {item("Underway")}
-              {item("UnderwayHalfDone")}
               {item("UnderwayWrapUp")}
+              {item("Suspended")}
 
               {item("ResolveDone")}
               {item("ResolveNo")}

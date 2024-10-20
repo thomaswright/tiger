@@ -5,7 +5,7 @@ function statusToFloat(s) {
   return [
             "Unsorted",
             "Underway",
-            "UnderwayHalfDone",
+            "Suspended",
             "UnderwayWrapUp",
             "NowUrgent",
             "NowWillDo",
@@ -25,8 +25,8 @@ function statusStringShort(s) {
   switch (s) {
     case "Underway" :
         return "Underway";
-    case "UnderwayHalfDone" :
-        return "Half Done";
+    case "Suspended" :
+        return "Suspended";
     case "UnderwayWrapUp" :
         return "Wrap Up";
     case "NowUrgent" :
@@ -57,8 +57,8 @@ function statusString(s) {
   switch (s) {
     case "Underway" :
         return "Underway";
-    case "UnderwayHalfDone" :
-        return "Underway: Half Done";
+    case "Suspended" :
+        return "Underway: Suspended";
     case "UnderwayWrapUp" :
         return "Underway: Wrap Up";
     case "NowUrgent" :
@@ -89,8 +89,8 @@ function statusColor(s) {
   switch (s) {
     case "Underway" :
         return "var(--Underway)";
-    case "UnderwayHalfDone" :
-        return "var(--UnderwayHalfDone)";
+    case "Suspended" :
+        return "var(--Suspended)";
     case "UnderwayWrapUp" :
         return "var(--UnderwayWrapUp)";
     case "NowUrgent" :
@@ -121,8 +121,8 @@ function statusColorText(s) {
   switch (s) {
     case "Underway" :
         return "var(--UnderwayText)";
-    case "UnderwayHalfDone" :
-        return "var(--UnderwayHalfDoneText)";
+    case "Suspended" :
+        return "var(--SuspendedText)";
     case "UnderwayWrapUp" :
         return "var(--UnderwayWrapUpText)";
     case "NowUrgent" :

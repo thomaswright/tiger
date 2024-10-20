@@ -1,6 +1,6 @@
 type status =
   | @as("Underway") Underway
-  | @as("UnderwayHalfDone") UnderwayHalfDone
+  | @as("Suspended") Suspended
   | @as("UnderwayWrapUp") UnderwayWrapUp
   | @as("NowUrgent") NowUrgent
   | @as("NowWillDo") NowWillDo
@@ -47,7 +47,7 @@ let statusToFloat = s => {
   [
     Unsorted,
     Underway,
-    UnderwayHalfDone,
+    Suspended,
     UnderwayWrapUp,
     NowUrgent,
     NowWillDo,
@@ -67,7 +67,7 @@ let statusStringShort = s => {
   switch s {
   | Unsorted => ""
   | Underway => "Underway"
-  | UnderwayHalfDone => "Half Done"
+  | Suspended => "Suspended"
   | UnderwayWrapUp => "Wrap Up"
   | NowUrgent => "Urgent"
   | NowWillDo => "Will Do"
@@ -85,7 +85,7 @@ let statusString = s => {
   switch s {
   | Unsorted => "No Status"
   | Underway => "Underway"
-  | UnderwayHalfDone => "Underway: Half Done"
+  | Suspended => "Underway: Suspended"
   | UnderwayWrapUp => "Underway: Wrap Up"
   | NowUrgent => "Now: Urgent"
   | NowWillDo => "Now: Will Do"
@@ -103,7 +103,7 @@ let statusColor = s =>
   switch s {
   | Unsorted => "var(--Unsorted)"
   | Underway => "var(--Underway)"
-  | UnderwayHalfDone => "var(--UnderwayHalfDone)"
+  | Suspended => "var(--Suspended)"
   | UnderwayWrapUp => "var(--UnderwayWrapUp)"
   | NowUrgent => "var(--NowUrgent)"
   | NowWillDo => "var(--NowWillDo)"
@@ -120,7 +120,7 @@ let statusColorText = s =>
   switch s {
   | Unsorted => "var(--UnsortedText)"
   | Underway => "var(--UnderwayText)"
-  | UnderwayHalfDone => "var(--UnderwayHalfDoneText)"
+  | Suspended => "var(--SuspendedText)"
   | UnderwayWrapUp => "var(--UnderwayWrapUpText)"
   | NowUrgent => "var(--NowUrgentText)"
   | NowWillDo => "var(--NowWillDoText)"
