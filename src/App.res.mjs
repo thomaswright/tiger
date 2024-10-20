@@ -10,6 +10,7 @@ import * as DisplayTodo from "./DisplayTodo.res.mjs";
 import * as SwitchJsx from "./Switch.jsx";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as DisplayProject from "./DisplayProject.res.mjs";
+import * as Tb from "react-icons/tb";
 import * as JsxRuntime from "react/jsx-runtime";
 
 var defaultProjects = [{
@@ -152,7 +153,7 @@ function App(props) {
                                 JsxRuntime.jsxs("div", {
                                       children: [
                                         JsxRuntime.jsx("div", {
-                                              children: "Show NonActive",
+                                              children: "Show Inactive",
                                               className: "text-sm"
                                             }),
                                         JsxRuntime.jsx(make, {
@@ -170,9 +171,12 @@ function App(props) {
                                       ],
                                       className: "flex flex-row gap-2 "
                                     }),
-                                JsxRuntime.jsx("button", {
-                                      children: "Add Project",
-                                      className: ["bg-[var(--t2)] px-2 rounded text-sm"].join(" "),
+                                JsxRuntime.jsxs("button", {
+                                      children: [
+                                        JsxRuntime.jsx(Tb.TbPlus, {}),
+                                        "Project"
+                                      ],
+                                      className: ["bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1"].join(" "),
                                       onClick: (function (param) {
                                           var newProjectId = Uuid.v4();
                                           setProjects(function (v) {

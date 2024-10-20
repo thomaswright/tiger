@@ -15,7 +15,7 @@ let make = (
       id="id-display-title"
       className={[
         " flex-1 bg-inherit text-[--t10] w-full outline-none 
-          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500",
+           border-none px-2 py-1  focus:text-blue-500",
       ]->Array.join(" ")}
       placeholder={"Project Name"}
       value={project.name}
@@ -26,29 +26,37 @@ let make = (
         })
       }}
     />
-    <button
-      onClick={_ => {
-        document
-        ->Document.getElementById(getProjectId(project.id))
-        ->Option.mapOr((), projectEl => {
-          Console.log(projectEl)
-          Common.focusPreviousClass(listItemClass, projectEl)
-        })
+    <div className="flex flex-row border-y items-center gap-3 p-1 px-2">
+      <button
+        className="rounded bg-[var(--t2)] px-2 text-xs h-fit flex-none"
+        onClick={_ =>
+          updateProject(project.id, p => {
+            ...p,
+            isActive: !p.isActive,
+          })}>
+        {(project.isActive ? "Active" : "Inactive")->React.string}
+      </button>
+      <div className={"flex-1"} />
+      <button
+        onClick={_ => {
+          document
+          ->Document.getElementById(getProjectId(project.id))
+          ->Option.mapOr((), projectEl => {
+            Console.log(projectEl)
+            Common.focusPreviousClass(listItemClass, projectEl)
+          })
 
-        setProjects(v => v->Array.filter(p => p.id != project.id))
-        setTodos(v => v->Array.filter(p => p.project != project.id))
-      }}
-      className={["bg-[var(--t2)] px-2 rounded"]->Array.join(" ")}>
-      {"Delete Project"->React.string}
-    </button>
-    <button
-      className="rounded bg-[var(--t2)] px-1 text-xs h-fit flex-none"
-      onClick={_ =>
-        updateProject(project.id, p => {
-          ...p,
-          isActive: !p.isActive,
-        })}>
-      {(project.isActive ? "Active" : "Not Active")->React.string}
-    </button>
+          setProjects(v => v->Array.filter(p => p.id != project.id))
+          setTodos(v => v->Array.filter(p => p.project != project.id))
+        }}
+        className={[
+          "
+          text-[var(--t4)] px-1 h-6 flex flex-row items-center justify-center rounded border-[var(--t3)]
+          hover:text-blue-600
+        ",
+        ]->Array.join(" ")}>
+        <Icons.Trash />
+      </button>
+    </div>
   </div>
 }

@@ -10,13 +10,13 @@ html {
 
   --t10: black;
   --t9: oklch(from var(--tBase) 0.03 c h);
-  --t8: oklch(from var(--tBase) 0.08 c h);
-  --t7: oklch(from var(--tBase) 0.15 c h);
-  --t6: oklch(from var(--tBase) 0.25 c h);
+  --t8: oklch(from var(--tBase) 0.05 c h);
+  --t7: oklch(from var(--tBase) 0.1 c h);
+  --t6: oklch(from var(--tBase) 0.15 c h);
   --t5: oklch(from var(--tBase) 0.5 c h);
-  --t4: oklch(from var(--tBase) 0.75 c h);
-  --t3: oklch(from var(--tBase) 0.85 c h);
-  --t2: oklch(from var(--tBase) 0.92 c h);
+  --t4: oklch(from var(--tBase) 0.85 c h);
+  --t3: oklch(from var(--tBase) 0.9 c h);
+  --t2: oklch(from var(--tBase) 0.95 c h);
   --t1: oklch(from var(--tBase) 0.97 c h);
   --t0: white;
 

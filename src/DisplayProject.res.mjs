@@ -4,6 +4,7 @@ import * as Types from "./Types.res.mjs";
 import * as Common from "./Common.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
+import * as Tb from "react-icons/tb";
 import * as JsxRuntime from "react/jsx-runtime";
 
 function DisplayProject(props) {
@@ -14,7 +15,7 @@ function DisplayProject(props) {
   return JsxRuntime.jsxs("div", {
               children: [
                 JsxRuntime.jsx("input", {
-                      className: [" flex-1 bg-inherit text-[--t10] w-full outline-none \n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500"].join(" "),
+                      className: [" flex-1 bg-inherit text-[--t10] w-full outline-none \n           border-none px-2 py-1  focus:text-blue-500"].join(" "),
                       id: "id-display-title",
                       placeholder: "Project Name",
                       type: "text",
@@ -29,38 +30,46 @@ function DisplayProject(props) {
                                 }));
                         })
                     }),
-                JsxRuntime.jsx("button", {
-                      children: "Delete Project",
-                      className: ["bg-[var(--t2)] px-2 rounded"].join(" "),
-                      onClick: (function (param) {
-                          Core__Option.mapOr(Caml_option.nullable_to_opt(document.getElementById(Types.getProjectId(project.id))), undefined, (function (projectEl) {
-                                  console.log(projectEl);
-                                  Common.focusPreviousClass(Types.listItemClass, projectEl);
-                                }));
-                          setProjects(function (v) {
-                                return v.filter(function (p) {
-                                            return p.id !== project.id;
-                                          });
-                              });
-                          setTodos(function (v) {
-                                return v.filter(function (p) {
-                                            return p.project !== project.id;
-                                          });
-                              });
-                        })
-                    }),
-                JsxRuntime.jsx("button", {
-                      children: project.isActive ? "Active" : "Not Active",
-                      className: "rounded bg-[var(--t2)] px-1 text-xs h-fit flex-none",
-                      onClick: (function (param) {
-                          updateProject(project.id, (function (p) {
-                                  return {
-                                          id: p.id,
-                                          name: p.name,
-                                          isActive: !p.isActive
-                                        };
-                                }));
-                        })
+                JsxRuntime.jsxs("div", {
+                      children: [
+                        JsxRuntime.jsx("button", {
+                              children: project.isActive ? "Active" : "Inactive",
+                              className: "rounded bg-[var(--t2)] px-2 text-xs h-fit flex-none",
+                              onClick: (function (param) {
+                                  updateProject(project.id, (function (p) {
+                                          return {
+                                                  id: p.id,
+                                                  name: p.name,
+                                                  isActive: !p.isActive
+                                                };
+                                        }));
+                                })
+                            }),
+                        JsxRuntime.jsx("div", {
+                              className: "flex-1"
+                            }),
+                        JsxRuntime.jsx("button", {
+                              children: JsxRuntime.jsx(Tb.TbTrash, {}),
+                              className: ["\n          text-[var(--t4)] px-1 h-6 flex flex-row items-center justify-center rounded border-[var(--t3)]\n          hover:text-blue-600\n        "].join(" "),
+                              onClick: (function (param) {
+                                  Core__Option.mapOr(Caml_option.nullable_to_opt(document.getElementById(Types.getProjectId(project.id))), undefined, (function (projectEl) {
+                                          console.log(projectEl);
+                                          Common.focusPreviousClass(Types.listItemClass, projectEl);
+                                        }));
+                                  setProjects(function (v) {
+                                        return v.filter(function (p) {
+                                                    return p.id !== project.id;
+                                                  });
+                                      });
+                                  setTodos(function (v) {
+                                        return v.filter(function (p) {
+                                                    return p.project !== project.id;
+                                                  });
+                                      });
+                                })
+                            })
+                      ],
+                      className: "flex flex-row border-y items-center gap-3 p-1 px-2"
                     })
               ]
             });

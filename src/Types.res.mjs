@@ -48,7 +48,7 @@ function statusStringShort(s) {
     case "ResolveScrap" :
         return "Scrap";
     case "Unsorted" :
-        return "";
+        return "-";
     
   }
 }

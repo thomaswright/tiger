@@ -19,32 +19,34 @@ function DisplayTodo(props) {
   var setStatusSelectIsOpen = match[1];
   return JsxRuntime.jsxs("div", {
               children: [
-                JsxRuntime.jsx("input", {
-                      className: ["px-2 flex-1 bg-inherit text-[--t10] w-full outline-none \n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500"].join(" "),
-                      id: "id-display-title",
-                      placeholder: "Todo Text",
-                      type: "text",
-                      value: todo.text,
-                      onKeyDown: (function (e) {
-                          if (e.key === "Escape") {
-                            return setFocusIdNext(function (param) {
-                                        return Types.getTodoId(todo.id);
-                                      });
-                          }
-                          
-                        }),
-                      onChange: (function (e) {
-                          updateTodo(todo.id, (function (t) {
-                                  return {
-                                          id: t.id,
-                                          text: e.target.value,
-                                          project: t.project,
-                                          isDone: t.isDone,
-                                          status: t.status,
-                                          box: t.box
-                                        };
-                                }));
-                        })
+                JsxRuntime.jsx("div", {
+                      children: JsxRuntime.jsx("input", {
+                            className: [" flex-1 bg-inherit text-[--t10] w-full outline-none \n           border-none px-2 py-1  focus:text-blue-500"].join(" "),
+                            id: "id-display-title",
+                            placeholder: "Todo",
+                            type: "text",
+                            value: todo.text,
+                            onKeyDown: (function (e) {
+                                if (e.key === "Escape") {
+                                  return setFocusIdNext(function (param) {
+                                              return Types.getTodoId(todo.id);
+                                            });
+                                }
+                                
+                              }),
+                            onChange: (function (e) {
+                                updateTodo(todo.id, (function (t) {
+                                        return {
+                                                id: t.id,
+                                                text: e.target.value,
+                                                project: t.project,
+                                                isDone: t.isDone,
+                                                status: t.status,
+                                                box: t.box
+                                              };
+                                      }));
+                              })
+                          })
                     }),
                 JsxRuntime.jsxs("div", {
                       children: [
@@ -72,30 +74,8 @@ function DisplayTodo(props) {
                                       });
                                 })
                             }),
-                        JsxRuntime.jsx("button", {
-                              children: JsxRuntime.jsx(Tb.TbPin, {}),
-                              className: [
-                                  " px-1 h-6 flex flex-row items-center justify-center rounded border-[var(--t3)]\n          hover:text-blue-600\n          ",
-                                  todo.box === "Pinned" ? "text-blue-600" : "text-[var(--t4)]"
-                                ].join(" "),
-                              onClick: (function (param) {
-                                  setTodos(function (v) {
-                                        return v.map(function (t) {
-                                                    if (t.id === todo.id) {
-                                                      return {
-                                                              id: t.id,
-                                                              text: t.text,
-                                                              project: t.project,
-                                                              isDone: t.isDone,
-                                                              status: t.status,
-                                                              box: t.box !== "Pinned" ? "Pinned" : "Working"
-                                                            };
-                                                    } else {
-                                                      return t;
-                                                    }
-                                                  });
-                                      });
-                                })
+                        JsxRuntime.jsx("div", {
+                              className: "flex-1"
                             }),
                         Types.statusIsResolved(todo.status) ? JsxRuntime.jsx("button", {
                                 children: JsxRuntime.jsx(Tb.TbArchive, {}),
@@ -123,6 +103,31 @@ function DisplayTodo(props) {
                                   })
                               }) : null,
                         JsxRuntime.jsx("button", {
+                              children: JsxRuntime.jsx(Tb.TbPin, {}),
+                              className: [
+                                  " px-1 h-6 flex flex-row items-center justify-center rounded border-[var(--t3)]\n          hover:text-blue-600\n          ",
+                                  todo.box === "Pinned" ? "text-blue-600" : "text-[var(--t4)]"
+                                ].join(" "),
+                              onClick: (function (param) {
+                                  setTodos(function (v) {
+                                        return v.map(function (t) {
+                                                    if (t.id === todo.id) {
+                                                      return {
+                                                              id: t.id,
+                                                              text: t.text,
+                                                              project: t.project,
+                                                              isDone: t.isDone,
+                                                              status: t.status,
+                                                              box: t.box !== "Pinned" ? "Pinned" : "Working"
+                                                            };
+                                                    } else {
+                                                      return t;
+                                                    }
+                                                  });
+                                      });
+                                })
+                            }),
+                        JsxRuntime.jsx("button", {
                               children: JsxRuntime.jsx(Tb.TbTrash, {}),
                               className: ["\n          text-[var(--t4)] px-1 h-6 flex flex-row items-center justify-center rounded border-[var(--t3)]\n          hover:text-blue-600\n        "].join(" "),
                               onClick: (function (param) {
@@ -137,7 +142,7 @@ function DisplayTodo(props) {
                                 })
                             })
                       ],
-                      className: "flex flex-row border-y items-center gap-3"
+                      className: "flex flex-row border-y items-center gap-3 p-1 px-2"
                     })
               ]
             });

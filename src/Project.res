@@ -186,7 +186,7 @@ module Todo = {
         type_="text"
         className={[
           todoInputClass,
-          " flex-1 bg-inherit text-[--t10] w-full outline-none  text-sm font-medium
+          " flex-1 bg-inherit text-[--t10] w-full outline-none  text-xs font-medium
           leading-none padding-none border-none h-5 -my-1 focus:text-blue-600",
         ]->Array.join(" ")}
         placeholder={""}
@@ -289,20 +289,20 @@ let make = (
       }}
       className={[
         listItemClass,
-        "h-6 flex flex-row justify-between items-center bg-[var(--t2)] ",
+        "h-7 flex flex-row justify-between items-center bg-[var(--t2)] px-1 gap-1",
         isSelected ? "outline outline-1 -outline-offset-1 " : "",
       ]->Array.join(" ")}>
-      <div className=" flex-none px-2"> {project.name->React.string} </div>
+      <div className=" flex-none px-2 text-sm"> {project.name->React.string} </div>
       <div className="flex-1" />
       <button
         onClick={_ => {
           newTodoAfter(-1)
         }}
-        className="text-xs rounded h-4 w-4 flex-none mr-2">
+        className="text-xs rounded h-6 w-6 flex-none mr-2">
         <Icons.Plus />
       </button>
       <button
-        className="text-xs rounded h-4 w-4 flex-none"
+        className="text-xs rounded h-6 w-6 flex-none"
         onClick={_ =>
           setShowArchive(v =>
             v->Array.includes(project.id)

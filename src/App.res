@@ -91,7 +91,7 @@ let make = () => {
     <div className="flex-1">
       <div className="flex flex-row gap-2 justify-between w-full p-1">
         <div className="flex flex-row gap-2 ">
-          <div className="text-sm"> {"Show NonActive"->React.string} </div>
+          <div className="text-sm"> {"Show Inactive"->React.string} </div>
           <Switch
             checked={projectsTab == All}
             onCheckedChange={() => setProjectTab(v => v == All ? Active : All)}
@@ -116,8 +116,11 @@ let make = () => {
             setDisplayElement(_ => Some(Project(newProjectId)))
             setFocusClassNext(_ => Some("class-display-title"))
           }}
-          className={["bg-[var(--t2)] px-2 rounded text-sm"]->Array.join(" ")}>
-          {"Add Project"->React.string}
+          className={[
+            "bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1",
+          ]->Array.join(" ")}>
+          <Icons.Plus />
+          {"Project"->React.string}
         </button>
       </div>
       <div>

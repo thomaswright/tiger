@@ -206,7 +206,7 @@ function Project$Todo(props) {
                       ref: Caml_option.some(inputRef),
                       className: [
                           Types.todoInputClass,
-                          " flex-1 bg-inherit text-[--t10] w-full outline-none  text-sm font-medium\n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-600"
+                          " flex-1 bg-inherit text-[--t10] w-full outline-none  text-xs font-medium\n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-600"
                         ].join(" "),
                       id: Types.getTodoInputId(todo.id),
                       placeholder: "",
@@ -345,21 +345,21 @@ function Project(props) {
                       children: [
                         JsxRuntime.jsx("div", {
                               children: project.name,
-                              className: " flex-none px-2"
+                              className: " flex-none px-2 text-sm"
                             }),
                         JsxRuntime.jsx("div", {
                               className: "flex-1"
                             }),
                         JsxRuntime.jsx("button", {
                               children: JsxRuntime.jsx(Tb.TbPlus, {}),
-                              className: "text-xs rounded h-4 w-4 flex-none mr-2",
+                              className: "text-xs rounded h-6 w-6 flex-none mr-2",
                               onClick: (function (param) {
                                   newTodoAfter(-1);
                                 })
                             }),
                         JsxRuntime.jsx("button", {
                               children: showArchive ? JsxRuntime.jsx(Tb.TbEye, {}) : JsxRuntime.jsx(Tb.TbEyeClosed, {}),
-                              className: "text-xs rounded h-4 w-4 flex-none",
+                              className: "text-xs rounded h-6 w-6 flex-none",
                               onClick: (function (param) {
                                   setShowArchive(function (v) {
                                         if (v.includes(project.id)) {
@@ -376,7 +376,7 @@ function Project(props) {
                       ref: Caml_option.some(projectRef),
                       className: [
                           Types.listItemClass,
-                          "h-6 flex flex-row justify-between items-center bg-[var(--t2)] ",
+                          "h-7 flex flex-row justify-between items-center bg-[var(--t2)] px-1 gap-1",
                           isSelected ? "outline outline-1 -outline-offset-1 " : ""
                         ].join(" "),
                       id: Types.getProjectId(project.id),
