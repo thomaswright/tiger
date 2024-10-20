@@ -106,7 +106,7 @@ function Project$Todo(props) {
     if (isSelected) {
       if (e.key === "Escape") {
         e.stopPropagation();
-        Core__Option.mapOr(Caml_option.nullable_to_opt(containerRef.current), undefined, (function (dom) {
+        mapNullable(containerRef.current, (function (dom) {
                 dom.focus();
               }));
       }
@@ -185,9 +185,18 @@ function Project$Todo(props) {
                         }),
                       isOpen: match[0],
                       onOpenChange: (function (v) {
-                          setStatusSelectIsOpen(function (param) {
-                                return v;
-                              });
+                          if (v) {
+                            return setStatusSelectIsOpen(function (param) {
+                                        return v;
+                                      });
+                          } else {
+                            mapNullable(containerRef.current, (function (dom) {
+                                    dom.focus();
+                                  }));
+                            return setStatusSelectIsOpen(function (param) {
+                                        return v;
+                                      });
+                          }
                         })
                     }),
                 JsxRuntime.jsx("input", {

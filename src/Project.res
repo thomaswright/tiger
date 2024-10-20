@@ -94,9 +94,7 @@ module Todo = {
         if e->ReactEvent.Keyboard.key == "Escape" {
           // e->ReactEvent.Keyboard.preventDefault // ?
           e->ReactEvent.Keyboard.stopPropagation
-          containerRef.current
-          ->Nullable.toOption
-          ->Option.mapOr((), dom => {
+          containerRef.current->mapNullable(dom => {
             dom->Obj.magic->HtmlElement.focus
           })
         }
@@ -173,7 +171,16 @@ module Todo = {
       ]->Array.join(" ")}>
       <StatusSelect
         isOpen={statusSelectIsOpen}
-        onOpenChange={v => setStatusSelectIsOpen(_ => v)}
+        onOpenChange={v => {
+          if !v {
+            containerRef.current->mapNullable(dom => {
+              dom->Obj.magic->HtmlElement.focus
+            })
+            setStatusSelectIsOpen(_ => v)
+          } else {
+            setStatusSelectIsOpen(_ => v)
+          }
+        }}
         status={todo.status}
         focusTodo={() => {
           // this isn't set directly because the "Enter"

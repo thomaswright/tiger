@@ -16,7 +16,6 @@ const Dropdown = ({
   focusTodo,
   isOpen,
   onOpenChange,
-  containerRef,
 }) => {
   let [hoverStatus, setHoverStatus] = React.useState(status);
   const item = (s) => {
