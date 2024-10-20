@@ -9,6 +9,7 @@ import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as DisplayTodo from "./DisplayTodo.res.mjs";
 import * as SwitchJsx from "./Switch.jsx";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
+import * as DisplayProject from "./DisplayProject.res.mjs";
 import * as JsxRuntime from "react/jsx-runtime";
 
 var defaultProjects = [{
@@ -131,66 +132,11 @@ function App(props) {
       tmp = Core__Option.mapOr(projects.find(function (p) {
                 return p.id === projectId;
               }), null, (function (project) {
-              return JsxRuntime.jsxs("div", {
-                          children: [
-                            JsxRuntime.jsx("input", {
-                                  className: [" flex-1 bg-inherit text-[--t10] w-full outline-none \n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500"].join(" "),
-                                  id: "id-display-title",
-                                  placeholder: "Project Name",
-                                  type: "text",
-                                  value: project.name,
-                                  onKeyDown: (function (e) {
-                                      if (e.key === "Escape") {
-                                        return setFocusIdNext(function (param) {
-                                                    return Types.getProjectId(project.id);
-                                                  });
-                                      }
-                                      
-                                    }),
-                                  onChange: (function (e) {
-                                      updateProject(project.id, (function (p) {
-                                              return {
-                                                      id: p.id,
-                                                      name: e.target.value,
-                                                      isActive: p.isActive
-                                                    };
-                                            }));
-                                    })
-                                }),
-                            JsxRuntime.jsx("button", {
-                                  children: "Delete Project",
-                                  className: ["bg-[var(--t2)] px-2 rounded"].join(" "),
-                                  onClick: (function (param) {
-                                      Core__Option.mapOr(Caml_option.nullable_to_opt(document.getElementById(Types.getProjectId(projectId))), undefined, (function (projectEl) {
-                                              console.log(projectEl);
-                                              Common.focusPreviousClass(Types.listItemClass, projectEl);
-                                            }));
-                                      setProjects(function (v) {
-                                            return v.filter(function (p) {
-                                                        return p.id !== projectId;
-                                                      });
-                                          });
-                                      setTodos(function (v) {
-                                            return v.filter(function (p) {
-                                                        return p.project !== projectId;
-                                                      });
-                                          });
-                                    })
-                                }),
-                            JsxRuntime.jsx("button", {
-                                  children: project.isActive ? "Active" : "Not Active",
-                                  className: "rounded bg-[var(--t2)] px-1 text-xs h-fit flex-none",
-                                  onClick: (function (param) {
-                                      updateProject(project.id, (function (p) {
-                                              return {
-                                                      id: p.id,
-                                                      name: p.name,
-                                                      isActive: !p.isActive
-                                                    };
-                                            }));
-                                    })
-                                })
-                          ]
+              return JsxRuntime.jsx(DisplayProject.make, {
+                          project: project,
+                          updateProject: updateProject,
+                          setProjects: setProjects,
+                          setTodos: setTodos
                         });
             }));
     }

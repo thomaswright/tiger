@@ -156,53 +156,7 @@ let make = () => {
         projects
         ->Array.find(p => p.id == projectId)
         ->Option.mapOr(React.null, project => {
-          <div>
-            <input
-              type_="text"
-              id="id-display-title"
-              className={[
-                " flex-1 bg-inherit text-[--t10] w-full outline-none 
-          leading-none padding-none border-none h-5 -my-1 focus:text-blue-500",
-              ]->Array.join(" ")}
-              placeholder={"Project Name"}
-              value={project.name}
-              onKeyDown={e => {
-                if e->ReactEvent.Keyboard.key == "Escape" {
-                  setFocusIdNext(_ => Some(getProjectId(project.id)))
-                }
-              }}
-              onChange={e => {
-                updateProject(project.id, p => {
-                  ...p,
-                  name: ReactEvent.Form.target(e)["value"],
-                })
-              }}
-            />
-            <button
-              onClick={_ => {
-                document
-                ->Document.getElementById(getProjectId(projectId))
-                ->Option.mapOr((), projectEl => {
-                  Console.log(projectEl)
-                  Common.focusPreviousClass(listItemClass, projectEl)
-                })
-
-                setProjects(v => v->Array.filter(p => p.id != projectId))
-                setTodos(v => v->Array.filter(p => p.project != projectId))
-              }}
-              className={["bg-[var(--t2)] px-2 rounded"]->Array.join(" ")}>
-              {"Delete Project"->React.string}
-            </button>
-            <button
-              className="rounded bg-[var(--t2)] px-1 text-xs h-fit flex-none"
-              onClick={_ =>
-                updateProject(project.id, p => {
-                  ...p,
-                  isActive: !p.isActive,
-                })}>
-              {(project.isActive ? "Active" : "Not Active")->React.string}
-            </button>
-          </div>
+          <DisplayProject project updateProject setProjects setTodos />
         })
       | _ => React.null
       }}
