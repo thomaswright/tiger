@@ -38,6 +38,8 @@ let make = (
     <div className="flex flex-row border-y items-center gap-3 p-1 px-2">
       <Common.StatusSelect
         isOpen={statusSelectIsOpen}
+        isPinned={todo.box == Pinned}
+        isArchived={todo.box == Archive}
         onOpenChange={v => {
           setStatusSelectIsOpen(_ => v)
         }}

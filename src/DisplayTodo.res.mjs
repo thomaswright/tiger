@@ -68,6 +68,8 @@ function DisplayTodo(props) {
                                   
                                 }),
                               isOpen: match[0],
+                              isPinned: todo.box === "Pinned",
+                              isArchived: todo.box === "Archive",
                               onOpenChange: (function (v) {
                                   setStatusSelectIsOpen(function (param) {
                                         return v;

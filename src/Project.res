@@ -166,6 +166,8 @@ module Todo = {
       </div>
       <Common.StatusSelect
         isOpen={statusSelectIsOpen}
+        isPinned={todo.box == Pinned}
+        isArchived={todo.box == Archive}
         onOpenChange={v => {
           if !v {
             containerRef.current->mapNullable(dom => {

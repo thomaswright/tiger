@@ -191,6 +191,8 @@ function Project$Todo(props) {
                               });
                         }),
                       isOpen: match[0],
+                      isPinned: todo.box === "Pinned",
+                      isArchived: todo.box === "Archive",
                       onOpenChange: (function (v) {
                           if (v) {
                             return setStatusSelectIsOpen(function (param) {

@@ -9,6 +9,12 @@ import {
   // statusIcon,
 } from "./Types.res.mjs";
 
+import {
+  TbPin as Pin,
+  TbArchive as Archive,
+  // statusIcon,
+} from "react-icons/tb";
+
 const Dropdown = ({
   status,
   setStatus,
@@ -16,6 +22,8 @@ const Dropdown = ({
   focusTodo,
   isOpen,
   onOpenChange,
+  isPinned,
+  isArchived,
 }) => {
   let [hoverStatus, setHoverStatus] = React.useState(status);
   const item = (s) => {
@@ -76,10 +84,20 @@ const Dropdown = ({
             backgroundColor: statusColor(status),
             color: statusColorText(status),
           }}
-          className=" flex flex-row items-center text-xs justify-center w-20 h-5 font-bold rounded text-[var(--t0)]"
+          className="relative flex flex-row items-center text-xs justify-center w-20 h-5 font-bold rounded text-[var(--t0)]"
           aria-label="Customise options"
         >
           {statusStringShort(status)}
+          {isPinned && (
+            <div className="text-white bg-blue-600 text-xs absolute right-0.5 rounded-full w-3.5 h-3.5 items-center justify-center flex flex-row shadow-sm">
+              <Pin />
+            </div>
+          )}
+          {isArchived && (
+            <div className="text-white bg-slate-600 text-xs absolute right-0.5 rounded w-3.5 h-3.5 items-center justify-center flex flex-row shadow-sm">
+              <Archive />
+            </div>
+          )}
         </button>
       </DropdownMenu.Trigger>
 

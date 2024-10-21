@@ -25,6 +25,7 @@ type todo = {
   isDone: bool,
   status: status,
   box: box,
+  // parentId: option<string>,
 }
 
 type project = {
