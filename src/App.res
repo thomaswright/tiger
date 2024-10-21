@@ -37,7 +37,7 @@ let defaultTodos = [
 
 module Details = {
   @react.component
-  let make = (~selectElement) => {
+  let make = (~selectedElement) => {
     <div className=" border-l flex-1"> {"Details"->React.string} </div>
   }
 }
@@ -120,7 +120,7 @@ let make = () => {
   let (todos, setTodos, getTodos) = Common.useLocalStorage("todos", defaultTodos)
   let (showArchive, setShowArchive, _) = Common.useLocalStorage("showArchive", [])
   let (projectsTab, setProjectTab, _) = Common.useLocalStorage("projectsTab", All)
-  let (selectElement, setSelectElement) = React.useState(_ => None)
+  let (selectedElement, setSelectedElement) = React.useState(_ => None)
   let (displayElement, setDisplayElement) = React.useState(_ => None)
   let (focusClassNext, setFocusClassNext) = React.useState(_ => None)
   let (focusIdNext, setFocusIdNext) = React.useState(_ => None)
@@ -181,7 +181,7 @@ let make = () => {
                 v,
               )
             )
-            setSelectElement(_ => Some(Project(newProjectId)))
+            setSelectedElement(_ => Some(Project(newProjectId)))
             setDisplayElement(_ => Some(Project(newProjectId)))
             setFocusClassNext(_ => Some("class-display-title"))
           }}
@@ -195,26 +195,28 @@ let make = () => {
       <div>
         {projects
         ->Array.filter(project => projectsTab == Active ? project.isActive : true)
-        ->Array.map(project =>
+        ->Array.map(project => {
+          let showArchive = showArchive->Array.includes(project.id)
           <Project
             key={getProjectId(project.id)}
-            showArchive={showArchive->Array.includes(project.id)}
+            showArchive={showArchive}
             setShowArchive={setShowArchive}
             project
             todos={todos
             ->Array.filter(todo => todo.project == project.id)
+            ->Array.filter(todo => showArchive ? true : todo.box != Archive)
             ->buildTodoTree}
             updateProject
             updateTodo
-            selectElement
-            setSelectElement
+            selectedElement
+            setSelectedElement
             displayElement
             setDisplayElement
             setFocusIdNext
             setTodos
             getTodos
           />
-        )
+        })
         ->React.array}
       </div>
     </div>

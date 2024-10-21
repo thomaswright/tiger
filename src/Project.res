@@ -8,7 +8,7 @@ module Todo = {
     ~todo: todo,
     ~updateTodo,
     ~isSelected,
-    ~setSelectElement,
+    ~setSelectedElement,
     ~displayElement,
     ~setDisplayElement,
     ~setTodos: (array<Types.todo> => array<Types.todo>) => unit,
@@ -64,7 +64,7 @@ module Todo = {
 
           if e->ReactEvent.Keyboard.key == "Escape" {
             // e->ReactEvent.Keyboard.preventDefault // ?
-            setSelectElement(_ => None)
+            setSelectedElement(_ => None)
             setDisplayElement(_ => None)
 
             dom->Obj.magic->HtmlElement.blur
@@ -137,11 +137,11 @@ module Todo = {
       tabIndex={0}
       ref={ReactDOM.Ref.domRef(containerRef)}
       onBlur={_ => {
-        setSelectElement(_ => None)
+        setSelectedElement(_ => None)
         setStagedForDelete(_ => false)
       }}
       onFocus={_ => {
-        setSelectElement(_ => Some(Todo(todo.id)))
+        setSelectedElement(_ => Some(Todo(todo.id)))
         setDisplayElement(_ => Some(Todo(todo.id)))
       }}
       onKeyDown={onKeyDownContainer}
@@ -215,9 +215,9 @@ module Todo = {
           ]->Array.join(" ")}
           placeholder={""}
           value={todo.text}
-          onBlur={_ => setSelectElement(_ => None)}
+          onBlur={_ => setSelectedElement(_ => None)}
           onFocus={_ => {
-            setSelectElement(_ => Some(Todo(todo.id)))
+            setSelectedElement(_ => Some(Todo(todo.id)))
             setDisplayElement(_ => Some(Todo(todo.id)))
           }}
           onKeyDown={onKeyDownInput}
@@ -251,18 +251,17 @@ let make = (
   ~setShowArchive,
   ~updateProject,
   ~updateTodo,
-  ~selectElement,
-  ~setSelectElement,
+  ~selectedElement,
+  ~setSelectedElement,
   ~displayElement,
   ~setDisplayElement,
   ~setFocusIdNext,
   ~setTodos: (array<Types.todo> => array<Types.todo>) => unit,
   ~getTodos,
 ) => {
-  Console.log(todos)
   let projectRef = React.useRef(Nullable.null)
 
-  let isSelected = selectElement == Some(Project(project.id))
+  let isSelected = selectedElement == Some(Project(project.id))
 
   let newTodoAfter = (i, parentTodo) => {
     Console.log2(i, parentTodo)
@@ -315,9 +314,9 @@ let make = (
       tabIndex={0}
       ref={ReactDOM.Ref.domRef(projectRef)}
       onKeyDown={onKeyDownProject}
-      onBlur={_ => setSelectElement(_ => None)}
+      onBlur={_ => setSelectedElement(_ => None)}
       onFocus={_ => {
-        setSelectElement(_ => Some(Project(project.id)))
+        setSelectedElement(_ => Some(Project(project.id)))
         setDisplayElement(_ => Some(Project(project.id)))
       }}
       className={[
@@ -348,15 +347,14 @@ let make = (
     <div>
       <div className="flex flex-col  ">
         {todos
-        ->Array.filter(todo => showArchive ? true : todo.box != Archive)
         // ->Array.toSorted((a, b) => a.status->statusToFloat -. b.status->statusToFloat)
         ->Array.map(todo =>
           <Todo
             key={getTodoId(todo.id)}
             todo
             updateTodo
-            isSelected={selectElement == Some(Todo(todo.id))}
-            setSelectElement
+            isSelected={selectedElement == Some(Todo(todo.id))}
+            setSelectedElement
             displayElement
             setDisplayElement
             setTodos

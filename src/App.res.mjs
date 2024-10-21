@@ -92,8 +92,8 @@ function App(props) {
   var match$4 = React.useState(function () {
         
       });
-  var setSelectElement = match$4[1];
-  var selectElement = match$4[0];
+  var setSelectedElement = match$4[1];
+  var selectedElement = match$4[0];
   var match$5 = React.useState(function () {
         
       });
@@ -221,7 +221,7 @@ function App(props) {
                                                             isActive: true
                                                           }].concat(v);
                                               });
-                                          setSelectElement(function (param) {
+                                          setSelectedElement(function (param) {
                                                 return {
                                                         TAG: "Project",
                                                         _0: newProjectId
@@ -249,17 +249,24 @@ function App(props) {
                                         return true;
                                       }
                                     }).map(function (project) {
+                                    var showArchive$1 = showArchive.includes(project.id);
                                     return JsxRuntime.jsx(Project.make, {
                                                 project: project,
                                                 todos: buildTodoTree(todos.filter(function (todo) {
-                                                          return todo.project === project.id;
+                                                            return todo.project === project.id;
+                                                          }).filter(function (todo) {
+                                                          if (showArchive$1) {
+                                                            return true;
+                                                          } else {
+                                                            return todo.box !== "Archive";
+                                                          }
                                                         })),
-                                                showArchive: showArchive.includes(project.id),
+                                                showArchive: showArchive$1,
                                                 setShowArchive: setShowArchive,
                                                 updateProject: updateProject,
                                                 updateTodo: updateTodo,
-                                                selectElement: selectElement,
-                                                setSelectElement: setSelectElement,
+                                                selectedElement: selectedElement,
+                                                setSelectedElement: setSelectedElement,
                                                 displayElement: displayElement,
                                                 setDisplayElement: setDisplayElement,
                                                 setFocusIdNext: setFocusIdNext,

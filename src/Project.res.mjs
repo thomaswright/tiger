@@ -17,7 +17,7 @@ function Project$Todo(props) {
   var setFocusIdNext = props.setFocusIdNext;
   var setTodos = props.setTodos;
   var setDisplayElement = props.setDisplayElement;
-  var setSelectElement = props.setSelectElement;
+  var setSelectedElement = props.setSelectedElement;
   var isSelected = props.isSelected;
   var updateTodo = props.updateTodo;
   var todo = props.todo;
@@ -74,7 +74,7 @@ function Project$Todo(props) {
                             }));
                     }
                     if (e.key === "Escape") {
-                      setSelectElement(function (param) {
+                      setSelectedElement(function (param) {
                             
                           });
                       setDisplayElement(function (param) {
@@ -210,7 +210,7 @@ function Project$Todo(props) {
                               value: todo.text,
                               onKeyDown: onKeyDownInput,
                               onFocus: (function (param) {
-                                  setSelectElement(function (param) {
+                                  setSelectedElement(function (param) {
                                         return {
                                                 TAG: "Todo",
                                                 _0: todo.id
@@ -224,7 +224,7 @@ function Project$Todo(props) {
                                       });
                                 }),
                               onBlur: (function (param) {
-                                  setSelectElement(function (param) {
+                                  setSelectedElement(function (param) {
                                         
                                       });
                                 }),
@@ -271,7 +271,7 @@ function Project$Todo(props) {
               tabIndex: 0,
               onKeyDown: onKeyDownContainer,
               onFocus: (function (param) {
-                  setSelectElement(function (param) {
+                  setSelectedElement(function (param) {
                         return {
                                 TAG: "Todo",
                                 _0: todo.id
@@ -285,7 +285,7 @@ function Project$Todo(props) {
                       });
                 }),
               onBlur: (function (param) {
-                  setSelectElement(function (param) {
+                  setSelectedElement(function (param) {
                         
                       });
                   setStagedForDelete(function (param) {
@@ -305,16 +305,13 @@ function Project(props) {
   var setFocusIdNext = props.setFocusIdNext;
   var setDisplayElement = props.setDisplayElement;
   var displayElement = props.displayElement;
-  var setSelectElement = props.setSelectElement;
-  var selectElement = props.selectElement;
+  var setSelectedElement = props.setSelectedElement;
+  var selectedElement = props.selectedElement;
   var updateTodo = props.updateTodo;
   var setShowArchive = props.setShowArchive;
-  var showArchive = props.showArchive;
-  var todos = props.todos;
   var project = props.project;
-  console.log(todos);
   var projectRef = React.useRef(null);
-  var isSelected = Caml_obj.equal(selectElement, {
+  var isSelected = Caml_obj.equal(selectedElement, {
         TAG: "Project",
         _0: project.id
       });
@@ -374,7 +371,7 @@ function Project(props) {
                                 })
                             }),
                         JsxRuntime.jsx("button", {
-                              children: showArchive ? JsxRuntime.jsx(Tb.TbArchive, {}) : JsxRuntime.jsx(Tb.TbArchiveOff, {}),
+                              children: props.showArchive ? JsxRuntime.jsx(Tb.TbArchive, {}) : JsxRuntime.jsx(Tb.TbArchiveOff, {}),
                               className: "text-xs rounded h-6 w-6 flex-none",
                               onClick: (function (param) {
                                   setShowArchive(function (v) {
@@ -399,7 +396,7 @@ function Project(props) {
                       tabIndex: 0,
                       onKeyDown: onKeyDownProject,
                       onFocus: (function (param) {
-                          setSelectElement(function (param) {
+                          setSelectedElement(function (param) {
                                 return {
                                         TAG: "Project",
                                         _0: project.id
@@ -413,28 +410,22 @@ function Project(props) {
                               });
                         }),
                       onBlur: (function (param) {
-                          setSelectElement(function (param) {
+                          setSelectedElement(function (param) {
                                 
                               });
                         })
                     }),
                 JsxRuntime.jsx("div", {
                       children: JsxRuntime.jsx("div", {
-                            children: todos.filter(function (todo) {
-                                    if (showArchive) {
-                                      return true;
-                                    } else {
-                                      return todo.box !== "Archive";
-                                    }
-                                  }).map(function (todo) {
+                            children: props.todos.map(function (todo) {
                                   return JsxRuntime.jsx(Project$Todo, {
                                               todo: todo,
                                               updateTodo: updateTodo,
-                                              isSelected: Caml_obj.equal(selectElement, {
+                                              isSelected: Caml_obj.equal(selectedElement, {
                                                     TAG: "Todo",
                                                     _0: todo.id
                                                   }),
-                                              setSelectElement: setSelectElement,
+                                              setSelectedElement: setSelectedElement,
                                               displayElement: displayElement,
                                               setDisplayElement: setDisplayElement,
                                               setTodos: setTodos,
