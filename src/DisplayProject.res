@@ -58,5 +58,26 @@ let make = (
         <Icons.Trash />
       </button>
     </div>
+    <div className="p-2">
+      <button
+        className="rounded bg-[var(--t2)] px-2 text-xs h-fit flex-none"
+        onClick={_ =>
+          setTodos(todos => {
+            todos->Array.map(t => {
+              if t.project != project.id {
+                t
+              } else if t.status->statusIsResolved && t.box != Pinned {
+                {
+                  ...t,
+                  box: Archive,
+                }
+              } else {
+                t
+              }
+            })
+          })}>
+        {"Archive All Resolved if not Pinned"->React.string}
+      </button>
+    </div>
   </div>
 }

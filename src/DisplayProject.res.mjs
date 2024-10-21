@@ -70,6 +70,31 @@ function DisplayProject(props) {
                             })
                       ],
                       className: "flex flex-row border-y items-center gap-3 p-1 px-2"
+                    }),
+                JsxRuntime.jsx("div", {
+                      children: JsxRuntime.jsx("button", {
+                            children: "Archive All Resolved if not Pinned",
+                            className: "rounded bg-[var(--t2)] px-2 text-xs h-fit flex-none",
+                            onClick: (function (param) {
+                                setTodos(function (todos) {
+                                      return todos.map(function (t) {
+                                                  if (t.project !== project.id || !(Types.statusIsResolved(t.status) && t.box !== "Pinned")) {
+                                                    return t;
+                                                  } else {
+                                                    return {
+                                                            id: t.id,
+                                                            text: t.text,
+                                                            project: t.project,
+                                                            isDone: t.isDone,
+                                                            status: t.status,
+                                                            box: "Archive"
+                                                          };
+                                                  }
+                                                });
+                                    });
+                              })
+                          }),
+                      className: "p-2"
                     })
               ]
             });
