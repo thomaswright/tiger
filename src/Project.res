@@ -50,7 +50,7 @@ module Todo = {
           if e->ReactEvent.Keyboard.key == "Enter" && e->ReactEvent.Keyboard.metaKey {
             getTodos()
             ->Array.findIndexOpt(v => v.id == todo.id)
-            ->Option.mapOr((), todoIndex => newTodoAfter(todoIndex, None))
+            ->Option.mapOr((), todoIndex => newTodoAfter(todoIndex, todo.parentTodo))
           }
 
           if e->ReactEvent.Keyboard.key == "Enter" {
@@ -126,7 +126,7 @@ module Todo = {
             e->ReactEvent.Keyboard.stopPropagation
             getTodos()
             ->Array.findIndexOpt(v => v.id == todo.id)
-            ->Option.mapOr((), todoIndex => newTodoAfter(todoIndex, None))
+            ->Option.mapOr((), todoIndex => newTodoAfter(todoIndex, todo.parentTodo))
           }
         })
       }
@@ -151,12 +151,12 @@ module Todo = {
       className={[
         listItemClass,
         // "focus:bg-blue-300 focus-within:bg-green-200", // helpful for debug
-        "group flex flex-row justify-start items-center   h-6 pl-2",
-        stagedForDelete
-          ? "bg-red-200 outline outline-1 -outline-offset-1"
-          : isSelected
-          ? "bg-var(--t1) outline outline-1 -outline-offset-1"
-          : "",
+        "group flex flex-row justify-start items-center outline-none  h-6 pl-1",
+        // stagedForDelete
+        //   ? "bg-red-200 outline outline-1 -outline-offset-1"
+        //   : isSelected
+        //   ? "bg-var(--t1) outline outline-1 -outline-offset-1"
+        //   : "",
       ]->Array.join(" ")}>
       {Array.make(~length=todo.depth->Option.getOr(0), false)
       ->Array.mapWithIndex((_, _) => {
@@ -175,69 +175,79 @@ module Todo = {
       //   | Pinned => <Icons.Pin />
       //   }}
       // </div>
-      <Common.StatusSelect
-        isOpen={statusSelectIsOpen}
-        isPinned={todo.box == Pinned}
-        isArchived={todo.box == Archive}
-        onOpenChange={v => {
-          if !v {
-            containerRef.current->mapNullable(dom => {
-              dom->Obj.magic->HtmlElement.focus
-            })
-            setStatusSelectIsOpen(_ => v)
-          } else {
-            setStatusSelectIsOpen(_ => v)
-          }
-        }}
-        status={todo.status}
-        focusTodo={() => {
-          // this isn't set directly because the "Enter"
-          // will then fire on the container then focusing
-          // the input *shrugs*
-          setFocusIdNext(_ => Some(getTodoId(todo.id)))
-        }}
-        setStatus={newStatus =>
-          updateTodo(todo.id, t => {
-            ...t,
-            status: newStatus,
-            box: t.box == Archive && !(newStatus->statusIsResolved) ? Working : t.box,
-          })}
-      />
-      <div className="border-b flex-1 ml-1 flex flex-row h-full justify-start items-center ">
-        <input
-          id={getTodoInputId(todo.id)}
-          ref={ReactDOM.Ref.domRef(inputRef)}
-          type_="text"
-          className={[
-            todoInputClass,
-            "mx-1 flex-1 bg-inherit text-[--t10] w-full outline-none  text-xs font-medium
-          leading-none padding-none border-none h-5 -my-1 focus:text-blue-600",
-          ]->Array.join(" ")}
-          placeholder={""}
-          value={todo.text}
-          onBlur={_ => setSelectedElement(_ => None)}
-          onFocus={_ => {
-            setSelectedElement(_ => Some(Todo(todo.id)))
-            setDisplayElement(_ => Some(Todo(todo.id)))
+      <div
+        className={[
+          "group flex flex-row justify-start items-center h-full flex-1 pl-0.5",
+          stagedForDelete
+            ? "bg-red-200 outline outline-1 -outline-offset-1"
+            : isSelected
+            ? "bg-var(--t1) outline outline-1 -outline-offset-1"
+            : "",
+        ]->Array.join(" ")}>
+        <Common.StatusSelect
+          isOpen={statusSelectIsOpen}
+          isPinned={todo.box == Pinned}
+          isArchived={todo.box == Archive}
+          onOpenChange={v => {
+            if !v {
+              containerRef.current->mapNullable(dom => {
+                dom->Obj.magic->HtmlElement.focus
+              })
+              setStatusSelectIsOpen(_ => v)
+            } else {
+              setStatusSelectIsOpen(_ => v)
+            }
           }}
-          onKeyDown={onKeyDownInput}
-          onChange={e => {
+          status={todo.status}
+          focusTodo={() => {
+            // this isn't set directly because the "Enter"
+            // will then fire on the container then focusing
+            // the input *shrugs*
+            setFocusIdNext(_ => Some(getTodoId(todo.id)))
+          }}
+          setStatus={newStatus =>
             updateTodo(todo.id, t => {
               ...t,
-              text: ReactEvent.Form.target(e)["value"],
-            })
-          }}
+              status: newStatus,
+              box: t.box == Archive && !(newStatus->statusIsResolved) ? Working : t.box,
+            })}
         />
-        <button
-          className={["text-xs  mr-1 hidden group-hover:block"]->Array.join(" ")}
-          onClick={_ => {
-            Console.log("click")
-            getTodos()
-            ->Array.findIndexOpt(v => v.id == todo.id)
-            ->Option.mapOr((), todoIndex => newTodoAfter(todoIndex, Some(todo.id)))
-          }}>
-          <Icons.Plus />
-        </button>
+        <div className="border-b flex-1 ml-1 flex flex-row h-full justify-start items-center ">
+          <input
+            id={getTodoInputId(todo.id)}
+            ref={ReactDOM.Ref.domRef(inputRef)}
+            type_="text"
+            className={[
+              todoInputClass,
+              "mx-1 flex-1 bg-inherit text-[--t10] w-full outline-none  text-xs font-medium
+          leading-none padding-none border-none h-5 -my-1 focus:text-blue-600",
+            ]->Array.join(" ")}
+            placeholder={""}
+            value={todo.text}
+            onBlur={_ => setSelectedElement(_ => None)}
+            onFocus={_ => {
+              setSelectedElement(_ => Some(Todo(todo.id)))
+              setDisplayElement(_ => Some(Todo(todo.id)))
+            }}
+            onKeyDown={onKeyDownInput}
+            onChange={e => {
+              updateTodo(todo.id, t => {
+                ...t,
+                text: ReactEvent.Form.target(e)["value"],
+              })
+            }}
+          />
+          <button
+            className={["text-xs  mr-1 hidden group-hover:block"]->Array.join(" ")}
+            onClick={_ => {
+              Console.log("click")
+              getTodos()
+              ->Array.findIndexOpt(v => v.id == todo.id)
+              ->Option.mapOr((), todoIndex => newTodoAfter(todoIndex, Some(todo.id)))
+            }}>
+            <Icons.Plus />
+          </button>
+        </div>
       </div>
     </div>
   }

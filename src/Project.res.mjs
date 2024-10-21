@@ -63,7 +63,7 @@ function Project$Todo(props) {
                       Core__Option.mapOr(Core__Array.findIndexOpt(getTodos(), (function (v) {
                                   return v.id === todo.id;
                                 })), undefined, (function (todoIndex) {
-                              newTodoAfter(todoIndex, undefined);
+                              newTodoAfter(todoIndex, todo.parentTodo);
                             }));
                     }
                     if (e.key === "Enter") {
@@ -143,7 +143,7 @@ function Project$Todo(props) {
                       return Core__Option.mapOr(Core__Array.findIndexOpt(getTodos(), (function (v) {
                                         return v.id === todo.id;
                                       })), undefined, (function (todoIndex) {
-                                    newTodoAfter(todoIndex, undefined);
+                                    newTodoAfter(todoIndex, todo.parentTodo);
                                   }));
                     }
                     
@@ -158,113 +158,120 @@ function Project$Todo(props) {
                                   className: "h-full w-3 border-l ml-1"
                                 });
                     }),
-                JsxRuntime.jsx(Common.StatusSelect.make, {
-                      status: todo.status,
-                      setStatus: (function (newStatus) {
-                          updateTodo(todo.id, (function (t) {
-                                  return {
-                                          id: t.id,
-                                          text: t.text,
-                                          project: t.project,
-                                          status: newStatus,
-                                          box: t.box === "Archive" && !Types.statusIsResolved(newStatus) ? "Working" : t.box,
-                                          parentTodo: t.parentTodo,
-                                          depth: t.depth
-                                        };
-                                }));
-                        }),
-                      focusTodo: (function () {
-                          setFocusIdNext(function (param) {
-                                return Types.getTodoId(todo.id);
-                              });
-                        }),
-                      isOpen: match[0],
-                      isPinned: todo.box === "Pinned",
-                      isArchived: todo.box === "Archive",
-                      onOpenChange: (function (v) {
-                          if (v) {
-                            return setStatusSelectIsOpen(function (param) {
-                                        return v;
-                                      });
-                          } else {
-                            Common.mapNullable(containerRef.current, (function (dom) {
-                                    dom.focus();
-                                  }));
-                            return setStatusSelectIsOpen(function (param) {
-                                        return v;
-                                      });
-                          }
-                        })
-                    }),
                 JsxRuntime.jsxs("div", {
                       children: [
-                        JsxRuntime.jsx("input", {
-                              ref: Caml_option.some(inputRef),
-                              className: [
-                                  Types.todoInputClass,
-                                  "mx-1 flex-1 bg-inherit text-[--t10] w-full outline-none  text-xs font-medium\n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-600"
-                                ].join(" "),
-                              id: Types.getTodoInputId(todo.id),
-                              placeholder: "",
-                              type: "text",
-                              value: todo.text,
-                              onKeyDown: onKeyDownInput,
-                              onFocus: (function (param) {
-                                  setSelectedElement(function (param) {
-                                        return {
-                                                TAG: "Todo",
-                                                _0: todo.id
-                                              };
-                                      });
-                                  setDisplayElement(function (param) {
-                                        return {
-                                                TAG: "Todo",
-                                                _0: todo.id
-                                              };
-                                      });
-                                }),
-                              onBlur: (function (param) {
-                                  setSelectedElement(function (param) {
-                                        
-                                      });
-                                }),
-                              onChange: (function (e) {
+                        JsxRuntime.jsx(Common.StatusSelect.make, {
+                              status: todo.status,
+                              setStatus: (function (newStatus) {
                                   updateTodo(todo.id, (function (t) {
                                           return {
                                                   id: t.id,
-                                                  text: e.target.value,
+                                                  text: t.text,
                                                   project: t.project,
-                                                  status: t.status,
-                                                  box: t.box,
+                                                  status: newStatus,
+                                                  box: t.box === "Archive" && !Types.statusIsResolved(newStatus) ? "Working" : t.box,
                                                   parentTodo: t.parentTodo,
                                                   depth: t.depth
                                                 };
                                         }));
+                                }),
+                              focusTodo: (function () {
+                                  setFocusIdNext(function (param) {
+                                        return Types.getTodoId(todo.id);
+                                      });
+                                }),
+                              isOpen: match[0],
+                              isPinned: todo.box === "Pinned",
+                              isArchived: todo.box === "Archive",
+                              onOpenChange: (function (v) {
+                                  if (v) {
+                                    return setStatusSelectIsOpen(function (param) {
+                                                return v;
+                                              });
+                                  } else {
+                                    Common.mapNullable(containerRef.current, (function (dom) {
+                                            dom.focus();
+                                          }));
+                                    return setStatusSelectIsOpen(function (param) {
+                                                return v;
+                                              });
+                                  }
                                 })
                             }),
-                        JsxRuntime.jsx("button", {
-                              children: JsxRuntime.jsx(Tb.TbPlus, {}),
-                              className: ["text-xs  mr-1 hidden group-hover:block"].join(" "),
-                              onClick: (function (param) {
-                                  console.log("click");
-                                  Core__Option.mapOr(Core__Array.findIndexOpt(getTodos(), (function (v) {
-                                              return v.id === todo.id;
-                                            })), undefined, (function (todoIndex) {
-                                          newTodoAfter(todoIndex, todo.id);
-                                        }));
-                                })
+                        JsxRuntime.jsxs("div", {
+                              children: [
+                                JsxRuntime.jsx("input", {
+                                      ref: Caml_option.some(inputRef),
+                                      className: [
+                                          Types.todoInputClass,
+                                          "mx-1 flex-1 bg-inherit text-[--t10] w-full outline-none  text-xs font-medium\n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-600"
+                                        ].join(" "),
+                                      id: Types.getTodoInputId(todo.id),
+                                      placeholder: "",
+                                      type: "text",
+                                      value: todo.text,
+                                      onKeyDown: onKeyDownInput,
+                                      onFocus: (function (param) {
+                                          setSelectedElement(function (param) {
+                                                return {
+                                                        TAG: "Todo",
+                                                        _0: todo.id
+                                                      };
+                                              });
+                                          setDisplayElement(function (param) {
+                                                return {
+                                                        TAG: "Todo",
+                                                        _0: todo.id
+                                                      };
+                                              });
+                                        }),
+                                      onBlur: (function (param) {
+                                          setSelectedElement(function (param) {
+                                                
+                                              });
+                                        }),
+                                      onChange: (function (e) {
+                                          updateTodo(todo.id, (function (t) {
+                                                  return {
+                                                          id: t.id,
+                                                          text: e.target.value,
+                                                          project: t.project,
+                                                          status: t.status,
+                                                          box: t.box,
+                                                          parentTodo: t.parentTodo,
+                                                          depth: t.depth
+                                                        };
+                                                }));
+                                        })
+                                    }),
+                                JsxRuntime.jsx("button", {
+                                      children: JsxRuntime.jsx(Tb.TbPlus, {}),
+                                      className: ["text-xs  mr-1 hidden group-hover:block"].join(" "),
+                                      onClick: (function (param) {
+                                          console.log("click");
+                                          Core__Option.mapOr(Core__Array.findIndexOpt(getTodos(), (function (v) {
+                                                      return v.id === todo.id;
+                                                    })), undefined, (function (todoIndex) {
+                                                  newTodoAfter(todoIndex, todo.id);
+                                                }));
+                                        })
+                                    })
+                              ],
+                              className: "border-b flex-1 ml-1 flex flex-row h-full justify-start items-center "
                             })
                       ],
-                      className: "border-b flex-1 ml-1 flex flex-row h-full justify-start items-center "
+                      className: [
+                          "group flex flex-row justify-start items-center h-full flex-1 pl-0.5",
+                          stagedForDelete ? "bg-red-200 outline outline-1 -outline-offset-1" : (
+                              isSelected ? "bg-var(--t1) outline outline-1 -outline-offset-1" : ""
+                            )
+                        ].join(" ")
                     })
               ],
               ref: Caml_option.some(containerRef),
               className: [
                   Types.listItemClass,
-                  "group flex flex-row justify-start items-center   h-6 pl-2",
-                  stagedForDelete ? "bg-red-200 outline outline-1 -outline-offset-1" : (
-                      isSelected ? "bg-var(--t1) outline outline-1 -outline-offset-1" : ""
-                    )
+                  "group flex flex-row justify-start items-center outline-none  h-6 pl-1"
                 ].join(" "),
               id: Types.getTodoId(todo.id),
               style: {},
