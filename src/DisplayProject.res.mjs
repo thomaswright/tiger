@@ -85,9 +85,10 @@ function DisplayProject(props) {
                                                             id: t.id,
                                                             text: t.text,
                                                             project: t.project,
-                                                            isDone: t.isDone,
                                                             status: t.status,
-                                                            box: "Archive"
+                                                            box: "Archive",
+                                                            parentTodo: t.parentTodo,
+                                                            depth: t.depth
                                                           };
                                                   }
                                                 });

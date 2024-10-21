@@ -6,9 +6,11 @@ import * as React from "react";
 import * as Common from "./Common.res.mjs";
 import * as Project from "./Project.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
+import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as DisplayTodo from "./DisplayTodo.res.mjs";
 import * as SwitchJsx from "./Switch.jsx";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
+import * as Belt_MapString from "rescript/lib/es6/belt_MapString.js";
 import * as DisplayProject from "./DisplayProject.res.mjs";
 import * as Tb from "react-icons/tb";
 import * as JsxRuntime from "react/jsx-runtime";
@@ -24,21 +26,54 @@ var defaultTodos = [
     id: "1",
     text: "Do Something",
     project: "1",
-    isDone: false,
     status: "Unsorted",
-    box: "Working"
+    box: "Working",
+    parentTodo: undefined,
+    depth: undefined
   },
   {
     id: "2",
     text: "Do Something Else",
     project: "1",
-    isDone: false,
-    status: "Unsorted",
-    box: "Archive"
+    status: "ResolveScrap",
+    box: "Archive",
+    parentTodo: undefined,
+    depth: undefined
   }
 ];
 
 var make = SwitchJsx.Switch;
+
+function buildTodoTree(input) {
+  var rootMapId = "_";
+  var parentMap = Core__Array.reduce(input, undefined, (function (a, c) {
+          var mapId = Core__Option.getOr(c.parentTodo, rootMapId);
+          return Belt_MapString.update(a, mapId, (function (v) {
+                        return Core__Option.mapOr(v, [c], (function (v) {
+                                      return v.concat([c]);
+                                    }));
+                      }));
+        }));
+  var mutParentMap = {
+    contents: parentMap
+  };
+  var build = function (arr, mapId, depth) {
+    var children = Belt_MapString.get(mutParentMap.contents, mapId);
+    mutParentMap.contents = Belt_MapString.remove(mutParentMap.contents, mapId);
+    return Core__Array.reduce(Core__Option.getOr(children, []), arr, (function (a, todo) {
+                  return build(a.concat([{
+                                    id: todo.id,
+                                    text: todo.text,
+                                    project: todo.project,
+                                    status: todo.status,
+                                    box: todo.box,
+                                    parentTodo: todo.parentTodo,
+                                    depth: depth
+                                  }]), todo.id, depth + 1 | 0);
+                }));
+  };
+  return build([], rootMapId, 0);
+}
 
 function App(props) {
   var match = Common.useLocalStorage("projects", defaultProjects);
@@ -216,9 +251,9 @@ function App(props) {
                                     }).map(function (project) {
                                     return JsxRuntime.jsx(Project.make, {
                                                 project: project,
-                                                todos: todos.filter(function (todo) {
-                                                      return todo.project === project.id;
-                                                    }),
+                                                todos: buildTodoTree(todos.filter(function (todo) {
+                                                          return todo.project === project.id;
+                                                        })),
                                                 showArchive: showArchive.includes(project.id),
                                                 setShowArchive: setShowArchive,
                                                 updateProject: updateProject,

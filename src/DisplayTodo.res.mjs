@@ -40,9 +40,10 @@ function DisplayTodo(props) {
                                                 id: t.id,
                                                 text: e.target.value,
                                                 project: t.project,
-                                                isDone: t.isDone,
                                                 status: t.status,
-                                                box: t.box
+                                                box: t.box,
+                                                parentTodo: t.parentTodo,
+                                                depth: t.depth
                                               };
                                       }));
                               })
@@ -58,9 +59,10 @@ function DisplayTodo(props) {
                                                   id: t.id,
                                                   text: t.text,
                                                   project: t.project,
-                                                  isDone: t.isDone,
                                                   status: newStatus,
-                                                  box: t.box === "Archive" && !Types.statusIsResolved(newStatus) ? "Working" : t.box
+                                                  box: t.box === "Archive" && !Types.statusIsResolved(newStatus) ? "Working" : t.box,
+                                                  parentTodo: t.parentTodo,
+                                                  depth: t.depth
                                                 };
                                         }));
                                 }),
@@ -93,9 +95,10 @@ function DisplayTodo(props) {
                                                                 id: t.id,
                                                                 text: t.text,
                                                                 project: t.project,
-                                                                isDone: t.isDone,
                                                                 status: Types.statusIsResolved(t.status) ? t.status : "ResolveScrap",
-                                                                box: t.box !== "Archive" ? "Archive" : "Working"
+                                                                box: t.box !== "Archive" ? "Archive" : "Working",
+                                                                parentTodo: t.parentTodo,
+                                                                depth: t.depth
                                                               };
                                                       } else {
                                                         return t;
@@ -118,9 +121,10 @@ function DisplayTodo(props) {
                                                                 id: t.id,
                                                                 text: t.text,
                                                                 project: t.project,
-                                                                isDone: t.isDone,
                                                                 status: t.status,
-                                                                box: t.box !== "Pinned" ? "Pinned" : "Working"
+                                                                box: t.box !== "Pinned" ? "Pinned" : "Working",
+                                                                parentTodo: t.parentTodo,
+                                                                depth: t.depth
                                                               };
                                                       } else {
                                                         return t;

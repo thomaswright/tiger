@@ -13,17 +13,19 @@ let defaultTodos = [
     text: "Do Something",
     project: "1",
     id: "1",
-    isDone: false,
     status: Unsorted,
     box: Working,
+    parentTodo: None,
+    depth: None,
   },
   {
     text: "Do Something Else",
     project: "1",
     id: "2",
-    isDone: false,
-    status: Unsorted,
+    status: ResolveScrap,
     box: Archive,
+    parentTodo: None,
+    depth: None,
   },
 ]
 
@@ -44,6 +46,73 @@ module Switch = {
   @module("./Switch.jsx") @react.component
   external make: (~checked: bool, ~onCheckedChange: unit => unit) => React.element = "Switch"
 }
+
+module Map = Belt.Map.String
+
+let buildTodoTree = (input: array<todo>) => {
+  let rootMapId = "_"
+  let parentMap = input->Array.reduce(Map.empty, (a, c) => {
+    let mapId = c.parentTodo->Option.getOr(rootMapId)
+    a->Map.update(mapId, v => v->Option.mapOr([c], v => Array.concat(v, [c]))->Some)
+  })
+
+  let mutParentMap = ref(parentMap)
+
+  let rec build = (arr, mapId, depth) => {
+    let children = mutParentMap.contents->Map.get(mapId)
+    // this is to prevent accidental inf loops
+    mutParentMap := mutParentMap.contents->Map.remove(mapId)
+
+    children
+    ->Option.getOr([])
+    ->Array.reduce(arr, (a, todo) => {
+      build(
+        a->Array.concat([
+          {
+            ...todo,
+            depth: Some(depth),
+          },
+        ]),
+        todo.id,
+        depth + 1,
+      )
+    })
+  }
+
+  build([], rootMapId, 0)
+}
+
+// const groupedItems = items.reduce((group, item) => {
+//   // Get the group key (category in this case)
+//   const key = item.category;
+
+//   // If the group doesn't exist, create it
+//   if (!group[key]) {
+//     group[key] = [];
+//   }
+
+//   // Push the item into the appropriate group
+//   group[key].push(item);
+
+//   // Return the updated group
+//   return group;
+// }, {});
+
+// let rec f = (input) => {
+//   let left = ref([...input])
+
+//   while (left -> Array.length > 0) {
+//     let c = left[0]
+//     let rest = left -> Array.sliceToEnd(~start=1)
+//     let (children, notChildren) = rest -> Belt.Array.partition((v) => v.parentTodo == c.id)
+//     let result :=
+//     result.contents->
+//     Array.concat([c])
+//     ->Array.concat(f(children))
+//     let left := notChildren
+
+//   }
+// }
 
 @react.component
 let make = () => {
@@ -132,7 +201,9 @@ let make = () => {
             showArchive={showArchive->Array.includes(project.id)}
             setShowArchive={setShowArchive}
             project
-            todos={todos->Array.filter(todo => todo.project == project.id)}
+            todos={todos
+            ->Array.filter(todo => todo.project == project.id)
+            ->buildTodoTree}
             updateProject
             updateTodo
             selectElement

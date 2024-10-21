@@ -22,10 +22,10 @@ type todo = {
   id: string,
   text: string,
   project: string,
-  isDone: bool,
   status: status,
   box: box,
-  // parentId: option<string>,
+  parentTodo: option<string>,
+  depth: option<int>,
 }
 
 type project = {

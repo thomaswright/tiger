@@ -16,8 +16,6 @@ module Todo = {
     ~newTodoAfter,
     ~getTodos: unit => array<todo>,
   ) => {
-    let addSubTodo = _ => ()
-
     let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
     let inputRef = React.useRef(Nullable.null)
     let containerRef = React.useRef(Nullable.null)
@@ -52,7 +50,7 @@ module Todo = {
           if e->ReactEvent.Keyboard.key == "Enter" && e->ReactEvent.Keyboard.metaKey {
             getTodos()
             ->Array.findIndexOpt(v => v.id == todo.id)
-            ->Option.mapOr((), todoIndex => newTodoAfter(todoIndex))
+            ->Option.mapOr((), todoIndex => newTodoAfter(todoIndex, None))
           }
 
           if e->ReactEvent.Keyboard.key == "Enter" {
@@ -128,7 +126,7 @@ module Todo = {
             e->ReactEvent.Keyboard.stopPropagation
             getTodos()
             ->Array.findIndexOpt(v => v.id == todo.id)
-            ->Option.mapOr((), todoIndex => newTodoAfter(todoIndex))
+            ->Option.mapOr((), todoIndex => newTodoAfter(todoIndex, None))
           }
         })
       }
@@ -147,16 +145,29 @@ module Todo = {
         setDisplayElement(_ => Some(Todo(todo.id)))
       }}
       onKeyDown={onKeyDownContainer}
+      style={{
+        // paddingLeft: (todo.depth->Option.getOr(0) * 16 + 4)->Int.toString ++ "px",
+      }}
       className={[
         listItemClass,
         // "focus:bg-blue-300 focus-within:bg-green-200", // helpful for debug
-        "group flex flex-row justify-start items-center  pl-2 h-6",
+        "group flex flex-row justify-start items-center   h-6 pl-2",
         stagedForDelete
           ? "bg-red-200 outline outline-1 -outline-offset-1"
           : isSelected
           ? "bg-var(--t1) outline outline-1 -outline-offset-1"
           : "",
       ]->Array.join(" ")}>
+      {Array.make(~length=todo.depth->Option.getOr(0), false)
+      ->Array.mapWithIndex((_, _) => {
+        <div
+          className="h-full w-3 border-l ml-1"
+          // style={{
+          // backgroundColor: `oklch(${(1.0 -. 0.1 *. i->Int.toFloat)->Float.toString} 0.0 0)`,
+          // }}
+        />
+      })
+      ->React.array}
       // <div className="text-xs w-5">
       //   {switch todo.box {
       //   | Working => React.null
@@ -192,35 +203,42 @@ module Todo = {
             box: t.box == Archive && !(newStatus->statusIsResolved) ? Working : t.box,
           })}
       />
-      <input
-        id={getTodoInputId(todo.id)}
-        ref={ReactDOM.Ref.domRef(inputRef)}
-        type_="text"
-        className={[
-          todoInputClass,
-          "mx-1 flex-1 bg-inherit text-[--t10] w-full outline-none  text-xs font-medium
+      <div className="border-b flex-1 ml-1 flex flex-row h-full justify-start items-center ">
+        <input
+          id={getTodoInputId(todo.id)}
+          ref={ReactDOM.Ref.domRef(inputRef)}
+          type_="text"
+          className={[
+            todoInputClass,
+            "mx-1 flex-1 bg-inherit text-[--t10] w-full outline-none  text-xs font-medium
           leading-none padding-none border-none h-5 -my-1 focus:text-blue-600",
-        ]->Array.join(" ")}
-        placeholder={""}
-        value={todo.text}
-        onBlur={_ => setSelectElement(_ => None)}
-        onFocus={_ => {
-          setSelectElement(_ => Some(Todo(todo.id)))
-          setDisplayElement(_ => Some(Todo(todo.id)))
-        }}
-        onKeyDown={onKeyDownInput}
-        onChange={e => {
-          updateTodo(todo.id, t => {
-            ...t,
-            text: ReactEvent.Form.target(e)["value"],
-          })
-        }}
-      />
-      <button
-        className={["text-xs  mr-1", isSelected ? "" : "hidden"]->Array.join(" ")}
-        onClick={_ => addSubTodo(todo.id)}>
-        <Icons.Plus />
-      </button>
+          ]->Array.join(" ")}
+          placeholder={""}
+          value={todo.text}
+          onBlur={_ => setSelectElement(_ => None)}
+          onFocus={_ => {
+            setSelectElement(_ => Some(Todo(todo.id)))
+            setDisplayElement(_ => Some(Todo(todo.id)))
+          }}
+          onKeyDown={onKeyDownInput}
+          onChange={e => {
+            updateTodo(todo.id, t => {
+              ...t,
+              text: ReactEvent.Form.target(e)["value"],
+            })
+          }}
+        />
+        <button
+          className={["text-xs  mr-1 hidden group-hover:block"]->Array.join(" ")}
+          onClick={_ => {
+            Console.log("click")
+            getTodos()
+            ->Array.findIndexOpt(v => v.id == todo.id)
+            ->Option.mapOr((), todoIndex => newTodoAfter(todoIndex, Some(todo.id)))
+          }}>
+          <Icons.Plus />
+        </button>
+      </div>
     </div>
   }
 }
@@ -241,11 +259,13 @@ let make = (
   ~setTodos: (array<Types.todo> => array<Types.todo>) => unit,
   ~getTodos,
 ) => {
+  Console.log(todos)
   let projectRef = React.useRef(Nullable.null)
 
   let isSelected = selectElement == Some(Project(project.id))
 
-  let newTodoAfter = i => {
+  let newTodoAfter = (i, parentTodo) => {
+    Console.log2(i, parentTodo)
     let newId = Common.uuid()
     setTodos(v => {
       v->Array.toSpliced(
@@ -256,9 +276,10 @@ let make = (
             id: newId,
             text: "",
             project: project.id,
-            isDone: false,
             status: Unsorted,
             box: Working,
+            parentTodo,
+            depth: None,
           },
         ],
       )
@@ -271,7 +292,7 @@ let make = (
     if isSelected {
       if e->ReactEvent.Keyboard.key == "Enter" {
         // setFocusIdNext(_ => Some("id-display-title"))
-        newTodoAfter(-1)
+        newTodoAfter(-1, None)
       }
 
       projectRef.current->mapNullable(dom => {
@@ -308,7 +329,7 @@ let make = (
       <div className="flex-1" />
       <button
         onClick={_ => {
-          newTodoAfter(-1)
+          newTodoAfter(-1, None)
         }}
         className="text-xs rounded h-6 w-6 flex-none mr-2">
         <Icons.Plus />
@@ -325,7 +346,7 @@ let make = (
       </button>
     </div>
     <div>
-      <div className="flex flex-col divide-y ">
+      <div className="flex flex-col  ">
         {todos
         ->Array.filter(todo => showArchive ? true : todo.box != Archive)
         // ->Array.toSorted((a, b) => a.status->statusToFloat -. b.status->statusToFloat)
