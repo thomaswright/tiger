@@ -23,6 +23,8 @@ var Pin = {};
 
 var Archive = {};
 
+var ArchiveOff = {};
+
 export {
   EyeClosed ,
   Eye ,
@@ -35,5 +37,6 @@ export {
   Trash ,
   Pin ,
   Archive ,
+  ArchiveOff ,
 }
 /* No side effect */

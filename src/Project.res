@@ -309,7 +309,7 @@ let make = (
               ? v->Array.filter(el => el != project.id)
               : v->Array.concat([project.id])
           )}>
-        {showArchive ? <Icons.Eye /> : <Icons.EyeClosed />}
+        {showArchive ? <Icons.Archive /> : <Icons.ArchiveOff />}
       </button>
     </div>
     <div>

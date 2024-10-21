@@ -51,3 +51,8 @@ module Archive = {
   @react.component @module("react-icons/tb")
   external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "TbArchive"
 }
+
+module ArchiveOff = {
+  @react.component @module("react-icons/tb")
+  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "TbArchiveOff"
+}

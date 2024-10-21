@@ -6,7 +6,7 @@
 html {
   background-color: white;
   color: black;
-  --tBase: hsl(222, 14%, 85%);
+  --tBase: hsl(222, 15%, 85%);
 
   --t10: black;
   --t9: oklch(from var(--tBase) 0.03 c h);

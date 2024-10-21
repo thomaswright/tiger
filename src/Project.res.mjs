@@ -358,7 +358,7 @@ function Project(props) {
                                 })
                             }),
                         JsxRuntime.jsx("button", {
-                              children: showArchive ? JsxRuntime.jsx(Tb.TbEye, {}) : JsxRuntime.jsx(Tb.TbEyeClosed, {}),
+                              children: showArchive ? JsxRuntime.jsx(Tb.TbArchive, {}) : JsxRuntime.jsx(Tb.TbArchiveOff, {}),
                               className: "text-xs rounded h-6 w-6 flex-none",
                               onClick: (function (param) {
                                   setShowArchive(function (v) {
