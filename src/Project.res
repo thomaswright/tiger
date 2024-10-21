@@ -157,13 +157,13 @@ module Todo = {
           ? "bg-var(--t1) outline outline-1 -outline-offset-1"
           : "",
       ]->Array.join(" ")}>
-      <div className="text-xs w-5">
-        {switch todo.box {
-        | Working => React.null
-        | Archive => <Icons.Archive />
-        | Pinned => <Icons.Pin />
-        }}
-      </div>
+      // <div className="text-xs w-5">
+      //   {switch todo.box {
+      //   | Working => React.null
+      //   | Archive => <Icons.Archive />
+      //   | Pinned => <Icons.Pin />
+      //   }}
+      // </div>
       <Common.StatusSelect
         isOpen={statusSelectIsOpen}
         isPinned={todo.box == Pinned}

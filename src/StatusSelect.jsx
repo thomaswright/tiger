@@ -89,12 +89,26 @@ const Dropdown = ({
         >
           {statusStringShort(status)}
           {isPinned && (
-            <div className="text-white bg-blue-600 text-xs absolute right-0.5 rounded-full w-3.5 h-3.5 items-center justify-center flex flex-row shadow-sm">
+            <div
+              style={{
+                backgroundColor: statusColor(status),
+                color: statusColorText(status),
+                borderColor: statusColorText(status),
+              }}
+              className=" text-xs absolute right-0.5  w-3.5 h-3.5 items-center justify-center flex flex-row "
+            >
               <Pin />
             </div>
           )}
           {isArchived && (
-            <div className="text-white bg-slate-600 text-xs absolute right-0.5 rounded w-3.5 h-3.5 items-center justify-center flex flex-row shadow-sm">
+            <div
+              style={{
+                backgroundColor: statusColor(status),
+                color: statusColorText(status),
+                borderColor: statusColorText(status),
+              }}
+              className="text-xs absolute right-0.5  w-3.5 h-3.5 items-center justify-center flex flex-row "
+            >
               <Archive />
             </div>
           )}

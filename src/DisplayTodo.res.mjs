@@ -104,31 +104,31 @@ function DisplayTodo(props) {
                                         });
                                   })
                               }) : null,
-                        JsxRuntime.jsx("button", {
-                              children: JsxRuntime.jsx(Tb.TbPin, {}),
-                              className: [
-                                  " px-1 h-6 flex flex-row items-center justify-center rounded border-[var(--t3)]\n          hover:text-blue-600\n          ",
-                                  todo.box === "Pinned" ? "text-blue-600" : "text-[var(--t4)]"
-                                ].join(" "),
-                              onClick: (function (param) {
-                                  setTodos(function (v) {
-                                        return v.map(function (t) {
-                                                    if (t.id === todo.id) {
-                                                      return {
-                                                              id: t.id,
-                                                              text: t.text,
-                                                              project: t.project,
-                                                              isDone: t.isDone,
-                                                              status: t.status,
-                                                              box: t.box !== "Pinned" ? "Pinned" : "Working"
-                                                            };
-                                                    } else {
-                                                      return t;
-                                                    }
-                                                  });
-                                      });
-                                })
-                            }),
+                        Types.statusIsResolved(todo.status) ? JsxRuntime.jsx("button", {
+                                children: JsxRuntime.jsx(Tb.TbPin, {}),
+                                className: [
+                                    " px-1 h-6 flex flex-row items-center justify-center rounded border-[var(--t3)]\n          hover:text-blue-600\n          ",
+                                    todo.box === "Pinned" ? "text-blue-600" : "text-[var(--t4)]"
+                                  ].join(" "),
+                                onClick: (function (param) {
+                                    setTodos(function (v) {
+                                          return v.map(function (t) {
+                                                      if (t.id === todo.id) {
+                                                        return {
+                                                                id: t.id,
+                                                                text: t.text,
+                                                                project: t.project,
+                                                                isDone: t.isDone,
+                                                                status: t.status,
+                                                                box: t.box !== "Pinned" ? "Pinned" : "Working"
+                                                              };
+                                                      } else {
+                                                        return t;
+                                                      }
+                                                    });
+                                        });
+                                  })
+                              }) : null,
                         JsxRuntime.jsx("button", {
                               children: JsxRuntime.jsx(Tb.TbTrash, {}),
                               className: ["\n          text-[var(--t4)] px-1 h-6 flex flex-row items-center justify-center rounded border-[var(--t3)]\n          hover:text-blue-600\n        "].join(" "),

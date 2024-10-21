@@ -151,26 +151,8 @@ function Project$Todo(props) {
     }
     
   };
-  var match$2 = todo.box;
-  var tmp;
-  switch (match$2) {
-    case "Working" :
-        tmp = null;
-        break;
-    case "Pinned" :
-        tmp = JsxRuntime.jsx(Tb.TbPin, {});
-        break;
-    case "Archive" :
-        tmp = JsxRuntime.jsx(Tb.TbArchive, {});
-        break;
-    
-  }
   return JsxRuntime.jsxs("div", {
               children: [
-                JsxRuntime.jsx("div", {
-                      children: tmp,
-                      className: "text-xs w-5"
-                    }),
                 JsxRuntime.jsx(Common.StatusSelect.make, {
                       status: todo.status,
                       setStatus: (function (newStatus) {

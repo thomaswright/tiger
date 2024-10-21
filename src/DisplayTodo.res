@@ -80,27 +80,29 @@ let make = (
             <Icons.Archive />
           </button>
         : React.null}
-      <button
-        onClick={_ => {
-          setTodos(v =>
-            v->Array.map(t =>
-              t.id == todo.id
-                ? {
-                    ...t,
-                    box: t.box != Pinned ? Pinned : Working,
-                  }
-                : t
-            )
-          )
-        }}
-        className={[
-          " px-1 h-6 flex flex-row items-center justify-center rounded border-[var(--t3)]
+      {todo.status->statusIsResolved
+        ? <button
+            onClick={_ => {
+              setTodos(v =>
+                v->Array.map(t =>
+                  t.id == todo.id
+                    ? {
+                        ...t,
+                        box: t.box != Pinned ? Pinned : Working,
+                      }
+                    : t
+                )
+              )
+            }}
+            className={[
+              " px-1 h-6 flex flex-row items-center justify-center rounded border-[var(--t3)]
           hover:text-blue-600
           ",
-          todo.box == Pinned ? "text-blue-600" : "text-[var(--t4)]",
-        ]->Array.join(" ")}>
-        <Icons.Pin />
-      </button>
+              todo.box == Pinned ? "text-blue-600" : "text-[var(--t4)]",
+            ]->Array.join(" ")}>
+            <Icons.Pin />
+          </button>
+        : React.null}
       <button
         onClick={_ => {
           document
