@@ -44,9 +44,10 @@ let make = (
         status={todo.status}
         focusTodo={() => ()}
         setStatus={newStatus =>
-          updateTodo(todo.id, todo => {
-            ...todo,
+          updateTodo(todo.id, t => {
+            ...t,
             status: newStatus,
+            box: t.box == Archive && !(newStatus->statusIsResolved) ? Working : t.box,
           })}
       />
       <div className={"flex-1"} />

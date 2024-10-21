@@ -53,14 +53,14 @@ function DisplayTodo(props) {
                         JsxRuntime.jsx(Common.StatusSelect.make, {
                               status: todo.status,
                               setStatus: (function (newStatus) {
-                                  updateTodo(todo.id, (function (todo) {
+                                  updateTodo(todo.id, (function (t) {
                                           return {
-                                                  id: todo.id,
-                                                  text: todo.text,
-                                                  project: todo.project,
-                                                  isDone: todo.isDone,
+                                                  id: t.id,
+                                                  text: t.text,
+                                                  project: t.project,
+                                                  isDone: t.isDone,
                                                   status: newStatus,
-                                                  box: todo.box
+                                                  box: t.box === "Archive" && !Types.statusIsResolved(newStatus) ? "Working" : t.box
                                                 };
                                         }));
                                 }),

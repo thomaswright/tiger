@@ -16,6 +16,8 @@ module Todo = {
     ~newTodoAfter,
     ~getTodos: unit => array<todo>,
   ) => {
+    let addSubTodo = _ => ()
+
     let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
     let inputRef = React.useRef(Nullable.null)
     let containerRef = React.useRef(Nullable.null)
@@ -148,13 +150,20 @@ module Todo = {
       className={[
         listItemClass,
         // "focus:bg-blue-300 focus-within:bg-green-200", // helpful for debug
-        " flex flex-row justify-start items-center gap-2 px-2 h-6",
+        "group flex flex-row justify-start items-center  pl-2 h-6",
         stagedForDelete
           ? "bg-red-200 outline outline-1 -outline-offset-1"
           : isSelected
           ? "bg-var(--t1) outline outline-1 -outline-offset-1"
           : "",
       ]->Array.join(" ")}>
+      <div className="text-xs w-5">
+        {switch todo.box {
+        | Working => React.null
+        | Archive => <Icons.Archive />
+        | Pinned => <Icons.Pin />
+        }}
+      </div>
       <Common.StatusSelect
         isOpen={statusSelectIsOpen}
         onOpenChange={v => {
@@ -175,9 +184,10 @@ module Todo = {
           setFocusIdNext(_ => Some(getTodoId(todo.id)))
         }}
         setStatus={newStatus =>
-          updateTodo(todo.id, todo => {
-            ...todo,
+          updateTodo(todo.id, t => {
+            ...t,
             status: newStatus,
+            box: t.box == Archive && !(newStatus->statusIsResolved) ? Working : t.box,
           })}
       />
       <input
@@ -186,7 +196,7 @@ module Todo = {
         type_="text"
         className={[
           todoInputClass,
-          " flex-1 bg-inherit text-[--t10] w-full outline-none  text-xs font-medium
+          "mx-1 flex-1 bg-inherit text-[--t10] w-full outline-none  text-xs font-medium
           leading-none padding-none border-none h-5 -my-1 focus:text-blue-600",
         ]->Array.join(" ")}
         placeholder={""}
@@ -204,11 +214,11 @@ module Todo = {
           })
         }}
       />
-      {switch todo.box {
-      | Working => React.null
-      | Archive => <Icons.Archive />
-      | Pinned => <Icons.Pin />
-      }}
+      <button
+        className={["text-xs  mr-1", isSelected ? "" : "hidden"]->Array.join(" ")}
+        onClick={_ => addSubTodo(todo.id)}>
+        <Icons.Plus />
+      </button>
     </div>
   }
 }

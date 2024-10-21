@@ -56,3 +56,9 @@ module ArchiveOff = {
   @react.component @module("react-icons/tb")
   external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "TbArchiveOff"
 }
+
+module CornerDownRight = {
+  @react.component @module("react-icons/tb")
+  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element =
+    "TbCornerDownRight"
+}

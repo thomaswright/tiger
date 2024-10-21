@@ -25,6 +25,8 @@ var Archive = {};
 
 var ArchiveOff = {};
 
+var CornerDownRight = {};
+
 export {
   EyeClosed ,
   Eye ,
@@ -38,5 +40,6 @@ export {
   Pin ,
   Archive ,
   ArchiveOff ,
+  CornerDownRight ,
 }
 /* No side effect */
