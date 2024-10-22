@@ -13,6 +13,7 @@ import * as JsxRuntime from "react/jsx-runtime";
 
 function Project$Todo(props) {
   var setChecked = props.setChecked;
+  var isChecked = props.isChecked;
   var getTodos = props.getTodos;
   var newTodoAfter = props.newTodoAfter;
   var setFocusIdNext = props.setFocusIdNext;
@@ -319,7 +320,7 @@ function Project$Todo(props) {
                                       ref: Caml_option.some(inputRef),
                                       className: [
                                           Types.todoInputClass,
-                                          "mx-1 block text-sm font-medium  w-full h-5 border-0 px-0.5 py-0 focus:ring-0 \n              focus:text-blue-600 leading-none "
+                                          "mx-1 block text-sm font-medium  w-full h-5 border-0 px-0.5 py-0 focus:ring-0 \n              focus:text-blue-600 leading-none bg-transparent"
                                         ].join(" "),
                                       id: Types.getTodoInputId(todo.id),
                                       placeholder: "",
@@ -372,8 +373,8 @@ function Project$Todo(props) {
                                         })
                                     }),
                                 JsxRuntime.jsx("input", {
-                                      className: "border-[var(--t3)] rounded mx-1 text-blue-300 h-3.5 w-3.5 focus:ring-0 focus:outline-none focus:ring-offset-0",
-                                      checked: props.isChecked,
+                                      className: "border-[var(--t3)] rounded mx-1 text-blue-400 h-3.5 w-3.5 focus:ring-offset-0 focus:ring-blue-500",
+                                      checked: isChecked,
                                       type: "checkbox",
                                       onChange: (function (e) {
                                           setChecked(function (v) {
@@ -386,10 +387,12 @@ function Project$Todo(props) {
                             })
                       ],
                       className: [
-                          "group flex flex-row justify-start items-center h-full flex-1 pl-0.5",
-                          stagedForDelete ? "bg-red-200 outline outline-1 -outline-offset-1" : (
-                              isSelected ? "bg-var(--t1) outline outline-1 -outline-offset-1" : ""
-                            )
+                          "group flex flex-row justify-start items-center h-full flex-1 pl-0.5 rounded-sm",
+                          stagedForDelete ? "outline-red-700" : "outline-sky-300 group-focus:outline-sky-500",
+                          stagedForDelete ? "bg-red-200 " : (
+                              isChecked ? "bg-sky-50" : ""
+                            ),
+                          isSelected ? "outline outline-2 -outline-offset-2 " : ""
                         ].join(" ")
                     })
               ],
@@ -518,7 +521,7 @@ function Project(props) {
                       className: [
                           Types.listItemClass,
                           "h-7 flex flex-row justify-between items-center bg-[var(--t2)] px-1 gap-1",
-                          isSelected ? "outline outline-1 -outline-offset-1 " : ""
+                          isSelected ? "outline outline-2 -outline-offset-2 outline-sky-500" : ""
                         ].join(" "),
                       id: Types.getProjectId(project.id),
                       tabIndex: 0,

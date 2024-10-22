@@ -272,12 +272,10 @@ module Todo = {
       // </div>
       <div
         className={[
-          "group flex flex-row justify-start items-center h-full flex-1 pl-0.5",
-          stagedForDelete
-            ? "bg-red-200 outline outline-1 -outline-offset-1"
-            : isSelected
-            ? "bg-var(--t1) outline outline-1 -outline-offset-1"
-            : "",
+          "group flex flex-row justify-start items-center h-full flex-1 pl-0.5 rounded-sm",
+          stagedForDelete ? "outline-red-700" : "outline-sky-300 group-focus:outline-sky-500",
+          stagedForDelete ? "bg-red-200 " : isChecked ? "bg-sky-50" : "",
+          isSelected ? "outline outline-2 -outline-offset-2 " : "",
         ]->Array.join(" ")}>
         <Common.StatusSelect
           isOpen={statusSelectIsOpen}
@@ -315,7 +313,7 @@ module Todo = {
             className={[
               todoInputClass,
               "mx-1 block text-sm font-medium  w-full h-5 border-0 px-0.5 py-0 focus:ring-0 
-              focus:text-blue-600 leading-none ",
+              focus:text-blue-600 leading-none bg-transparent",
             ]->Array.join(" ")}
             placeholder={""}
             value={todo.text}
@@ -347,7 +345,7 @@ module Todo = {
             }}
             checked={isChecked}
             type_={"checkbox"}
-            className="border-[var(--t3)] rounded mx-1 text-blue-300 h-3.5 w-3.5 focus:ring-0 focus:outline-none focus:ring-offset-0"
+            className="border-[var(--t3)] rounded mx-1 text-blue-400 h-3.5 w-3.5 focus:ring-offset-0 focus:ring-blue-500"
           />
         </div>
       </div>
@@ -436,7 +434,7 @@ let make = (
       className={[
         listItemClass,
         "h-7 flex flex-row justify-between items-center bg-[var(--t2)] px-1 gap-1",
-        isSelected ? "outline outline-1 -outline-offset-1 " : "",
+        isSelected ? "outline outline-2 -outline-offset-2 outline-sky-500" : "",
       ]->Array.join(" ")}>
       <div className=" flex-none px-2 text-sm"> {project.name->React.string} </div>
       <div className="flex-1" />
