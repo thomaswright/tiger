@@ -18,6 +18,7 @@ module Todo = {
     ~isChecked: bool,
     ~setChecked,
     ~deleteTodo,
+    ~showArchive,
   ) => {
     let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
     let inputRef = React.useRef(Nullable.null)
@@ -229,6 +230,7 @@ module Todo = {
         })
       }
     }
+    Console.log(todo)
 
     <div
       id={getTodoId(todo.id)}
@@ -309,7 +311,16 @@ module Todo = {
               box: t.box == Archive && !(newStatus->statusIsResolved) ? Working : t.box,
             })}
         />
-        <div className="border-b flex-1 ml-1 flex flex-row h-full justify-start items-center ">
+        <div
+          className="relative border-b flex-1 ml-1 flex flex-row h-full justify-start items-center ">
+          // {if todo.hasArchivedChildren && showArchive {
+          //   <div
+          //     className="absolute bg-purple-800 text-xs h-1.5 w-1.5 -left-2 top-0 flex flex-row items-center justify-center rounded-full">
+          //     // <Icons.EyeClosed />
+          //   </div>
+          // } else {
+          //   React.null
+          // }}
           <input
             id={getTodoInputId(todo.id)}
             ref={ReactDOM.Ref.domRef(inputRef)}
@@ -397,6 +408,7 @@ let make = (
             parentTodo,
             depth: None,
             childNumber: None,
+            hasArchivedChildren: false,
           },
         ],
       )
@@ -507,7 +519,7 @@ let make = (
       }}
       className={[
         listItemClass,
-        "h-7 flex flex-row justify-between items-center bg-[var(--t2)] px-1 
+        "group h-7 flex flex-row justify-between items-center bg-[var(--t2)] px-1 
         gap-1 border-y border-b-[var(--t4)] border-t-[var(--t3)]",
         isSelected
           ? "outline outline-2 -outline-offset-2 outline-sky-300 focus:outline-sky-500"
@@ -542,13 +554,16 @@ let make = (
         onClick={_ => {
           newTodoAfter(-1, None)
         }}
-        className="text-xs rounded h-6 w-6 flex-none mr-2">
+        className="hidden group-hover:block text-xs rounded h-6 w-6 flex-none mr-2">
         <Icons.Plus />
       </button>
       <button
-        className="text-xs rounded h-6 w-6 flex-none"
+        className="text-2xs rounded h-6 w-6 flex-none font-mono strike"
         onClick={_ => setShowArchive(v => v->arrayToggle(project.id))}>
-        {showArchive ? <Icons.Archive /> : <Icons.ArchiveOff />}
+        {showArchive ? <Icons.Eye /> : <Icons.EyeClosed />}
+        // {showArchive
+        //   ? <span className="line-through"> {"closed"->React.string} </span>
+        //   : <span> {"closed"->React.string} </span>}
       </button>
     </div>
     <div>
@@ -560,6 +575,7 @@ let make = (
             key={getTodoId(todo.id)}
             todo
             updateTodo
+            showArchive
             isSelected={selectedElement == Some(Todo(todo.id))}
             setSelectedElement
             displayElement

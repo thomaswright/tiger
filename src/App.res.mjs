@@ -31,7 +31,8 @@ var defaultTodos = [
     box: "Working",
     parentTodo: undefined,
     depth: undefined,
-    childNumber: undefined
+    childNumber: undefined,
+    hasArchivedChildren: false
   },
   {
     id: "2",
@@ -41,7 +42,8 @@ var defaultTodos = [
     box: "Archive",
     parentTodo: undefined,
     depth: undefined,
-    childNumber: undefined
+    childNumber: undefined,
+    hasArchivedChildren: false
   }
 ];
 
@@ -60,6 +62,11 @@ function buildTodoTree(input) {
   var mutParentMap = {
     contents: parentMap
   };
+  var parentAggs = Belt_MapString.map(parentMap, (function (children) {
+          return children.some(function (v) {
+                      return v.box === "Archive";
+                    });
+        }));
   var build = function (arr, mapId, depth) {
     var children = Belt_MapString.get(mutParentMap.contents, mapId);
     mutParentMap.contents = Belt_MapString.remove(mutParentMap.contents, mapId);
@@ -72,7 +79,8 @@ function buildTodoTree(input) {
                                     box: todo.box,
                                     parentTodo: todo.parentTodo,
                                     depth: depth,
-                                    childNumber: i
+                                    childNumber: i,
+                                    hasArchivedChildren: Belt_MapString.getWithDefault(parentAggs, todo.id, false)
                                   }]), todo.id, depth + 1 | 0);
                 }));
   };
@@ -117,7 +125,8 @@ function App$CheckedSummary(props) {
                                                   box: t.box === "Archive" && !Types.statusIsResolved(newStatus) ? "Working" : t.box,
                                                   parentTodo: t.parentTodo,
                                                   depth: t.depth,
-                                                  childNumber: t.childNumber
+                                                  childNumber: t.childNumber,
+                                                  hasArchivedChildren: t.hasArchivedChildren
                                                 };
                                         } else {
                                           return t;
@@ -249,7 +258,8 @@ function App(props) {
                                 box: t.box,
                                 parentTodo: todo.parentTodo,
                                 depth: t.depth,
-                                childNumber: t.childNumber
+                                childNumber: t.childNumber,
+                                hasArchivedChildren: t.hasArchivedChildren
                               };
                       } else {
                         return t;

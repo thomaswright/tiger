@@ -89,7 +89,8 @@ function DisplayProject(props) {
                                                             box: "Archive",
                                                             parentTodo: t.parentTodo,
                                                             depth: t.depth,
-                                                            childNumber: t.childNumber
+                                                            childNumber: t.childNumber,
+                                                            hasArchivedChildren: t.hasArchivedChildren
                                                           };
                                                   }
                                                 });

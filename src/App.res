@@ -18,6 +18,7 @@ let defaultTodos = [
     parentTodo: None,
     depth: None,
     childNumber: None,
+    hasArchivedChildren: false,
   },
   {
     text: "Do Something Else",
@@ -28,6 +29,7 @@ let defaultTodos = [
     parentTodo: None,
     depth: None,
     childNumber: None,
+    hasArchivedChildren: false,
   },
 ]
 
@@ -60,11 +62,12 @@ let buildTodoTree = (input: array<todo>) => {
 
   let mutParentMap = ref(parentMap)
 
+  let parentAggs = parentMap->Map.map(children => children->Array.some(v => v.box == Archive))
+
   let rec build = (arr, mapId, depth) => {
     let children = mutParentMap.contents->Map.get(mapId)
     // this is to prevent accidental inf loops
     mutParentMap := mutParentMap.contents->Map.remove(mapId)
-
     children
     ->Option.getOr([])
     ->Array.reduceWithIndex(arr, (a, todo, i) => {
@@ -74,6 +77,7 @@ let buildTodoTree = (input: array<todo>) => {
             ...todo,
             depth: Some(depth),
             childNumber: Some(i),
+            hasArchivedChildren: parentAggs->Map.getWithDefault(todo.id, false),
           },
         ]),
         todo.id,

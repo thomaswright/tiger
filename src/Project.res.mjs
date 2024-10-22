@@ -63,7 +63,8 @@ function Project$Todo(props) {
                                           return t.id;
                                         })),
                                   depth: t.depth,
-                                  childNumber: t.childNumber
+                                  childNumber: t.childNumber,
+                                  hasArchivedChildren: t.hasArchivedChildren
                                 };
                         } else if (Caml_obj.equal(t.parentTodo, todo.id)) {
                           return {
@@ -76,7 +77,8 @@ function Project$Todo(props) {
                                           return t.id;
                                         })),
                                   depth: t.depth,
-                                  childNumber: t.childNumber
+                                  childNumber: t.childNumber,
+                                  hasArchivedChildren: t.hasArchivedChildren
                                 };
                         } else {
                           return t;
@@ -131,7 +133,8 @@ function Project$Todo(props) {
                                         box: t.box,
                                         parentTodo: newParent,
                                         depth: t.depth,
-                                        childNumber: t.childNumber
+                                        childNumber: t.childNumber,
+                                        hasArchivedChildren: t.hasArchivedChildren
                                       };
                               } else if (newChildren.contents.includes(t.id)) {
                                 return {
@@ -142,7 +145,8 @@ function Project$Todo(props) {
                                         box: t.box,
                                         parentTodo: todo.id,
                                         depth: t.depth,
-                                        childNumber: t.childNumber
+                                        childNumber: t.childNumber,
+                                        hasArchivedChildren: t.hasArchivedChildren
                                       };
                               } else {
                                 return t;
@@ -268,6 +272,7 @@ function Project$Todo(props) {
     }
     
   };
+  console.log(todo);
   return JsxRuntime.jsxs("div", {
               children: [
                 Core__Array.make(Core__Option.getOr(todo.depth, 0), false).map(function (param, i) {
@@ -289,7 +294,8 @@ function Project$Todo(props) {
                                                   box: t.box === "Archive" && !Types.statusIsResolved(newStatus) ? "Working" : t.box,
                                                   parentTodo: t.parentTodo,
                                                   depth: t.depth,
-                                                  childNumber: t.childNumber
+                                                  childNumber: t.childNumber,
+                                                  hasArchivedChildren: t.hasArchivedChildren
                                                 };
                                         }));
                                 }),
@@ -358,7 +364,8 @@ function Project$Todo(props) {
                                                           box: t.box,
                                                           parentTodo: t.parentTodo,
                                                           depth: t.depth,
-                                                          childNumber: t.childNumber
+                                                          childNumber: t.childNumber,
+                                                          hasArchivedChildren: t.hasArchivedChildren
                                                         };
                                                 }));
                                         })
@@ -385,7 +392,7 @@ function Project$Todo(props) {
                                         })
                                     })
                               ],
-                              className: "border-b flex-1 ml-1 flex flex-row h-full justify-start items-center "
+                              className: "relative border-b flex-1 ml-1 flex flex-row h-full justify-start items-center "
                             })
                       ],
                       className: [
@@ -450,6 +457,7 @@ function Project(props) {
   var updateTodo = props.updateTodo;
   var updateProject = props.updateProject;
   var setShowArchive = props.setShowArchive;
+  var showArchive = props.showArchive;
   var project = props.project;
   var projectRef = React.useRef(null);
   var inputRef = React.useRef(null);
@@ -468,7 +476,8 @@ function Project(props) {
                       box: "Working",
                       parentTodo: parentTodo,
                       depth: undefined,
-                      childNumber: undefined
+                      childNumber: undefined,
+                      hasArchivedChildren: false
                     });
         });
     setFocusIdNext(function (param) {
@@ -607,14 +616,14 @@ function Project(props) {
                             }),
                         JsxRuntime.jsx("button", {
                               children: JsxRuntime.jsx(Tb.TbPlus, {}),
-                              className: "text-xs rounded h-6 w-6 flex-none mr-2",
+                              className: "hidden group-hover:block text-xs rounded h-6 w-6 flex-none mr-2",
                               onClick: (function (param) {
                                   newTodoAfter(-1, undefined);
                                 })
                             }),
                         JsxRuntime.jsx("button", {
-                              children: props.showArchive ? JsxRuntime.jsx(Tb.TbArchive, {}) : JsxRuntime.jsx(Tb.TbArchiveOff, {}),
-                              className: "text-xs rounded h-6 w-6 flex-none",
+                              children: showArchive ? JsxRuntime.jsx(Tb.TbEye, {}) : JsxRuntime.jsx(Tb.TbEyeClosed, {}),
+                              className: "text-2xs rounded h-6 w-6 flex-none font-mono strike",
                               onClick: (function (param) {
                                   setShowArchive(function (v) {
                                         return Common.arrayToggle(v, project.id);
@@ -625,7 +634,7 @@ function Project(props) {
                       ref: Caml_option.some(projectRef),
                       className: [
                           Types.listItemClass,
-                          "h-7 flex flex-row justify-between items-center bg-[var(--t2)] px-1 \n        gap-1 border-y border-b-[var(--t4)] border-t-[var(--t3)]",
+                          "group h-7 flex flex-row justify-between items-center bg-[var(--t2)] px-1 \n        gap-1 border-y border-b-[var(--t4)] border-t-[var(--t3)]",
                           isSelected ? "outline outline-2 -outline-offset-2 outline-sky-300 focus:outline-sky-500" : ""
                         ].join(" "),
                       id: Types.getProjectId(project.id),
@@ -670,7 +679,8 @@ function Project(props) {
                                               getTodos: getTodos,
                                               isChecked: checked.includes(todo.id),
                                               setChecked: setChecked,
-                                              deleteTodo: deleteTodo
+                                              deleteTodo: deleteTodo,
+                                              showArchive: showArchive
                                             }, Types.getTodoId(todo.id));
                                 }),
                             className: "flex flex-col pb-1"
