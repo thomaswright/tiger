@@ -293,7 +293,7 @@ module Todo = {
               setStatusSelectIsOpen(_ => v)
             }
           }}
-          status={todo.status}
+          status={Some(todo.status)}
           focusTodo={() => {
             // this isn't set directly because the "Enter"
             // will then fire on the container then focusing
@@ -347,7 +347,7 @@ module Todo = {
             }}
             checked={isChecked}
             type_={"checkbox"}
-            className="border-[var(--t3)] rounded mx-1 text-pink-300 h-3.5 w-3.5 focus:ring-0 focus:outline-none focus:ring-offset-0"
+            className="border-[var(--t3)] rounded mx-1 text-blue-300 h-3.5 w-3.5 focus:ring-0 focus:outline-none focus:ring-offset-0"
           />
         </div>
       </div>

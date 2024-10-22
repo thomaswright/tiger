@@ -43,7 +43,7 @@ let make = (
         onOpenChange={v => {
           setStatusSelectIsOpen(_ => v)
         }}
-        status={todo.status}
+        status={Some(todo.status)}
         focusTodo={() => ()}
         setStatus={newStatus =>
           updateTodo(todo.id, t => {

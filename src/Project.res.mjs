@@ -372,7 +372,7 @@ function Project$Todo(props) {
                                         })
                                     }),
                                 JsxRuntime.jsx("input", {
-                                      className: "border-[var(--t3)] rounded mx-1 text-pink-300 h-3.5 w-3.5 focus:ring-0 focus:outline-none focus:ring-offset-0",
+                                      className: "border-[var(--t3)] rounded mx-1 text-blue-300 h-3.5 w-3.5 focus:ring-0 focus:outline-none focus:ring-offset-0",
                                       checked: props.isChecked,
                                       type: "checkbox",
                                       onChange: (function (e) {

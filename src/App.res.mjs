@@ -78,6 +78,86 @@ function buildTodoTree(input) {
   return build([], rootMapId, 0);
 }
 
+function App$CheckedSummary(props) {
+  var setTodos = props.setTodos;
+  var setChecked = props.setChecked;
+  var checked = props.checked;
+  var match = React.useState(function () {
+        return false;
+      });
+  var setStatusSelectIsOpen = match[1];
+  var tmp;
+  if (checked.length < 2) {
+    tmp = null;
+  } else {
+    var checkedTodos = props.todos.filter(function (t) {
+          return checked.includes(t.id);
+        });
+    tmp = JsxRuntime.jsxs(React.Fragment, {
+          children: [
+            JsxRuntime.jsx(Common.StatusSelect.make, {
+                  status: Core__Option.flatMap(checkedTodos[0], (function (first) {
+                          if (checkedTodos.every(function (t) {
+                                  return t.status === first.status;
+                                })) {
+                            return first.status;
+                          }
+                          
+                        })),
+                  setStatus: (function (newStatus) {
+                      setTodos(function (todos) {
+                            return todos.map(function (t) {
+                                        if (checked.includes(t.id)) {
+                                          return {
+                                                  id: t.id,
+                                                  text: t.text,
+                                                  project: t.project,
+                                                  status: newStatus,
+                                                  box: t.box === "Archive" && !Types.statusIsResolved(newStatus) ? "Working" : t.box,
+                                                  parentTodo: t.parentTodo,
+                                                  depth: t.depth,
+                                                  childNumber: t.childNumber
+                                                };
+                                        } else {
+                                          return t;
+                                        }
+                                      });
+                          });
+                    }),
+                  focusTodo: (function () {
+                      
+                    }),
+                  isOpen: match[0],
+                  isPinned: false,
+                  isArchived: false,
+                  onOpenChange: (function (v) {
+                      setStatusSelectIsOpen(function (param) {
+                            return v;
+                          });
+                    })
+                }),
+            checked.length.toString() + " Checked",
+            JsxRuntime.jsx("div", {
+                  className: "flex-1"
+                }),
+            JsxRuntime.jsx("button", {
+                  children: "Clear",
+                  className: "px-2",
+                  onClick: (function (param) {
+                      setChecked(function (param) {
+                            return [];
+                          });
+                    })
+                })
+          ]
+        });
+  }
+  return JsxRuntime.jsx("div", {
+              children: tmp,
+              className: "h-8 text-sm px-2 flex flex-row gap-2 items-center border-b"
+            });
+}
+
 function App(props) {
   var match = Common.useLocalStorage("projects", defaultProjects);
   var setProjects = match[1];
@@ -288,8 +368,16 @@ function App(props) {
                       ],
                       className: "flex-1"
                     }),
-                JsxRuntime.jsx("div", {
-                      children: tmp,
+                JsxRuntime.jsxs("div", {
+                      children: [
+                        JsxRuntime.jsx(App$CheckedSummary, {
+                              checked: checked,
+                              todos: todos,
+                              setChecked: setChecked,
+                              setTodos: setTodos
+                            }),
+                        tmp
+                      ],
                       className: " border-l flex-1"
                     })
               ],

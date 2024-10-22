@@ -77,42 +77,55 @@ const Dropdown = ({
   return (
     <DropdownMenu.Root modal={false} open={isOpen} onOpenChange={onOpenChange}>
       <DropdownMenu.Trigger asChild>
-        <button
-          style={{
-            // backgroundColor: statusColor(status),
-            // color: "var(--t10)",
-            backgroundColor: statusColor(status),
-            color: statusColorText(status),
-          }}
-          className="relative flex flex-row items-center text-xs justify-center w-20 h-5 font-bold rounded text-[var(--t0)]"
-          aria-label="Customise options"
-        >
-          {statusStringShort(status)}
-          {isPinned && (
-            <div
-              style={{
-                backgroundColor: statusColor(status),
-                color: statusColorText(status),
-                borderColor: statusColorText(status),
-              }}
-              className=" text-xs absolute right-0.5  w-3.5 h-3.5 items-center justify-center flex flex-row "
-            >
-              <Pin />
-            </div>
-          )}
-          {isArchived && (
-            <div
-              style={{
-                backgroundColor: statusColor(status),
-                color: statusColorText(status),
-                borderColor: statusColorText(status),
-              }}
-              className="text-xs absolute right-0.5  w-3.5 h-3.5 items-center justify-center flex flex-row "
-            >
-              <Archive />
-            </div>
-          )}
-        </button>
+        {Boolean(status) ? (
+          <button
+            style={{
+              // backgroundColor: statusColor(status),
+              // color: "var(--t10)",
+              backgroundColor: statusColor(status),
+              color: statusColorText(status),
+            }}
+            className="relative flex flex-row items-center text-xs justify-center w-20 h-5 font-bold rounded text-[var(--t0)]"
+            aria-label="Customise options"
+          >
+            {statusStringShort(status)}
+            {isPinned && (
+              <div
+                style={{
+                  backgroundColor: statusColor(status),
+                  color: statusColorText(status),
+                  borderColor: statusColorText(status),
+                }}
+                className=" text-xs absolute right-0.5  w-3.5 h-3.5 items-center justify-center flex flex-row "
+              >
+                <Pin />
+              </div>
+            )}
+            {isArchived && (
+              <div
+                style={{
+                  backgroundColor: statusColor(status),
+                  color: statusColorText(status),
+                  borderColor: statusColorText(status),
+                }}
+                className="text-xs absolute right-0.5  w-3.5 h-3.5 items-center justify-center flex flex-row "
+              >
+                <Archive />
+              </div>
+            )}
+          </button>
+        ) : (
+          <button
+            style={{
+              backgroundColor: "var(--t2)",
+              color: "var(--t8)",
+            }}
+            className="relative flex flex-row items-center text-xs justify-center w-20 h-5 font-bold rounded text-[var(--t0)]"
+            aria-label="Customise options"
+          >
+            {"Mixed"}
+          </button>
+        )}
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Portal>
@@ -141,7 +154,9 @@ const Dropdown = ({
               {/* <div className=" w-6 flex flex-row items-center justify-center">
                 {statusStringShort(hoverStatus)}
               </div> */}
-              <div>{statusString(hoverStatus)}</div>
+              <div>
+                {Boolean(hoverStatus) ? statusString(hoverStatus) : "Mixed"}
+              </div>
             </div>
           </div>
 

@@ -117,6 +117,66 @@ let buildTodoTree = (input: array<todo>) => {
 //   }
 // }
 
+module CheckedSummary = {
+  @react.component
+  let make = (
+    ~checked,
+    ~todos: array<todo>,
+    ~setChecked,
+    ~setTodos: (array<Types.todo> => array<Types.todo>) => unit,
+  ) => {
+    let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
+
+    <div className="h-8 text-sm px-2 flex flex-row gap-2 items-center border-b">
+      {if checked->Array.length < 2 {
+        React.null
+      } else {
+        <React.Fragment>
+          <Common.StatusSelect
+            isPinned={false}
+            isArchived={false}
+            isOpen={statusSelectIsOpen}
+            onOpenChange={v => {
+              setStatusSelectIsOpen(_ => v)
+            }}
+            status={
+              let checkedTodos = todos->Array.filter(t => checked->Array.includes(t.id))
+              checkedTodos
+              ->Array.get(0)
+              ->Option.flatMap(first => {
+                if checkedTodos->Array.every(t => t.status == first.status) {
+                  Some(first.status)
+                } else {
+                  None
+                }
+              })
+            }
+            focusTodo={() => {()}}
+            setStatus={newStatus =>
+              setTodos(todos =>
+                todos->Array.map(t => {
+                  if checked->Array.includes(t.id) {
+                    {
+                      ...t,
+                      status: newStatus,
+                      box: t.box == Archive && !(newStatus->statusIsResolved) ? Working : t.box,
+                    }
+                  } else {
+                    t
+                  }
+                })
+              )}
+          />
+          {`${checked->Array.length->Int.toString} Checked`->React.string}
+          <div className="flex-1" />
+          <button className="px-2" onClick={_ => setChecked(_ => [])}>
+            {"Clear"->React.string}
+          </button>
+        </React.Fragment>
+      }}
+    </div>
+  }
+}
 @react.component
 let make = () => {
   let (projects, setProjects, _) = Common.useLocalStorage("projects", defaultProjects)
@@ -229,6 +289,7 @@ let make = () => {
       </div>
     </div>
     <div className=" border-l flex-1">
+      <CheckedSummary checked={checked} todos={todos} setChecked={setChecked} setTodos />
       {switch displayElement {
       | Some(Todo(todoId)) =>
         todos

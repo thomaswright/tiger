@@ -17,7 +17,7 @@ external focusNextClass: (string, Dom.element) => unit = "focusNextClass"
 module StatusSelect = {
   @react.component @module("./StatusSelect.jsx")
   external make: (
-    ~status: status,
+    ~status: option<status>,
     ~setStatus: status => unit,
     ~focusTodo: unit => unit,
     ~isOpen: bool,
