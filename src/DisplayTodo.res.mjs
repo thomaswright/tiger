@@ -43,7 +43,8 @@ function DisplayTodo(props) {
                                                 status: t.status,
                                                 box: t.box,
                                                 parentTodo: t.parentTodo,
-                                                depth: t.depth
+                                                depth: t.depth,
+                                                childNumber: t.childNumber
                                               };
                                       }));
                               })
@@ -62,7 +63,8 @@ function DisplayTodo(props) {
                                                   status: newStatus,
                                                   box: t.box === "Archive" && !Types.statusIsResolved(newStatus) ? "Working" : t.box,
                                                   parentTodo: t.parentTodo,
-                                                  depth: t.depth
+                                                  depth: t.depth,
+                                                  childNumber: t.childNumber
                                                 };
                                         }));
                                 }),
@@ -98,7 +100,8 @@ function DisplayTodo(props) {
                                                                 status: Types.statusIsResolved(t.status) ? t.status : "ResolveScrap",
                                                                 box: t.box !== "Archive" ? "Archive" : "Working",
                                                                 parentTodo: t.parentTodo,
-                                                                depth: t.depth
+                                                                depth: t.depth,
+                                                                childNumber: t.childNumber
                                                               };
                                                       } else {
                                                         return t;
@@ -124,7 +127,8 @@ function DisplayTodo(props) {
                                                                 status: t.status,
                                                                 box: t.box !== "Pinned" ? "Pinned" : "Working",
                                                                 parentTodo: t.parentTodo,
-                                                                depth: t.depth
+                                                                depth: t.depth,
+                                                                childNumber: t.childNumber
                                                               };
                                                       } else {
                                                         return t;

@@ -17,6 +17,7 @@ let defaultTodos = [
     box: Working,
     parentTodo: None,
     depth: None,
+    childNumber: None,
   },
   {
     text: "Do Something Else",
@@ -26,6 +27,7 @@ let defaultTodos = [
     box: Archive,
     parentTodo: None,
     depth: None,
+    childNumber: None,
   },
 ]
 
@@ -65,12 +67,13 @@ let buildTodoTree = (input: array<todo>) => {
 
     children
     ->Option.getOr([])
-    ->Array.reduce(arr, (a, todo) => {
+    ->Array.reduceWithIndex(arr, (a, todo, i) => {
       build(
         a->Array.concat([
           {
             ...todo,
             depth: Some(depth),
+            childNumber: Some(i),
           },
         ]),
         todo.id,
@@ -197,15 +200,17 @@ let make = () => {
         ->Array.filter(project => projectsTab == Active ? project.isActive : true)
         ->Array.map(project => {
           let showArchive = showArchive->Array.includes(project.id)
+          let projectTodos =
+            todos
+            ->Array.filter(todo => todo.project == project.id)
+            ->Array.filter(todo => showArchive ? true : todo.box != Archive)
+            ->buildTodoTree
           <Project
             key={getProjectId(project.id)}
             showArchive={showArchive}
             setShowArchive={setShowArchive}
             project
-            todos={todos
-            ->Array.filter(todo => todo.project == project.id)
-            ->Array.filter(todo => showArchive ? true : todo.box != Archive)
-            ->buildTodoTree}
+            todos={projectTodos}
             updateProject
             updateTodo
             selectedElement
@@ -214,7 +219,7 @@ let make = () => {
             setDisplayElement
             setFocusIdNext
             setTodos
-            getTodos
+            getTodos={() => projectTodos}
           />
         })
         ->React.array}

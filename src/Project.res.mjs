@@ -102,6 +102,119 @@ function Project$Todo(props) {
       return Common.mapNullable(inputRef.current, (function (dom) {
                     var cursorPosition = Core__Option.getOr(Caml_option.nullable_to_opt(dom.selectionStart), 0);
                     var inputValueLength = dom.value.length;
+                    if (e.key === "]" && e.metaKey && Core__Option.mapOr(todo.childNumber, false, (function (childNumber) {
+                              return childNumber !== 0;
+                            }))) {
+                      e.preventDefault();
+                      var todos = getTodos();
+                      var newParent = todos.find(function (t) {
+                            if (Caml_obj.equal(t.parentTodo, todo.parentTodo)) {
+                              return Caml_obj.equal(t.childNumber, Core__Option.map(todo.childNumber, (function (c) {
+                                                return c - 1 | 0;
+                                              })));
+                            } else {
+                              return false;
+                            }
+                          });
+                      setTodos(function (todos) {
+                            return todos.map(function (t) {
+                                        if (t.id === todo.id) {
+                                          return {
+                                                  id: t.id,
+                                                  text: t.text,
+                                                  project: t.project,
+                                                  status: t.status,
+                                                  box: t.box,
+                                                  parentTodo: Core__Option.map(newParent, (function (t) {
+                                                          return t.id;
+                                                        })),
+                                                  depth: t.depth,
+                                                  childNumber: t.childNumber
+                                                };
+                                        } else if (Caml_obj.equal(t.parentTodo, todo.id)) {
+                                          return {
+                                                  id: t.id,
+                                                  text: t.text,
+                                                  project: t.project,
+                                                  status: t.status,
+                                                  box: t.box,
+                                                  parentTodo: Core__Option.map(newParent, (function (t) {
+                                                          return t.id;
+                                                        })),
+                                                  depth: t.depth,
+                                                  childNumber: t.childNumber
+                                                };
+                                        } else {
+                                          return t;
+                                        }
+                                      });
+                          });
+                    }
+                    if (e.key === "[" && e.metaKey && todo.parentTodo !== undefined) {
+                      e.preventDefault();
+                      var todos$1 = getTodos();
+                      var todoIndex = todos$1.findIndex(function (t) {
+                            return t.id === todo.id;
+                          });
+                      var todosGoingBack = todos$1.slice(0, todoIndex).toReversed();
+                      var todosGoingForward = todos$1.slice(todoIndex + 1 | 0);
+                      Core__Option.mapOr(todo.depth, undefined, (function (todoDepth) {
+                              var newChildren = {
+                                contents: []
+                              };
+                              var $$break = false;
+                              var i = 0;
+                              while(!$$break && i < todosGoingForward.length) {
+                                var t = todosGoingForward[i];
+                                if (Core__Option.mapOr(t.depth, false, (function (d) {
+                                          return d < todoDepth;
+                                        }))) {
+                                  $$break = true;
+                                } else {
+                                  if (Core__Option.mapOr(t.depth, false, (function (d) {
+                                            return d === todoDepth;
+                                          }))) {
+                                    newChildren.contents = newChildren.contents.concat([t.id]);
+                                  }
+                                  i = i + 1 | 0;
+                                }
+                              };
+                              var newParent = Core__Option.map(todosGoingBack.find(function (t) {
+                                        return Caml_obj.equal(t.depth, todoDepth - 2 | 0);
+                                      }), (function (t) {
+                                      return t.id;
+                                    }));
+                              setTodos(function (todos) {
+                                    return todos.map(function (t) {
+                                                if (t.id === todo.id) {
+                                                  return {
+                                                          id: t.id,
+                                                          text: t.text,
+                                                          project: t.project,
+                                                          status: t.status,
+                                                          box: t.box,
+                                                          parentTodo: newParent,
+                                                          depth: t.depth,
+                                                          childNumber: t.childNumber
+                                                        };
+                                                } else if (newChildren.contents.includes(t.id)) {
+                                                  return {
+                                                          id: t.id,
+                                                          text: t.text,
+                                                          project: t.project,
+                                                          status: t.status,
+                                                          box: t.box,
+                                                          parentTodo: todo.id,
+                                                          depth: t.depth,
+                                                          childNumber: t.childNumber
+                                                        };
+                                                } else {
+                                                  return t;
+                                                }
+                                              });
+                                  });
+                            }));
+                    }
                     if (e.key === "ArrowUp") {
                       e.stopPropagation();
                       if (cursorPosition === 0) {
@@ -153,10 +266,10 @@ function Project$Todo(props) {
   };
   return JsxRuntime.jsxs("div", {
               children: [
-                Core__Array.make(Core__Option.getOr(todo.depth, 0), false).map(function (param, param$1) {
+                Core__Array.make(Core__Option.getOr(todo.depth, 0), false).map(function (param, i) {
                       return JsxRuntime.jsx("div", {
                                   className: "h-full w-3 border-l ml-1"
-                                });
+                                }, i.toString());
                     }),
                 JsxRuntime.jsxs("div", {
                       children: [
@@ -171,7 +284,8 @@ function Project$Todo(props) {
                                                   status: newStatus,
                                                   box: t.box === "Archive" && !Types.statusIsResolved(newStatus) ? "Working" : t.box,
                                                   parentTodo: t.parentTodo,
-                                                  depth: t.depth
+                                                  depth: t.depth,
+                                                  childNumber: t.childNumber
                                                 };
                                         }));
                                 }),
@@ -239,7 +353,8 @@ function Project$Todo(props) {
                                                           status: t.status,
                                                           box: t.box,
                                                           parentTodo: t.parentTodo,
-                                                          depth: t.depth
+                                                          depth: t.depth,
+                                                          childNumber: t.childNumber
                                                         };
                                                 }));
                                         })
@@ -248,7 +363,6 @@ function Project$Todo(props) {
                                       children: JsxRuntime.jsx(Tb.TbPlus, {}),
                                       className: ["text-xs  mr-1 hidden group-hover:block"].join(" "),
                                       onClick: (function (param) {
-                                          console.log("click");
                                           Core__Option.mapOr(Core__Array.findIndexOpt(getTodos(), (function (v) {
                                                       return v.id === todo.id;
                                                     })), undefined, (function (todoIndex) {
@@ -323,7 +437,6 @@ function Project(props) {
         _0: project.id
       });
   var newTodoAfter = function (i, parentTodo) {
-    console.log(i, parentTodo);
     var newId = Uuid.v4();
     setTodos(function (v) {
           return v.toSpliced(i + 1 | 0, 0, {
@@ -333,7 +446,8 @@ function Project(props) {
                       status: "Unsorted",
                       box: "Working",
                       parentTodo: parentTodo,
-                      depth: undefined
+                      depth: undefined,
+                      childNumber: undefined
                     });
         });
     setFocusIdNext(function (param) {

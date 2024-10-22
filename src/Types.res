@@ -26,6 +26,7 @@ type todo = {
   box: box,
   parentTodo: option<string>,
   depth: option<int>,
+  childNumber: option<int>,
 }
 
 type project = {

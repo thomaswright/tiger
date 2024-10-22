@@ -29,7 +29,8 @@ var defaultTodos = [
     status: "Unsorted",
     box: "Working",
     parentTodo: undefined,
-    depth: undefined
+    depth: undefined,
+    childNumber: undefined
   },
   {
     id: "2",
@@ -38,7 +39,8 @@ var defaultTodos = [
     status: "ResolveScrap",
     box: "Archive",
     parentTodo: undefined,
-    depth: undefined
+    depth: undefined,
+    childNumber: undefined
   }
 ];
 
@@ -60,7 +62,7 @@ function buildTodoTree(input) {
   var build = function (arr, mapId, depth) {
     var children = Belt_MapString.get(mutParentMap.contents, mapId);
     mutParentMap.contents = Belt_MapString.remove(mutParentMap.contents, mapId);
-    return Core__Array.reduce(Core__Option.getOr(children, []), arr, (function (a, todo) {
+    return Core__Array.reduceWithIndex(Core__Option.getOr(children, []), arr, (function (a, todo, i) {
                   return build(a.concat([{
                                     id: todo.id,
                                     text: todo.text,
@@ -68,7 +70,8 @@ function buildTodoTree(input) {
                                     status: todo.status,
                                     box: todo.box,
                                     parentTodo: todo.parentTodo,
-                                    depth: depth
+                                    depth: depth,
+                                    childNumber: i
                                   }]), todo.id, depth + 1 | 0);
                 }));
   };
@@ -80,7 +83,6 @@ function App(props) {
   var setProjects = match[1];
   var projects = match[0];
   var match$1 = Common.useLocalStorage("todos", defaultTodos);
-  var getTodos = match$1[2];
   var setTodos = match$1[1];
   var todos = match$1[0];
   var match$2 = Common.useLocalStorage("showArchive", []);
@@ -250,17 +252,18 @@ function App(props) {
                                       }
                                     }).map(function (project) {
                                     var showArchive$1 = showArchive.includes(project.id);
+                                    var projectTodos = buildTodoTree(todos.filter(function (todo) {
+                                                return todo.project === project.id;
+                                              }).filter(function (todo) {
+                                              if (showArchive$1) {
+                                                return true;
+                                              } else {
+                                                return todo.box !== "Archive";
+                                              }
+                                            }));
                                     return JsxRuntime.jsx(Project.make, {
                                                 project: project,
-                                                todos: buildTodoTree(todos.filter(function (todo) {
-                                                            return todo.project === project.id;
-                                                          }).filter(function (todo) {
-                                                          if (showArchive$1) {
-                                                            return true;
-                                                          } else {
-                                                            return todo.box !== "Archive";
-                                                          }
-                                                        })),
+                                                todos: projectTodos,
                                                 showArchive: showArchive$1,
                                                 setShowArchive: setShowArchive,
                                                 updateProject: updateProject,
@@ -271,7 +274,9 @@ function App(props) {
                                                 setDisplayElement: setDisplayElement,
                                                 setFocusIdNext: setFocusIdNext,
                                                 setTodos: setTodos,
-                                                getTodos: getTodos
+                                                getTodos: (function () {
+                                                    return projectTodos;
+                                                  })
                                               }, Types.getProjectId(project.id));
                                   })
                             })
