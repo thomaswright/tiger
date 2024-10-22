@@ -31,3 +31,7 @@ let mapNullable = (n, f) =>
   n
   ->Nullable.toOption
   ->Option.mapOr((), f)
+
+let arrayToggle = (a, match) => {
+  a->Array.includes(match) ? a->Array.filter(el => el != match) : a->Array.concat([match])
+}

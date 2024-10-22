@@ -12,6 +12,7 @@ import * as Tb from "react-icons/tb";
 import * as JsxRuntime from "react/jsx-runtime";
 
 function Project$Todo(props) {
+  var setChecked = props.setChecked;
   var getTodos = props.getTodos;
   var newTodoAfter = props.newTodoAfter;
   var setFocusIdNext = props.setFocusIdNext;
@@ -369,6 +370,16 @@ function Project$Todo(props) {
                                                   newTodoAfter(todoIndex, todo.id);
                                                 }));
                                         })
+                                    }),
+                                JsxRuntime.jsx("input", {
+                                      className: "border-[var(--t3)] rounded mx-1 text-pink-300 h-3.5 w-3.5 focus:ring-0 focus:outline-none focus:ring-offset-0",
+                                      checked: props.isChecked,
+                                      type: "checkbox",
+                                      onChange: (function (e) {
+                                          setChecked(function (v) {
+                                                return Common.arrayToggle(v, todo.id);
+                                              });
+                                        })
                                     })
                               ],
                               className: "border-b flex-1 ml-1 flex flex-row h-full justify-start items-center "
@@ -421,6 +432,8 @@ var Todo = {
 };
 
 function Project(props) {
+  var setChecked = props.setChecked;
+  var checked = props.checked;
   var getTodos = props.getTodos;
   var setTodos = props.setTodos;
   var setFocusIdNext = props.setFocusIdNext;
@@ -496,13 +509,7 @@ function Project(props) {
                               className: "text-xs rounded h-6 w-6 flex-none",
                               onClick: (function (param) {
                                   setShowArchive(function (v) {
-                                        if (v.includes(project.id)) {
-                                          return v.filter(function (el) {
-                                                      return el !== project.id;
-                                                    });
-                                        } else {
-                                          return v.concat([project.id]);
-                                        }
+                                        return Common.arrayToggle(v, project.id);
                                       });
                                 })
                             })
@@ -552,7 +559,9 @@ function Project(props) {
                                               setTodos: setTodos,
                                               setFocusIdNext: setFocusIdNext,
                                               newTodoAfter: newTodoAfter,
-                                              getTodos: getTodos
+                                              getTodos: getTodos,
+                                              isChecked: checked.includes(todo.id),
+                                              setChecked: setChecked
                                             }, Types.getTodoId(todo.id));
                                 }),
                             className: "flex flex-col  "

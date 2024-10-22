@@ -15,6 +15,8 @@ module Todo = {
     ~setFocusIdNext,
     ~newTodoAfter,
     ~getTodos: unit => array<todo>,
+    ~isChecked: bool,
+    ~setChecked,
   ) => {
     let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
     let inputRef = React.useRef(Nullable.null)
@@ -339,15 +341,19 @@ module Todo = {
             }}>
             <Icons.Plus />
           </button>
+          <input
+            onChange={e => {
+              setChecked(v => v->Common.arrayToggle(todo.id))
+            }}
+            checked={isChecked}
+            type_={"checkbox"}
+            className="border-[var(--t3)] rounded mx-1 text-pink-300 h-3.5 w-3.5 focus:ring-0 focus:outline-none focus:ring-offset-0"
+          />
         </div>
       </div>
     </div>
   }
 }
-
-// <input
-//   type_={"checkbox"} className="border-[var(--t3)] rounded mx-1 text-pink-300 h-3.5 w-3.5"
-// />
 
 @react.component
 let make = (
@@ -364,6 +370,8 @@ let make = (
   ~setFocusIdNext,
   ~setTodos: (array<Types.todo> => array<Types.todo>) => unit,
   ~getTodos,
+  ~checked,
+  ~setChecked,
 ) => {
   let projectRef = React.useRef(Nullable.null)
 
@@ -441,12 +449,7 @@ let make = (
       </button>
       <button
         className="text-xs rounded h-6 w-6 flex-none"
-        onClick={_ =>
-          setShowArchive(v =>
-            v->Array.includes(project.id)
-              ? v->Array.filter(el => el != project.id)
-              : v->Array.concat([project.id])
-          )}>
+        onClick={_ => setShowArchive(v => v->arrayToggle(project.id))}>
         {showArchive ? <Icons.Archive /> : <Icons.ArchiveOff />}
       </button>
     </div>
@@ -467,6 +470,8 @@ let make = (
             setFocusIdNext
             newTodoAfter
             getTodos
+            setChecked
+            isChecked={checked->Array.includes(todo.id)}
           />
         )
         ->React.array}

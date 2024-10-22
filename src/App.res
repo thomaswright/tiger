@@ -122,6 +122,7 @@ let make = () => {
   let (projects, setProjects, _) = Common.useLocalStorage("projects", defaultProjects)
   let (todos, setTodos, getTodos) = Common.useLocalStorage("todos", defaultTodos)
   let (showArchive, setShowArchive, _) = Common.useLocalStorage("showArchive", [])
+  let (checked, setChecked, _) = Common.useLocalStorage("checked", [])
   let (projectsTab, setProjectTab, _) = Common.useLocalStorage("projectsTab", All)
   let (selectedElement, setSelectedElement) = React.useState(_ => None)
   let (displayElement, setDisplayElement) = React.useState(_ => None)
@@ -220,6 +221,8 @@ let make = () => {
             setFocusIdNext
             setTodos
             getTodos={() => projectTodos}
+            setChecked
+            checked
           />
         })
         ->React.array}

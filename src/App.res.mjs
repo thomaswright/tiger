@@ -88,29 +88,32 @@ function App(props) {
   var match$2 = Common.useLocalStorage("showArchive", []);
   var setShowArchive = match$2[1];
   var showArchive = match$2[0];
-  var match$3 = Common.useLocalStorage("projectsTab", "All");
-  var setProjectTab = match$3[1];
-  var projectsTab = match$3[0];
-  var match$4 = React.useState(function () {
-        
-      });
-  var setSelectedElement = match$4[1];
-  var selectedElement = match$4[0];
+  var match$3 = Common.useLocalStorage("checked", []);
+  var setChecked = match$3[1];
+  var checked = match$3[0];
+  var match$4 = Common.useLocalStorage("projectsTab", "All");
+  var setProjectTab = match$4[1];
+  var projectsTab = match$4[0];
   var match$5 = React.useState(function () {
         
       });
-  var setDisplayElement = match$5[1];
-  var displayElement = match$5[0];
+  var setSelectedElement = match$5[1];
+  var selectedElement = match$5[0];
   var match$6 = React.useState(function () {
         
       });
-  var setFocusClassNext = match$6[1];
-  var focusClassNext = match$6[0];
+  var setDisplayElement = match$6[1];
+  var displayElement = match$6[0];
   var match$7 = React.useState(function () {
         
       });
-  var setFocusIdNext = match$7[1];
-  var focusIdNext = match$7[0];
+  var setFocusClassNext = match$7[1];
+  var focusClassNext = match$7[0];
+  var match$8 = React.useState(function () {
+        
+      });
+  var setFocusIdNext = match$8[1];
+  var focusIdNext = match$8[0];
   var updateProject = React.useCallback((function (id, f) {
           setProjects(function (v) {
                 return v.map(function (project) {
@@ -276,7 +279,9 @@ function App(props) {
                                                 setTodos: setTodos,
                                                 getTodos: (function () {
                                                     return projectTodos;
-                                                  })
+                                                  }),
+                                                checked: checked,
+                                                setChecked: setChecked
                                               }, Types.getProjectId(project.id));
                                   })
                             })
