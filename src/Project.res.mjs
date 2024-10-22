@@ -318,7 +318,7 @@ function Project$Todo(props) {
                                       ref: Caml_option.some(inputRef),
                                       className: [
                                           Types.todoInputClass,
-                                          "mx-1 flex-1 bg-inherit text-[--t10] w-full outline-none  text-xs font-medium\n          leading-none padding-none border-none h-5 -my-1 focus:text-blue-600"
+                                          "mx-1 block text-sm font-medium  w-full h-5 border-0 px-0.5 py-0 focus:ring-0 \n              focus:text-blue-600 leading-none "
                                         ].join(" "),
                                       id: Types.getTodoInputId(todo.id),
                                       placeholder: "",
