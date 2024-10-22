@@ -34,9 +34,126 @@ function Project$Todo(props) {
       });
   var setStagedForDelete = match$1[1];
   var stagedForDelete = match$1[0];
+  var indentation = function (e) {
+    if (e.key === "]" && e.metaKey && Core__Option.mapOr(todo.childNumber, false, (function (childNumber) {
+              return childNumber !== 0;
+            }))) {
+      e.preventDefault();
+      var todos = getTodos();
+      var newParent = todos.find(function (t) {
+            if (Caml_obj.equal(t.parentTodo, todo.parentTodo)) {
+              return Caml_obj.equal(t.childNumber, Core__Option.map(todo.childNumber, (function (c) {
+                                return c - 1 | 0;
+                              })));
+            } else {
+              return false;
+            }
+          });
+      setTodos(function (todos) {
+            return todos.map(function (t) {
+                        if (t.id === todo.id) {
+                          return {
+                                  id: t.id,
+                                  text: t.text,
+                                  project: t.project,
+                                  status: t.status,
+                                  box: t.box,
+                                  parentTodo: Core__Option.map(newParent, (function (t) {
+                                          return t.id;
+                                        })),
+                                  depth: t.depth,
+                                  childNumber: t.childNumber
+                                };
+                        } else if (Caml_obj.equal(t.parentTodo, todo.id)) {
+                          return {
+                                  id: t.id,
+                                  text: t.text,
+                                  project: t.project,
+                                  status: t.status,
+                                  box: t.box,
+                                  parentTodo: Core__Option.map(newParent, (function (t) {
+                                          return t.id;
+                                        })),
+                                  depth: t.depth,
+                                  childNumber: t.childNumber
+                                };
+                        } else {
+                          return t;
+                        }
+                      });
+          });
+    }
+    if (!(e.key === "[" && e.metaKey && todo.parentTodo !== undefined)) {
+      return ;
+    }
+    e.preventDefault();
+    var todos$1 = getTodos();
+    var todoIndex = todos$1.findIndex(function (t) {
+          return t.id === todo.id;
+        });
+    var todosGoingBack = todos$1.slice(0, todoIndex).toReversed();
+    var todosGoingForward = todos$1.slice(todoIndex + 1 | 0);
+    Core__Option.mapOr(todo.depth, undefined, (function (todoDepth) {
+            var newChildren = {
+              contents: []
+            };
+            var $$break = false;
+            var i = 0;
+            while(!$$break && i < todosGoingForward.length) {
+              var t = todosGoingForward[i];
+              if (Core__Option.mapOr(t.depth, false, (function (d) {
+                        return d < todoDepth;
+                      }))) {
+                $$break = true;
+              } else {
+                if (Core__Option.mapOr(t.depth, false, (function (d) {
+                          return d === todoDepth;
+                        }))) {
+                  newChildren.contents = newChildren.contents.concat([t.id]);
+                }
+                i = i + 1 | 0;
+              }
+            };
+            var newParent = Core__Option.map(todosGoingBack.find(function (t) {
+                      return Caml_obj.equal(t.depth, todoDepth - 2 | 0);
+                    }), (function (t) {
+                    return t.id;
+                  }));
+            setTodos(function (todos) {
+                  return todos.map(function (t) {
+                              if (t.id === todo.id) {
+                                return {
+                                        id: t.id,
+                                        text: t.text,
+                                        project: t.project,
+                                        status: t.status,
+                                        box: t.box,
+                                        parentTodo: newParent,
+                                        depth: t.depth,
+                                        childNumber: t.childNumber
+                                      };
+                              } else if (newChildren.contents.includes(t.id)) {
+                                return {
+                                        id: t.id,
+                                        text: t.text,
+                                        project: t.project,
+                                        status: t.status,
+                                        box: t.box,
+                                        parentTodo: todo.id,
+                                        depth: t.depth,
+                                        childNumber: t.childNumber
+                                      };
+                              } else {
+                                return t;
+                              }
+                            });
+                });
+          }));
+  };
   var onKeyDownContainer = function (e) {
     if (isSelected && Caml_obj.equal(Caml_option.nullable_to_opt(containerRef.current), Caml_option.nullable_to_opt(document.activeElement))) {
       return Common.mapNullable(containerRef.current, (function (dom) {
+                    indentation(e);
                     if (e.key === "s") {
                       e.preventDefault();
                       setStatusSelectIsOpen(function (param) {
@@ -102,121 +219,9 @@ function Project$Todo(props) {
               }));
       }
       return Common.mapNullable(inputRef.current, (function (dom) {
+                    indentation(e);
                     var cursorPosition = Core__Option.getOr(Caml_option.nullable_to_opt(dom.selectionStart), 0);
                     var inputValueLength = dom.value.length;
-                    if (e.key === "]" && e.metaKey && Core__Option.mapOr(todo.childNumber, false, (function (childNumber) {
-                              return childNumber !== 0;
-                            }))) {
-                      e.preventDefault();
-                      var todos = getTodos();
-                      var newParent = todos.find(function (t) {
-                            if (Caml_obj.equal(t.parentTodo, todo.parentTodo)) {
-                              return Caml_obj.equal(t.childNumber, Core__Option.map(todo.childNumber, (function (c) {
-                                                return c - 1 | 0;
-                                              })));
-                            } else {
-                              return false;
-                            }
-                          });
-                      setTodos(function (todos) {
-                            return todos.map(function (t) {
-                                        if (t.id === todo.id) {
-                                          return {
-                                                  id: t.id,
-                                                  text: t.text,
-                                                  project: t.project,
-                                                  status: t.status,
-                                                  box: t.box,
-                                                  parentTodo: Core__Option.map(newParent, (function (t) {
-                                                          return t.id;
-                                                        })),
-                                                  depth: t.depth,
-                                                  childNumber: t.childNumber
-                                                };
-                                        } else if (Caml_obj.equal(t.parentTodo, todo.id)) {
-                                          return {
-                                                  id: t.id,
-                                                  text: t.text,
-                                                  project: t.project,
-                                                  status: t.status,
-                                                  box: t.box,
-                                                  parentTodo: Core__Option.map(newParent, (function (t) {
-                                                          return t.id;
-                                                        })),
-                                                  depth: t.depth,
-                                                  childNumber: t.childNumber
-                                                };
-                                        } else {
-                                          return t;
-                                        }
-                                      });
-                          });
-                    }
-                    if (e.key === "[" && e.metaKey && todo.parentTodo !== undefined) {
-                      e.preventDefault();
-                      var todos$1 = getTodos();
-                      var todoIndex = todos$1.findIndex(function (t) {
-                            return t.id === todo.id;
-                          });
-                      var todosGoingBack = todos$1.slice(0, todoIndex).toReversed();
-                      var todosGoingForward = todos$1.slice(todoIndex + 1 | 0);
-                      Core__Option.mapOr(todo.depth, undefined, (function (todoDepth) {
-                              var newChildren = {
-                                contents: []
-                              };
-                              var $$break = false;
-                              var i = 0;
-                              while(!$$break && i < todosGoingForward.length) {
-                                var t = todosGoingForward[i];
-                                if (Core__Option.mapOr(t.depth, false, (function (d) {
-                                          return d < todoDepth;
-                                        }))) {
-                                  $$break = true;
-                                } else {
-                                  if (Core__Option.mapOr(t.depth, false, (function (d) {
-                                            return d === todoDepth;
-                                          }))) {
-                                    newChildren.contents = newChildren.contents.concat([t.id]);
-                                  }
-                                  i = i + 1 | 0;
-                                }
-                              };
-                              var newParent = Core__Option.map(todosGoingBack.find(function (t) {
-                                        return Caml_obj.equal(t.depth, todoDepth - 2 | 0);
-                                      }), (function (t) {
-                                      return t.id;
-                                    }));
-                              setTodos(function (todos) {
-                                    return todos.map(function (t) {
-                                                if (t.id === todo.id) {
-                                                  return {
-                                                          id: t.id,
-                                                          text: t.text,
-                                                          project: t.project,
-                                                          status: t.status,
-                                                          box: t.box,
-                                                          parentTodo: newParent,
-                                                          depth: t.depth,
-                                                          childNumber: t.childNumber
-                                                        };
-                                                } else if (newChildren.contents.includes(t.id)) {
-                                                  return {
-                                                          id: t.id,
-                                                          text: t.text,
-                                                          project: t.project,
-                                                          status: t.status,
-                                                          box: t.box,
-                                                          parentTodo: todo.id,
-                                                          depth: t.depth,
-                                                          childNumber: t.childNumber
-                                                        };
-                                                } else {
-                                                  return t;
-                                                }
-                                              });
-                                  });
-                            }));
-                    }
                     if (e.key === "ArrowUp") {
                       e.stopPropagation();
                       if (cursorPosition === 0) {
@@ -520,7 +525,7 @@ function Project(props) {
                       ref: Caml_option.some(projectRef),
                       className: [
                           Types.listItemClass,
-                          "h-7 flex flex-row justify-between items-center bg-[var(--t2)] px-1 gap-1",
+                          "h-7 flex flex-row justify-between items-center bg-[var(--t2)] px-1 gap-1 border-y border-b-[var(--t4)]\n        border-t-[var(--t3)]\n        ",
                           isSelected ? "outline outline-2 -outline-offset-2 outline-sky-500" : ""
                         ].join(" "),
                       id: Types.getProjectId(project.id),
@@ -567,7 +572,7 @@ function Project(props) {
                                               setChecked: setChecked
                                             }, Types.getTodoId(todo.id));
                                 }),
-                            className: "flex flex-col  "
+                            className: "flex flex-col pb-1"
                           })
                     })
               ],
