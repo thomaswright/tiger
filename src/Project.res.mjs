@@ -450,9 +450,11 @@ function Project(props) {
   var setSelectedElement = props.setSelectedElement;
   var selectedElement = props.selectedElement;
   var updateTodo = props.updateTodo;
+  var updateProject = props.updateProject;
   var setShowArchive = props.setShowArchive;
   var project = props.project;
   var projectRef = React.useRef(null);
+  var inputRef = React.useRef(null);
   var isSelected = Caml_obj.equal(selectedElement, {
         TAG: "Project",
         _0: project.id
@@ -477,9 +479,6 @@ function Project(props) {
   };
   var onKeyDownProject = function (e) {
     if (isSelected) {
-      if (e.key === "Enter") {
-        newTodoAfter(-1, undefined);
-      }
       return Common.mapNullable(projectRef.current, (function (dom) {
                     if (e.key === "ArrowUp") {
                       e.preventDefault();
@@ -487,7 +486,74 @@ function Project(props) {
                     }
                     if (e.key === "ArrowDown") {
                       e.preventDefault();
-                      return Common.focusNextClass(Types.listItemClass, dom);
+                      Common.focusNextClass(Types.listItemClass, dom);
+                    }
+                    if (e.key === "Backspace" && e.metaKey) {
+                      Common.mapNullable(projectRef.current, (function (containerEl) {
+                              Common.focusPreviousClass(Types.listItemClass, containerEl);
+                            }));
+                    }
+                    if (e.key === "Enter" && e.metaKey) {
+                      newTodoAfter(-1, undefined);
+                    }
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      Common.mapNullable(inputRef.current, (function (inputEl) {
+                              inputEl.focus();
+                              inputEl.selectionStart = Caml_option.nullable_to_opt(inputEl.selectionEnd);
+                            }));
+                    }
+                    if (e.key === "Escape") {
+                      setSelectedElement(function (param) {
+                            
+                          });
+                      setDisplayElement(function (param) {
+                            
+                          });
+                      dom.blur();
+                      return ;
+                    }
+                    
+                  }));
+    }
+    
+  };
+  var onKeyDownInput = function (e) {
+    if (isSelected) {
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        Common.mapNullable(projectRef.current, (function (dom) {
+                dom.focus();
+              }));
+      }
+      return Common.mapNullable(inputRef.current, (function (dom) {
+                    var cursorPosition = Core__Option.getOr(Caml_option.nullable_to_opt(dom.selectionStart), 0);
+                    var inputValueLength = dom.value.length;
+                    if (e.key === "ArrowUp") {
+                      e.stopPropagation();
+                      if (cursorPosition === 0) {
+                        e.preventDefault();
+                        Common.mapNullable(projectRef.current, (function (dom) {
+                                dom.focus();
+                              }));
+                      }
+                      
+                    }
+                    if (e.key === "ArrowDown") {
+                      e.stopPropagation();
+                      if (cursorPosition === inputValueLength) {
+                        e.preventDefault();
+                        Common.mapNullable(projectRef.current, (function (dom) {
+                                dom.focus();
+                              }));
+                      }
+                      
+                    }
+                    if (e.key === "Enter" && cursorPosition === inputValueLength) {
+                      e.stopPropagation();
+                      return Common.mapNullable(projectRef.current, (function (dom) {
+                                    dom.focus();
+                                  }));
                     }
                     
                   }));
@@ -498,9 +564,45 @@ function Project(props) {
               children: [
                 JsxRuntime.jsxs("div", {
                       children: [
-                        JsxRuntime.jsx("div", {
-                              children: project.name,
-                              className: " flex-none px-2 text-sm"
+                        JsxRuntime.jsx("input", {
+                              ref: Caml_option.some(inputRef),
+                              className: [
+                                  Types.todoInputClass,
+                                  "mx-1 block text-sm font-medium  w-full h-5 border-0 px-0.5 py-0 focus:ring-0 \n              focus:text-blue-600 leading-none bg-transparent"
+                                ].join(" "),
+                              id: Types.getTodoInputId(project.id),
+                              placeholder: "",
+                              type: "text",
+                              value: project.name,
+                              onKeyDown: onKeyDownInput,
+                              onFocus: (function (param) {
+                                  setSelectedElement(function (param) {
+                                        return {
+                                                TAG: "Todo",
+                                                _0: project.id
+                                              };
+                                      });
+                                  setDisplayElement(function (param) {
+                                        return {
+                                                TAG: "Todo",
+                                                _0: project.id
+                                              };
+                                      });
+                                }),
+                              onBlur: (function (param) {
+                                  setSelectedElement(function (param) {
+                                        
+                                      });
+                                }),
+                              onChange: (function (e) {
+                                  updateProject(project.id, (function (t) {
+                                          return {
+                                                  id: t.id,
+                                                  name: e.target.value,
+                                                  isActive: t.isActive
+                                                };
+                                        }));
+                                })
                             }),
                         JsxRuntime.jsx("div", {
                               className: "flex-1"
@@ -525,8 +627,8 @@ function Project(props) {
                       ref: Caml_option.some(projectRef),
                       className: [
                           Types.listItemClass,
-                          "h-7 flex flex-row justify-between items-center bg-[var(--t2)] px-1 gap-1 border-y border-b-[var(--t4)]\n        border-t-[var(--t3)]\n        ",
-                          isSelected ? "outline outline-2 -outline-offset-2 outline-sky-500" : ""
+                          "h-7 flex flex-row justify-between items-center bg-[var(--t2)] px-1 \n        gap-1 border-y border-b-[var(--t4)] border-t-[var(--t3)]",
+                          isSelected ? "outline outline-2 -outline-offset-2 outline-sky-300 focus:outline-sky-500" : ""
                         ].join(" "),
                       id: Types.getProjectId(project.id),
                       tabIndex: 0,

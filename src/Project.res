@@ -374,6 +374,7 @@ let make = (
   ~setChecked,
 ) => {
   let projectRef = React.useRef(Nullable.null)
+  let inputRef = React.useRef(Nullable.null)
 
   let isSelected = selectedElement == Some(Project(project.id))
 
@@ -403,11 +404,6 @@ let make = (
 
   let onKeyDownProject = e => {
     if isSelected {
-      if e->ReactEvent.Keyboard.key == "Enter" {
-        // setFocusIdNext(_ => Some("id-display-title"))
-        newTodoAfter(-1, None)
-      }
-
       projectRef.current->mapNullable(dom => {
         if e->ReactEvent.Keyboard.key == "ArrowUp" {
           e->ReactEvent.Keyboard.preventDefault
@@ -417,6 +413,79 @@ let make = (
         if e->ReactEvent.Keyboard.key == "ArrowDown" {
           e->ReactEvent.Keyboard.preventDefault
           Common.focusNextClass(listItemClass, dom)
+        }
+
+        if e->ReactEvent.Keyboard.key == "Backspace" && e->ReactEvent.Keyboard.metaKey {
+          projectRef.current->mapNullable(containerEl => {
+            Common.focusPreviousClass(listItemClass, containerEl)
+          })
+        }
+
+        if e->ReactEvent.Keyboard.key == "Enter" && e->ReactEvent.Keyboard.metaKey {
+          newTodoAfter(-1, None)
+        }
+
+        if e->ReactEvent.Keyboard.key == "Enter" {
+          e->ReactEvent.Keyboard.preventDefault
+          inputRef.current->mapNullable(inputEl => {
+            let inputEl = inputEl->Obj.magic
+            inputEl->HtmlElement.focus
+            inputEl->HtmlInputElement.setSelectionStart(inputEl->HtmlInputElement.selectionEnd)
+          })
+        }
+
+        if e->ReactEvent.Keyboard.key == "Escape" {
+          // e->ReactEvent.Keyboard.preventDefault // ?
+          setSelectedElement(_ => None)
+          setDisplayElement(_ => None)
+
+          dom->Obj.magic->HtmlElement.blur
+        }
+      })
+    }
+  }
+
+  let onKeyDownInput = e => {
+    if isSelected {
+      if e->ReactEvent.Keyboard.key == "Escape" {
+        // e->ReactEvent.Keyboard.preventDefault // ?
+        e->ReactEvent.Keyboard.stopPropagation
+        projectRef.current->mapNullable(dom => {
+          dom->Obj.magic->HtmlElement.focus
+        })
+      }
+
+      inputRef.current->mapNullable(dom => {
+        let cursorPosition = dom->Obj.magic->HtmlInputElement.selectionStart->Option.getOr(0)
+        let inputValueLength = dom->Obj.magic->HtmlInputElement.value->String.length
+
+        if e->ReactEvent.Keyboard.key == "ArrowUp" {
+          e->ReactEvent.Keyboard.stopPropagation
+          if cursorPosition == 0 {
+            e->ReactEvent.Keyboard.preventDefault
+            // Common.focusPreviousClass(todoInputClass, dom)
+            projectRef.current->mapNullable(dom => {
+              dom->Obj.magic->HtmlElement.focus
+            })
+          }
+        }
+
+        if e->ReactEvent.Keyboard.key == "ArrowDown" {
+          e->ReactEvent.Keyboard.stopPropagation
+          if cursorPosition == inputValueLength {
+            e->ReactEvent.Keyboard.preventDefault
+            // Common.focusNextClass(todoInputClass, dom)
+            projectRef.current->mapNullable(dom => {
+              dom->Obj.magic->HtmlElement.focus
+            })
+          }
+        }
+
+        if e->ReactEvent.Keyboard.key == "Enter" && cursorPosition == inputValueLength {
+          e->ReactEvent.Keyboard.stopPropagation
+          projectRef.current->mapNullable(dom => {
+            dom->Obj.magic->HtmlElement.focus
+          })
         }
       })
     }
@@ -435,12 +504,36 @@ let make = (
       }}
       className={[
         listItemClass,
-        "h-7 flex flex-row justify-between items-center bg-[var(--t2)] px-1 gap-1 border-y border-b-[var(--t4)]
-        border-t-[var(--t3)]
-        ",
-        isSelected ? "outline outline-2 -outline-offset-2 outline-sky-500" : "",
+        "h-7 flex flex-row justify-between items-center bg-[var(--t2)] px-1 
+        gap-1 border-y border-b-[var(--t4)] border-t-[var(--t3)]",
+        isSelected
+          ? "outline outline-2 -outline-offset-2 outline-sky-300 focus:outline-sky-500"
+          : "",
       ]->Array.join(" ")}>
-      <div className=" flex-none px-2 text-sm"> {project.name->React.string} </div>
+      <input
+        id={getTodoInputId(project.id)}
+        ref={ReactDOM.Ref.domRef(inputRef)}
+        type_="text"
+        className={[
+          todoInputClass,
+          "mx-1 block text-sm font-medium  w-full h-5 border-0 px-0.5 py-0 focus:ring-0 
+              focus:text-blue-600 leading-none bg-transparent",
+        ]->Array.join(" ")}
+        placeholder={""}
+        value={project.name}
+        onBlur={_ => setSelectedElement(_ => None)}
+        onFocus={_ => {
+          setSelectedElement(_ => Some(Todo(project.id)))
+          setDisplayElement(_ => Some(Todo(project.id)))
+        }}
+        onKeyDown={onKeyDownInput}
+        onChange={e => {
+          updateProject(project.id, t => {
+            ...t,
+            name: ReactEvent.Form.target(e)["value"],
+          })
+        }}
+      />
       <div className="flex-1" />
       <button
         onClick={_ => {
