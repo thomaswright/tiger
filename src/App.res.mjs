@@ -5,6 +5,7 @@ import * as Types from "./Types.res.mjs";
 import * as React from "react";
 import * as Common from "./Common.res.mjs";
 import * as Project from "./Project.res.mjs";
+import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as DisplayTodo from "./DisplayTodo.res.mjs";
@@ -234,6 +235,28 @@ function App(props) {
                     });
               }));
       });
+  var deleteTodo = function (todo) {
+    setTodos(function (todos) {
+          return todos.filter(function (t) {
+                        return t.id !== todo.id;
+                      }).map(function (t) {
+                      if (Caml_obj.equal(t.parentTodo, todo.id)) {
+                        return {
+                                id: t.id,
+                                text: t.text,
+                                project: t.project,
+                                status: t.status,
+                                box: t.box,
+                                parentTodo: todo.parentTodo,
+                                depth: t.depth,
+                                childNumber: t.childNumber
+                              };
+                      } else {
+                        return t;
+                      }
+                    });
+        });
+  };
   var tmp;
   if (displayElement !== undefined) {
     if (displayElement.TAG === "Todo") {
@@ -245,7 +268,8 @@ function App(props) {
                           todo: todo,
                           setFocusIdNext: setFocusIdNext,
                           updateTodo: updateTodo,
-                          setTodos: setTodos
+                          setTodos: setTodos,
+                          deleteTodo: deleteTodo
                         });
             }));
     } else {
@@ -361,7 +385,8 @@ function App(props) {
                                                     return projectTodos;
                                                   }),
                                                 checked: checked,
-                                                setChecked: setChecked
+                                                setChecked: setChecked,
+                                                deleteTodo: deleteTodo
                                               }, Types.getProjectId(project.id));
                                   })
                             })

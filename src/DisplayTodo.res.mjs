@@ -9,6 +9,7 @@ import * as Tb from "react-icons/tb";
 import * as JsxRuntime from "react/jsx-runtime";
 
 function DisplayTodo(props) {
+  var deleteTodo = props.deleteTodo;
   var setTodos = props.setTodos;
   var updateTodo = props.updateTodo;
   var setFocusIdNext = props.setFocusIdNext;
@@ -144,11 +145,7 @@ function DisplayTodo(props) {
                                   Core__Option.mapOr(Caml_option.nullable_to_opt(document.getElementById(Types.getTodoId(todo.id))), undefined, (function (todoEl) {
                                           Common.focusPreviousClass(Types.listItemClass, todoEl);
                                         }));
-                                  setTodos(function (v) {
-                                        return v.filter(function (t) {
-                                                    return t.id !== todo.id;
-                                                  });
-                                      });
+                                  deleteTodo(todo);
                                 })
                             })
                       ],

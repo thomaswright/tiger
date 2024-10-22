@@ -17,6 +17,7 @@ module Todo = {
     ~getTodos: unit => array<todo>,
     ~isChecked: bool,
     ~setChecked,
+    ~deleteTodo,
   ) => {
     let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
     let inputRef = React.useRef(Nullable.null)
@@ -209,7 +210,8 @@ module Todo = {
 
           if e->ReactEvent.Keyboard.key == "Backspace" && inputValueLength == 0 {
             if stagedForDelete {
-              setTodos(todos => todos->Array.filter(t => t.id != todo.id))
+              deleteTodo(todo)
+
               containerRef.current->mapNullable(containerEl => {
                 Common.focusPreviousClass(listItemClass, containerEl)
               })
@@ -372,6 +374,7 @@ let make = (
   ~getTodos,
   ~checked,
   ~setChecked,
+  ~deleteTodo,
 ) => {
   let projectRef = React.useRef(Nullable.null)
   let inputRef = React.useRef(Nullable.null)
@@ -566,6 +569,7 @@ let make = (
             newTodoAfter
             getTodos
             setChecked
+            deleteTodo
             isChecked={checked->Array.includes(todo.id)}
           />
         )

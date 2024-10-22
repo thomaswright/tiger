@@ -219,6 +219,22 @@ let make = () => {
     None
   })
 
+  let deleteTodo = (todo: todo) =>
+    setTodos(todos =>
+      todos
+      ->Array.filter(t => t.id != todo.id)
+      ->Array.map(t => {
+        if t.parentTodo == Some(todo.id) {
+          {
+            ...t,
+            parentTodo: todo.parentTodo,
+          }
+        } else {
+          t
+        }
+      })
+    )
+
   <div className="flex flex-row h-dvh">
     // <StatusSelector />
     <div className="flex-1">
@@ -283,6 +299,7 @@ let make = () => {
             getTodos={() => projectTodos}
             setChecked
             checked
+            deleteTodo
           />
         })
         ->React.array}
@@ -295,7 +312,7 @@ let make = () => {
         todos
         ->Array.find(t => t.id == todoId)
         ->Option.mapOr(React.null, todo => {
-          <DisplayTodo todo setFocusIdNext updateTodo setTodos />
+          <DisplayTodo todo setFocusIdNext updateTodo setTodos deleteTodo />
         })
       | Some(Project(projectId)) =>
         projects

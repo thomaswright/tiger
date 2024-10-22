@@ -8,6 +8,7 @@ let make = (
   ~setFocusIdNext,
   ~updateTodo,
   ~setTodos: (array<todo> => array<todo>) => unit,
+  ~deleteTodo,
 ) => {
   let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
 
@@ -108,8 +109,7 @@ let make = (
           document
           ->Document.getElementById(getTodoId(todo.id))
           ->Option.mapOr((), todoEl => Common.focusPreviousClass(listItemClass, todoEl))
-
-          setTodos(v => v->Array.filter(t => t.id != todo.id))
+          deleteTodo(todo)
         }}
         className={[
           "

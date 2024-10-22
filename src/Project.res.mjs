@@ -12,6 +12,7 @@ import * as Tb from "react-icons/tb";
 import * as JsxRuntime from "react/jsx-runtime";
 
 function Project$Todo(props) {
+  var deleteTodo = props.deleteTodo;
   var setChecked = props.setChecked;
   var isChecked = props.isChecked;
   var getTodos = props.getTodos;
@@ -244,11 +245,7 @@ function Project$Todo(props) {
                     }
                     if (e.key === "Backspace" && inputValueLength === 0) {
                       if (stagedForDelete) {
-                        setTodos(function (todos) {
-                              return todos.filter(function (t) {
-                                          return t.id !== todo.id;
-                                        });
-                            });
+                        deleteTodo(todo);
                         Common.mapNullable(containerRef.current, (function (containerEl) {
                                 Common.focusPreviousClass(Types.listItemClass, containerEl);
                               }));
@@ -440,6 +437,7 @@ var Todo = {
 };
 
 function Project(props) {
+  var deleteTodo = props.deleteTodo;
   var setChecked = props.setChecked;
   var checked = props.checked;
   var getTodos = props.getTodos;
@@ -671,7 +669,8 @@ function Project(props) {
                                               newTodoAfter: newTodoAfter,
                                               getTodos: getTodos,
                                               isChecked: checked.includes(todo.id),
-                                              setChecked: setChecked
+                                              setChecked: setChecked,
+                                              deleteTodo: deleteTodo
                                             }, Types.getTodoId(todo.id));
                                 }),
                             className: "flex flex-col pb-1"
