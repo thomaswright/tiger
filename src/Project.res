@@ -28,11 +28,15 @@ module Todo = {
     let (stagedForDelete, setStagedForDelete) = React.useState(_ => false)
 
     let indentation = e => {
+      if e->ReactEvent.Keyboard.key == "Tab" {
+        e->ReactEvent.Keyboard.preventDefault
+      }
+
       // Indents
       if (
-        e->ReactEvent.Keyboard.key == "]" &&
-        e->ReactEvent.Keyboard.metaKey &&
-        todo.childNumber->Option.mapOr(false, childNumber => childNumber != 0)
+        (e->ReactEvent.Keyboard.key == "Tab" ||
+          (e->ReactEvent.Keyboard.key == "]" && e->ReactEvent.Keyboard.metaKey)) &&
+          todo.childNumber->Option.mapOr(false, childNumber => childNumber != 0)
       ) {
         e->ReactEvent.Keyboard.preventDefault
 
@@ -63,9 +67,9 @@ module Todo = {
 
       // De Indents
       if (
-        e->ReactEvent.Keyboard.key == "[" &&
-        e->ReactEvent.Keyboard.metaKey &&
-        todo.parentTodo != None
+        ((e->ReactEvent.Keyboard.key == "Tab" && e->ReactEvent.Keyboard.shiftKey) ||
+          (e->ReactEvent.Keyboard.key == "[" && e->ReactEvent.Keyboard.metaKey)) &&
+          todo.parentTodo != None
       ) {
         e->ReactEvent.Keyboard.preventDefault
 

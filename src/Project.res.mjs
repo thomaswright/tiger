@@ -38,7 +38,10 @@ function Project$Todo(props) {
   var setStagedForDelete = match$1[1];
   var stagedForDelete = match$1[0];
   var indentation = function (e) {
-    if (e.key === "]" && e.metaKey && Core__Option.mapOr(todo.childNumber, false, (function (childNumber) {
+    if (e.key === "Tab") {
+      e.preventDefault();
+    }
+    if ((e.key === "Tab" || e.key === "]" && e.metaKey) && Core__Option.mapOr(todo.childNumber, false, (function (childNumber) {
               return childNumber !== 0;
             }))) {
       e.preventDefault();
@@ -90,7 +93,7 @@ function Project$Todo(props) {
                         });
             }));
     }
-    if (!(e.key === "[" && e.metaKey && todo.parentTodo !== undefined)) {
+    if (!((e.key === "Tab" && e.shiftKey || e.key === "[" && e.metaKey) && todo.parentTodo !== undefined)) {
       return ;
     }
     e.preventDefault();
