@@ -28,6 +28,7 @@ type todo = {
   depth: option<int>,
   childNumber: option<int>,
   hasArchivedChildren: bool,
+  hasChildren: bool,
 }
 
 type project = {

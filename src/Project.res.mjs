@@ -66,7 +66,8 @@ function Project$Todo(props) {
                                           })),
                                     depth: t.depth,
                                     childNumber: t.childNumber,
-                                    hasArchivedChildren: t.hasArchivedChildren
+                                    hasArchivedChildren: t.hasArchivedChildren,
+                                    hasChildren: t.hasChildren
                                   };
                           } else if (Caml_obj.equal(t.parentTodo, todo.id)) {
                             return {
@@ -80,7 +81,8 @@ function Project$Todo(props) {
                                           })),
                                     depth: t.depth,
                                     childNumber: t.childNumber,
-                                    hasArchivedChildren: t.hasArchivedChildren
+                                    hasArchivedChildren: t.hasArchivedChildren,
+                                    hasChildren: t.hasChildren
                                   };
                           } else {
                             return t;
@@ -136,7 +138,8 @@ function Project$Todo(props) {
                                           parentTodo: newParent,
                                           depth: t.depth,
                                           childNumber: t.childNumber,
-                                          hasArchivedChildren: t.hasArchivedChildren
+                                          hasArchivedChildren: t.hasArchivedChildren,
+                                          hasChildren: t.hasChildren
                                         };
                                 } else if (newChildren.contents.includes(t.id)) {
                                   return {
@@ -148,7 +151,8 @@ function Project$Todo(props) {
                                           parentTodo: todo.id,
                                           depth: t.depth,
                                           childNumber: t.childNumber,
-                                          hasArchivedChildren: t.hasArchivedChildren
+                                          hasArchivedChildren: t.hasArchivedChildren,
+                                          hasChildren: t.hasChildren
                                         };
                                 } else {
                                   return t;
@@ -186,7 +190,7 @@ function Project$Todo(props) {
                             }));
                     }
                     if (e.key === "Enter" && e.metaKey) {
-                      newTodoAfter(todo.id, todo.parentTodo);
+                      newTodoAfter(todo.id, todo.hasChildren ? todo.id : todo.parentTodo);
                     }
                     if (e.key === "Enter") {
                       e.preventDefault();
@@ -260,7 +264,7 @@ function Project$Todo(props) {
                     if (e.key === "Enter" && cursorPosition === inputValueLength) {
                       e.preventDefault();
                       e.stopPropagation();
-                      return newTodoAfter(todo.id, todo.parentTodo);
+                      return newTodoAfter(todo.id, todo.hasChildren ? todo.id : todo.parentTodo);
                     }
                     
                   }));
@@ -289,7 +293,8 @@ function Project$Todo(props) {
                                                   parentTodo: t.parentTodo,
                                                   depth: t.depth,
                                                   childNumber: t.childNumber,
-                                                  hasArchivedChildren: t.hasArchivedChildren
+                                                  hasArchivedChildren: t.hasArchivedChildren,
+                                                  hasChildren: t.hasChildren
                                                 };
                                         }));
                                 }),
@@ -361,7 +366,8 @@ function Project$Todo(props) {
                                                           parentTodo: t.parentTodo,
                                                           depth: t.depth,
                                                           childNumber: t.childNumber,
-                                                          hasArchivedChildren: t.hasArchivedChildren
+                                                          hasArchivedChildren: t.hasArchivedChildren,
+                                                          hasChildren: t.hasChildren
                                                         };
                                                 }));
                                         })
@@ -472,7 +478,8 @@ function Project(props) {
       parentTodo: parentTodo,
       depth: undefined,
       childNumber: undefined,
-      hasArchivedChildren: false
+      hasArchivedChildren: false,
+      hasChildren: false
     };
     setTodos(project.id, (function (todos) {
             if (after === undefined) {

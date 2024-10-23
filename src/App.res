@@ -12,6 +12,7 @@ let defaultTodos = [
     depth: None,
     childNumber: None,
     hasArchivedChildren: false,
+    hasChildren: false,
   },
   {
     text: "Do Something Else",
@@ -23,6 +24,7 @@ let defaultTodos = [
     depth: None,
     childNumber: None,
     hasArchivedChildren: false,
+    hasChildren: false,
   },
 ]
 
@@ -73,6 +75,7 @@ let buildTodoTree = (input: array<todo>) => {
             depth: Some(depth),
             childNumber: Some(i),
             hasArchivedChildren: parentAggs->Map.getWithDefault(todo.id, false),
+            hasChildren: parentMap->Map.getWithDefault(todo.id, [])->Array.length > 0,
           },
         ]),
         todo.id,

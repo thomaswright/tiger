@@ -27,7 +27,8 @@ var defaultTodos = [
     parentTodo: undefined,
     depth: undefined,
     childNumber: undefined,
-    hasArchivedChildren: false
+    hasArchivedChildren: false,
+    hasChildren: false
   },
   {
     id: "2",
@@ -38,7 +39,8 @@ var defaultTodos = [
     parentTodo: undefined,
     depth: undefined,
     childNumber: undefined,
-    hasArchivedChildren: false
+    hasArchivedChildren: false,
+    hasChildren: false
   }
 ];
 
@@ -82,7 +84,8 @@ function buildTodoTree(input) {
                                     parentTodo: todo.parentTodo,
                                     depth: depth,
                                     childNumber: i,
-                                    hasArchivedChildren: Belt_MapString.getWithDefault(parentAggs, todo.id, false)
+                                    hasArchivedChildren: Belt_MapString.getWithDefault(parentAggs, todo.id, false),
+                                    hasChildren: Belt_MapString.getWithDefault(parentMap, todo.id, []).length > 0
                                   }]), todo.id, depth + 1 | 0);
                 }));
   };
@@ -136,7 +139,8 @@ function App$CheckedSummary(props) {
                                                                 parentTodo: t.parentTodo,
                                                                 depth: t.depth,
                                                                 childNumber: t.childNumber,
-                                                                hasArchivedChildren: t.hasArchivedChildren
+                                                                hasArchivedChildren: t.hasArchivedChildren,
+                                                                hasChildren: t.hasChildren
                                                               };
                                                       } else {
                                                         return t;
@@ -265,7 +269,8 @@ function App(props) {
                                   parentTodo: todo.parentTodo,
                                   depth: t.depth,
                                   childNumber: t.childNumber,
-                                  hasArchivedChildren: t.hasArchivedChildren
+                                  hasArchivedChildren: t.hasArchivedChildren,
+                                  hasChildren: t.hasChildren
                                 };
                         } else {
                           return t;

@@ -148,7 +148,7 @@ module Todo = {
           }
 
           if e->ReactEvent.Keyboard.key == "Enter" && e->ReactEvent.Keyboard.metaKey {
-            newTodoAfter(Some(todo.id), todo.parentTodo)
+            newTodoAfter(Some(todo.id), todo.hasChildren ? Some(todo.id) : todo.parentTodo)
           }
 
           if e->ReactEvent.Keyboard.key == "Enter" {
@@ -226,7 +226,7 @@ module Todo = {
           if e->ReactEvent.Keyboard.key == "Enter" && cursorPosition == inputValueLength {
             e->ReactEvent.Keyboard.preventDefault
             e->ReactEvent.Keyboard.stopPropagation
-            newTodoAfter(Some(todo.id), todo.parentTodo)
+            newTodoAfter(Some(todo.id), todo.hasChildren ? Some(todo.id) : todo.parentTodo)
           }
         })
       }
@@ -413,6 +413,7 @@ let make = (
       depth: None,
       childNumber: None,
       hasArchivedChildren: false,
+      hasChildren: false,
     }
 
     setTodos(project.id, todos => {

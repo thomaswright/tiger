@@ -50,7 +50,8 @@ function DisplayTodo(props) {
                                                 parentTodo: t.parentTodo,
                                                 depth: t.depth,
                                                 childNumber: t.childNumber,
-                                                hasArchivedChildren: t.hasArchivedChildren
+                                                hasArchivedChildren: t.hasArchivedChildren,
+                                                hasChildren: t.hasChildren
                                               };
                                       }));
                               })
@@ -71,7 +72,8 @@ function DisplayTodo(props) {
                                                   parentTodo: t.parentTodo,
                                                   depth: t.depth,
                                                   childNumber: t.childNumber,
-                                                  hasArchivedChildren: t.hasArchivedChildren
+                                                  hasArchivedChildren: t.hasArchivedChildren,
+                                                  hasChildren: t.hasChildren
                                                 };
                                         }));
                                 }),
@@ -109,7 +111,8 @@ function DisplayTodo(props) {
                                                                   parentTodo: t.parentTodo,
                                                                   depth: t.depth,
                                                                   childNumber: t.childNumber,
-                                                                  hasArchivedChildren: t.hasArchivedChildren
+                                                                  hasArchivedChildren: t.hasArchivedChildren,
+                                                                  hasChildren: t.hasChildren
                                                                 };
                                                         } else {
                                                           return t;
@@ -137,7 +140,8 @@ function DisplayTodo(props) {
                                                                   parentTodo: t.parentTodo,
                                                                   depth: t.depth,
                                                                   childNumber: t.childNumber,
-                                                                  hasArchivedChildren: t.hasArchivedChildren
+                                                                  hasArchivedChildren: t.hasArchivedChildren,
+                                                                  hasChildren: t.hasChildren
                                                                 };
                                                         } else {
                                                           return t;
