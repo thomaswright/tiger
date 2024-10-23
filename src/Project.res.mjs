@@ -324,6 +324,9 @@ function Project$Todo(props) {
                             }),
                         JsxRuntime.jsxs("div", {
                               children: [
+                                isSelected ? null : JsxRuntime.jsx("div", {
+                                        className: "h-px w-full absolute bg-[var(--t3)] -bottom-0"
+                                      }),
                                 JsxRuntime.jsx("input", {
                                       ref: Caml_option.some(inputRef),
                                       className: [
@@ -392,12 +395,12 @@ function Project$Todo(props) {
                                         })
                                     })
                               ],
-                              className: "relative border-b flex-1 ml-1 flex flex-row h-full justify-start items-center "
+                              className: ["relative flex-1 ml-1 flex flex-row h-full justify-start items-center "].join(" ")
                             })
                       ],
                       className: [
                           "group flex flex-row justify-start items-center h-full flex-1 pl-0.5 rounded-sm",
-                          stagedForDelete ? "outline-red-700" : "outline-sky-300 group-focus:outline-sky-500",
+                          stagedForDelete ? "outline-red-700" : "outline-sky-300 group-focus:outline-blue-500",
                           stagedForDelete ? "bg-red-200 " : (
                               isChecked ? "bg-sky-50" : ""
                             ),

@@ -279,7 +279,7 @@ module Todo = {
       <div
         className={[
           "group flex flex-row justify-start items-center h-full flex-1 pl-0.5 rounded-sm",
-          stagedForDelete ? "outline-red-700" : "outline-sky-300 group-focus:outline-sky-500",
+          stagedForDelete ? "outline-red-700" : "outline-sky-300 group-focus:outline-blue-500",
           stagedForDelete ? "bg-red-200 " : isChecked ? "bg-sky-50" : "",
           isSelected ? "outline outline-2 -outline-offset-2 " : "",
         ]->Array.join(" ")}>
@@ -312,7 +312,9 @@ module Todo = {
             })}
         />
         <div
-          className="relative border-b flex-1 ml-1 flex flex-row h-full justify-start items-center ">
+          className={[
+            "relative flex-1 ml-1 flex flex-row h-full justify-start items-center ",
+          ]->Array.join(" ")}>
           // {if todo.hasArchivedChildren && showArchive {
           //   <div
           //     className="absolute bg-purple-800 text-xs h-1.5 w-1.5 -left-2 top-0 flex flex-row items-center justify-center rounded-full">
@@ -321,6 +323,9 @@ module Todo = {
           // } else {
           //   React.null
           // }}
+          {isSelected
+            ? React.null
+            : <div className="h-px w-full absolute bg-[var(--t3)] -bottom-0" />}
           <input
             id={getTodoInputId(todo.id)}
             ref={ReactDOM.Ref.domRef(inputRef)}
