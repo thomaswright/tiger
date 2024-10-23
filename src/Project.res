@@ -333,7 +333,7 @@ module Todo = {
             className={[
               todoInputClass,
               "mx-1 block text-sm font-medium  w-full h-5 border-0 px-0.5 py-0 focus:ring-0 
-              focus:text-blue-600 leading-none bg-transparent",
+              focus:text-blue-700 leading-none bg-transparent",
             ]->Array.join(" ")}
             placeholder={""}
             value={todo.text}

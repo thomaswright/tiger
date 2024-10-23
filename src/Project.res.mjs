@@ -331,7 +331,7 @@ function Project$Todo(props) {
                                       ref: Caml_option.some(inputRef),
                                       className: [
                                           Types.todoInputClass,
-                                          "mx-1 block text-sm font-medium  w-full h-5 border-0 px-0.5 py-0 focus:ring-0 \n              focus:text-blue-600 leading-none bg-transparent"
+                                          "mx-1 block text-sm font-medium  w-full h-5 border-0 px-0.5 py-0 focus:ring-0 \n              focus:text-blue-700 leading-none bg-transparent"
                                         ].join(" "),
                                       id: Types.getTodoInputId(todo.id),
                                       placeholder: "",
