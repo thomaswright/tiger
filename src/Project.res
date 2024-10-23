@@ -14,7 +14,7 @@ module Todo = {
     ~setDisplayElement,
     ~setTodos: (string, array<Types.todo> => array<Types.todo>) => unit,
     ~setFocusIdNext,
-    ~newTodoAfter,
+    ~newTodoAfter: (option<string>, option<string>) => unit,
     ~getTodos: unit => array<todo>,
     ~isChecked: bool,
     ~setChecked,
@@ -150,7 +150,7 @@ module Todo = {
           if e->ReactEvent.Keyboard.key == "Enter" && e->ReactEvent.Keyboard.metaKey {
             getTodos()
             ->Array.findIndexOpt(v => v.id == todo.id)
-            ->Option.mapOr((), todoIndex => newTodoAfter(todoIndex, todo.parentTodo))
+            ->Option.mapOr((), todoIndex => newTodoAfter(Some(todo.id), todo.parentTodo))
           }
 
           if e->ReactEvent.Keyboard.key == "Enter" {
@@ -229,7 +229,7 @@ module Todo = {
             e->ReactEvent.Keyboard.stopPropagation
             getTodos()
             ->Array.findIndexOpt(v => v.id == todo.id)
-            ->Option.mapOr((), todoIndex => newTodoAfter(todoIndex, todo.parentTodo))
+            ->Option.mapOr((), todoIndex => newTodoAfter(Some(todo.id), todo.parentTodo))
           }
         })
       }
@@ -358,7 +358,7 @@ module Todo = {
             onClick={_ => {
               getTodos()
               ->Array.findIndexOpt(v => v.id == todo.id)
-              ->Option.mapOr((), todoIndex => newTodoAfter(todoIndex, Some(todo.id)))
+              ->Option.mapOr((), todoIndex => newTodoAfter(Some(todo.id), Some(todo.id)))
             }}>
             <Icons.Plus />
           </button>
@@ -400,26 +400,29 @@ let make = (
 
   let isSelected = selectedElement == Some(Project(project.id))
 
-  let newTodoAfter = (i, parentTodo) => {
+  let newTodoAfter = (after, parentTodo) => {
     let newId = Common.uuid()
-    setTodos(project.id, v => {
-      v->Array.toSpliced(
-        ~start=i + 1,
-        ~remove=0,
-        ~insert=[
-          {
-            id: newId,
-            text: "",
-            project: project.id,
-            status: Unsorted,
-            box: Working,
-            parentTodo,
-            depth: None,
-            childNumber: None,
-            hasArchivedChildren: false,
-          },
-        ],
-      )
+
+    let newTodo = {
+      id: newId,
+      text: "",
+      project: project.id,
+      status: Unsorted,
+      box: Working,
+      parentTodo,
+      depth: None,
+      childNumber: None,
+      hasArchivedChildren: false,
+    }
+
+    setTodos(project.id, todos => {
+      if after == None {
+        [newTodo]->Array.concat(todos)
+      } else {
+        todos->Array.reduce([], (a, c) => {
+          Some(c.id) == after ? a->Array.concat([c])->Array.concat([newTodo]) : a->Array.concat([c])
+        })
+      }
     })
 
     setFocusIdNext(_ => Some(getTodoInputId(newId)))
@@ -445,7 +448,7 @@ let make = (
         }
 
         if e->ReactEvent.Keyboard.key == "Enter" && e->ReactEvent.Keyboard.metaKey {
-          newTodoAfter(-1, None)
+          newTodoAfter(None, None)
         }
 
         if e->ReactEvent.Keyboard.key == "Enter" {
@@ -560,7 +563,7 @@ let make = (
       <div className="flex-1" />
       <button
         onClick={_ => {
-          newTodoAfter(-1, None)
+          newTodoAfter(None, None)
         }}
         className="hidden group-hover:block text-xs rounded h-6 w-6 flex-none mr-2">
         <Icons.Plus />

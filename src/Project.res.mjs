@@ -188,7 +188,7 @@ function Project$Todo(props) {
                       Core__Option.mapOr(Core__Array.findIndexOpt(getTodos(), (function (v) {
                                   return v.id === todo.id;
                                 })), undefined, (function (todoIndex) {
-                              newTodoAfter(todoIndex, todo.parentTodo);
+                              newTodoAfter(todo.id, todo.parentTodo);
                             }));
                     }
                     if (e.key === "Enter") {
@@ -265,7 +265,7 @@ function Project$Todo(props) {
                       return Core__Option.mapOr(Core__Array.findIndexOpt(getTodos(), (function (v) {
                                         return v.id === todo.id;
                                       })), undefined, (function (todoIndex) {
-                                    newTodoAfter(todoIndex, todo.parentTodo);
+                                    newTodoAfter(todo.id, todo.parentTodo);
                                   }));
                     }
                     
@@ -377,7 +377,7 @@ function Project$Todo(props) {
                                           Core__Option.mapOr(Core__Array.findIndexOpt(getTodos(), (function (v) {
                                                       return v.id === todo.id;
                                                     })), undefined, (function (todoIndex) {
-                                                  newTodoAfter(todoIndex, todo.id);
+                                                  newTodoAfter(todo.id, todo.id);
                                                 }));
                                         })
                                     }),
@@ -465,20 +465,32 @@ function Project(props) {
         TAG: "Project",
         _0: project.id
       });
-  var newTodoAfter = function (i, parentTodo) {
+  var newTodoAfter = function (after, parentTodo) {
     var newId = Uuid.v4();
-    setTodos(project.id, (function (v) {
-            return v.toSpliced(i + 1 | 0, 0, {
-                        id: newId,
-                        text: "",
-                        project: project.id,
-                        status: "Unsorted",
-                        box: "Working",
-                        parentTodo: parentTodo,
-                        depth: undefined,
-                        childNumber: undefined,
-                        hasArchivedChildren: false
-                      });
+    var newTodo_project = project.id;
+    var newTodo = {
+      id: newId,
+      text: "",
+      project: newTodo_project,
+      status: "Unsorted",
+      box: "Working",
+      parentTodo: parentTodo,
+      depth: undefined,
+      childNumber: undefined,
+      hasArchivedChildren: false
+    };
+    setTodos(project.id, (function (todos) {
+            if (after === undefined) {
+              return [newTodo].concat(todos);
+            } else {
+              return Core__Array.reduce(todos, [], (function (a, c) {
+                            if (Caml_obj.equal(c.id, after)) {
+                              return a.concat([c]).concat([newTodo]);
+                            } else {
+                              return a.concat([c]);
+                            }
+                          }));
+            }
           }));
     setFocusIdNext(function (param) {
           return Types.getTodoInputId(newId);
@@ -501,7 +513,7 @@ function Project(props) {
                             }));
                     }
                     if (e.key === "Enter" && e.metaKey) {
-                      newTodoAfter(-1, undefined);
+                      newTodoAfter(undefined, undefined);
                     }
                     if (e.key === "Enter") {
                       e.preventDefault();
@@ -619,7 +631,7 @@ function Project(props) {
                               children: JsxRuntime.jsx(Tb.TbPlus, {}),
                               className: "hidden group-hover:block text-xs rounded h-6 w-6 flex-none mr-2",
                               onClick: (function (param) {
-                                  newTodoAfter(-1, undefined);
+                                  newTodoAfter(undefined, undefined);
                                 })
                             }),
                         JsxRuntime.jsx("button", {
