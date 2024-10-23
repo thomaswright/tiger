@@ -279,7 +279,7 @@ module Todo = {
       <div
         className={[
           "group flex flex-row justify-start items-center h-full flex-1 pl-0.5 rounded-sm",
-          stagedForDelete ? "outline-red-700" : "outline-sky-300 group-focus:outline-blue-500",
+          stagedForDelete ? "outline-red-700" : "outline-blue-400 group-focus:outline-blue-500",
           stagedForDelete ? "bg-red-200 " : isChecked ? "bg-sky-50" : "",
           isSelected ? "outline outline-2 -outline-offset-2 " : "",
         ]->Array.join(" ")}>
