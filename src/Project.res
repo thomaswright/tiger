@@ -148,9 +148,7 @@ module Todo = {
           }
 
           if e->ReactEvent.Keyboard.key == "Enter" && e->ReactEvent.Keyboard.metaKey {
-            getTodos()
-            ->Array.findIndexOpt(v => v.id == todo.id)
-            ->Option.mapOr((), todoIndex => newTodoAfter(Some(todo.id), todo.parentTodo))
+            newTodoAfter(Some(todo.id), todo.parentTodo)
           }
 
           if e->ReactEvent.Keyboard.key == "Enter" {
@@ -227,9 +225,7 @@ module Todo = {
 
           if e->ReactEvent.Keyboard.key == "Enter" && cursorPosition == inputValueLength {
             e->ReactEvent.Keyboard.stopPropagation
-            getTodos()
-            ->Array.findIndexOpt(v => v.id == todo.id)
-            ->Option.mapOr((), todoIndex => newTodoAfter(Some(todo.id), todo.parentTodo))
+            newTodoAfter(Some(todo.id), todo.parentTodo)
           }
         })
       }
@@ -356,9 +352,7 @@ module Todo = {
           <button
             className={["text-xs  mr-1 hidden group-hover:block"]->Array.join(" ")}
             onClick={_ => {
-              getTodos()
-              ->Array.findIndexOpt(v => v.id == todo.id)
-              ->Option.mapOr((), todoIndex => newTodoAfter(Some(todo.id), Some(todo.id)))
+              newTodoAfter(Some(todo.id), Some(todo.id))
             }}>
             <Icons.Plus />
           </button>

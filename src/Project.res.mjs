@@ -185,11 +185,7 @@ function Project$Todo(props) {
                             }));
                     }
                     if (e.key === "Enter" && e.metaKey) {
-                      Core__Option.mapOr(Core__Array.findIndexOpt(getTodos(), (function (v) {
-                                  return v.id === todo.id;
-                                })), undefined, (function (todoIndex) {
-                              newTodoAfter(todo.id, todo.parentTodo);
-                            }));
+                      newTodoAfter(todo.id, todo.parentTodo);
                     }
                     if (e.key === "Enter") {
                       e.preventDefault();
@@ -262,11 +258,7 @@ function Project$Todo(props) {
                     }
                     if (e.key === "Enter" && cursorPosition === inputValueLength) {
                       e.stopPropagation();
-                      return Core__Option.mapOr(Core__Array.findIndexOpt(getTodos(), (function (v) {
-                                        return v.id === todo.id;
-                                      })), undefined, (function (todoIndex) {
-                                    newTodoAfter(todo.id, todo.parentTodo);
-                                  }));
+                      return newTodoAfter(todo.id, todo.parentTodo);
                     }
                     
                   }));
@@ -374,11 +366,7 @@ function Project$Todo(props) {
                                       children: JsxRuntime.jsx(Tb.TbPlus, {}),
                                       className: ["text-xs  mr-1 hidden group-hover:block"].join(" "),
                                       onClick: (function (param) {
-                                          Core__Option.mapOr(Core__Array.findIndexOpt(getTodos(), (function (v) {
-                                                      return v.id === todo.id;
-                                                    })), undefined, (function (todoIndex) {
-                                                  newTodoAfter(todo.id, todo.id);
-                                                }));
+                                          newTodoAfter(todo.id, todo.id);
                                         })
                                     }),
                                 JsxRuntime.jsx("input", {
