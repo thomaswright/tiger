@@ -313,9 +313,6 @@ function Project$Todo(props) {
                                                 return v;
                                               });
                                   } else {
-                                    Common.mapNullable(containerRef.current, (function (dom) {
-                                            dom.focus();
-                                          }));
                                     return setStatusSelectIsOpen(function (param) {
                                                 return v;
                                               });

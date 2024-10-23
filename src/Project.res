@@ -292,9 +292,9 @@ module Todo = {
           isArchived={todo.box == Archive}
           onOpenChange={v => {
             if !v {
-              containerRef.current->mapNullable(dom => {
-                dom->Obj.magic->HtmlElement.focus
-              })
+              // containerRef.current->mapNullable(dom => {
+              //   dom->Obj.magic->HtmlElement.focus
+              // })
               setStatusSelectIsOpen(_ => v)
             } else {
               setStatusSelectIsOpen(_ => v)

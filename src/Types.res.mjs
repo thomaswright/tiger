@@ -24,7 +24,7 @@ function statusToFloat(s) {
 function statusStringShort(s) {
   switch (s) {
     case "Underway" :
-        return "Going";
+        return "Underway";
     case "Suspended" :
         return "Paused";
     case "UnderwayWrapUp" :
@@ -55,7 +55,7 @@ function statusStringShort(s) {
 function statusString(s) {
   switch (s) {
     case "Underway" :
-        return "Underway: Going";
+        return "Underway";
     case "Suspended" :
         return "Underway: Paused";
     case "UnderwayWrapUp" :

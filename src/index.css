@@ -23,46 +23,46 @@ html {
   --lightBlue: oklch(0.93 0.07 232);
   --lightBrown: oklch(0.93 0.07 90);
   --lightGray: oklch(0.93 0.02 230);
-  --lightGreen: oklch(0.93 0.07 127);
-  --lightOrange: oklch(0.93 0.07 90);
+  --lightGreen: oklch(0.93 0.07 150);
+  --lightOrange: oklch(0.96 0.07 97.08);
   --lightPurple: oklch(0.93 0.07 310);
-  --lightRed: #ffd5cf;
+  --lightRed: oklch(0.93 0.07 25);
 
-  --darkBlue: #0332b5;
-  --darkBrown: #4a3f01;
+  --darkBlue: oklch(0.4 0.21 232);
+  --darkBrown: oklch(0.37 0.08 97.88);
   --darkGray: oklch(0.44 0.02 230);
-  --darkGreen: #0d6000;
-  --darkOrange: #ff6200;
-  --darkPurple: #3f146f;
-  --darkRed: #be001a;
+  --darkGreen: oklch(0.43 0.14 150);
+  --darkOrange: oklch(0.66 0.23 35.22);
+  --darkPurple: oklch(0.32 0.14 310);
+  --darkRed: oklch(0.5 0.2 25);
 
   --FutureConsider: var(--lightBlue);
   --FutureSoon: var(--lightBlue);
   --FutureWillDo: var(--lightBlue);
   --NowIfTime: var(--lightOrange);
-  --NowUrgent: var(--lightRed);
+  --NowUrgent: var(--lightOrange);
   --NowWillDo: var(--lightOrange);
   --ResolveDone: var(--lightPurple);
   --ResolveNo: var(--lightPurple);
   --ResolveScrap: var(--lightPurple);
-  --Suspended: var(--lightBrown);
+  --Suspended: var(--lightGreen);
   --Underway: var(--lightGreen);
   --UnderwayWrapUp: var(--lightGreen);
-  --Unsorted: var(--lightGray);
+  --Unsorted: var(--lightBlue);
 
   --FutureConsiderText: var(--darkBlue);
   --FutureSoonText: var(--darkBlue);
   --FutureWillDoText: var(--darkBlue);
   --NowIfTimeText: var(--darkOrange);
-  --NowUrgentText: var(--darkRed);
+  --NowUrgentText: var(--darkOrange);
   --NowWillDoText: var(--darkOrange);
   --ResolveDoneText: var(--darkPurple);
   --ResolveNoText: var(--darkPurple);
   --ResolveScrapText: var(--darkPurple);
-  --SuspendedText: var(--darkBrown);
+  --SuspendedText: var(--darkGreen);
   --UnderwayText: var(--darkGreen);
   --UnderwayWrapUpText: var(--darkGreen);
-  --UnsortedText: var(--darkGray);
+  --UnsortedText: var(--darkBlue);
 }
 
 .dark {

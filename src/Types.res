@@ -70,7 +70,7 @@ let statusToFloat = s => {
 let statusStringShort = s => {
   switch s {
   | Unsorted => "-"
-  | Underway => "Going"
+  | Underway => "Underway"
   | Suspended => "Paused"
   | UnderwayWrapUp => "Wrap Up"
   | NowUrgent => "Must Do"
@@ -88,7 +88,7 @@ let statusStringShort = s => {
 let statusString = s => {
   switch s {
   | Unsorted => "No Status"
-  | Underway => "Underway: Going"
+  | Underway => "Underway"
   | Suspended => "Underway: Paused"
   | UnderwayWrapUp => "Underway: Wrap Up"
   | NowUrgent => "Now: Must Do"
