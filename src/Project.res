@@ -10,7 +10,7 @@ module Todo = {
     ~updateTodo,
     ~isSelected,
     ~setSelectedElement,
-    ~displayElement,
+    ~displayElement as _,
     ~setDisplayElement,
     ~setTodos: (string, array<Types.todo> => array<Types.todo>) => unit,
     ~setFocusIdNext,
@@ -19,7 +19,7 @@ module Todo = {
     ~isChecked: bool,
     ~setChecked,
     ~deleteTodo,
-    ~showArchive,
+    ~showArchive as _,
   ) => {
     let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
     let inputRef = React.useRef(Nullable.null)
@@ -290,9 +290,6 @@ module Todo = {
           isArchived={todo.box == Archive}
           onOpenChange={v => {
             if !v {
-              // containerRef.current->mapNullable(dom => {
-              //   dom->Obj.magic->HtmlElement.focus
-              // })
               setStatusSelectIsOpen(_ => v)
             } else {
               setStatusSelectIsOpen(_ => v)
@@ -546,7 +543,7 @@ let make = (
         type_="text"
         className={[
           todoInputClass,
-          "ml-3 my-1 block font-black tracking-tight  w-full border-0 px-0 py-0 focus:ring-0 
+          "ml-3 my-1 block text-base font-black tracking-tight  w-full border-0 px-0 py-0 focus:ring-0 
                leading-none bg-transparent",
         ]->Array.join(" ")}
         placeholder={""}
