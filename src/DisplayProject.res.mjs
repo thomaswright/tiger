@@ -25,7 +25,8 @@ function DisplayProject(props) {
                                   return {
                                           id: p.id,
                                           name: e.target.value,
-                                          isActive: p.isActive
+                                          isActive: p.isActive,
+                                          todos: p.todos
                                         };
                                 }));
                         })
@@ -40,7 +41,8 @@ function DisplayProject(props) {
                                           return {
                                                   id: p.id,
                                                   name: p.name,
-                                                  isActive: !p.isActive
+                                                  isActive: !p.isActive,
+                                                  todos: p.todos
                                                 };
                                         }));
                                 })
@@ -61,11 +63,11 @@ function DisplayProject(props) {
                                                     return p.id !== project.id;
                                                   });
                                       });
-                                  setTodos(function (v) {
-                                        return v.filter(function (p) {
-                                                    return p.project !== project.id;
-                                                  });
-                                      });
+                                  setTodos(project.id, (function (v) {
+                                          return v.filter(function (p) {
+                                                      return p.project !== project.id;
+                                                    });
+                                        }));
                                 })
                             })
                       ],
@@ -76,25 +78,25 @@ function DisplayProject(props) {
                             children: "Archive All Resolved if not Pinned",
                             className: "rounded bg-[var(--t2)] px-2 text-xs h-fit flex-none",
                             onClick: (function (param) {
-                                setTodos(function (todos) {
-                                      return todos.map(function (t) {
-                                                  if (t.project !== project.id || !(Types.statusIsResolved(t.status) && t.box !== "Pinned")) {
-                                                    return t;
-                                                  } else {
-                                                    return {
-                                                            id: t.id,
-                                                            text: t.text,
-                                                            project: t.project,
-                                                            status: t.status,
-                                                            box: "Archive",
-                                                            parentTodo: t.parentTodo,
-                                                            depth: t.depth,
-                                                            childNumber: t.childNumber,
-                                                            hasArchivedChildren: t.hasArchivedChildren
-                                                          };
-                                                  }
-                                                });
-                                    });
+                                setTodos(project.id, (function (todos) {
+                                        return todos.map(function (t) {
+                                                    if (t.project !== project.id || !(Types.statusIsResolved(t.status) && t.box !== "Pinned")) {
+                                                      return t;
+                                                    } else {
+                                                      return {
+                                                              id: t.id,
+                                                              text: t.text,
+                                                              project: t.project,
+                                                              status: t.status,
+                                                              box: "Archive",
+                                                              parentTodo: t.parentTodo,
+                                                              depth: t.depth,
+                                                              childNumber: t.childNumber,
+                                                              hasArchivedChildren: t.hasArchivedChildren
+                                                            };
+                                                    }
+                                                  });
+                                      }));
                               })
                           }),
                       className: "p-2"

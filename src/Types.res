@@ -34,6 +34,7 @@ type project = {
   id: string,
   name: string,
   isActive: bool,
+  todos: array<todo>,
 }
 
 type projectsTab = | @as("All") All | @as("Active") Active

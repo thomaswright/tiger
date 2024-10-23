@@ -1,13 +1,15 @@
 open Types
 open Webapi.Dom
+@warning("-33")
 open Common
 
 @react.component
 let make = (
+  ~project: project,
   ~todo: todo,
   ~setFocusIdNext,
   ~updateTodo,
-  ~setTodos: (array<todo> => array<todo>) => unit,
+  ~setTodos: (string, array<todo> => array<todo>) => unit,
   ~deleteTodo,
 ) => {
   let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
@@ -29,7 +31,7 @@ let make = (
           }
         }}
         onChange={e => {
-          updateTodo(todo.id, t => {
+          updateTodo(project.id, todo.id, t => {
             ...t,
             text: ReactEvent.Form.target(e)["value"],
           })
@@ -47,7 +49,7 @@ let make = (
         status={Some(todo.status)}
         focusTodo={() => ()}
         setStatus={newStatus =>
-          updateTodo(todo.id, t => {
+          updateTodo(project.id, todo.id, t => {
             ...t,
             status: newStatus,
             box: t.box == Archive && !(newStatus->statusIsResolved) ? Working : t.box,
@@ -57,7 +59,7 @@ let make = (
       {todo.status->statusIsResolved
         ? <button
             onClick={_ => {
-              setTodos(v =>
+              setTodos(project.id, v =>
                 v->Array.map(t =>
                   t.id == todo.id
                     ? {
@@ -84,7 +86,7 @@ let make = (
       {todo.status->statusIsResolved
         ? <button
             onClick={_ => {
-              setTodos(v =>
+              setTodos(project.id, v =>
                 v->Array.map(t =>
                   t.id == todo.id
                     ? {
@@ -106,10 +108,10 @@ let make = (
         : React.null}
       <button
         onClick={_ => {
-          document
+          Webapi.Dom.document
           ->Document.getElementById(getTodoId(todo.id))
           ->Option.mapOr((), todoEl => Common.focusPreviousClass(listItemClass, todoEl))
-          deleteTodo(todo)
+          deleteTodo(project.id, todo)
         }}
         className={[
           "

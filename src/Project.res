@@ -5,13 +5,14 @@ open Common
 module Todo = {
   @react.component
   let make = (
+    ~project: project,
     ~todo: todo,
     ~updateTodo,
     ~isSelected,
     ~setSelectedElement,
     ~displayElement,
     ~setDisplayElement,
-    ~setTodos: (array<Types.todo> => array<Types.todo>) => unit,
+    ~setTodos: (string, array<Types.todo> => array<Types.todo>) => unit,
     ~setFocusIdNext,
     ~newTodoAfter,
     ~getTodos: unit => array<todo>,
@@ -41,7 +42,7 @@ module Todo = {
             t.parentTodo == todo.parentTodo &&
               t.childNumber == todo.childNumber->Option.map(c => c - 1)
           )
-        setTodos(todos =>
+        setTodos(project.id, todos =>
           todos->Array.map(t => {
             if t.id == todo.id {
               {
@@ -94,7 +95,7 @@ module Todo = {
             ->Array.find(t => t.depth == Some(todoDepth - 2))
             ->Option.map(t => t.id)
 
-          setTodos(todos =>
+          setTodos(project.id, todos =>
             todos->Array.map(
               t => {
                 if t.id == todo.id {
@@ -118,7 +119,10 @@ module Todo = {
     }
 
     let onKeyDownContainer = e => {
-      if isSelected && containerRef.current->Nullable.toOption == document->Document.activeElement {
+      if (
+        isSelected &&
+        containerRef.current->Nullable.toOption == Webapi.Dom.document->Document.activeElement
+      ) {
         containerRef.current->mapNullable(dom => {
           indentation(e)
           if e->ReactEvent.Keyboard.key == "s" {
@@ -137,7 +141,7 @@ module Todo = {
           }
 
           if e->ReactEvent.Keyboard.key == "Backspace" && e->ReactEvent.Keyboard.metaKey {
-            setTodos(todos => todos->Array.filter(t => t.id != todo.id))
+            setTodos(project.id, todos => todos->Array.filter(t => t.id != todo.id))
             containerRef.current->mapNullable(containerEl => {
               Common.focusPreviousClass(listItemClass, containerEl)
             })
@@ -211,7 +215,7 @@ module Todo = {
 
           if e->ReactEvent.Keyboard.key == "Backspace" && inputValueLength == 0 {
             if stagedForDelete {
-              deleteTodo(todo)
+              deleteTodo(project.id, todo)
 
               containerRef.current->mapNullable(containerEl => {
                 Common.focusPreviousClass(listItemClass, containerEl)
@@ -230,7 +234,6 @@ module Todo = {
         })
       }
     }
-    Console.log(todo)
 
     <div
       id={getTodoId(todo.id)}
@@ -305,7 +308,7 @@ module Todo = {
             setFocusIdNext(_ => Some(getTodoId(todo.id)))
           }}
           setStatus={newStatus =>
-            updateTodo(todo.id, t => {
+            updateTodo(project.id, todo.id, t => {
               ...t,
               status: newStatus,
               box: t.box == Archive && !(newStatus->statusIsResolved) ? Working : t.box,
@@ -344,7 +347,7 @@ module Todo = {
             }}
             onKeyDown={onKeyDownInput}
             onChange={e => {
-              updateTodo(todo.id, t => {
+              updateTodo(project.id, todo.id, t => {
                 ...t,
                 text: ReactEvent.Form.target(e)["value"],
               })
@@ -360,7 +363,7 @@ module Todo = {
             <Icons.Plus />
           </button>
           <input
-            onChange={e => {
+            onChange={_ => {
               setChecked(v => v->Common.arrayToggle(todo.id))
             }}
             checked={isChecked}
@@ -386,7 +389,7 @@ let make = (
   ~displayElement,
   ~setDisplayElement,
   ~setFocusIdNext,
-  ~setTodos: (array<Types.todo> => array<Types.todo>) => unit,
+  ~setTodos: (string, array<Types.todo> => array<Types.todo>) => unit,
   ~getTodos,
   ~checked,
   ~setChecked,
@@ -399,7 +402,7 @@ let make = (
 
   let newTodoAfter = (i, parentTodo) => {
     let newId = Common.uuid()
-    setTodos(v => {
+    setTodos(project.id, v => {
       v->Array.toSpliced(
         ~start=i + 1,
         ~remove=0,
@@ -578,6 +581,7 @@ let make = (
         ->Array.map(todo =>
           <Todo
             key={getTodoId(todo.id)}
+            project
             todo
             updateTodo
             showArchive

@@ -1,13 +1,6 @@
 open Types
 open Webapi.Dom
 
-let defaultProjects = [
-  {
-    id: "1",
-    name: "Project Omega",
-    isActive: true,
-  },
-]
 let defaultTodos = [
   {
     text: "Do Something",
@@ -33,18 +26,20 @@ let defaultTodos = [
   },
 ]
 
+let defaultProjects = [
+  {
+    id: "1",
+    name: "Project Omega",
+    isActive: true,
+    todos: defaultTodos,
+  },
+]
+
 // let filterMap = (m, f) => m ->
 // Map.entries -> Array.fromIterator -> Array.filter(f) -> Map.fromArray
 
 // let mapToArray = m => m ->
 // Map.entries -> Array.fromIterator
-
-module Details = {
-  @react.component
-  let make = (~selectedElement) => {
-    <div className=" border-l flex-1"> {"Details"->React.string} </div>
-  }
-}
 
 module Switch = {
   @module("./Switch.jsx") @react.component
@@ -125,12 +120,12 @@ module CheckedSummary = {
   @react.component
   let make = (
     ~checked,
-    ~todos: array<todo>,
+    ~projects: array<project>,
     ~setChecked,
-    ~setTodos: (array<Types.todo> => array<Types.todo>) => unit,
+    ~setProjects: (array<Types.project> => array<Types.project>) => unit,
   ) => {
     let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
-
+    let allTodos = Array.concatMany([], projects->Array.map(p => p.todos))
     <div className="h-8 text-sm px-2 flex flex-row gap-2 items-center border-b">
       {if checked->Array.length < 2 {
         React.null
@@ -144,7 +139,7 @@ module CheckedSummary = {
               setStatusSelectIsOpen(_ => v)
             }}
             status={
-              let checkedTodos = todos->Array.filter(t => checked->Array.includes(t.id))
+              let checkedTodos = allTodos->Array.filter(t => checked->Array.includes(t.id))
               checkedTodos
               ->Array.get(0)
               ->Option.flatMap(first => {
@@ -157,19 +152,24 @@ module CheckedSummary = {
             }
             focusTodo={() => {()}}
             setStatus={newStatus =>
-              setTodos(todos =>
-                todos->Array.map(t => {
-                  if checked->Array.includes(t.id) {
-                    {
-                      ...t,
-                      status: newStatus,
-                      box: t.box == Archive && !(newStatus->statusIsResolved) ? Working : t.box,
-                    }
-                  } else {
-                    t
-                  }
+              setProjects(projects => {
+                projects->Array.map(project => {
+                  ...project,
+                  todos: project.todos->Array.map(
+                    t => {
+                      if checked->Array.includes(t.id) {
+                        {
+                          ...t,
+                          status: newStatus,
+                          box: t.box == Archive && !(newStatus->statusIsResolved) ? Working : t.box,
+                        }
+                      } else {
+                        t
+                      }
+                    },
+                  ),
                 })
-              )}
+              })}
           />
           {`${checked->Array.length->Int.toString} Checked`->React.string}
           <div className="flex-1" />
@@ -184,7 +184,7 @@ module CheckedSummary = {
 @react.component
 let make = () => {
   let (projects, setProjects, _) = Common.useLocalStorage("projects", defaultProjects)
-  let (todos, setTodos, getTodos) = Common.useLocalStorage("todos", defaultTodos)
+  // let (todos, setTodos, getTodos) = Common.useLocalStorage("todos", defaultTodos)
   let (showArchive, setShowArchive, _) = Common.useLocalStorage("showArchive", [])
   let (checked, setChecked, _) = Common.useLocalStorage("checked", [])
   let (projectsTab, setProjectTab, _) = Common.useLocalStorage("projectsTab", All)
@@ -196,35 +196,23 @@ let make = () => {
   let updateProject = React.useCallback0((id, f) => {
     setProjects(v => v->Array.map(project => project.id == id ? f(project) : project))
   })
-  let updateTodo = React.useCallback0((id, f) => {
-    setTodos(v => v->Array.map(todo => todo.id == id ? f(todo) : todo))
+
+  let updateTodo = React.useCallback0((projectId, todoId, f) => {
+    updateProject(projectId, project => {
+      ...project,
+      todos: project.todos->Array.map(todo => todo.id == todoId ? f(todo) : todo),
+    })
   })
 
-  React.useEffectOnEveryRender(() => {
-    focusClassNext
-    ->Option.flatMap(x =>
-      document
-      ->Document.getElementsByClassName(x)
-      ->HtmlCollection.toArray
-      ->Array.get(0)
-    )
-    ->Option.mapOr((), element => {
-      element->Obj.magic->HtmlElement.focus
-      setFocusClassNext(_ => None)
+  let setTodos = React.useCallback0((projectId, f) => {
+    updateProject(projectId, project => {
+      ...project,
+      todos: f(project.todos),
     })
-
-    focusIdNext
-    ->Option.flatMap(x => document->Document.getElementById(x))
-    ->Option.mapOr((), element => {
-      element->Obj.magic->HtmlElement.focus
-      setFocusIdNext(_ => None)
-    })
-
-    None
   })
 
-  let deleteTodo = (todo: todo) =>
-    setTodos(todos =>
+  let deleteTodo = (projectId, todo: todo) =>
+    setTodos(projectId, todos =>
       todos
       ->Array.filter(t => t.id != todo.id)
       ->Array.map(t => {
@@ -238,6 +226,29 @@ let make = () => {
         }
       })
     )
+
+  React.useEffectOnEveryRender(() => {
+    focusClassNext
+    ->Option.flatMap(x =>
+      Webapi.Dom.document
+      ->Document.getElementsByClassName(x)
+      ->HtmlCollection.toArray
+      ->Array.get(0)
+    )
+    ->Option.mapOr((), element => {
+      element->Obj.magic->HtmlElement.focus
+      setFocusClassNext(_ => None)
+    })
+
+    focusIdNext
+    ->Option.flatMap(x => Webapi.Dom.document->Document.getElementById(x))
+    ->Option.mapOr((), element => {
+      element->Obj.magic->HtmlElement.focus
+      setFocusIdNext(_ => None)
+    })
+
+    None
+  })
 
   <div className="flex flex-row h-dvh">
     // <StatusSelector />
@@ -260,6 +271,7 @@ let make = () => {
                     id: newProjectId,
                     name: "",
                     isActive: true,
+                    todos: [],
                   },
                 ],
                 v,
@@ -282,8 +294,7 @@ let make = () => {
         ->Array.map(project => {
           let showArchive = showArchive->Array.includes(project.id)
           let projectTodos =
-            todos
-            ->Array.filter(todo => todo.project == project.id)
+            project.todos
             ->Array.filter(todo => showArchive ? true : todo.box != Archive)
             ->buildTodoTree
           <Project
@@ -310,13 +321,15 @@ let make = () => {
       </div>
     </div>
     <div className=" border-l flex-1">
-      <CheckedSummary checked={checked} todos={todos} setChecked={setChecked} setTodos />
+      <CheckedSummary checked={checked} projects={projects} setChecked={setChecked} setProjects />
       {switch displayElement {
       | Some(Todo(todoId)) =>
-        todos
-        ->Array.find(t => t.id == todoId)
-        ->Option.mapOr(React.null, todo => {
-          <DisplayTodo todo setFocusIdNext updateTodo setTodos deleteTodo />
+        projects
+        ->Array.reduce(None, (a, c) => {
+          a->Option.isSome ? a : c.todos->Array.find(t => t.id == todoId)->Option.map(v => (c, v))
+        })
+        ->Option.mapOr(React.null, ((project, todo)) => {
+          <DisplayTodo todo project setFocusIdNext updateTodo setTodos deleteTodo />
         })
       | Some(Project(projectId)) =>
         projects

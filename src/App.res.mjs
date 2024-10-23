@@ -14,13 +14,8 @@ import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as Belt_MapString from "rescript/lib/es6/belt_MapString.js";
 import * as DisplayProject from "./DisplayProject.res.mjs";
 import * as Tb from "react-icons/tb";
+import * as Caml_splice_call from "rescript/lib/es6/caml_splice_call.js";
 import * as JsxRuntime from "react/jsx-runtime";
-
-var defaultProjects = [{
-    id: "1",
-    name: "Project Omega",
-    isActive: true
-  }];
 
 var defaultTodos = [
   {
@@ -46,6 +41,13 @@ var defaultTodos = [
     hasArchivedChildren: false
   }
 ];
+
+var defaultProjects = [{
+    id: "1",
+    name: "Project Omega",
+    isActive: true,
+    todos: defaultTodos
+  }];
 
 var make = SwitchJsx.Switch;
 
@@ -88,18 +90,21 @@ function buildTodoTree(input) {
 }
 
 function App$CheckedSummary(props) {
-  var setTodos = props.setTodos;
+  var setProjects = props.setProjects;
   var setChecked = props.setChecked;
   var checked = props.checked;
   var match = React.useState(function () {
         return false;
       });
   var setStatusSelectIsOpen = match[1];
+  var allTodos = Caml_splice_call.spliceObjApply([], "concat", [props.projects.map(function (p) {
+              return p.todos;
+            })]);
   var tmp;
   if (checked.length < 2) {
     tmp = null;
   } else {
-    var checkedTodos = props.todos.filter(function (t) {
+    var checkedTodos = allTodos.filter(function (t) {
           return checked.includes(t.id);
         });
     tmp = JsxRuntime.jsxs(React.Fragment, {
@@ -114,23 +119,30 @@ function App$CheckedSummary(props) {
                           
                         })),
                   setStatus: (function (newStatus) {
-                      setTodos(function (todos) {
-                            return todos.map(function (t) {
-                                        if (checked.includes(t.id)) {
-                                          return {
-                                                  id: t.id,
-                                                  text: t.text,
-                                                  project: t.project,
-                                                  status: newStatus,
-                                                  box: t.box === "Archive" && !Types.statusIsResolved(newStatus) ? "Working" : t.box,
-                                                  parentTodo: t.parentTodo,
-                                                  depth: t.depth,
-                                                  childNumber: t.childNumber,
-                                                  hasArchivedChildren: t.hasArchivedChildren
-                                                };
-                                        } else {
-                                          return t;
-                                        }
+                      setProjects(function (projects) {
+                            return projects.map(function (project) {
+                                        return {
+                                                id: project.id,
+                                                name: project.name,
+                                                isActive: project.isActive,
+                                                todos: project.todos.map(function (t) {
+                                                      if (checked.includes(t.id)) {
+                                                        return {
+                                                                id: t.id,
+                                                                text: t.text,
+                                                                project: t.project,
+                                                                status: newStatus,
+                                                                box: t.box === "Archive" && !Types.statusIsResolved(newStatus) ? "Working" : t.box,
+                                                                parentTodo: t.parentTodo,
+                                                                depth: t.depth,
+                                                                childNumber: t.childNumber,
+                                                                hasArchivedChildren: t.hasArchivedChildren
+                                                              };
+                                                      } else {
+                                                        return t;
+                                                      }
+                                                    })
+                                              };
                                       });
                           });
                     }),
@@ -172,38 +184,35 @@ function App(props) {
   var match = Common.useLocalStorage("projects", defaultProjects);
   var setProjects = match[1];
   var projects = match[0];
-  var match$1 = Common.useLocalStorage("todos", defaultTodos);
-  var setTodos = match$1[1];
-  var todos = match$1[0];
-  var match$2 = Common.useLocalStorage("showArchive", []);
-  var setShowArchive = match$2[1];
-  var showArchive = match$2[0];
-  var match$3 = Common.useLocalStorage("checked", []);
-  var setChecked = match$3[1];
-  var checked = match$3[0];
-  var match$4 = Common.useLocalStorage("projectsTab", "All");
-  var setProjectTab = match$4[1];
-  var projectsTab = match$4[0];
+  var match$1 = Common.useLocalStorage("showArchive", []);
+  var setShowArchive = match$1[1];
+  var showArchive = match$1[0];
+  var match$2 = Common.useLocalStorage("checked", []);
+  var setChecked = match$2[1];
+  var checked = match$2[0];
+  var match$3 = Common.useLocalStorage("projectsTab", "All");
+  var setProjectTab = match$3[1];
+  var projectsTab = match$3[0];
+  var match$4 = React.useState(function () {
+        
+      });
+  var setSelectedElement = match$4[1];
+  var selectedElement = match$4[0];
   var match$5 = React.useState(function () {
         
       });
-  var setSelectedElement = match$5[1];
-  var selectedElement = match$5[0];
+  var setDisplayElement = match$5[1];
+  var displayElement = match$5[0];
   var match$6 = React.useState(function () {
         
       });
-  var setDisplayElement = match$6[1];
-  var displayElement = match$6[0];
+  var setFocusClassNext = match$6[1];
+  var focusClassNext = match$6[0];
   var match$7 = React.useState(function () {
         
       });
-  var setFocusClassNext = match$7[1];
-  var focusClassNext = match$7[0];
-  var match$8 = React.useState(function () {
-        
-      });
-  var setFocusIdNext = match$8[1];
-  var focusIdNext = match$8[0];
+  var setFocusIdNext = match$7[1];
+  var focusIdNext = match$7[0];
   var updateProject = React.useCallback((function (id, f) {
           setProjects(function (v) {
                 return v.map(function (project) {
@@ -215,17 +224,55 @@ function App(props) {
                           });
               });
         }), []);
-  var updateTodo = React.useCallback((function (id, f) {
-          setTodos(function (v) {
-                return v.map(function (todo) {
-                            if (todo.id === id) {
-                              return f(todo);
-                            } else {
-                              return todo;
-                            }
-                          });
-              });
+  var updateTodo = React.useCallback((function (projectId, todoId, f) {
+          updateProject(projectId, (function (project) {
+                  return {
+                          id: project.id,
+                          name: project.name,
+                          isActive: project.isActive,
+                          todos: project.todos.map(function (todo) {
+                                if (todo.id === todoId) {
+                                  return f(todo);
+                                } else {
+                                  return todo;
+                                }
+                              })
+                        };
+                }));
         }), []);
+  var setTodos = React.useCallback((function (projectId, f) {
+          updateProject(projectId, (function (project) {
+                  return {
+                          id: project.id,
+                          name: project.name,
+                          isActive: project.isActive,
+                          todos: f(project.todos)
+                        };
+                }));
+        }), []);
+  var deleteTodo = function (projectId, todo) {
+    setTodos(projectId, (function (todos) {
+            return todos.filter(function (t) {
+                          return t.id !== todo.id;
+                        }).map(function (t) {
+                        if (Caml_obj.equal(t.parentTodo, todo.id)) {
+                          return {
+                                  id: t.id,
+                                  text: t.text,
+                                  project: t.project,
+                                  status: t.status,
+                                  box: t.box,
+                                  parentTodo: todo.parentTodo,
+                                  depth: t.depth,
+                                  childNumber: t.childNumber,
+                                  hasArchivedChildren: t.hasArchivedChildren
+                                };
+                        } else {
+                          return t;
+                        }
+                      });
+          }));
+  };
   React.useEffect(function () {
         Core__Option.mapOr(Core__Option.flatMap(focusClassNext, (function (x) {
                     return Array.prototype.slice.call(document.getElementsByClassName(x))[0];
@@ -244,38 +291,27 @@ function App(props) {
                     });
               }));
       });
-  var deleteTodo = function (todo) {
-    setTodos(function (todos) {
-          return todos.filter(function (t) {
-                        return t.id !== todo.id;
-                      }).map(function (t) {
-                      if (Caml_obj.equal(t.parentTodo, todo.id)) {
-                        return {
-                                id: t.id,
-                                text: t.text,
-                                project: t.project,
-                                status: t.status,
-                                box: t.box,
-                                parentTodo: todo.parentTodo,
-                                depth: t.depth,
-                                childNumber: t.childNumber,
-                                hasArchivedChildren: t.hasArchivedChildren
-                              };
-                      } else {
-                        return t;
-                      }
-                    });
-        });
-  };
   var tmp;
   if (displayElement !== undefined) {
     if (displayElement.TAG === "Todo") {
       var todoId = displayElement._0;
-      tmp = Core__Option.mapOr(todos.find(function (t) {
-                return t.id === todoId;
-              }), null, (function (todo) {
+      tmp = Core__Option.mapOr(Core__Array.reduce(projects, undefined, (function (a, c) {
+                  if (Core__Option.isSome(a)) {
+                    return a;
+                  } else {
+                    return Core__Option.map(c.todos.find(function (t) {
+                                    return t.id === todoId;
+                                  }), (function (v) {
+                                  return [
+                                          c,
+                                          v
+                                        ];
+                                }));
+                  }
+                })), null, (function (param) {
               return JsxRuntime.jsx(DisplayTodo.make, {
-                          todo: todo,
+                          project: param[0],
+                          todo: param[1],
                           setFocusIdNext: setFocusIdNext,
                           updateTodo: updateTodo,
                           setTodos: setTodos,
@@ -337,7 +373,8 @@ function App(props) {
                                                 return [{
                                                             id: newProjectId,
                                                             name: "",
-                                                            isActive: true
+                                                            isActive: true,
+                                                            todos: []
                                                           }].concat(v);
                                               });
                                           setSelectedElement(function (param) {
@@ -369,9 +406,7 @@ function App(props) {
                                       }
                                     }).map(function (project) {
                                     var showArchive$1 = showArchive.includes(project.id);
-                                    var projectTodos = buildTodoTree(todos.filter(function (todo) {
-                                                return todo.project === project.id;
-                                              }).filter(function (todo) {
+                                    var projectTodos = buildTodoTree(project.todos.filter(function (todo) {
                                               if (showArchive$1) {
                                                 return true;
                                               } else {
@@ -407,9 +442,9 @@ function App(props) {
                       children: [
                         JsxRuntime.jsx(App$CheckedSummary, {
                               checked: checked,
-                              todos: todos,
+                              projects: projects,
                               setChecked: setChecked,
-                              setTodos: setTodos
+                              setProjects: setProjects
                             }),
                         tmp
                       ],

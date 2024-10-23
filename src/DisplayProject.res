@@ -1,5 +1,6 @@
 open Types
 open Webapi.Dom
+@warning("-33")
 open Common
 
 @react.component
@@ -7,7 +8,7 @@ let make = (
   ~project: project,
   ~updateProject,
   ~setProjects,
-  ~setTodos: (array<todo> => array<todo>) => unit,
+  ~setTodos: (string, array<todo> => array<todo>) => unit,
 ) => {
   <div>
     <input
@@ -39,7 +40,7 @@ let make = (
       <div className={"flex-1"} />
       <button
         onClick={_ => {
-          document
+          Webapi.Dom.document
           ->Document.getElementById(getProjectId(project.id))
           ->Option.mapOr((), projectEl => {
             Console.log(projectEl)
@@ -47,7 +48,7 @@ let make = (
           })
 
           setProjects(v => v->Array.filter(p => p.id != project.id))
-          setTodos(v => v->Array.filter(p => p.project != project.id))
+          setTodos(project.id, v => v->Array.filter(p => p.project != project.id))
         }}
         className={[
           "
@@ -62,7 +63,7 @@ let make = (
       <button
         className="rounded bg-[var(--t2)] px-2 text-xs h-fit flex-none"
         onClick={_ =>
-          setTodos(todos => {
+          setTodos(project.id, todos => {
             todos->Array.map(t => {
               if t.project != project.id {
                 t

@@ -14,6 +14,7 @@ function DisplayTodo(props) {
   var updateTodo = props.updateTodo;
   var setFocusIdNext = props.setFocusIdNext;
   var todo = props.todo;
+  var project = props.project;
   var match = React.useState(function () {
         return false;
       });
@@ -36,7 +37,7 @@ function DisplayTodo(props) {
                                 
                               }),
                             onChange: (function (e) {
-                                updateTodo(todo.id, (function (t) {
+                                updateTodo(project.id, todo.id, (function (t) {
                                         return {
                                                 id: t.id,
                                                 text: e.target.value,
@@ -57,7 +58,7 @@ function DisplayTodo(props) {
                         JsxRuntime.jsx(Common.StatusSelect.make, {
                               status: todo.status,
                               setStatus: (function (newStatus) {
-                                  updateTodo(todo.id, (function (t) {
+                                  updateTodo(project.id, todo.id, (function (t) {
                                           return {
                                                   id: t.id,
                                                   text: t.text,
@@ -93,25 +94,25 @@ function DisplayTodo(props) {
                                     todo.box === "Archive" ? "text-blue-600" : "text-[var(--t4)]"
                                   ].join(" "),
                                 onClick: (function (param) {
-                                    setTodos(function (v) {
-                                          return v.map(function (t) {
-                                                      if (t.id === todo.id) {
-                                                        return {
-                                                                id: t.id,
-                                                                text: t.text,
-                                                                project: t.project,
-                                                                status: Types.statusIsResolved(t.status) ? t.status : "ResolveScrap",
-                                                                box: t.box !== "Archive" ? "Archive" : "Working",
-                                                                parentTodo: t.parentTodo,
-                                                                depth: t.depth,
-                                                                childNumber: t.childNumber,
-                                                                hasArchivedChildren: t.hasArchivedChildren
-                                                              };
-                                                      } else {
-                                                        return t;
-                                                      }
-                                                    });
-                                        });
+                                    setTodos(project.id, (function (v) {
+                                            return v.map(function (t) {
+                                                        if (t.id === todo.id) {
+                                                          return {
+                                                                  id: t.id,
+                                                                  text: t.text,
+                                                                  project: t.project,
+                                                                  status: Types.statusIsResolved(t.status) ? t.status : "ResolveScrap",
+                                                                  box: t.box !== "Archive" ? "Archive" : "Working",
+                                                                  parentTodo: t.parentTodo,
+                                                                  depth: t.depth,
+                                                                  childNumber: t.childNumber,
+                                                                  hasArchivedChildren: t.hasArchivedChildren
+                                                                };
+                                                        } else {
+                                                          return t;
+                                                        }
+                                                      });
+                                          }));
                                   })
                               }) : null,
                         Types.statusIsResolved(todo.status) ? JsxRuntime.jsx("button", {
@@ -121,25 +122,25 @@ function DisplayTodo(props) {
                                     todo.box === "Pinned" ? "text-blue-600" : "text-[var(--t4)]"
                                   ].join(" "),
                                 onClick: (function (param) {
-                                    setTodos(function (v) {
-                                          return v.map(function (t) {
-                                                      if (t.id === todo.id) {
-                                                        return {
-                                                                id: t.id,
-                                                                text: t.text,
-                                                                project: t.project,
-                                                                status: t.status,
-                                                                box: t.box !== "Pinned" ? "Pinned" : "Working",
-                                                                parentTodo: t.parentTodo,
-                                                                depth: t.depth,
-                                                                childNumber: t.childNumber,
-                                                                hasArchivedChildren: t.hasArchivedChildren
-                                                              };
-                                                      } else {
-                                                        return t;
-                                                      }
-                                                    });
-                                        });
+                                    setTodos(project.id, (function (v) {
+                                            return v.map(function (t) {
+                                                        if (t.id === todo.id) {
+                                                          return {
+                                                                  id: t.id,
+                                                                  text: t.text,
+                                                                  project: t.project,
+                                                                  status: t.status,
+                                                                  box: t.box !== "Pinned" ? "Pinned" : "Working",
+                                                                  parentTodo: t.parentTodo,
+                                                                  depth: t.depth,
+                                                                  childNumber: t.childNumber,
+                                                                  hasArchivedChildren: t.hasArchivedChildren
+                                                                };
+                                                        } else {
+                                                          return t;
+                                                        }
+                                                      });
+                                          }));
                                   })
                               }) : null,
                         JsxRuntime.jsx("button", {
@@ -149,7 +150,7 @@ function DisplayTodo(props) {
                                   Core__Option.mapOr(Caml_option.nullable_to_opt(document.getElementById(Types.getTodoId(todo.id))), undefined, (function (todoEl) {
                                           Common.focusPreviousClass(Types.listItemClass, todoEl);
                                         }));
-                                  deleteTodo(todo);
+                                  deleteTodo(project.id, todo);
                                 })
                             })
                       ],
