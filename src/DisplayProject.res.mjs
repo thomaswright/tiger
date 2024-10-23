@@ -58,7 +58,6 @@ function DisplayProject(props) {
                               className: ["\n          text-[var(--t4)] px-1 h-6 flex flex-row items-center justify-center rounded border-[var(--t3)]\n          hover:text-blue-600\n        "].join(" "),
                               onClick: (function (param) {
                                   Core__Option.mapOr(Caml_option.nullable_to_opt(document.getElementById(Types.getProjectId(project.id))), undefined, (function (projectEl) {
-                                          console.log(projectEl);
                                           Common.focusPreviousClass(Types.listItemClass, projectEl);
                                         }));
                                   setProjects(function (v) {

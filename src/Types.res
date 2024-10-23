@@ -145,9 +145,11 @@ let statusIsResolved = s =>
   | _ => false
   }
 
-let getProjectId = s => "project-" ++ s
 let getTodoId = s => "todo-" ++ s
 let getTodoInputId = s => "todo-input-" ++ s
+
+let getProjectId = s => "project-" ++ s
+let getProjectInputId = s => "project-input-" ++ s
 
 let listItemClass = "class-list-item"
 let todoInputClass = "class-list-todo-input"

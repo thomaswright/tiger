@@ -583,7 +583,7 @@ function Project(props) {
                                   Types.todoInputClass,
                                   "ml-3 my-1 block text-base font-black tracking-tight  w-full border-0 px-0 py-0 focus:ring-0 \n               leading-none bg-transparent"
                                 ].join(" "),
-                              id: Types.getTodoInputId(project.id),
+                              id: Types.getProjectInputId(project.id),
                               style: {
                                 resize: "none"
                               },

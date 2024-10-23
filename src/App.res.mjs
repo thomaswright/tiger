@@ -389,8 +389,8 @@ function App(props) {
                                                         _0: newProjectId
                                                       };
                                               });
-                                          setFocusClassNext(function (param) {
-                                                return "class-display-title";
+                                          setFocusIdNext(function (param) {
+                                                return Types.getProjectInputId(newProjectId);
                                               });
                                         })
                                     })

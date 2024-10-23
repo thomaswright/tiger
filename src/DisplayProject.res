@@ -45,7 +45,6 @@ let make = (
           Webapi.Dom.document
           ->Document.getElementById(getProjectId(project.id))
           ->Option.mapOr((), projectEl => {
-            Console.log(projectEl)
             Common.focusPreviousClass(listItemClass, projectEl)
           })
 

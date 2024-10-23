@@ -536,7 +536,7 @@ let make = (
           : "",
       ]->Array.join(" ")}>
       <Common.TextareaAutosize
-        id={getTodoInputId(project.id)}
+        id={getProjectInputId(project.id)}
         style={{resize: "none"}}
         ref={ReactDOM.Ref.domRef(inputRef)}
         className={[

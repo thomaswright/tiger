@@ -279,7 +279,7 @@ let make = () => {
             )
             setSelectedElement(_ => Some(Project(newProjectId)))
             setDisplayElement(_ => Some(Project(newProjectId)))
-            setFocusClassNext(_ => Some("class-display-title"))
+            setFocusIdNext(_ => Some(getProjectInputId(newProjectId)))
           }}
           className={[
             "bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1",

@@ -156,16 +156,20 @@ function statusIsResolved(s) {
   }
 }
 
-function getProjectId(s) {
-  return "project-" + s;
-}
-
 function getTodoId(s) {
   return "todo-" + s;
 }
 
 function getTodoInputId(s) {
   return "todo-input-" + s;
+}
+
+function getProjectId(s) {
+  return "project-" + s;
+}
+
+function getProjectInputId(s) {
+  return "project-input-" + s;
 }
 
 var listItemClass = "class-list-item";
@@ -179,9 +183,10 @@ export {
   statusColor ,
   statusColorText ,
   statusIsResolved ,
-  getProjectId ,
   getTodoId ,
   getTodoInputId ,
+  getProjectId ,
+  getProjectInputId ,
   listItemClass ,
   todoInputClass ,
 }
