@@ -278,7 +278,7 @@ function Project$Todo(props) {
               children: [
                 Core__Array.make(Core__Option.getOr(todo.depth, 0), false).map(function (param, i) {
                       return JsxRuntime.jsx("div", {
-                                  className: "h-full w-3 border-l ml-1"
+                                  className: "self-stretch w-2 border-l ml-2 border-[var(--t3)] "
                                 }, i.toString());
                     }),
                 JsxRuntime.jsxs("div", {
@@ -330,7 +330,7 @@ function Project$Todo(props) {
                                       ref: Caml_option.some(inputRef),
                                       className: [
                                           Types.todoInputClass,
-                                          "mx-1 my-1.5 block text-xs font-medium  w-full h-5 border-0 px-0 py-0 focus:ring-0 \n                bg-transparent text-[var(--t8)]"
+                                          "mx-1 my-1 block text-sm font-medium  w-full h-5 border-0 px-0 py-0 focus:ring-0 \n                bg-transparent text-[var(--t8)]"
                                         ].join(" "),
                                       id: Types.getTodoInputId(todo.id),
                                       style: {
@@ -400,7 +400,7 @@ function Project$Todo(props) {
                             })
                       ],
                       className: [
-                          "group flex flex-row justify-start items-center h-full flex-1 pl-0.5 rounded-sm",
+                          "group flex flex-row justify-start items-center h-full flex-1 pl-1 rounded-sm",
                           stagedForDelete ? "outline-red-700" : "focus-within:outline-purple-500 ",
                           stagedForDelete ? "bg-red-200 " : (
                               isChecked ? "bg-sky-50" : ""
@@ -415,7 +415,6 @@ function Project$Todo(props) {
                   "group flex flex-row justify-start items-center outline-none  pl-1"
                 ].join(" "),
               id: Types.getTodoId(todo.id),
-              style: {},
               tabIndex: 0,
               onKeyDown: onKeyDownContainer,
               onFocus: (function (param) {

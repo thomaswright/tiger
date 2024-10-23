@@ -249,40 +249,18 @@ module Todo = {
         setDisplayElement(_ => Some(Todo(todo.id)))
       }}
       onKeyDown={onKeyDownContainer}
-      style={{
-        // paddingLeft: (todo.depth->Option.getOr(0) * 16 + 4)->Int.toString ++ "px",
-      }}
       className={[
         listItemClass,
-        // "focus:bg-blue-300 focus-within:bg-green-200", // helpful for debug
         "group flex flex-row justify-start items-center outline-none  pl-1",
-        // stagedForDelete
-        //   ? "bg-red-200 outline outline-1 -outline-offset-1"
-        //   : isSelected
-        //   ? "bg-var(--t1) outline outline-1 -outline-offset-1"
-        //   : "",
       ]->Array.join(" ")}>
       {Array.make(~length=todo.depth->Option.getOr(0), false)
       ->Array.mapWithIndex((_, i) => {
-        <div
-          key={i->Int.toString}
-          className="h-full w-3 border-l ml-1"
-          // style={{
-          // backgroundColor: `oklch(${(1.0 -. 0.1 *. i->Int.toFloat)->Float.toString} 0.0 0)`,
-          // }}
-        />
+        <div key={i->Int.toString} className="self-stretch w-2 border-l ml-2 border-[var(--t3)] " />
       })
       ->React.array}
-      // <div className="text-xs w-5">
-      //   {switch todo.box {
-      //   | Working => React.null
-      //   | Archive => <Icons.Archive />
-      //   | Pinned => <Icons.Pin />
-      //   }}
-      // </div>
       <div
         className={[
-          "group flex flex-row justify-start items-center h-full flex-1 pl-0.5 rounded-sm",
+          "group flex flex-row justify-start items-center h-full flex-1 pl-1 rounded-sm",
           stagedForDelete ? "outline-red-700" : "focus-within:outline-purple-500 ",
           stagedForDelete ? "bg-red-200 " : isChecked ? "bg-sky-50" : "",
           isSelected ? "outline outline-2 -outline-offset-2 outline-blue-500" : "",
@@ -332,7 +310,7 @@ module Todo = {
             ref={ReactDOM.Ref.domRef(inputRef)}
             className={[
               todoInputClass,
-              "mx-1 my-1.5 block text-xs font-medium  w-full h-5 border-0 px-0 py-0 focus:ring-0 
+              "mx-1 my-1 block text-sm font-medium  w-full h-5 border-0 px-0 py-0 focus:ring-0 
                 bg-transparent text-[var(--t8)]",
             ]->Array.join(" ")}
             placeholder={""}
