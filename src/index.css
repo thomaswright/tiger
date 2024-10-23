@@ -20,43 +20,49 @@ html {
   --t1: oklch(from var(--tBase) 0.97 c h);
   --t0: white;
 
-  --underway: oklch(0.93 0.07 127);
-  --now: oklch(0.93 0.07 90);
-  --future: oklch(0.93 0.07 232);
-  --resolve: oklch(0.93 0.07 310);
+  --lightBlue: oklch(0.93 0.07 232);
+  --lightBrown: oklch(0.93 0.07 90);
+  --lightGray: oklch(0.93 0.02 230);
+  --lightGreen: oklch(0.93 0.07 127);
+  --lightOrange: oklch(0.93 0.07 90);
+  --lightPurple: oklch(0.93 0.07 310);
+  --lightRed: #ffd5cf;
 
-  --underwayText: #0d6000;
-  --nowText: #ff6200;
-  --futureText: #0332b5;
-  --resolveText: #3f146f;
+  --darkBlue: #0332b5;
+  --darkBrown: #4a3f01;
+  --darkGray: oklch(0.44 0.02 230);
+  --darkGreen: #0d6000;
+  --darkOrange: #ff6200;
+  --darkPurple: #3f146f;
+  --darkRed: #be001a;
 
-  --NowUrgent: #ffd5cf;
-  --Unsorted: oklch(0.93 0.02 230);
-  --Suspended: oklch(0.93 0.07 90);
-  --Underway: var(--underway);
-  --UnderwayWrapUp: var(--underway);
-  --NowWillDo: var(--now);
-  --NowIfTime: var(--now);
-  --FutureSoon: var(--future);
-  --FutureWillDo: var(--future);
-  --FutureConsider: var(--future);
-  --ResolveDone: var(--resolve);
-  --ResolveNo: var(--resolve);
-  --ResolveScrap: var(--resolve);
+  --FutureConsider: var(--lightBlue);
+  --FutureSoon: var(--lightBlue);
+  --FutureWillDo: var(--lightBlue);
+  --NowIfTime: var(--lightOrange);
+  --NowUrgent: var(--lightRed);
+  --NowWillDo: var(--lightOrange);
+  --ResolveDone: var(--lightPurple);
+  --ResolveNo: var(--lightPurple);
+  --ResolveScrap: var(--lightPurple);
+  --Suspended: var(--lightBrown);
+  --Underway: var(--lightGreen);
+  --UnderwayWrapUp: var(--lightGreen);
+  --Unsorted: var(--lightGray);
 
-  --NowUrgentText: #be001a;
-  --UnsortedText: oklch(0.44 0.02 230);
-  --SuspendedText: #4a3f01;
-  --UnderwayText: var(--underwayText);
-  --UnderwayWrapUpText: var(--underwayText);
-  --NowWillDoText: var(--nowText);
-  --NowIfTimeText: var(--nowText);
-  --FutureSoonText: var(--futureText);
-  --FutureWillDoText: var(--futureText);
-  --FutureConsiderText: var(--futureText);
-  --ResolveDoneText: var(--resolveText);
-  --ResolveNoText: var(--resolveText);
-  --ResolveScrapText: var(--resolveText);
+  --FutureConsiderText: var(--darkBlue);
+  --FutureSoonText: var(--darkBlue);
+  --FutureWillDoText: var(--darkBlue);
+  --NowIfTimeText: var(--darkOrange);
+  --NowUrgentText: var(--darkRed);
+  --NowWillDoText: var(--darkOrange);
+  --ResolveDoneText: var(--darkPurple);
+  --ResolveNoText: var(--darkPurple);
+  --ResolveScrapText: var(--darkPurple);
+  --SuspendedText: var(--darkBrown);
+  --UnderwayText: var(--darkGreen);
+  --UnderwayWrapUpText: var(--darkGreen);
+  --UnsortedText: var(--darkGray);
 }
 
 .dark {

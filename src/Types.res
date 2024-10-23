@@ -70,17 +70,17 @@ let statusToFloat = s => {
 let statusStringShort = s => {
   switch s {
   | Unsorted => "-"
-  | Underway => "Underway"
-  | Suspended => "Suspended"
+  | Underway => "Going"
+  | Suspended => "Paused"
   | UnderwayWrapUp => "Wrap Up"
-  | NowUrgent => "Urgent"
-  | NowWillDo => "Will Do"
+  | NowUrgent => "Must Do"
+  | NowWillDo => "Todo"
   | NowIfTime => "If Time"
   | FutureSoon => "Soon"
   | FutureWillDo => "Future"
   | FutureConsider => "Consider"
   | ResolveDone => "Done"
-  | ResolveNo => "No"
+  | ResolveNo => "Scrap"
   | ResolveScrap => "Scrap"
   }
 }
@@ -88,17 +88,17 @@ let statusStringShort = s => {
 let statusString = s => {
   switch s {
   | Unsorted => "No Status"
-  | Underway => "Underway"
-  | Suspended => "Underway: Suspended"
+  | Underway => "Underway: Going"
+  | Suspended => "Underway: Paused"
   | UnderwayWrapUp => "Underway: Wrap Up"
-  | NowUrgent => "Now: Urgent"
-  | NowWillDo => "Now: Will Do"
+  | NowUrgent => "Now: Must Do"
+  | NowWillDo => "Now: Todo"
   | NowIfTime => "Now: If Time"
   | FutureSoon => "Future: Soon"
   | FutureWillDo => "Future"
   | FutureConsider => "Future: Consider"
   | ResolveDone => "Resolved: Done"
-  | ResolveNo => "Resolved: No"
+  | ResolveNo => "Resolved: Scrap"
   | ResolveScrap => "Resolved: Scrap"
   }
 }

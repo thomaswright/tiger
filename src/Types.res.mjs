@@ -24,15 +24,15 @@ function statusToFloat(s) {
 function statusStringShort(s) {
   switch (s) {
     case "Underway" :
-        return "Underway";
+        return "Going";
     case "Suspended" :
-        return "Suspended";
+        return "Paused";
     case "UnderwayWrapUp" :
         return "Wrap Up";
     case "NowUrgent" :
-        return "Urgent";
+        return "Must Do";
     case "NowWillDo" :
-        return "Will Do";
+        return "Todo";
     case "NowIfTime" :
         return "If Time";
     case "FutureSoon" :
@@ -44,7 +44,6 @@ function statusStringShort(s) {
     case "ResolveDone" :
         return "Done";
     case "ResolveNo" :
-        return "No";
     case "ResolveScrap" :
         return "Scrap";
     case "Unsorted" :
@@ -56,15 +55,15 @@ function statusStringShort(s) {
 function statusString(s) {
   switch (s) {
     case "Underway" :
-        return "Underway";
+        return "Underway: Going";
     case "Suspended" :
-        return "Underway: Suspended";
+        return "Underway: Paused";
     case "UnderwayWrapUp" :
         return "Underway: Wrap Up";
     case "NowUrgent" :
-        return "Now: Urgent";
+        return "Now: Must Do";
     case "NowWillDo" :
-        return "Now: Will Do";
+        return "Now: Todo";
     case "NowIfTime" :
         return "Now: If Time";
     case "FutureSoon" :
@@ -76,7 +75,6 @@ function statusString(s) {
     case "ResolveDone" :
         return "Resolved: Done";
     case "ResolveNo" :
-        return "Resolved: No";
     case "ResolveScrap" :
         return "Resolved: Scrap";
     case "Unsorted" :

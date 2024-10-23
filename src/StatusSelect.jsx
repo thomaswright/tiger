@@ -50,7 +50,7 @@ const Dropdown = ({
             ? "outline outline-1 outline-inherit focus:outline-2 "
             : "focus:outline-2 focus:outline-inherit",
           ` rounded font-bold flex flex-row items-center justify-center 
-          relative h-5 w-20 select-none `,
+          relative h-5 w-16 select-none `,
           // isArchiveStatus(s) ? "bg-[var(--t2)]" : "",
         ].join(" ")}
         onSelect={(_) => {
@@ -85,7 +85,7 @@ const Dropdown = ({
               backgroundColor: statusColor(status),
               color: statusColorText(status),
             }}
-            className="relative flex flex-row items-center text-xs justify-center w-20 h-5 font-bold rounded text-[var(--t0)]"
+            className="relative flex flex-row items-center text-xs justify-center w-16 h-5 font-bold rounded text-[var(--t0)]"
             aria-label="Customise options"
           >
             {statusStringShort(status)}
@@ -120,7 +120,7 @@ const Dropdown = ({
               backgroundColor: "var(--t2)",
               color: "var(--t8)",
             }}
-            className="relative flex flex-row items-center text-xs justify-center w-20 h-5 font-bold rounded text-[var(--t0)]"
+            className="relative flex flex-row items-center text-xs justify-center w-16 h-5 font-bold rounded text-[var(--t0)]"
             aria-label="Customise options"
           >
             {"Mixed"}
@@ -131,24 +131,24 @@ const Dropdown = ({
       <DropdownMenu.Portal>
         <DropdownMenu.Content className="DropdownMenuContent" sideOffset={5}>
           <div className="p-1.5 pb-1">
-            <div className="grid grid-cols-3 gap-1 ">
-              {item("FutureSoon")}
-              {item("FutureWillDo")}
-              {item("FutureConsider")}
+            <div className="grid grid-cols-2 gap-1 ">
+              {item("Unsorted")}
 
-              {item("NowUrgent")}
+              {/* {item("FutureSoon")} */}
+              {item("FutureWillDo")}
+              {/* {item("FutureConsider")} */}
+
               {item("NowWillDo")}
-              {item("NowIfTime")}
+              {item("NowUrgent")}
+              {/* {item("NowIfTime")} */}
 
               {item("Underway")}
-              {item("UnderwayWrapUp")}
+              {/* {item("UnderwayWrapUp")} */}
               {item("Suspended")}
 
               {item("ResolveDone")}
               {item("ResolveNo")}
-              {item("ResolveScrap")}
-
-              {item("Unsorted")}
+              {/* {item("ResolveScrap")} */}
             </div>
             <div className="h-5 font-bold flex flex-row items-center justify-center">
               {/* <div className=" w-6 flex flex-row items-center justify-center">
