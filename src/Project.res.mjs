@@ -578,7 +578,7 @@ function Project(props) {
                               ref: Caml_option.some(inputRef),
                               className: [
                                   Types.todoInputClass,
-                                  "mx-1 block text-sm font-medium  w-full h-5 border-0 px-0.5 py-0 focus:ring-0 \n              focus:text-blue-600 leading-none bg-transparent"
+                                  "mx-1 block text-sm font-medium  w-full h-5 border-0 px-0.5 py-0 focus:ring-0 \n              focus:text-blue-700 leading-none bg-transparent"
                                 ].join(" "),
                               id: Types.getTodoInputId(project.id),
                               placeholder: "",
@@ -639,7 +639,7 @@ function Project(props) {
                       className: [
                           Types.listItemClass,
                           "group h-7 flex flex-row justify-between items-center bg-[var(--t2)] px-1 \n        gap-1 border-y border-b-[var(--t4)] border-t-[var(--t3)]",
-                          isSelected ? "outline outline-2 -outline-offset-2 outline-sky-300 focus:outline-sky-500" : ""
+                          isSelected ? "outline outline-2 -outline-offset-2 outline-blue-400 focus:outline-blue-500" : ""
                         ].join(" "),
                       id: Types.getProjectId(project.id),
                       tabIndex: 0,

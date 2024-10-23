@@ -530,7 +530,7 @@ let make = (
         "group h-7 flex flex-row justify-between items-center bg-[var(--t2)] px-1 
         gap-1 border-y border-b-[var(--t4)] border-t-[var(--t3)]",
         isSelected
-          ? "outline outline-2 -outline-offset-2 outline-sky-300 focus:outline-sky-500"
+          ? "outline outline-2 -outline-offset-2 outline-blue-400 focus:outline-blue-500"
           : "",
       ]->Array.join(" ")}>
       <input
@@ -540,7 +540,7 @@ let make = (
         className={[
           todoInputClass,
           "mx-1 block text-sm font-medium  w-full h-5 border-0 px-0.5 py-0 focus:ring-0 
-              focus:text-blue-600 leading-none bg-transparent",
+              focus:text-blue-700 leading-none bg-transparent",
         ]->Array.join(" ")}
         placeholder={""}
         value={project.name}
