@@ -255,7 +255,7 @@ let make = () => {
 
   <div className="flex flex-row h-dvh text-[var(--t9)]">
     // <StatusSelector />
-    <div className="flex-1">
+    <div className="flex-1 overflow-y-scroll">
       <div className="flex flex-row gap-2 justify-between w-full p-1">
         <div className="flex flex-row gap-2 ">
           <div className="text-sm"> {"Show Inactive"->React.string} </div>

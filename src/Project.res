@@ -526,7 +526,7 @@ let make = (
         ref={ReactDOM.Ref.domRef(inputRef)}
         className={[
           todoInputClass,
-          "ml-3 my-1 block text-base font-black tracking-tight  w-full border-0 px-0 py-0 focus:ring-0 
+          "ml-1 my-1 block text-lg font-black tracking-tight  w-full border-0 px-0 py-0 focus:ring-0 
                leading-none bg-transparent",
         ]->Array.join(" ")}
         placeholder={""}

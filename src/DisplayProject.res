@@ -11,24 +11,26 @@ let make = (
   ~setTodos: (string, array<todo> => array<todo>) => unit,
 ) => {
   <div>
-    <Common.TextareaAutosize
-      style={{
-        resize: "none",
-      }}
-      id="id-display-title"
-      className={[
-        " flex-1 bg-inherit text-[--t10] w-full outline-none font-black tracking-tight focus:ring-0
-           border-none px-0 py-0 my-1 mx-2",
-      ]->Array.join(" ")}
-      placeholder={"Project"}
-      value={project.name}
-      onChange={e => {
-        updateProject(project.id, p => {
-          ...p,
-          name: ReactEvent.Form.target(e)["value"],
-        })
-      }}
-    />
+    <div className="w-full px-2 py-1">
+      <Common.TextareaAutosize
+        style={{
+          resize: "none",
+        }}
+        id="id-display-title"
+        className={[
+          " flex-1 text-lg bg-inherit text-[--t10] w-full outline-none font-black tracking-tight focus:ring-0
+           border-none px-0 py-0",
+        ]->Array.join(" ")}
+        placeholder={"Project"}
+        value={project.name}
+        onChange={e => {
+          updateProject(project.id, p => {
+            ...p,
+            name: ReactEvent.Form.target(e)["value"],
+          })
+        }}
+      />
+    </div>
     <div className="flex flex-row border-y items-center gap-3 p-1 px-2">
       <button
         className="rounded bg-[var(--t2)] px-2 text-xs h-fit flex-none"

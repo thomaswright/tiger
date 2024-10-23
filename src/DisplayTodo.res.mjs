@@ -24,7 +24,7 @@ function DisplayTodo(props) {
               children: [
                 JsxRuntime.jsx("div", {
                       children: JsxRuntime.jsx(ReactTextareaAutosize, {
-                            className: [" flex-1 bg-inherit text-[--t10] w-full outline-none \n          focus:ring-0\n          font-medium \n           border-none p-0 my-1 mx-2"].join(" "),
+                            className: [" flex-1 bg-inherit text-[--t10] w-full outline-none \n          focus:ring-0\n          font-medium \n           border-none p-0 "].join(" "),
                             id: "id-display-title",
                             style: {
                               resize: "none"
@@ -55,7 +55,8 @@ function DisplayTodo(props) {
                                               };
                                       }));
                               })
-                          })
+                          }),
+                      className: "w-full px-2 py-1"
                     }),
                 JsxRuntime.jsxs("div", {
                       children: [
@@ -163,7 +164,8 @@ function DisplayTodo(props) {
                       ],
                       className: "flex flex-row border-y items-center gap-3 p-1 px-2"
                     })
-              ]
+              ],
+              className: "w-full"
             });
 }
 

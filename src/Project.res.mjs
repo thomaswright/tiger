@@ -590,7 +590,7 @@ function Project(props) {
                               ref: Caml_option.some(inputRef),
                               className: [
                                   Types.todoInputClass,
-                                  "ml-3 my-1 block text-base font-black tracking-tight  w-full border-0 px-0 py-0 focus:ring-0 \n               leading-none bg-transparent"
+                                  "ml-1 my-1 block text-lg font-black tracking-tight  w-full border-0 px-0 py-0 focus:ring-0 \n               leading-none bg-transparent"
                                 ].join(" "),
                               id: Types.getProjectInputId(project.id),
                               style: {

@@ -441,7 +441,7 @@ function App(props) {
                                   })
                             })
                       ],
-                      className: "flex-1"
+                      className: "flex-1 overflow-y-scroll"
                     }),
                 JsxRuntime.jsxs("div", {
                       children: [

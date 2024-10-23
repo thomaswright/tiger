@@ -14,8 +14,8 @@ let make = (
 ) => {
   let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
 
-  <div>
-    <div>
+  <div className="w-full">
+    <div className="w-full px-2 py-1">
       <Common.TextareaAutosize
         style={{
           resize: "none",
@@ -25,7 +25,7 @@ let make = (
           " flex-1 bg-inherit text-[--t10] w-full outline-none 
           focus:ring-0
           font-medium 
-           border-none p-0 my-1 mx-2",
+           border-none p-0 ",
         ]->Array.join(" ")}
         placeholder={"Todo"}
         value={todo.text}

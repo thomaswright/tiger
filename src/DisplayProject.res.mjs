@@ -15,24 +15,27 @@ function DisplayProject(props) {
   var project = props.project;
   return JsxRuntime.jsxs("div", {
               children: [
-                JsxRuntime.jsx(ReactTextareaAutosize, {
-                      className: [" flex-1 bg-inherit text-[--t10] w-full outline-none font-black tracking-tight focus:ring-0\n           border-none px-0 py-0 my-1 mx-2"].join(" "),
-                      id: "id-display-title",
-                      style: {
-                        resize: "none"
-                      },
-                      placeholder: "Project",
-                      value: project.name,
-                      onChange: (function (e) {
-                          updateProject(project.id, (function (p) {
-                                  return {
-                                          id: p.id,
-                                          name: e.target.value,
-                                          isActive: p.isActive,
-                                          todos: p.todos
-                                        };
-                                }));
-                        })
+                JsxRuntime.jsx("div", {
+                      children: JsxRuntime.jsx(ReactTextareaAutosize, {
+                            className: [" flex-1 text-lg bg-inherit text-[--t10] w-full outline-none font-black tracking-tight focus:ring-0\n           border-none px-0 py-0"].join(" "),
+                            id: "id-display-title",
+                            style: {
+                              resize: "none"
+                            },
+                            placeholder: "Project",
+                            value: project.name,
+                            onChange: (function (e) {
+                                updateProject(project.id, (function (p) {
+                                        return {
+                                                id: p.id,
+                                                name: e.target.value,
+                                                isActive: p.isActive,
+                                                todos: p.todos
+                                              };
+                                      }));
+                              })
+                          }),
+                      className: "w-full px-2 py-1"
                     }),
                 JsxRuntime.jsxs("div", {
                       children: [
