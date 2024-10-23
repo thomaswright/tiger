@@ -224,6 +224,7 @@ module Todo = {
           }
 
           if e->ReactEvent.Keyboard.key == "Enter" && cursorPosition == inputValueLength {
+            e->ReactEvent.Keyboard.preventDefault
             e->ReactEvent.Keyboard.stopPropagation
             newTodoAfter(Some(todo.id), todo.parentTodo)
           }
@@ -329,7 +330,7 @@ module Todo = {
             ref={ReactDOM.Ref.domRef(inputRef)}
             className={[
               todoInputClass,
-              "mx-1 my-1.5 block text-xs font-medium tracking-wide w-full h-5 border-0 px-0 py-0 focus:ring-0 
+              "mx-1 my-1.5 block text-xs font-medium  w-full h-5 border-0 px-0 py-0 focus:ring-0 
                 bg-transparent text-[var(--t8)]",
             ]->Array.join(" ")}
             placeholder={""}
@@ -508,9 +509,12 @@ let make = (
 
         if e->ReactEvent.Keyboard.key == "Enter" && cursorPosition == inputValueLength {
           e->ReactEvent.Keyboard.stopPropagation
-          projectRef.current->mapNullable(dom => {
-            dom->Obj.magic->HtmlElement.focus
-          })
+          e->ReactEvent.Keyboard.preventDefault
+          newTodoAfter(None, None)
+
+          // projectRef.current->mapNullable(dom => {
+          //   dom->Obj.magic->HtmlElement.focus
+          // })
         }
       })
     }

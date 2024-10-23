@@ -258,6 +258,7 @@ function Project$Todo(props) {
                       }
                     }
                     if (e.key === "Enter" && cursorPosition === inputValueLength) {
+                      e.preventDefault();
                       e.stopPropagation();
                       return newTodoAfter(todo.id, todo.parentTodo);
                     }
@@ -321,7 +322,7 @@ function Project$Todo(props) {
                                       ref: Caml_option.some(inputRef),
                                       className: [
                                           Types.todoInputClass,
-                                          "mx-1 my-1.5 block text-xs font-medium tracking-wide w-full h-5 border-0 px-0 py-0 focus:ring-0 \n                bg-transparent text-[var(--t8)]"
+                                          "mx-1 my-1.5 block text-xs font-medium  w-full h-5 border-0 px-0 py-0 focus:ring-0 \n                bg-transparent text-[var(--t8)]"
                                         ].join(" "),
                                       id: Types.getTodoInputId(todo.id),
                                       style: {
@@ -564,9 +565,8 @@ function Project(props) {
                     }
                     if (e.key === "Enter" && cursorPosition === inputValueLength) {
                       e.stopPropagation();
-                      return Common.mapNullable(projectRef.current, (function (dom) {
-                                    dom.focus();
-                                  }));
+                      e.preventDefault();
+                      return newTodoAfter(undefined, undefined);
                     }
                     
                   }));

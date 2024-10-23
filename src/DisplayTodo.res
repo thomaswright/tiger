@@ -24,7 +24,7 @@ let make = (
         className={[
           " flex-1 bg-inherit text-[--t10] w-full outline-none 
           focus:ring-0
-          font-medium tracking-wide
+          font-medium 
            border-none p-0 my-1 mx-2",
         ]->Array.join(" ")}
         placeholder={"Todo"}
