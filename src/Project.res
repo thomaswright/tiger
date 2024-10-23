@@ -250,7 +250,7 @@ module Todo = {
       className={[
         listItemClass,
         // "focus:bg-blue-300 focus-within:bg-green-200", // helpful for debug
-        "group flex flex-row justify-start items-center outline-none  h-6 pl-1",
+        "group flex flex-row justify-start items-center outline-none  pl-1",
         // stagedForDelete
         //   ? "bg-red-200 outline outline-1 -outline-offset-1"
         //   : isSelected
@@ -278,7 +278,9 @@ module Todo = {
       <div
         className={[
           "group flex flex-row justify-start items-center h-full flex-1 pl-0.5 rounded-sm",
-          stagedForDelete ? "outline-red-700" : "outline-blue-400 group-focus:outline-blue-500",
+          stagedForDelete
+            ? "outline-red-700"
+            : "focus-within:outline-indigo-500 group-focus:outline-blue-500",
           stagedForDelete ? "bg-red-200 " : isChecked ? "bg-sky-50" : "",
           isSelected ? "outline outline-2 -outline-offset-2 " : "",
         ]->Array.join(" ")}>
@@ -325,16 +327,17 @@ module Todo = {
           {isSelected
             ? React.null
             : <div className="h-px w-full absolute bg-[var(--t3)] -bottom-0" />}
-          <input
+          <Common.TextareaAutosize
             id={getTodoInputId(todo.id)}
             ref={ReactDOM.Ref.domRef(inputRef)}
             type_="text"
             className={[
               todoInputClass,
-              "mx-1 block text-sm font-medium  w-full h-5 border-0 px-0.5 py-0 focus:ring-0 
-              focus:text-blue-700 leading-none bg-transparent",
+              "mx-1 my-1 block text-sm font-medium tracking-tight w-full h-5 border-0 px-0.5 py-0 focus:ring-0 
+               leading-none bg-transparent",
             ]->Array.join(" ")}
             placeholder={""}
+            style={{resize: "none"}}
             value={todo.text}
             onBlur={_ => setSelectedElement(_ => None)}
             onFocus={_ => {
@@ -350,7 +353,9 @@ module Todo = {
             }}
           />
           <button
-            className={["text-xs  mr-1 hidden group-hover:block"]->Array.join(" ")}
+            className={[
+              "absolute bg-[var(--t1)] rounded right-6 p-0.5  text-xs  hidden group-hover:block",
+            ]->Array.join(" ")}
             onClick={_ => {
               newTodoAfter(Some(todo.id), Some(todo.id))
             }}>
@@ -362,7 +367,7 @@ module Todo = {
             }}
             checked={isChecked}
             type_={"checkbox"}
-            className="border-[var(--t3)] rounded mx-1 text-blue-400 h-3.5 w-3.5 focus:ring-offset-0 focus:ring-blue-500"
+            className=" border-[var(--t3)] rounded mx-1 text-blue-400 h-3.5 w-3.5 focus:ring-offset-0 focus:ring-blue-500"
           />
         </div>
       </div>
@@ -524,20 +529,21 @@ let make = (
       }}
       className={[
         listItemClass,
-        "group h-7 flex flex-row justify-between items-center bg-[var(--t2)] px-1 
-        gap-1 border-y border-b-[var(--t4)] border-t-[var(--t3)]",
+        "group  flex flex-row justify-between items-center bg-[var(--t0)] px-1 
+        gap-1 border-y border-b-[var(--t5)] border-t-[var(--t0)]",
         isSelected
-          ? "outline outline-2 -outline-offset-2 outline-blue-400 focus:outline-blue-500"
+          ? "outline outline-2 -outline-offset-2 outline-purple-500 focus:outline-blue-500"
           : "",
       ]->Array.join(" ")}>
-      <input
+      <Common.TextareaAutosize
         id={getTodoInputId(project.id)}
+        style={{resize: "none"}}
         ref={ReactDOM.Ref.domRef(inputRef)}
         type_="text"
         className={[
           todoInputClass,
-          "mx-1 block text-sm font-medium  w-full h-5 border-0 px-0.5 py-0 focus:ring-0 
-              focus:text-blue-700 leading-none bg-transparent",
+          "mx-1 my-1 block text-sm font-black tracking-tight  w-full border-0 px-0.5 py-0 focus:ring-0 
+               leading-none bg-transparent",
         ]->Array.join(" ")}
         placeholder={""}
         value={project.name}
@@ -572,7 +578,7 @@ let make = (
       </button>
     </div>
     <div>
-      <div className="flex flex-col pb-1">
+      <div className="flex flex-col pb-2">
         {todos
         // ->Array.toSorted((a, b) => a.status->statusToFloat -. b.status->statusToFloat)
         ->Array.map(todo =>

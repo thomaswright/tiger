@@ -35,3 +35,8 @@ let mapNullable = (n, f) =>
 let arrayToggle = (a, match) => {
   a->Array.includes(match) ? a->Array.filter(el => el != match) : a->Array.concat([match])
 }
+
+module TextareaAutosize = {
+  @react.component(: ReactDOM.domProps) @module("react-textarea-autosize")
+  external make: ReactDOM.domProps => React.element = "default"
+}

@@ -10,6 +10,7 @@ import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as Tb from "react-icons/tb";
 import * as JsxRuntime from "react/jsx-runtime";
+import ReactTextareaAutosize from "react-textarea-autosize";
 
 function Project$Todo(props) {
   var deleteTodo = props.deleteTodo;
@@ -316,13 +317,16 @@ function Project$Todo(props) {
                                 isSelected ? null : JsxRuntime.jsx("div", {
                                         className: "h-px w-full absolute bg-[var(--t3)] -bottom-0"
                                       }),
-                                JsxRuntime.jsx("input", {
+                                JsxRuntime.jsx(ReactTextareaAutosize, {
                                       ref: Caml_option.some(inputRef),
                                       className: [
                                           Types.todoInputClass,
-                                          "mx-1 block text-sm font-medium  w-full h-5 border-0 px-0.5 py-0 focus:ring-0 \n              focus:text-blue-700 leading-none bg-transparent"
+                                          "mx-1 my-1 block text-sm font-medium tracking-tight w-full h-5 border-0 px-0.5 py-0 focus:ring-0 \n               leading-none bg-transparent"
                                         ].join(" "),
                                       id: Types.getTodoInputId(todo.id),
+                                      style: {
+                                        resize: "none"
+                                      },
                                       placeholder: "",
                                       type: "text",
                                       value: todo.text,
@@ -364,13 +368,13 @@ function Project$Todo(props) {
                                     }),
                                 JsxRuntime.jsx("button", {
                                       children: JsxRuntime.jsx(Tb.TbPlus, {}),
-                                      className: ["text-xs  mr-1 hidden group-hover:block"].join(" "),
+                                      className: ["absolute bg-[var(--t1)] rounded right-6 p-0.5  text-xs  hidden group-hover:block"].join(" "),
                                       onClick: (function (param) {
                                           newTodoAfter(todo.id, todo.id);
                                         })
                                     }),
                                 JsxRuntime.jsx("input", {
-                                      className: "border-[var(--t3)] rounded mx-1 text-blue-400 h-3.5 w-3.5 focus:ring-offset-0 focus:ring-blue-500",
+                                      className: " border-[var(--t3)] rounded mx-1 text-blue-400 h-3.5 w-3.5 focus:ring-offset-0 focus:ring-blue-500",
                                       checked: isChecked,
                                       type: "checkbox",
                                       onChange: (function (param) {
@@ -385,7 +389,7 @@ function Project$Todo(props) {
                       ],
                       className: [
                           "group flex flex-row justify-start items-center h-full flex-1 pl-0.5 rounded-sm",
-                          stagedForDelete ? "outline-red-700" : "outline-blue-400 group-focus:outline-blue-500",
+                          stagedForDelete ? "outline-red-700" : "focus-within:outline-indigo-500 group-focus:outline-blue-500",
                           stagedForDelete ? "bg-red-200 " : (
                               isChecked ? "bg-sky-50" : ""
                             ),
@@ -396,7 +400,7 @@ function Project$Todo(props) {
               ref: Caml_option.some(containerRef),
               className: [
                   Types.listItemClass,
-                  "group flex flex-row justify-start items-center outline-none  h-6 pl-1"
+                  "group flex flex-row justify-start items-center outline-none  pl-1"
                 ].join(" "),
               id: Types.getTodoId(todo.id),
               style: {},
@@ -571,13 +575,16 @@ function Project(props) {
               children: [
                 JsxRuntime.jsxs("div", {
                       children: [
-                        JsxRuntime.jsx("input", {
+                        JsxRuntime.jsx(ReactTextareaAutosize, {
                               ref: Caml_option.some(inputRef),
                               className: [
                                   Types.todoInputClass,
-                                  "mx-1 block text-sm font-medium  w-full h-5 border-0 px-0.5 py-0 focus:ring-0 \n              focus:text-blue-700 leading-none bg-transparent"
+                                  "mx-1 my-1 block text-sm font-black tracking-tight  w-full border-0 px-0.5 py-0 focus:ring-0 \n               leading-none bg-transparent"
                                 ].join(" "),
                               id: Types.getTodoInputId(project.id),
+                              style: {
+                                resize: "none"
+                              },
                               placeholder: "",
                               type: "text",
                               value: project.name,
@@ -635,8 +642,8 @@ function Project(props) {
                       ref: Caml_option.some(projectRef),
                       className: [
                           Types.listItemClass,
-                          "group h-7 flex flex-row justify-between items-center bg-[var(--t2)] px-1 \n        gap-1 border-y border-b-[var(--t4)] border-t-[var(--t3)]",
-                          isSelected ? "outline outline-2 -outline-offset-2 outline-blue-400 focus:outline-blue-500" : ""
+                          "group  flex flex-row justify-between items-center bg-[var(--t0)] px-1 \n        gap-1 border-y border-b-[var(--t5)] border-t-[var(--t0)]",
+                          isSelected ? "outline outline-2 -outline-offset-2 outline-purple-500 focus:outline-blue-500" : ""
                         ].join(" "),
                       id: Types.getProjectId(project.id),
                       tabIndex: 0,
@@ -685,7 +692,7 @@ function Project(props) {
                                               showArchive: showArchive
                                             }, Types.getTodoId(todo.id));
                                 }),
-                            className: "flex flex-col pb-1"
+                            className: "flex flex-col pb-2"
                           })
                     })
               ],

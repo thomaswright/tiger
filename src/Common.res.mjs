@@ -44,6 +44,8 @@ function arrayToggle(a, match) {
   }
 }
 
+var TextareaAutosize = {};
+
 export {
   useLocalStorage ,
   useLocalStorageListener ,
@@ -52,5 +54,6 @@ export {
   StatusSelect ,
   mapNullable ,
   arrayToggle ,
+  TextareaAutosize ,
 }
 /* make Not a pure module */

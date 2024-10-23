@@ -250,7 +250,7 @@ let make = () => {
     None
   })
 
-  <div className="flex flex-row h-dvh">
+  <div className="flex flex-row h-dvh text-[var(--t10)]">
     // <StatusSelector />
     <div className="flex-1">
       <div className="flex flex-row gap-2 justify-between w-full p-1">
