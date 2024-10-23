@@ -280,7 +280,7 @@ module Todo = {
           "group flex flex-row justify-start items-center h-full flex-1 pl-0.5 rounded-sm",
           stagedForDelete
             ? "outline-red-700"
-            : "focus-within:outline-indigo-500 group-focus:outline-blue-500",
+            : "focus-within:outline-purple-500 group-focus:outline-blue-500",
           stagedForDelete ? "bg-red-200 " : isChecked ? "bg-sky-50" : "",
           isSelected ? "outline outline-2 -outline-offset-2 " : "",
         ]->Array.join(" ")}>
@@ -326,15 +326,15 @@ module Todo = {
           // }}
           {isSelected
             ? React.null
-            : <div className="h-px w-full absolute bg-[var(--t3)] -bottom-0" />}
+            : <div className="h-px w-full absolute bg-[var(--t2)] -bottom-0" />}
           <Common.TextareaAutosize
             id={getTodoInputId(todo.id)}
             ref={ReactDOM.Ref.domRef(inputRef)}
             type_="text"
             className={[
               todoInputClass,
-              "mx-1 my-1 block text-sm font-medium tracking-tight w-full h-5 border-0 px-0.5 py-0 focus:ring-0 
-               leading-none bg-transparent",
+              "mx-1 my-1.5 block text-xs font-medium tracking-wide w-full h-5 border-0 px-0 py-0 focus:ring-0 
+               leading-none bg-transparent text-[var(--t8)]",
             ]->Array.join(" ")}
             placeholder={""}
             style={{resize: "none"}}
@@ -354,7 +354,7 @@ module Todo = {
           />
           <button
             className={[
-              "absolute bg-[var(--t1)] rounded right-6 p-0.5  text-xs  hidden group-hover:block",
+              "absolute hidden group-hover:block right-6 bg-[var(--t1)] rounded p-0.5  text-xs  ",
             ]->Array.join(" ")}
             onClick={_ => {
               newTodoAfter(Some(todo.id), Some(todo.id))
@@ -367,7 +367,11 @@ module Todo = {
             }}
             checked={isChecked}
             type_={"checkbox"}
-            className=" border-[var(--t3)] rounded mx-1 text-blue-400 h-3.5 w-3.5 focus:ring-offset-0 focus:ring-blue-500"
+            className={[
+              "absolute right-0 border-[var(--t3)]
+             rounded mx-1 text-blue-400 h-3.5 w-3.5 focus:ring-offset-0 focus:ring-blue-500",
+              isChecked ? "" : " hidden group-hover:block",
+            ]->Array.join(" ")}
           />
         </div>
       </div>
@@ -529,8 +533,8 @@ let make = (
       }}
       className={[
         listItemClass,
-        "group  flex flex-row justify-between items-center bg-[var(--t0)] px-1 
-        gap-1 border-y border-b-[var(--t5)] border-t-[var(--t0)]",
+        "group  flex flex-row justify-between items-center bg-[var(--t0)] px-1 text-[var(--t9)]
+        gap-1 border-b-[var(--t6)] border-t-[var(--t0)]",
         isSelected
           ? "outline outline-2 -outline-offset-2 outline-purple-500 focus:outline-blue-500"
           : "",
@@ -542,7 +546,7 @@ let make = (
         type_="text"
         className={[
           todoInputClass,
-          "mx-1 my-1 block text-sm font-black tracking-tight  w-full border-0 px-0.5 py-0 focus:ring-0 
+          "ml-3 my-1 block font-black tracking-tight  w-full border-0 px-0 py-0 focus:ring-0 
                leading-none bg-transparent",
         ]->Array.join(" ")}
         placeholder={""}
@@ -565,7 +569,7 @@ let make = (
         onClick={_ => {
           newTodoAfter(None, None)
         }}
-        className="hidden group-hover:block text-xs rounded h-6 w-6 flex-none mr-2">
+        className="hidden group-hover:block bg-[var(--t1)] p-0.5 text-xs rounded  flex-none mr-2">
         <Icons.Plus />
       </button>
       <button
@@ -578,7 +582,7 @@ let make = (
       </button>
     </div>
     <div>
-      <div className="flex flex-col pb-2">
+      <div className="flex flex-col pb-4">
         {todos
         // ->Array.toSorted((a, b) => a.status->statusToFloat -. b.status->statusToFloat)
         ->Array.map(todo =>

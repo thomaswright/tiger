@@ -15,6 +15,9 @@ import {
   // statusIcon,
 } from "react-icons/tb";
 
+let buttonBase =
+  "relative flex flex-row items-center justify-center  text-2xs font-bold  tracking-wide w-16 h-5  rounded ";
+
 const Dropdown = ({
   status,
   setStatus,
@@ -49,8 +52,8 @@ const Dropdown = ({
           status === s
             ? "outline outline-1 outline-inherit focus:outline-2 "
             : "focus:outline-2 focus:outline-inherit",
-          ` rounded font-bold flex flex-row items-center justify-center 
-          relative h-5 w-16 select-none `,
+          buttonBase,
+          "select-none",
           // isArchiveStatus(s) ? "bg-[var(--t2)]" : "",
         ].join(" ")}
         onSelect={(_) => {
@@ -85,7 +88,7 @@ const Dropdown = ({
               backgroundColor: statusColor(status),
               color: statusColorText(status),
             }}
-            className="relative flex flex-row items-center text-xs justify-center w-16 h-5 font-bold rounded text-[var(--t0)]"
+            className={buttonBase}
             aria-label="Customise options"
           >
             {statusStringShort(status)}
@@ -120,7 +123,7 @@ const Dropdown = ({
               backgroundColor: "var(--t2)",
               color: "var(--t8)",
             }}
-            className="relative flex flex-row items-center text-xs justify-center w-16 h-5 font-bold rounded text-[var(--t0)]"
+            className={buttonBase}
             aria-label="Customise options"
           >
             {"Mixed"}

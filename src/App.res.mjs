@@ -451,7 +451,7 @@ function App(props) {
                       className: " border-l flex-1"
                     })
               ],
-              className: "flex flex-row h-dvh text-[var(--t10)]"
+              className: "flex flex-row h-dvh text-[var(--t9)]"
             });
 }
 

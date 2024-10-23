@@ -32,7 +32,6 @@ function statusStringShort(s) {
     case "NowUrgent" :
         return "Must Do";
     case "NowWillDo" :
-        return "Todo";
     case "NowIfTime" :
         return "If Time";
     case "FutureSoon" :
@@ -47,7 +46,7 @@ function statusStringShort(s) {
     case "ResolveScrap" :
         return "Scrap";
     case "Unsorted" :
-        return "-";
+        return "";
     
   }
 }
@@ -63,7 +62,6 @@ function statusString(s) {
     case "NowUrgent" :
         return "Now: Must Do";
     case "NowWillDo" :
-        return "Now: Todo";
     case "NowIfTime" :
         return "Now: If Time";
     case "FutureSoon" :
