@@ -6,6 +6,7 @@ import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as Tb from "react-icons/tb";
 import * as JsxRuntime from "react/jsx-runtime";
+import ReactTextareaAutosize from "react-textarea-autosize";
 
 function DisplayProject(props) {
   var setTodos = props.setTodos;
@@ -14,11 +15,13 @@ function DisplayProject(props) {
   var project = props.project;
   return JsxRuntime.jsxs("div", {
               children: [
-                JsxRuntime.jsx("input", {
-                      className: [" flex-1 bg-inherit text-[--t10] w-full outline-none \n           border-none px-2 py-1  focus:text-blue-500"].join(" "),
+                JsxRuntime.jsx(ReactTextareaAutosize, {
+                      className: [" flex-1 bg-inherit text-[--t10] w-full outline-none font-black tracking-tight focus:ring-0\n           border-none px-0 py-0 my-1 mx-2"].join(" "),
                       id: "id-display-title",
-                      placeholder: "Project Name",
-                      type: "text",
+                      style: {
+                        resize: "none"
+                      },
+                      placeholder: "Project",
                       value: project.name,
                       onChange: (function (e) {
                           updateProject(project.id, (function (p) {

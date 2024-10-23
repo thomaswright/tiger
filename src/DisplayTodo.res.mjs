@@ -7,6 +7,7 @@ import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as Tb from "react-icons/tb";
 import * as JsxRuntime from "react/jsx-runtime";
+import ReactTextareaAutosize from "react-textarea-autosize";
 
 function DisplayTodo(props) {
   var deleteTodo = props.deleteTodo;
@@ -22,11 +23,13 @@ function DisplayTodo(props) {
   return JsxRuntime.jsxs("div", {
               children: [
                 JsxRuntime.jsx("div", {
-                      children: JsxRuntime.jsx("input", {
-                            className: [" flex-1 bg-inherit text-[--t10] w-full outline-none \n           border-none px-2 py-1  focus:text-blue-500"].join(" "),
+                      children: JsxRuntime.jsx(ReactTextareaAutosize, {
+                            className: [" flex-1 bg-inherit text-[--t10] w-full outline-none \n          focus:ring-0\n          font-medium tracking-wide\n           border-none p-0 my-1 mx-2"].join(" "),
                             id: "id-display-title",
+                            style: {
+                              resize: "none"
+                            },
                             placeholder: "Todo",
-                            type: "text",
                             value: todo.text,
                             onKeyDown: (function (e) {
                                 if (e.key === "Escape") {

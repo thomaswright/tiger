@@ -11,14 +11,16 @@ let make = (
   ~setTodos: (string, array<todo> => array<todo>) => unit,
 ) => {
   <div>
-    <input
-      type_="text"
+    <Common.TextareaAutosize
+      style={{
+        resize: "none",
+      }}
       id="id-display-title"
       className={[
-        " flex-1 bg-inherit text-[--t10] w-full outline-none 
-           border-none px-2 py-1  focus:text-blue-500",
+        " flex-1 bg-inherit text-[--t10] w-full outline-none font-black tracking-tight focus:ring-0
+           border-none px-0 py-0 my-1 mx-2",
       ]->Array.join(" ")}
-      placeholder={"Project Name"}
+      placeholder={"Project"}
       value={project.name}
       onChange={e => {
         updateProject(project.id, p => {

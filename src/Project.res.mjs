@@ -321,14 +321,13 @@ function Project$Todo(props) {
                                       ref: Caml_option.some(inputRef),
                                       className: [
                                           Types.todoInputClass,
-                                          "mx-1 my-1.5 block text-xs font-medium tracking-wide w-full h-5 border-0 px-0 py-0 focus:ring-0 \n               leading-none bg-transparent text-[var(--t8)]"
+                                          "mx-1 my-1.5 block text-xs font-medium tracking-wide w-full h-5 border-0 px-0 py-0 focus:ring-0 \n                bg-transparent text-[var(--t8)]"
                                         ].join(" "),
                                       id: Types.getTodoInputId(todo.id),
                                       style: {
                                         resize: "none"
                                       },
                                       placeholder: "",
-                                      type: "text",
                                       value: todo.text,
                                       onKeyDown: onKeyDownInput,
                                       onFocus: (function (param) {
@@ -589,7 +588,6 @@ function Project(props) {
                                 resize: "none"
                               },
                               placeholder: "",
-                              type: "text",
                               value: project.name,
                               onKeyDown: onKeyDownInput,
                               onFocus: (function (param) {

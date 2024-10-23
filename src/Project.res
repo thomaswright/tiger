@@ -327,11 +327,10 @@ module Todo = {
           <Common.TextareaAutosize
             id={getTodoInputId(todo.id)}
             ref={ReactDOM.Ref.domRef(inputRef)}
-            type_="text"
             className={[
               todoInputClass,
               "mx-1 my-1.5 block text-xs font-medium tracking-wide w-full h-5 border-0 px-0 py-0 focus:ring-0 
-               leading-none bg-transparent text-[var(--t8)]",
+                bg-transparent text-[var(--t8)]",
             ]->Array.join(" ")}
             placeholder={""}
             style={{resize: "none"}}
@@ -540,7 +539,6 @@ let make = (
         id={getTodoInputId(project.id)}
         style={{resize: "none"}}
         ref={ReactDOM.Ref.domRef(inputRef)}
-        type_="text"
         className={[
           todoInputClass,
           "ml-3 my-1 block text-base font-black tracking-tight  w-full border-0 px-0 py-0 focus:ring-0 

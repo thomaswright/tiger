@@ -16,12 +16,16 @@ let make = (
 
   <div>
     <div>
-      <input
-        type_="text"
+      <Common.TextareaAutosize
+        style={{
+          resize: "none",
+        }}
         id="id-display-title"
         className={[
           " flex-1 bg-inherit text-[--t10] w-full outline-none 
-           border-none px-2 py-1  focus:text-blue-500",
+          focus:ring-0
+          font-medium tracking-wide
+           border-none p-0 my-1 mx-2",
         ]->Array.join(" ")}
         placeholder={"Todo"}
         value={todo.text}
