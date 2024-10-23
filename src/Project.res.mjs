@@ -401,11 +401,11 @@ function Project$Todo(props) {
                       ],
                       className: [
                           "group flex flex-row justify-start items-center h-full flex-1 pl-0.5 rounded-sm",
-                          stagedForDelete ? "outline-red-700" : "focus-within:outline-purple-500 group-focus:outline-blue-500",
+                          stagedForDelete ? "outline-red-700" : "focus-within:outline-purple-500 ",
                           stagedForDelete ? "bg-red-200 " : (
                               isChecked ? "bg-sky-50" : ""
                             ),
-                          isSelected ? "outline outline-2 -outline-offset-2 " : ""
+                          isSelected ? "outline outline-2 -outline-offset-2 outline-blue-500" : ""
                         ].join(" ")
                     })
               ],

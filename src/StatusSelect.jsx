@@ -88,6 +88,11 @@ const Dropdown = ({
               backgroundColor: statusColor(status),
               color: statusColorText(status),
             }}
+            onFocus={(e) => {
+              if (!isOpen) {
+                focusTodo();
+              }
+            }}
             className={buttonBase}
             aria-label="Customise options"
           >
@@ -132,7 +137,11 @@ const Dropdown = ({
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Portal>
-        <DropdownMenu.Content className="DropdownMenuContent" sideOffset={5}>
+        <DropdownMenu.Content
+          onEscapeKeyDown={(_) => focusTodo()}
+          className="DropdownMenuContent"
+          sideOffset={5}
+        >
           <div className="p-1.5 pb-1">
             <div className="grid grid-cols-2 gap-1 ">
               {item("Unsorted")}
