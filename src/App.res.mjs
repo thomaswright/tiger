@@ -227,12 +227,22 @@ function App(props) {
   var itemsToMove = match$8[0];
   var match$9 = React$1.useAutoAnimate();
   var aaEnable = match$9[1];
+  var setAaParent = match$9[0];
+  var aaParentRef = React.useRef(null);
   var clickDelayTimeout = React.useRef(undefined);
   var match$10 = React.useState(function () {
         
       });
   var setLastRelative = match$10[1];
   var lastRelative = match$10[0];
+  React.useEffect((function () {
+          var v = aaParentRef.current;
+          if (v === null || v === undefined) {
+            v === null;
+          } else {
+            setAaParent(v);
+          }
+        }), [aaParentRef]);
   var itemToMoveHandleMouseDown = function (itemId, param) {
     var timeoutId = setTimeout((function () {
             setItemsToMove(function (s) {
@@ -242,7 +252,7 @@ function App(props) {
           }), 200);
     clickDelayTimeout.current = Caml_option.some(timeoutId);
   };
-  var itemToMoveHandleMouseEnter = function (itemId, param) {
+  var itemToMoveHandleMouseEnter = function (isProject, itemId, param) {
     var isInMoveGroup = Belt_SetString.has(itemsToMove, itemId);
     if (isInMoveGroup) {
       return setLastRelative(function (param) {
@@ -261,21 +271,82 @@ function App(props) {
                                         }
                                       }));
                         }));
-                  return projects.map(function (p) {
-                              return {
-                                      id: p.id,
-                                      name: p.name,
-                                      isActive: p.isActive,
-                                      todos: Belt_Array.concatMany(p.todos.filter(function (t) {
-                                                  return !Belt_SetString.has(itemsToMove, t.id);
-                                                }).map(function (t) {
-                                                if (t.id === itemId) {
-                                                  return todosToMove.concat([t]);
-                                                } else {
-                                                  return [t];
-                                                }
-                                              }))
-                                    };
+                  var itemIndex = Core__Option.mapOr(Caml_option.nullable_to_opt(aaParentRef.current), 0, (function (containerEl) {
+                          return Array.prototype.slice.call(containerEl.children).findIndex(function (el) {
+                                      return Core__Option.mapOr(Types.getIdFromId(el.id), false, (function (id) {
+                                                    return id === itemId;
+                                                  }));
+                                    });
+                        }));
+                  var moveIndex = Core__Option.mapOr(Caml_option.nullable_to_opt(aaParentRef.current), 0, (function (containerEl) {
+                          return Array.prototype.slice.call(containerEl.children).findIndex(function (el) {
+                                      return Core__Option.mapOr(Types.getIdFromId(el.id), false, (function (id) {
+                                                    return Belt_SetString.has(itemsToMove, id);
+                                                  }));
+                                    });
+                        }));
+                  var fromBelow = itemIndex < moveIndex;
+                  var filterOutTodosToMove = function (p) {
+                    return {
+                            id: p.id,
+                            name: p.name,
+                            isActive: p.isActive,
+                            todos: p.todos.filter(function (t) {
+                                  return !Belt_SetString.has(itemsToMove, t.id);
+                                })
+                          };
+                  };
+                  if (!isProject) {
+                    return projects.map(function (p) {
+                                var p$1 = filterOutTodosToMove(p);
+                                return {
+                                        id: p$1.id,
+                                        name: p$1.name,
+                                        isActive: p$1.isActive,
+                                        todos: Belt_Array.concatMany(p$1.todos.map(function (t) {
+                                                  if (t.id === itemId) {
+                                                    if (fromBelow) {
+                                                      return todosToMove.concat([t]);
+                                                    } else {
+                                                      return [t].concat(todosToMove);
+                                                    }
+                                                  } else {
+                                                    return [t];
+                                                  }
+                                                }))
+                                      };
+                              });
+                  }
+                  if (!fromBelow) {
+                    return projects.map(function (p) {
+                                var p$1 = filterOutTodosToMove(p);
+                                if (p$1.id === itemId) {
+                                  return {
+                                          id: p$1.id,
+                                          name: p$1.name,
+                                          isActive: p$1.isActive,
+                                          todos: todosToMove.concat(p$1.todos)
+                                        };
+                                } else {
+                                  return p$1;
+                                }
+                              });
+                  }
+                  var projectIndex = projects.findIndex(function (p) {
+                        return p.id === itemId;
+                      });
+                  return projects.map(function (p, i) {
+                              var p$1 = filterOutTodosToMove(p);
+                              if (i === (projectIndex - 1 | 0)) {
+                                return {
+                                        id: p$1.id,
+                                        name: p$1.name,
+                                        isActive: p$1.isActive,
+                                        todos: p$1.todos.concat(todosToMove)
+                                      };
+                              } else {
+                                return p$1;
+                              }
                             });
                 });
     } else {
@@ -511,7 +582,7 @@ function App(props) {
                                                 itemToMoveHandleMouseEnter: itemToMoveHandleMouseEnter
                                               }, Types.getProjectId(project.id));
                                   }),
-                              ref: Caml_option.some(match$9[0]),
+                              ref: Caml_option.some(aaParentRef),
                               className: "pb-20"
                             })
                       ],

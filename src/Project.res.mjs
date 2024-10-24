@@ -40,6 +40,11 @@ function Project$Todo(props) {
       });
   var setStagedForDelete = match$1[1];
   var stagedForDelete = match$1[0];
+  var focusContainer = function () {
+    Common.mapNullable(containerRef.current, (function (dom) {
+            dom.focus();
+          }));
+  };
   var indentation = function (e) {
     if (e.key === "Tab") {
       e.preventDefault();
@@ -227,9 +232,7 @@ function Project$Todo(props) {
     if (isSelected) {
       if (e.key === "Escape") {
         e.stopPropagation();
-        Common.mapNullable(containerRef.current, (function (dom) {
-                dom.focus();
-              }));
+        focusContainer();
       }
       return Common.mapNullable(inputRef.current, (function (dom) {
                     indentation(e);
@@ -239,9 +242,7 @@ function Project$Todo(props) {
                       e.stopPropagation();
                       if (cursorPosition === 0) {
                         e.preventDefault();
-                        Common.mapNullable(containerRef.current, (function (dom) {
-                                dom.focus();
-                              }));
+                        focusContainer();
                       }
                       
                     }
@@ -249,9 +250,7 @@ function Project$Todo(props) {
                       e.stopPropagation();
                       if (cursorPosition === inputValueLength) {
                         e.preventDefault();
-                        Common.mapNullable(containerRef.current, (function (dom) {
-                                dom.focus();
-                              }));
+                        focusContainer();
                       }
                       
                     }
@@ -286,6 +285,12 @@ function Project$Todo(props) {
                     }),
                 JsxRuntime.jsxs("div", {
                       children: [
+                        JsxRuntime.jsx("div", {
+                              className: "w-4 h-4 bg-black",
+                              onMouseDown: (function (e) {
+                                  itemToMoveHandleMouseDown(todo.id, e);
+                                })
+                            }),
                         JsxRuntime.jsx(Common.StatusSelect.make, {
                               status: todo.status,
                               setStatus: (function (newStatus) {
@@ -443,11 +448,8 @@ function Project$Todo(props) {
                         return false;
                       });
                 }),
-              onMouseDown: (function (e) {
-                  itemToMoveHandleMouseDown(todo.id, e);
-                }),
               onMouseEnter: (function (e) {
-                  itemToMoveHandleMouseEnter(todo.id, e);
+                  itemToMoveHandleMouseEnter(false, todo.id, e);
                 })
             });
 }
@@ -688,6 +690,9 @@ function Project(props) {
                           setSelectedElement(function (param) {
                                 
                               });
+                        }),
+                      onMouseEnter: (function (e) {
+                          itemToMoveHandleMouseEnter(true, project.id, e);
                         })
                     }),
                 props.todos.map(function (todo) {

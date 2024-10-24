@@ -202,10 +202,20 @@ let make = () => {
   let (focusClassNext, setFocusClassNext) = React.useState(_ => None)
   let (focusIdNext, setFocusIdNext) = React.useState(_ => None)
   let (itemsToMove, setItemsToMove) = React.useState(_ => SSet.empty)
-  let (aaParent, aaEnable) = Common.useAutoAnimate()
+  let (setAaParent, aaEnable) = Common.useAutoAnimate()
+  let aaParentRef: React.ref<RescriptCore.Nullable.t<Dom.element>> = React.useRef(Nullable.null)
 
   let clickDelayTimeout = React.useRef(None)
   let (lastRelative, setLastRelative) = React.useState(() => None)
+
+  React.useEffect1(() => {
+    switch aaParentRef.current {
+    | Null | Undefined => ()
+    | Value(v) => setAaParent(v)
+    }
+
+    None
+  }, [aaParentRef])
 
   let itemToMoveHandleMouseDown = (itemId, _) => {
     let timeoutId = setTimeout(() => {
@@ -216,7 +226,7 @@ let make = () => {
     clickDelayTimeout.current = timeoutId->Some
   }
 
-  let itemToMoveHandleMouseEnter = (itemId, _) => {
+  let itemToMoveHandleMouseEnter = (isProject, itemId, _) => {
     let isInMoveGroup = itemsToMove->SSet.has(itemId)
     if isInMoveGroup {
       setLastRelative(_ => None)
@@ -231,21 +241,112 @@ let make = () => {
           )
         })
 
-        projects->Array.map(p => {
+        let itemIndex =
+          aaParentRef.current
+          ->Nullable.toOption
+          ->Option.mapOr(0, containerEl => {
+            containerEl
+            ->Obj.magic
+            ->HtmlElement.children
+            ->HtmlCollection.toArray
+            ->Array.findIndex(
+              el => {
+                el
+                ->Obj.magic
+                ->HtmlElement.id
+                ->getIdFromId
+                ->Option.mapOr(false, id => id == itemId)
+              },
+            )
+          })
+
+        let moveIndex =
+          aaParentRef.current
+          ->Nullable.toOption
+          ->Option.mapOr(0, containerEl => {
+            containerEl
+            ->Obj.magic
+            ->HtmlElement.children
+            ->HtmlCollection.toArray
+            ->Array.findIndex(
+              el => {
+                el
+                ->Obj.magic
+                ->HtmlElement.id
+                ->getIdFromId
+                ->Option.mapOr(
+                  false,
+                  id => {
+                    itemsToMove->SSet.has(id)
+                  },
+                )
+              },
+            )
+          })
+
+        // Console.log2(itemIndex, moveIndex)
+
+        let fromBelow = itemIndex < moveIndex
+
+        let filterOutTodosToMove = p => {
           ...p,
-          todos: p.todos
-          ->Array.filter(t => !(itemsToMove->SSet.has(t.id)))
-          ->Array.map(
-            t => {
-              if t.id == itemId {
-                todosToMove->Array.concat([t])
-              } else {
-                [t]
+          todos: p.todos->Array.filter(t => !(itemsToMove->SSet.has(t.id))),
+        }
+
+        if isProject {
+          if fromBelow {
+            let projectIndex = projects->Array.findIndex(p => p.id == itemId)
+            projects->Array.mapWithIndex((p, i) => {
+              p
+              ->filterOutTodosToMove
+              ->{
+                p => {
+                  i == projectIndex - 1
+                    ? {
+                        ...p,
+                        todos: Array.concat(p.todos, todosToMove),
+                      }
+                    : p
+                }
               }
-            },
+            })
+          } else {
+            projects->Array.map(p =>
+              p
+              ->filterOutTodosToMove
+              ->{
+                p =>
+                  p.id == itemId
+                    ? {
+                        ...p,
+                        todos: Array.concat(todosToMove, p.todos),
+                      }
+                    : p
+              }
+            )
+          }
+        } else {
+          projects->Array.map(p =>
+            p
+            ->filterOutTodosToMove
+            ->{
+              p => {
+                ...p,
+                todos: p.todos
+                ->Array.map(
+                  t => {
+                    if t.id == itemId {
+                      fromBelow ? Array.concat(todosToMove, [t]) : Array.concat([t], todosToMove)
+                    } else {
+                      [t]
+                    }
+                  },
+                )
+                ->Belt.Array.concatMany,
+              }
+            }
           )
-          ->Belt.Array.concatMany,
-        })
+        }
       })
     } else {
       ()
@@ -369,7 +470,7 @@ let make = () => {
           {"Project"->React.string}
         </button>
       </div>
-      <div className="pb-20" ref={ReactDOM.Ref.domRef(aaParent)}>
+      <div className="pb-20" ref={ReactDOM.Ref.domRef(aaParentRef)}>
         {projects
         ->Array.filter(project => projectsTab == Active ? project.isActive : true)
         ->Array.map(project => {

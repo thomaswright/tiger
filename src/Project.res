@@ -29,6 +29,23 @@ module Todo = {
     let containerRef = React.useRef(Nullable.null)
 
     let (stagedForDelete, setStagedForDelete) = React.useState(_ => false)
+    let focusContainer = () => {
+      containerRef.current->mapNullable(dom => {
+        dom->Obj.magic->HtmlElement.focus
+      })
+    }
+    // let clickDelayTimeout = React.useRef(None)
+    // let onCheckboxMouseDown = e => {
+    //   let timeoutId = setTimeout(() => {
+    //     focusContainer()
+    //     itemToMoveHandleMouseDown(todo.id, e)
+    //   }, 500)
+    //   clickDelayTimeout.current = timeoutId->Some
+    // }
+
+    // let onCheckboxMouseUp = _ => {
+    //   clickDelayTimeout.current->Option.mapOr((), timeoutId => clearTimeout(timeoutId))
+    // }
 
     let indentation = e => {
       if e->ReactEvent.Keyboard.key == "Tab" {
@@ -126,40 +143,41 @@ module Todo = {
     }
 
     let onKeyDownContainer = e => {
+      open ReactEvent.Keyboard
       if (
         isSelected &&
         containerRef.current->Nullable.toOption == Webapi.Dom.document->Document.activeElement
       ) {
         containerRef.current->mapNullable(dom => {
           indentation(e)
-          if e->ReactEvent.Keyboard.key == "s" {
-            e->ReactEvent.Keyboard.preventDefault
+          if e->key == "s" {
+            e->preventDefault
             setStatusSelectIsOpen(_ => true)
           }
 
-          if e->ReactEvent.Keyboard.key == "ArrowUp" {
-            e->ReactEvent.Keyboard.preventDefault
+          if e->key == "ArrowUp" {
+            e->preventDefault
             Common.focusPreviousClass(listItemClass, dom)
           }
 
-          if e->ReactEvent.Keyboard.key == "ArrowDown" {
-            e->ReactEvent.Keyboard.preventDefault
+          if e->key == "ArrowDown" {
+            e->preventDefault
             Common.focusNextClass(listItemClass, dom)
           }
 
-          if e->ReactEvent.Keyboard.key == "Backspace" && e->ReactEvent.Keyboard.metaKey {
+          if e->key == "Backspace" && e->metaKey {
             setTodos(project.id, todos => todos->Array.filter(t => t.id != todo.id))
             containerRef.current->mapNullable(containerEl => {
               Common.focusPreviousClass(listItemClass, containerEl)
             })
           }
 
-          if e->ReactEvent.Keyboard.key == "Enter" && e->ReactEvent.Keyboard.metaKey {
+          if e->key == "Enter" && e->metaKey {
             newTodoAfter(Some(todo.id), todo.hasChildren ? Some(todo.id) : todo.parentTodo)
           }
 
-          if e->ReactEvent.Keyboard.key == "Enter" {
-            e->ReactEvent.Keyboard.preventDefault
+          if e->key == "Enter" {
+            e->preventDefault
             inputRef.current->mapNullable(inputEl => {
               let inputEl = inputEl->Obj.magic
               inputEl->HtmlElement.focus
@@ -167,8 +185,8 @@ module Todo = {
             })
           }
 
-          if e->ReactEvent.Keyboard.key == "Escape" {
-            // e->ReactEvent.Keyboard.preventDefault // ?
+          if e->key == "Escape" {
+            // e->preventDefault // ?
             setSelectedElement(_ => None)
             setDisplayElement(_ => None)
 
@@ -179,15 +197,16 @@ module Todo = {
     }
 
     let onKeyDownInput = e => {
+      open ReactEvent.Keyboard
+
       setStagedForDelete(_ => false)
 
       if isSelected {
-        if e->ReactEvent.Keyboard.key == "Escape" {
-          // e->ReactEvent.Keyboard.preventDefault // ?
-          e->ReactEvent.Keyboard.stopPropagation
-          containerRef.current->mapNullable(dom => {
-            dom->Obj.magic->HtmlElement.focus
-          })
+        if e->key == "Escape" {
+          // e->preventDefault // ?
+          e->stopPropagation
+
+          focusContainer()
         }
 
         inputRef.current->mapNullable(dom => {
@@ -196,29 +215,25 @@ module Todo = {
           let cursorPosition = dom->Obj.magic->HtmlInputElement.selectionStart->Option.getOr(0)
           let inputValueLength = dom->Obj.magic->HtmlInputElement.value->String.length
 
-          if e->ReactEvent.Keyboard.key == "ArrowUp" {
-            e->ReactEvent.Keyboard.stopPropagation
+          if e->key == "ArrowUp" {
+            e->stopPropagation
             if cursorPosition == 0 {
-              e->ReactEvent.Keyboard.preventDefault
+              e->preventDefault
               // Common.focusPreviousClass(todoInputClass, dom)
-              containerRef.current->mapNullable(dom => {
-                dom->Obj.magic->HtmlElement.focus
-              })
+              focusContainer()
             }
           }
 
-          if e->ReactEvent.Keyboard.key == "ArrowDown" {
-            e->ReactEvent.Keyboard.stopPropagation
+          if e->key == "ArrowDown" {
+            e->stopPropagation
             if cursorPosition == inputValueLength {
-              e->ReactEvent.Keyboard.preventDefault
+              e->preventDefault
               // Common.focusNextClass(todoInputClass, dom)
-              containerRef.current->mapNullable(dom => {
-                dom->Obj.magic->HtmlElement.focus
-              })
+              focusContainer()
             }
           }
 
-          if e->ReactEvent.Keyboard.key == "Backspace" && inputValueLength == 0 {
+          if e->key == "Backspace" && inputValueLength == 0 {
             if stagedForDelete {
               deleteTodo(project.id, todo)
 
@@ -230,9 +245,9 @@ module Todo = {
             }
           }
 
-          if e->ReactEvent.Keyboard.key == "Enter" && cursorPosition == inputValueLength {
-            e->ReactEvent.Keyboard.preventDefault
-            e->ReactEvent.Keyboard.stopPropagation
+          if e->key == "Enter" && cursorPosition == inputValueLength {
+            e->preventDefault
+            e->stopPropagation
             newTodoAfter(Some(todo.id), todo.hasChildren ? Some(todo.id) : todo.parentTodo)
           }
         })
@@ -252,8 +267,7 @@ module Todo = {
         setDisplayElement(_ => Some(Todo(todo.id)))
       }}
       onKeyDown={onKeyDownContainer}
-      onMouseDown={e => itemToMoveHandleMouseDown(todo.id, e)}
-      onMouseEnter={e => itemToMoveHandleMouseEnter(todo.id, e)}
+      onMouseEnter={e => itemToMoveHandleMouseEnter(false, todo.id, e)}
       className={[
         listItemClass,
         "group flex flex-row justify-start items-center outline-none  pl-1",
@@ -271,6 +285,9 @@ module Todo = {
           isSelected ? "outline outline-2 -outline-offset-2 " : "",
           isDisplayElement && !isSelected ? "bg-sky-200" : "",
         ]->Array.join(" ")}>
+        <div
+          onMouseDown={e => itemToMoveHandleMouseDown(todo.id, e)} className={"w-4 h-4 bg-black"}
+        />
         <Common.StatusSelect
           isOpen={statusSelectIsOpen}
           isPinned={todo.box == Pinned}
@@ -328,6 +345,8 @@ module Todo = {
               setDisplayElement(_ => Some(Todo(todo.id)))
             }}
             onKeyDown={onKeyDownInput}
+            // onMouseDown={onInputMouseDown}
+            // onMouseUp={onInputMouseUp}
             onChange={e => {
               updateTodo(project.id, todo.id, t => {
                 ...t,
@@ -520,6 +539,7 @@ let make = (
         setSelectedElement(_ => Some(Project(project.id)))
         setDisplayElement(_ => Some(Project(project.id)))
       }}
+      onMouseEnter={e => itemToMoveHandleMouseEnter(true, project.id, e)}
       className={[
         listItemClass,
         "group  flex flex-row justify-between items-center bg-[var(--t0)] px-1 text-[var(--t9)]

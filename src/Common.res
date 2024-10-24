@@ -16,8 +16,7 @@ external focusNextClass: (string, Dom.element) => unit = "focusNextClass"
 
 @module("@formkit/auto-animate") external autoAnimate: Dom.element => unit = "default"
 @module("@formkit/auto-animate/react")
-external useAutoAnimate: unit => (React.ref<RescriptCore.Nullable.t<'a>>, bool => unit) =
-  "useAutoAnimate"
+external useAutoAnimate: unit => (Dom.element => unit, bool => unit) = "useAutoAnimate"
 
 module StatusSelect = {
   @react.component @module("./StatusSelect.jsx")

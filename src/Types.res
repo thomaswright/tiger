@@ -152,5 +152,21 @@ let getTodoInputId = s => "todo-input-" ++ s
 let getProjectId = s => "project-" ++ s
 let getProjectInputId = s => "project-input-" ++ s
 
+let getIdFromId = s => {
+  if s->String.includes("todo-") {
+    s
+    ->String.split("todo-")
+    ->Array.get(1)
+    ->Option.map(v => v)
+  } else if s->String.includes("project-") {
+    s
+    ->String.split("project-")
+    ->Array.get(1)
+    ->Option.map(v => v)
+  } else {
+    None
+  }
+}
+
 let listItemClass = "class-list-item"
 let todoInputClass = "class-list-todo-input"
