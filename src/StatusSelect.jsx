@@ -16,7 +16,7 @@ import {
 } from "react-icons/tb";
 
 let buttonBase =
-  "relative flex flex-row items-center justify-center  text-2xs font-bold  tracking-wide w-16 h-5  rounded ";
+  "relative flex flex-row items-center justify-center text-2xs font-bold  tracking-wide w-16 h-5  rounded ";
 
 const Dropdown = ({
   status,
@@ -85,6 +85,9 @@ const Dropdown = ({
             style={{
               // backgroundColor: statusColor(status),
               // color: "var(--t10)",
+              borderColor: `oklch(from ${statusColor(
+                status
+              )} calc(l - 0.05) c h)`,
               backgroundColor: statusColor(status),
               color: statusColorText(status),
             }}
