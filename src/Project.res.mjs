@@ -21,6 +21,7 @@ function Project$Todo(props) {
   var setFocusIdNext = props.setFocusIdNext;
   var setTodos = props.setTodos;
   var setDisplayElement = props.setDisplayElement;
+  var isDisplayElement = props.isDisplayElement;
   var setSelectedElement = props.setSelectedElement;
   var isSelected = props.isSelected;
   var updateTodo = props.updateTodo;
@@ -323,7 +324,7 @@ function Project$Todo(props) {
                             }),
                         JsxRuntime.jsxs("div", {
                               children: [
-                                isSelected ? null : JsxRuntime.jsx("div", {
+                                isSelected || isDisplayElement ? null : JsxRuntime.jsx("div", {
                                         className: "h-px w-full absolute bg-[var(--t2)] -bottom-0"
                                       }),
                                 JsxRuntime.jsx(ReactTextareaAutosize, {
@@ -405,7 +406,8 @@ function Project$Todo(props) {
                           stagedForDelete ? "bg-red-200 " : (
                               isChecked ? "bg-sky-50" : ""
                             ),
-                          isSelected ? "outline outline-2 -outline-offset-2 outline-blue-500" : ""
+                          isSelected ? "outline outline-2 -outline-offset-2 outline-blue-500" : "",
+                          isDisplayElement && !isSelected ? "bg-sky-200" : ""
                         ].join(" ")
                     })
               ],
@@ -691,6 +693,10 @@ function Project(props) {
                                                   }),
                                               setSelectedElement: setSelectedElement,
                                               displayElement: displayElement,
+                                              isDisplayElement: Caml_obj.equal(displayElement, {
+                                                    TAG: "Todo",
+                                                    _0: todo.id
+                                                  }),
                                               setDisplayElement: setDisplayElement,
                                               setTodos: setTodos,
                                               setFocusIdNext: setFocusIdNext,

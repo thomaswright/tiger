@@ -11,6 +11,7 @@ module Todo = {
     ~isSelected,
     ~setSelectedElement,
     ~displayElement as _,
+    ~isDisplayElement,
     ~setDisplayElement,
     ~setTodos: (string, array<Types.todo> => array<Types.todo>) => unit,
     ~setFocusIdNext,
@@ -264,6 +265,7 @@ module Todo = {
           stagedForDelete ? "outline-red-700" : "focus-within:outline-purple-500 ",
           stagedForDelete ? "bg-red-200 " : isChecked ? "bg-sky-50" : "",
           isSelected ? "outline outline-2 -outline-offset-2 outline-blue-500" : "",
+          isDisplayElement && !isSelected ? "bg-sky-200" : "",
         ]->Array.join(" ")}>
         <Common.StatusSelect
           isOpen={statusSelectIsOpen}
@@ -302,7 +304,7 @@ module Todo = {
           // } else {
           //   React.null
           // }}
-          {isSelected
+          {isSelected || isDisplayElement
             ? React.null
             : <div className="h-px w-full absolute bg-[var(--t2)] -bottom-0" />}
           <Common.TextareaAutosize
@@ -573,6 +575,7 @@ let make = (
             updateTodo
             showArchive
             isSelected={selectedElement == Some(Todo(todo.id))}
+            isDisplayElement={displayElement == Some(Todo(todo.id))}
             setSelectedElement
             displayElement
             setDisplayElement
