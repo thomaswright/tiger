@@ -64,7 +64,7 @@ let make = (
     </div>
     <div className="p-2">
       <button
-        className="rounded bg-[var(--t2)] px-2 text-xs h-fit flex-none"
+        className="rounded bg-[var(--t2)] px-2 py-1 text-xs h-fit flex-none"
         onClick={_ =>
           setTodos(project.id, todos => {
             todos->Array.map(t => {

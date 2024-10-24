@@ -294,7 +294,7 @@ let make = () => {
           {"Project"->React.string}
         </button>
       </div>
-      <div>
+      <div className="pb-20">
         {projects
         ->Array.filter(project => projectsTab == Active ? project.isActive : true)
         ->Array.map(project => {

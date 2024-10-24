@@ -422,7 +422,8 @@ function App(props) {
                                                 setChecked: setChecked,
                                                 deleteTodo: deleteTodo
                                               }, Types.getProjectId(project.id));
-                                  })
+                                  }),
+                              className: "pb-20"
                             })
                       ],
                       className: "flex-1 overflow-y-scroll"

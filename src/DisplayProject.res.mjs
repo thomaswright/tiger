@@ -81,7 +81,7 @@ function DisplayProject(props) {
                 JsxRuntime.jsx("div", {
                       children: JsxRuntime.jsx("button", {
                             children: "Archive All Resolved if not Pinned",
-                            className: "rounded bg-[var(--t2)] px-2 text-xs h-fit flex-none",
+                            className: "rounded bg-[var(--t2)] px-2 py-1 text-xs h-fit flex-none",
                             onClick: (function (param) {
                                 setTodos(project.id, (function (todos) {
                                         return todos.map(function (t) {

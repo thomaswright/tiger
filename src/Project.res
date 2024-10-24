@@ -345,7 +345,7 @@ module Todo = {
             checked={isChecked}
             type_={"checkbox"}
             className={[
-              "absolute right-0 border-[var(--t3)]
+              "absolute right-0.5 border-[var(--t3)]
              rounded mx-1 text-blue-400 h-3.5 w-3.5 focus:ring-offset-0 focus:ring-blue-500",
               isChecked ? "" : " hidden group-hover:block",
             ]->Array.join(" ")}
