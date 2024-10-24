@@ -198,6 +198,17 @@ let make = () => {
   let (focusClassNext, setFocusClassNext) = React.useState(_ => None)
   let (focusIdNext, setFocusIdNext) = React.useState(_ => None)
 
+  let autoAnimateParent = React.useRef(Nullable.null)
+
+  React.useEffect1(() => {
+    switch autoAnimateParent.current {
+    | Null | Undefined => ()
+    | Value(v) => Common.autoAnimate(v)
+    }
+
+    None
+  }, [autoAnimateParent])
+
   let updateProject = React.useCallback0((id, f) => {
     setProjects(v => v->Array.map(project => project.id == id ? f(project) : project))
   })
@@ -294,7 +305,7 @@ let make = () => {
           {"Project"->React.string}
         </button>
       </div>
-      <div className="pb-20">
+      <div className="pb-20" ref={ReactDOM.Ref.domRef(autoAnimateParent)}>
         {projects
         ->Array.filter(project => projectsTab == Active ? project.isActive : true)
         ->Array.map(project => {

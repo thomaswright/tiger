@@ -14,6 +14,8 @@ external focusNextClass: (string, Dom.element) => unit = "focusNextClass"
 
 @module("uuid") external uuid: unit => string = "v4"
 
+@module("@formkit/auto-animate") external autoAnimate: Dom.element => unit = "default"
+
 module StatusSelect = {
   @react.component @module("./StatusSelect.jsx")
   external make: (

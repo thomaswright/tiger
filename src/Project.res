@@ -503,7 +503,7 @@ let make = (
     }
   }
 
-  <div className="">
+  <React.Fragment>
     <div
       id={getProjectId(project.id)}
       tabIndex={0}
@@ -563,33 +563,29 @@ let make = (
         //   : <span> {"closed"->React.string} </span>}
       </button>
     </div>
-    <div>
-      <div className="flex flex-col pb-4">
-        {todos
-        // ->Array.toSorted((a, b) => a.status->statusToFloat -. b.status->statusToFloat)
-        ->Array.map(todo =>
-          <Todo
-            key={getTodoId(todo.id)}
-            project
-            todo
-            updateTodo
-            showArchive
-            isSelected={selectedElement == Some(Todo(todo.id))}
-            isDisplayElement={displayElement == Some(Todo(todo.id))}
-            setSelectedElement
-            displayElement
-            setDisplayElement
-            setTodos
-            setFocusIdNext
-            newTodoAfter
-            getTodos
-            setChecked
-            deleteTodo
-            isChecked={checked->Array.includes(todo.id)}
-          />
-        )
-        ->React.array}
-      </div>
-    </div>
-  </div>
+    {todos
+    // ->Array.toSorted((a, b) => a.status->statusToFloat -. b.status->statusToFloat)
+    ->Array.map(todo =>
+      <Todo
+        key={getTodoId(todo.id)}
+        project
+        todo
+        updateTodo
+        showArchive
+        isSelected={selectedElement == Some(Todo(todo.id))}
+        isDisplayElement={displayElement == Some(Todo(todo.id))}
+        setSelectedElement
+        displayElement
+        setDisplayElement
+        setTodos
+        setFocusIdNext
+        newTodoAfter
+        getTodos
+        setChecked
+        deleteTodo
+        isChecked={checked->Array.includes(todo.id)}
+      />
+    )
+    ->React.array}
+  </React.Fragment>
 }

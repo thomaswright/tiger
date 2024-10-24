@@ -17,6 +17,7 @@ import * as Tb from "react-icons/tb";
 import * as Caml_splice_call from "rescript/lib/es6/caml_splice_call.js";
 import * as JsxRuntime from "react/jsx-runtime";
 import TigerSvg from "./assets/tiger.svg";
+import AutoAnimate from "@formkit/auto-animate";
 
 var defaultTodos = [
   {
@@ -217,6 +218,15 @@ function App(props) {
       });
   var setFocusIdNext = match$7[1];
   var focusIdNext = match$7[0];
+  var autoAnimateParent = React.useRef(null);
+  React.useEffect((function () {
+          var v = autoAnimateParent.current;
+          if (v === null || v === undefined) {
+            v === null;
+          } else {
+            AutoAnimate(v);
+          }
+        }), [autoAnimateParent]);
   var updateProject = React.useCallback((function (id, f) {
           setProjects(function (v) {
                 return v.map(function (project) {
@@ -423,6 +433,7 @@ function App(props) {
                                                 deleteTodo: deleteTodo
                                               }, Types.getProjectId(project.id));
                                   }),
+                              ref: Caml_option.some(autoAnimateParent),
                               className: "pb-20"
                             })
                       ],

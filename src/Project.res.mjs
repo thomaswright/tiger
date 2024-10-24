@@ -584,7 +584,7 @@ function Project(props) {
     }
     
   };
-  return JsxRuntime.jsxs("div", {
+  return JsxRuntime.jsxs(React.Fragment, {
               children: [
                 JsxRuntime.jsxs("div", {
                       children: [
@@ -680,39 +680,33 @@ function Project(props) {
                               });
                         })
                     }),
-                JsxRuntime.jsx("div", {
-                      children: JsxRuntime.jsx("div", {
-                            children: props.todos.map(function (todo) {
-                                  return JsxRuntime.jsx(Project$Todo, {
-                                              project: project,
-                                              todo: todo,
-                                              updateTodo: updateTodo,
-                                              isSelected: Caml_obj.equal(selectedElement, {
-                                                    TAG: "Todo",
-                                                    _0: todo.id
-                                                  }),
-                                              setSelectedElement: setSelectedElement,
-                                              displayElement: displayElement,
-                                              isDisplayElement: Caml_obj.equal(displayElement, {
-                                                    TAG: "Todo",
-                                                    _0: todo.id
-                                                  }),
-                                              setDisplayElement: setDisplayElement,
-                                              setTodos: setTodos,
-                                              setFocusIdNext: setFocusIdNext,
-                                              newTodoAfter: newTodoAfter,
-                                              getTodos: getTodos,
-                                              isChecked: checked.includes(todo.id),
-                                              setChecked: setChecked,
-                                              deleteTodo: deleteTodo,
-                                              showArchive: showArchive
-                                            }, Types.getTodoId(todo.id));
-                                }),
-                            className: "flex flex-col pb-4"
-                          })
+                props.todos.map(function (todo) {
+                      return JsxRuntime.jsx(Project$Todo, {
+                                  project: project,
+                                  todo: todo,
+                                  updateTodo: updateTodo,
+                                  isSelected: Caml_obj.equal(selectedElement, {
+                                        TAG: "Todo",
+                                        _0: todo.id
+                                      }),
+                                  setSelectedElement: setSelectedElement,
+                                  displayElement: displayElement,
+                                  isDisplayElement: Caml_obj.equal(displayElement, {
+                                        TAG: "Todo",
+                                        _0: todo.id
+                                      }),
+                                  setDisplayElement: setDisplayElement,
+                                  setTodos: setTodos,
+                                  setFocusIdNext: setFocusIdNext,
+                                  newTodoAfter: newTodoAfter,
+                                  getTodos: getTodos,
+                                  isChecked: checked.includes(todo.id),
+                                  setChecked: setChecked,
+                                  deleteTodo: deleteTodo,
+                                  showArchive: showArchive
+                                }, Types.getTodoId(todo.id));
                     })
-              ],
-              className: ""
+              ]
             });
 }
 
