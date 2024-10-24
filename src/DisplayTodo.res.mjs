@@ -24,7 +24,7 @@ function DisplayTodo(props) {
               children: [
                 JsxRuntime.jsx("div", {
                       children: JsxRuntime.jsx(ReactTextareaAutosize, {
-                            className: [" flex-1 bg-inherit text-[--t10] w-full outline-none \n          focus:ring-0\n          font-medium \n           border-none p-0 "].join(" "),
+                            className: ["text-lg flex-1 bg-inherit text-[--t10] w-full outline-none \n          focus:ring-0\n          font-medium \n           border-none p-0 "].join(" "),
                             id: "id-display-title",
                             style: {
                               resize: "none"

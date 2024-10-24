@@ -22,7 +22,7 @@ let make = (
         }}
         id="id-display-title"
         className={[
-          " flex-1 bg-inherit text-[--t10] w-full outline-none 
+          "text-lg flex-1 bg-inherit text-[--t10] w-full outline-none 
           focus:ring-0
           font-medium 
            border-none p-0 ",
