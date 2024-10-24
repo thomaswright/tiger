@@ -21,6 +21,8 @@ module Todo = {
     ~setChecked,
     ~deleteTodo,
     ~showArchive as _,
+    ~itemToMoveHandleMouseDown,
+    ~itemToMoveHandleMouseEnter,
   ) => {
     let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
     let inputRef = React.useRef(Nullable.null)
@@ -250,6 +252,8 @@ module Todo = {
         setDisplayElement(_ => Some(Todo(todo.id)))
       }}
       onKeyDown={onKeyDownContainer}
+      onMouseDown={e => itemToMoveHandleMouseDown(todo.id, e)}
+      onMouseEnter={e => itemToMoveHandleMouseEnter(todo.id, e)}
       className={[
         listItemClass,
         "group flex flex-row justify-start items-center outline-none  pl-1",
@@ -376,6 +380,8 @@ let make = (
   ~checked,
   ~setChecked,
   ~deleteTodo,
+  ~itemToMoveHandleMouseDown,
+  ~itemToMoveHandleMouseEnter,
 ) => {
   let projectRef = React.useRef(Nullable.null)
   let inputRef = React.useRef(Nullable.null)
@@ -584,6 +590,8 @@ let make = (
         setChecked
         deleteTodo
         isChecked={checked->Array.includes(todo.id)}
+        itemToMoveHandleMouseDown
+        itemToMoveHandleMouseEnter
       />
     )
     ->React.array}

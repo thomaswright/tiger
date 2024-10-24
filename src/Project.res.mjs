@@ -13,6 +13,8 @@ import * as JsxRuntime from "react/jsx-runtime";
 import ReactTextareaAutosize from "react-textarea-autosize";
 
 function Project$Todo(props) {
+  var itemToMoveHandleMouseEnter = props.itemToMoveHandleMouseEnter;
+  var itemToMoveHandleMouseDown = props.itemToMoveHandleMouseDown;
   var deleteTodo = props.deleteTodo;
   var setChecked = props.setChecked;
   var isChecked = props.isChecked;
@@ -440,6 +442,12 @@ function Project$Todo(props) {
                   setStagedForDelete(function (param) {
                         return false;
                       });
+                }),
+              onMouseDown: (function (e) {
+                  itemToMoveHandleMouseDown(todo.id, e);
+                }),
+              onMouseEnter: (function (e) {
+                  itemToMoveHandleMouseEnter(todo.id, e);
                 })
             });
 }
@@ -449,6 +457,8 @@ var Todo = {
 };
 
 function Project(props) {
+  var itemToMoveHandleMouseEnter = props.itemToMoveHandleMouseEnter;
+  var itemToMoveHandleMouseDown = props.itemToMoveHandleMouseDown;
   var deleteTodo = props.deleteTodo;
   var setChecked = props.setChecked;
   var checked = props.checked;
@@ -703,7 +713,9 @@ function Project(props) {
                                   isChecked: checked.includes(todo.id),
                                   setChecked: setChecked,
                                   deleteTodo: deleteTodo,
-                                  showArchive: showArchive
+                                  showArchive: showArchive,
+                                  itemToMoveHandleMouseDown: itemToMoveHandleMouseDown,
+                                  itemToMoveHandleMouseEnter: itemToMoveHandleMouseEnter
                                 }, Types.getTodoId(todo.id));
                     })
               ]

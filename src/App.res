@@ -186,28 +186,92 @@ module CheckedSummary = {
     </div>
   }
 }
+
+module SSet = Belt.Set.String
+module SMap = Belt.Map.String
+
 @react.component
 let make = () => {
   let (projects, setProjects, _) = Common.useLocalStorage("projects", defaultProjects)
   // let (todos, setTodos, getTodos) = Common.useLocalStorage("todos", defaultTodos)
   let (showArchive, setShowArchive, _) = Common.useLocalStorage("showArchive", [])
   let (checked, setChecked, _) = Common.useLocalStorage("checked", [])
-  let (projectsTab, setProjectTab, _) = Common.useLocalStorage("projectsTab", All)
+  let (projectsTab, _setProjectTab, _) = Common.useLocalStorage("projectsTab", All)
   let (selectedElement, setSelectedElement) = React.useState(_ => None)
   let (displayElement, setDisplayElement) = React.useState(_ => None)
   let (focusClassNext, setFocusClassNext) = React.useState(_ => None)
   let (focusIdNext, setFocusIdNext) = React.useState(_ => None)
+  let (itemsToMove, setItemsToMove) = React.useState(_ => SSet.empty)
+  let (aaParent, aaEnable) = Common.useAutoAnimate()
 
-  let autoAnimateParent = React.useRef(Nullable.null)
+  let clickDelayTimeout = React.useRef(None)
+  let (lastRelative, setLastRelative) = React.useState(() => None)
 
-  React.useEffect1(() => {
-    switch autoAnimateParent.current {
-    | Null | Undefined => ()
-    | Value(v) => Common.autoAnimate(v)
+  let itemToMoveHandleMouseDown = (itemId, _) => {
+    let timeoutId = setTimeout(() => {
+      // startXStep(e)
+      setItemsToMove(s => s->SSet.add(itemId))
+      aaEnable(true)
+    }, 200)
+    clickDelayTimeout.current = timeoutId->Some
+  }
+
+  let itemToMoveHandleMouseEnter = (itemId, _) => {
+    let isInMoveGroup = itemsToMove->SSet.has(itemId)
+    if isInMoveGroup {
+      setLastRelative(_ => None)
+    } else if lastRelative->Option.mapOr(true, lastRelativeId => itemId != lastRelativeId) {
+      setProjects(projects => {
+        let todosToMove = projects->Array.reduce([], (pa, pc) => {
+          pc.todos->Array.reduce(
+            pa,
+            (ta, tc) => {
+              itemsToMove->SSet.has(tc.id) ? ta->Array.concat([tc]) : ta
+            },
+          )
+        })
+
+        projects->Array.map(p => {
+          ...p,
+          todos: p.todos
+          ->Array.filter(t => !(itemsToMove->SSet.has(t.id)))
+          ->Array.map(
+            t => {
+              if t.id == itemId {
+                todosToMove->Array.concat([t])
+              } else {
+                [t]
+              }
+            },
+          )
+          ->Belt.Array.concatMany,
+        })
+      })
+    } else {
+      ()
     }
+  }
 
+  let handleMouseUp = React.useCallback0(_ => {
+    clickDelayTimeout.current->Option.mapOr((), a => clearTimeout(a))
+    setItemsToMove(_ => SSet.empty)
+    aaEnable(false)
+    setLastRelative(_ => None)
+    // setItemMap(m => {...m, saved: m.working})
+    // setItemOrder(o => {...o, saved: o.working})
+
+    // endXStep()
+  })
+
+  React.useEffect0(() => {
+    aaEnable(false)
     None
-  }, [autoAnimateParent])
+  })
+
+  React.useEffect0(() => {
+    Webapi.Dom.document->Document.addMouseUpEventListener(handleMouseUp)
+    Some(() => Webapi.Dom.document->Document.removeMouseUpEventListener(handleMouseUp))
+  })
 
   let updateProject = React.useCallback0((id, f) => {
     setProjects(v => v->Array.map(project => project.id == id ? f(project) : project))
@@ -305,7 +369,7 @@ let make = () => {
           {"Project"->React.string}
         </button>
       </div>
-      <div className="pb-20" ref={ReactDOM.Ref.domRef(autoAnimateParent)}>
+      <div className="pb-20" ref={ReactDOM.Ref.domRef(aaParent)}>
         {projects
         ->Array.filter(project => projectsTab == Active ? project.isActive : true)
         ->Array.map(project => {
@@ -332,6 +396,8 @@ let make = () => {
             setChecked
             checked
             deleteTodo
+            itemToMoveHandleMouseDown
+            itemToMoveHandleMouseEnter
           />
         })
         ->React.array}

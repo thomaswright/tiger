@@ -6,18 +6,20 @@ import * as React from "react";
 import * as Common from "./Common.res.mjs";
 import * as Project from "./Project.res.mjs";
 import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
+import * as Belt_Array from "rescript/lib/es6/belt_Array.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as DisplayTodo from "./DisplayTodo.res.mjs";
 import * as SwitchJsx from "./Switch.jsx";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as Belt_MapString from "rescript/lib/es6/belt_MapString.js";
+import * as Belt_SetString from "rescript/lib/es6/belt_SetString.js";
 import * as DisplayProject from "./DisplayProject.res.mjs";
 import * as Tb from "react-icons/tb";
 import * as Caml_splice_call from "rescript/lib/es6/caml_splice_call.js";
 import * as JsxRuntime from "react/jsx-runtime";
 import TigerSvg from "./assets/tiger.svg";
-import AutoAnimate from "@formkit/auto-animate";
+import * as React$1 from "@formkit/auto-animate/react";
 
 var defaultTodos = [
   {
@@ -218,15 +220,89 @@ function App(props) {
       });
   var setFocusIdNext = match$7[1];
   var focusIdNext = match$7[0];
-  var autoAnimateParent = React.useRef(null);
+  var match$8 = React.useState(function () {
+        
+      });
+  var setItemsToMove = match$8[1];
+  var itemsToMove = match$8[0];
+  var match$9 = React$1.useAutoAnimate();
+  var aaEnable = match$9[1];
+  var clickDelayTimeout = React.useRef(undefined);
+  var match$10 = React.useState(function () {
+        
+      });
+  var setLastRelative = match$10[1];
+  var lastRelative = match$10[0];
+  var itemToMoveHandleMouseDown = function (itemId, param) {
+    var timeoutId = setTimeout((function () {
+            setItemsToMove(function (s) {
+                  return Belt_SetString.add(s, itemId);
+                });
+            aaEnable(true);
+          }), 200);
+    clickDelayTimeout.current = Caml_option.some(timeoutId);
+  };
+  var itemToMoveHandleMouseEnter = function (itemId, param) {
+    var isInMoveGroup = Belt_SetString.has(itemsToMove, itemId);
+    if (isInMoveGroup) {
+      return setLastRelative(function (param) {
+                  
+                });
+    } else if (Core__Option.mapOr(lastRelative, true, (function (lastRelativeId) {
+              return itemId !== lastRelativeId;
+            }))) {
+      return setProjects(function (projects) {
+                  var todosToMove = Core__Array.reduce(projects, [], (function (pa, pc) {
+                          return Core__Array.reduce(pc.todos, pa, (function (ta, tc) {
+                                        if (Belt_SetString.has(itemsToMove, tc.id)) {
+                                          return ta.concat([tc]);
+                                        } else {
+                                          return ta;
+                                        }
+                                      }));
+                        }));
+                  return projects.map(function (p) {
+                              return {
+                                      id: p.id,
+                                      name: p.name,
+                                      isActive: p.isActive,
+                                      todos: Belt_Array.concatMany(p.todos.filter(function (t) {
+                                                  return !Belt_SetString.has(itemsToMove, t.id);
+                                                }).map(function (t) {
+                                                if (t.id === itemId) {
+                                                  return todosToMove.concat([t]);
+                                                } else {
+                                                  return [t];
+                                                }
+                                              }))
+                                    };
+                            });
+                });
+    } else {
+      return ;
+    }
+  };
+  var handleMouseUp = React.useCallback((function (param) {
+          Core__Option.mapOr(clickDelayTimeout.current, undefined, (function (a) {
+                  clearTimeout(a);
+                }));
+          setItemsToMove(function (param) {
+                
+              });
+          aaEnable(false);
+          setLastRelative(function (param) {
+                
+              });
+        }), []);
   React.useEffect((function () {
-          var v = autoAnimateParent.current;
-          if (v === null || v === undefined) {
-            v === null;
-          } else {
-            AutoAnimate(v);
-          }
-        }), [autoAnimateParent]);
+          aaEnable(false);
+        }), []);
+  React.useEffect((function () {
+          document.addEventListener("mouseup", handleMouseUp);
+          return (function () {
+                    document.removeEventListener("mouseup", handleMouseUp);
+                  });
+        }), []);
   var updateProject = React.useCallback((function (id, f) {
           setProjects(function (v) {
                 return v.map(function (project) {
@@ -430,10 +506,12 @@ function App(props) {
                                                   }),
                                                 checked: checked,
                                                 setChecked: setChecked,
-                                                deleteTodo: deleteTodo
+                                                deleteTodo: deleteTodo,
+                                                itemToMoveHandleMouseDown: itemToMoveHandleMouseDown,
+                                                itemToMoveHandleMouseEnter: itemToMoveHandleMouseEnter
                                               }, Types.getProjectId(project.id));
                                   }),
-                              ref: Caml_option.some(autoAnimateParent),
+                              ref: Caml_option.some(match$9[0]),
                               className: "pb-20"
                             })
                       ],
