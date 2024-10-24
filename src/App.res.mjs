@@ -16,6 +16,7 @@ import * as DisplayProject from "./DisplayProject.res.mjs";
 import * as Tb from "react-icons/tb";
 import * as Caml_splice_call from "rescript/lib/es6/caml_splice_call.js";
 import * as JsxRuntime from "react/jsx-runtime";
+import TigerSvg from "./assets/tiger.svg";
 
 var defaultTodos = [
   {
@@ -51,7 +52,7 @@ var defaultProjects = [{
     todos: defaultTodos
   }];
 
-var make = SwitchJsx.Switch;
+var logoUrl = TigerSvg;
 
 function buildTodoTree(input) {
   var rootMapId = "_";
@@ -195,7 +196,6 @@ function App(props) {
   var setChecked = match$2[1];
   var checked = match$2[0];
   var match$3 = Common.useLocalStorage("projectsTab", "All");
-  var setProjectTab = match$3[1];
   var projectsTab = match$3[0];
   var match$4 = React.useState(function () {
         
@@ -345,33 +345,17 @@ function App(props) {
                       children: [
                         JsxRuntime.jsxs("div", {
                               children: [
-                                JsxRuntime.jsxs("div", {
-                                      children: [
-                                        JsxRuntime.jsx("div", {
-                                              children: "Show Inactive",
-                                              className: "text-sm"
-                                            }),
-                                        JsxRuntime.jsx(make, {
-                                              checked: projectsTab === "All",
-                                              onCheckedChange: (function () {
-                                                  setProjectTab(function (v) {
-                                                        if (v === "All") {
-                                                          return "Active";
-                                                        } else {
-                                                          return "All";
-                                                        }
-                                                      });
-                                                })
-                                            })
-                                      ],
-                                      className: "flex flex-row gap-2 "
+                                JsxRuntime.jsx("img", {
+                                      className: "py-0.5 ",
+                                      src: logoUrl,
+                                      width: "24"
                                     }),
                                 JsxRuntime.jsxs("button", {
                                       children: [
                                         JsxRuntime.jsx(Tb.TbPlus, {}),
                                         "Project"
                                       ],
-                                      className: ["bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1"].join(" "),
+                                      className: ["bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1 h-5 "].join(" "),
                                       onClick: (function (param) {
                                           var newProjectId = Uuid.v4();
                                           setProjects(function (v) {
@@ -400,7 +384,7 @@ function App(props) {
                                         })
                                     })
                               ],
-                              className: "flex flex-row gap-2 justify-between w-full p-1"
+                              className: "flex flex-row gap-2 justify-between items-center w-full h-10 border-b px-2"
                             }),
                         JsxRuntime.jsx("div", {
                               children: projects.filter(function (project) {
@@ -460,9 +444,9 @@ function App(props) {
             });
 }
 
-var make$1 = App;
+var make = App;
 
 export {
-  make$1 as make,
+  make ,
 }
-/* make Not a pure module */
+/* logoUrl Not a pure module */

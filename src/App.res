@@ -43,6 +43,8 @@ let defaultProjects = [
 // let mapToArray = m => m ->
 // Map.entries -> Array.fromIterator
 
+@module("./assets/tiger.svg") external logoUrl: string = "default"
+
 module Switch = {
   @module("./Switch.jsx") @react.component
   external make: (~checked: bool, ~onCheckedChange: unit => unit) => React.element = "Switch"
@@ -256,14 +258,15 @@ let make = () => {
   <div className="flex flex-row h-dvh text-[var(--t9)]">
     // <StatusSelector />
     <div className="flex-1 overflow-y-scroll">
-      <div className="flex flex-row gap-2 justify-between w-full p-1">
-        <div className="flex flex-row gap-2 ">
-          <div className="text-sm"> {"Show Inactive"->React.string} </div>
-          <Switch
-            checked={projectsTab == All}
-            onCheckedChange={() => setProjectTab(v => v == All ? Active : All)}
-          />
-        </div>
+      <div className="flex flex-row gap-2 justify-between items-center w-full h-10 border-b px-2">
+        <img src={logoUrl} width={"24"} className="py-0.5 " />
+        // <div className="flex flex-row gap-2 ">
+        //   <div className="text-sm"> {"Show Inactive"->React.string} </div>
+        //   <Switch
+        //     checked={projectsTab == All}
+        //     onCheckedChange={() => setProjectTab(v => v == All ? Active : All)}
+        //   />
+        // </div>
         <button
           onClick={_ => {
             let newProjectId = Common.uuid()
@@ -285,7 +288,7 @@ let make = () => {
             setFocusIdNext(_ => Some(getProjectInputId(newProjectId)))
           }}
           className={[
-            "bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1",
+            "bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1 h-5 ",
           ]->Array.join(" ")}>
           <Icons.Plus />
           {"Project"->React.string}
