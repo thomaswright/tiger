@@ -262,9 +262,9 @@ module Todo = {
       <div
         className={[
           "group flex flex-row justify-start items-center h-full flex-1 pl-1 rounded-sm",
-          stagedForDelete ? "outline-red-700" : "focus-within:outline-purple-500 ",
+          stagedForDelete ? "outline-red-700" : "focus-within:outline-purple-500 outline-blue-500",
           stagedForDelete ? "bg-red-200 " : isChecked ? "bg-sky-50" : "",
-          isSelected ? "outline outline-2 -outline-offset-2 outline-blue-500" : "",
+          isSelected ? "outline outline-2 -outline-offset-2 " : "",
           isDisplayElement && !isSelected ? "bg-sky-200" : "",
         ]->Array.join(" ")}>
         <Common.StatusSelect
