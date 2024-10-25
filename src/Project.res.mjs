@@ -191,14 +191,22 @@ function Project$Todo(props) {
                       Common.focusNextClass(Types.listItemClass, dom);
                     }
                     if (e.key === "Backspace" && e.metaKey) {
-                      setTodos(project.id, (function (todos) {
-                              return todos.filter(function (t) {
-                                          return t.id !== todo.id;
-                                        });
-                            }));
+                      deleteTodo(project.id, todo);
                       Common.mapNullable(containerRef.current, (function (containerEl) {
                               Common.focusPreviousClass(Types.listItemClass, containerEl);
                             }));
+                    }
+                    if (e.key === "Backspace" && !e.metaKey) {
+                      if (stagedForDelete) {
+                        deleteTodo(project.id, todo);
+                        Common.mapNullable(containerRef.current, (function (containerEl) {
+                                Common.focusPreviousClass(Types.listItemClass, containerEl);
+                              }));
+                      } else {
+                        setStagedForDelete(function (param) {
+                              return true;
+                            });
+                      }
                     }
                     if (e.key === "Enter" && e.metaKey) {
                       newTodoAfter(todo.id, todo.hasChildren ? todo.id : todo.parentTodo);
@@ -211,14 +219,20 @@ function Project$Todo(props) {
                             }));
                     }
                     if (e.key === "Escape") {
-                      setSelectedElement(function (param) {
-                            
-                          });
-                      setDisplayElement(function (param) {
-                            
-                          });
-                      dom.blur();
-                      return ;
+                      if (stagedForDelete) {
+                        return setStagedForDelete(function (param) {
+                                    return false;
+                                  });
+                      } else {
+                        setSelectedElement(function (param) {
+                              
+                            });
+                        setDisplayElement(function (param) {
+                              
+                            });
+                        dom.blur();
+                        return ;
+                      }
                     }
                     
                   }));

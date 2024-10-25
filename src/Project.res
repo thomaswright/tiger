@@ -166,10 +166,23 @@ module Todo = {
           }
 
           if e->key == "Backspace" && e->metaKey {
-            setTodos(project.id, todos => todos->Array.filter(t => t.id != todo.id))
+            deleteTodo(project.id, todo)
+
             containerRef.current->mapNullable(containerEl => {
               Common.focusPreviousClass(listItemClass, containerEl)
             })
+          }
+
+          if e->key == "Backspace" && !(e->metaKey) {
+            if stagedForDelete {
+              deleteTodo(project.id, todo)
+
+              containerRef.current->mapNullable(containerEl => {
+                Common.focusPreviousClass(listItemClass, containerEl)
+              })
+            } else {
+              setStagedForDelete(_ => true)
+            }
           }
 
           if e->key == "Enter" && e->metaKey {
@@ -186,11 +199,15 @@ module Todo = {
           }
 
           if e->key == "Escape" {
-            // e->preventDefault // ?
-            setSelectedElement(_ => None)
-            setDisplayElement(_ => None)
+            if stagedForDelete {
+              setStagedForDelete(_ => false)
+            } else {
+              // e->preventDefault // ?
+              setSelectedElement(_ => None)
+              setDisplayElement(_ => None)
 
-            dom->Obj.magic->HtmlElement.blur
+              dom->Obj.magic->HtmlElement.blur
+            }
           }
         })
       }
