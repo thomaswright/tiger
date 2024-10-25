@@ -188,9 +188,28 @@ function App$CheckedSummary(props) {
 }
 
 function App(props) {
-  var match = Common.useLocalStorage("projects", defaultProjects);
-  var setProjects = match[1];
+  var match = Common.useLocalStorage("projects", defaultProjects.map(function (p) {
+            return {
+                    id: p.id,
+                    name: p.name,
+                    isActive: p.isActive,
+                    todos: buildTodoTree(p.todos)
+                  };
+          }));
+  var setProjectsPreCompute = match[1];
   var projects = match[0];
+  var setProjects = function (f) {
+    setProjectsPreCompute(function (projects) {
+          return f(projects).map(function (p) {
+                      return {
+                              id: p.id,
+                              name: p.name,
+                              isActive: p.isActive,
+                              todos: buildTodoTree(p.todos)
+                            };
+                    });
+        });
+  };
   var match$1 = Common.useLocalStorage("showArchive", []);
   var setShowArchive = match$1[1];
   var showArchive = match$1[0];
@@ -230,12 +249,25 @@ function App(props) {
   var itemToMoveHandleMouseDown = function (itemId, param) {
     var timeoutId = setTimeout((function () {
             setItemsToMove(function (s) {
-                  return Belt_SetString.add(s, itemId);
+                  return Core__Array.reduce(projects, Belt_SetString.add(s, itemId), (function (a, c) {
+                                return Core__Array.reduce(c.todos, a, (function (a2, c2) {
+                                              if (Core__Option.mapOr(c2.parentTodo, false, (function (x) {
+                                                        return Belt_SetString.has(a2, x);
+                                                      }))) {
+                                                return Belt_SetString.add(a2, c2.id);
+                                              } else {
+                                                return a2;
+                                              }
+                                            }));
+                              }));
                 });
           }), 200);
     clickDelayTimeout.current = Caml_option.some(timeoutId);
   };
   var itemToMoveHandleMouseEnter = function (isProject, itemId, param) {
+    if (Belt_SetString.isEmpty(itemsToMove)) {
+      return ;
+    }
     var isInMoveGroup = Belt_SetString.has(itemsToMove, itemId);
     if (isInMoveGroup) {
       lastRelative.current = undefined;
@@ -254,6 +286,24 @@ function App(props) {
                                         }
                                       }));
                         }));
+                  var applyNewParent = function (todos, newParent) {
+                    return todos.map(function (t) {
+                                return {
+                                        id: t.id,
+                                        text: t.text,
+                                        project: t.project,
+                                        status: t.status,
+                                        box: t.box,
+                                        parentTodo: Belt_SetString.has(itemsToMove, t.id) && !Core__Option.mapOr(t.parentTodo, false, (function (currentParentTodo) {
+                                                return Belt_SetString.has(itemsToMove, currentParentTodo);
+                                              })) ? newParent : t.parentTodo,
+                                        depth: t.depth,
+                                        childNumber: t.childNumber,
+                                        hasArchivedChildren: t.hasArchivedChildren,
+                                        hasChildren: t.hasChildren
+                                      };
+                              });
+                  };
                   var itemIndex = Core__Option.mapOr(Caml_option.nullable_to_opt(aaParentRef.current), 0, (function (containerEl) {
                           return Array.prototype.slice.call(containerEl.children).findIndex(function (el) {
                                       return Core__Option.mapOr(Types.getIdFromId(el.id), false, (function (id) {
@@ -289,12 +339,14 @@ function App(props) {
                                         id: p$1.id,
                                         name: p$1.name,
                                         isActive: p$1.isActive,
-                                        todos: Belt_Array.concatMany(p$1.todos.map(function (t) {
+                                        todos: Belt_Array.concatMany(p$1.todos.map(function (t, i) {
                                                     if (t.id === itemId) {
                                                       if (fromBelow) {
-                                                        return todosToMove.concat([t]);
+                                                        return applyNewParent(todosToMove.concat([t]), t.parentTodo);
+                                                      } else if (t.hasChildren) {
+                                                        return applyNewParent([t].concat(todosToMove), t.id);
                                                       } else {
-                                                        return [t].concat(todosToMove);
+                                                        return applyNewParent([t].concat(todosToMove), t.parentTodo);
                                                       }
                                                     } else {
                                                       return [t];
@@ -324,7 +376,40 @@ function App(props) {
                                           id: p$1.id,
                                           name: p$1.name,
                                           isActive: p$1.isActive,
-                                          todos: todosToMove.concat(p$1.todos).map(function (t) {
+                                          todos: applyNewParent(todosToMove.concat(p$1.todos).map(function (t) {
+                                                    return {
+                                                            id: t.id,
+                                                            text: t.text,
+                                                            project: p$1.id,
+                                                            status: t.status,
+                                                            box: t.box,
+                                                            parentTodo: t.parentTodo,
+                                                            depth: t.depth,
+                                                            childNumber: t.childNumber,
+                                                            hasArchivedChildren: t.hasArchivedChildren,
+                                                            hasChildren: t.hasChildren
+                                                          };
+                                                  }), undefined)
+                                        };
+                                } else {
+                                  return p$1;
+                                }
+                              });
+                  }
+                  var projectIndex = projects.findIndex(function (p) {
+                        return p.id === itemId;
+                      });
+                  return projects.map(function (p, i) {
+                              var p$1 = filterOutTodosToMove(p);
+                              if (i !== (projectIndex - 1 | 0)) {
+                                return p$1;
+                              }
+                              var lastTodo = p$1.todos[p$1.todos.length - 1 | 0];
+                              return {
+                                      id: p$1.id,
+                                      name: p$1.name,
+                                      isActive: p$1.isActive,
+                                      todos: applyNewParent(p$1.todos.concat(todosToMove).map(function (t) {
                                                 return {
                                                         id: t.id,
                                                         text: t.text,
@@ -337,41 +422,8 @@ function App(props) {
                                                         hasArchivedChildren: t.hasArchivedChildren,
                                                         hasChildren: t.hasChildren
                                                       };
-                                              })
-                                        };
-                                } else {
-                                  return p$1;
-                                }
-                              });
-                  }
-                  var projectIndex = projects.findIndex(function (p) {
-                        return p.id === itemId;
-                      });
-                  return projects.map(function (p, i) {
-                              var p$1 = filterOutTodosToMove(p);
-                              if (i === (projectIndex - 1 | 0)) {
-                                return {
-                                        id: p$1.id,
-                                        name: p$1.name,
-                                        isActive: p$1.isActive,
-                                        todos: p$1.todos.concat(todosToMove).map(function (t) {
-                                              return {
-                                                      id: t.id,
-                                                      text: t.text,
-                                                      project: p$1.id,
-                                                      status: t.status,
-                                                      box: t.box,
-                                                      parentTodo: t.parentTodo,
-                                                      depth: t.depth,
-                                                      childNumber: t.childNumber,
-                                                      hasArchivedChildren: t.hasArchivedChildren,
-                                                      hasChildren: t.hasChildren
-                                                    };
-                                            })
-                                      };
-                              } else {
-                                return p$1;
-                              }
+                                              }), lastTodo.parentTodo)
+                                    };
                             });
                 });
     } else {
@@ -475,7 +527,6 @@ function App(props) {
                     });
               }));
       });
-  console.log(projects);
   var tmp;
   if (displayElement !== undefined) {
     if (displayElement.TAG === "Todo") {
@@ -575,16 +626,9 @@ function App(props) {
                                       }
                                     }).map(function (project) {
                                     var showArchive$1 = showArchive.includes(project.id);
-                                    var projectTodos = buildTodoTree(project.todos.filter(function (todo) {
-                                              if (showArchive$1) {
-                                                return true;
-                                              } else {
-                                                return todo.box !== "Archive";
-                                              }
-                                            }));
                                     return JsxRuntime.jsx(Project.make, {
                                                 project: project,
-                                                todos: projectTodos,
+                                                todos: project.todos,
                                                 showArchive: showArchive$1,
                                                 setShowArchive: setShowArchive,
                                                 updateProject: updateProject,
@@ -596,7 +640,7 @@ function App(props) {
                                                 setFocusIdNext: setFocusIdNext,
                                                 setTodos: setTodos,
                                                 getTodos: (function () {
-                                                    return projectTodos;
+                                                    return project.todos;
                                                   }),
                                                 checked: checked,
                                                 setChecked: setChecked,

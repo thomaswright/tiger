@@ -192,7 +192,23 @@ module SMap = Belt.Map.String
 
 @react.component
 let make = () => {
-  let (projects, setProjects, _) = Common.useLocalStorage("projects", defaultProjects)
+  let (projects, setProjectsPreCompute, _) = Common.useLocalStorage(
+    "projects",
+    defaultProjects->Array.map(p => {
+      ...p,
+      todos: p.todos->buildTodoTree,
+    }),
+  )
+  let setProjects = f =>
+    setProjectsPreCompute(projects => {
+      projects
+      ->f
+      ->Array.map(p => {
+        ...p,
+        todos: p.todos->buildTodoTree,
+      })
+    })
+
   // let (todos, setTodos, getTodos) = Common.useLocalStorage("todos", defaultTodos)
   let (showArchive, setShowArchive, _) = Common.useLocalStorage("showArchive", [])
   let (checked, setChecked, _) = Common.useLocalStorage("checked", [])
@@ -221,142 +237,196 @@ let make = () => {
   let itemToMoveHandleMouseDown = (itemId, _) => {
     let timeoutId = setTimeout(() => {
       // startXStep(e)
-      setItemsToMove(s => s->SSet.add(itemId))
+
+      setItemsToMove(s => {
+        // s->SSet.add(itemId)
+        projects->Array.reduce(
+          s->SSet.add(itemId),
+          (a, c) => {
+            c.todos->Array.reduce(
+              a,
+              (a2, c2) => {
+                c2.parentTodo->Option.mapOr(false, x => a2->SSet.has(x)) ? a2->SSet.add(c2.id) : a2
+              },
+            )
+          },
+        )
+      })
       // aaEnable(true)
     }, 200)
     clickDelayTimeout.current = timeoutId->Some
   }
 
   let itemToMoveHandleMouseEnter = (isProject, itemId, _) => {
-    let isInMoveGroup = itemsToMove->SSet.has(itemId)
-    if isInMoveGroup {
-      lastRelative.current = None
-    } else if lastRelative.current->Option.mapOr(true, lastRelativeId => itemId != lastRelativeId) {
-      lastRelative.current = Some(itemId)
+    if itemsToMove->SSet.isEmpty {
+      ()
+    } else {
+      let isInMoveGroup = itemsToMove->SSet.has(itemId)
+      if isInMoveGroup {
+        lastRelative.current = None
+      } else if (
+        lastRelative.current->Option.mapOr(true, lastRelativeId => itemId != lastRelativeId)
+      ) {
+        lastRelative.current = Some(itemId)
 
-      setProjects(projects => {
-        let todosToMove = projects->Array.reduce([], (pa, pc) => {
-          pc.todos->Array.reduce(
-            pa,
-            (ta, tc) => {
-              itemsToMove->SSet.has(tc.id) ? ta->Array.concat([tc]) : ta
-            },
-          )
-        })
-
-        let itemIndex =
-          aaParentRef.current
-          ->Nullable.toOption
-          ->Option.mapOr(0, containerEl => {
-            containerEl
-            ->Obj.magic
-            ->HtmlElement.children
-            ->HtmlCollection.toArray
-            ->Array.findIndex(
-              el => {
-                el
-                ->Obj.magic
-                ->HtmlElement.id
-                ->getIdFromId
-                ->Option.mapOr(false, id => id == itemId)
+        setProjects(projects => {
+          let todosToMove = projects->Array.reduce([], (pa, pc) => {
+            pc.todos->Array.reduce(
+              pa,
+              (ta, tc) => {
+                itemsToMove->SSet.has(tc.id) ? ta->Array.concat([tc]) : ta
               },
             )
           })
 
-        let moveIndex =
-          aaParentRef.current
-          ->Nullable.toOption
-          ->Option.mapOr(0, containerEl => {
-            containerEl
-            ->Obj.magic
-            ->HtmlElement.children
-            ->HtmlCollection.toArray
-            ->Array.findIndex(
-              el => {
-                el
-                ->Obj.magic
-                ->HtmlElement.id
-                ->getIdFromId
-                ->Option.mapOr(
-                  false,
-                  id => {
-                    itemsToMove->SSet.has(id)
-                  },
-                )
-              },
-            )
-          })
-
-        let fromBelow = itemIndex < moveIndex
-
-        let filterOutTodosToMove = p => {
-          ...p,
-          todos: p.todos->Array.filter(t => !(itemsToMove->SSet.has(t.id))),
-        }
-        if isProject && itemIndex == 0 {
-          projects
-        } else if isProject {
-          if fromBelow {
-            let projectIndex = projects->Array.findIndex(p => p.id == itemId)
-            projects->Array.mapWithIndex((p, i) => {
-              p
-              ->filterOutTodosToMove
-              ->{
-                p => {
-                  i == projectIndex - 1
-                    ? {
-                        ...p,
-                        todos: Array.concat(p.todos, todosToMove)->Array.map(
-                          t => {...t, project: p.id},
-                        ),
-                      }
-                    : p
+          let applyNewParent = (todos: array<todo>, newParent) => {
+            todos->Array.map(t => {
+              ...t,
+              parentTodo: if itemsToMove->SSet.has(t.id) {
+                if (
+                  t.parentTodo->Option.mapOr(
+                    false,
+                    currentParentTodo => itemsToMove->SSet.has(currentParentTodo),
+                  )
+                ) {
+                  t.parentTodo
+                } else {
+                  newParent
                 }
-              }
+              } else {
+                t.parentTodo
+              },
             })
+          }
+
+          let itemIndex =
+            aaParentRef.current
+            ->Nullable.toOption
+            ->Option.mapOr(0, containerEl => {
+              containerEl
+              ->Obj.magic
+              ->HtmlElement.children
+              ->HtmlCollection.toArray
+              ->Array.findIndex(
+                el => {
+                  el
+                  ->Obj.magic
+                  ->HtmlElement.id
+                  ->getIdFromId
+                  ->Option.mapOr(false, id => id == itemId)
+                },
+              )
+            })
+
+          let moveIndex =
+            aaParentRef.current
+            ->Nullable.toOption
+            ->Option.mapOr(0, containerEl => {
+              containerEl
+              ->Obj.magic
+              ->HtmlElement.children
+              ->HtmlCollection.toArray
+              ->Array.findIndex(
+                el => {
+                  el
+                  ->Obj.magic
+                  ->HtmlElement.id
+                  ->getIdFromId
+                  ->Option.mapOr(
+                    false,
+                    id => {
+                      itemsToMove->SSet.has(id)
+                    },
+                  )
+                },
+              )
+            })
+
+          let fromBelow = itemIndex < moveIndex
+
+          let filterOutTodosToMove = p => {
+            ...p,
+            todos: p.todos->Array.filter(t => !(itemsToMove->SSet.has(t.id))),
+          }
+
+          if isProject && itemIndex == 0 {
+            projects
+          } else if isProject {
+            if fromBelow {
+              let projectIndex = projects->Array.findIndex(p => p.id == itemId)
+              projects->Array.mapWithIndex((p, i) => {
+                p
+                ->filterOutTodosToMove
+                ->{
+                  p => {
+                    i == projectIndex - 1
+                      ? {
+                          ...p,
+                          todos: {
+                            let lastTodo = p.todos->Array.getUnsafe(p.todos->Array.length - 1)
+
+                            Array.concat(p.todos, todosToMove)
+                            ->Array.map(t => {...t, project: p.id})
+                            ->applyNewParent(lastTodo.parentTodo)
+                          },
+                        }
+                      : p
+                  }
+                }
+              })
+            } else {
+              projects->Array.map(p =>
+                p
+                ->filterOutTodosToMove
+                ->{
+                  p =>
+                    p.id == itemId
+                      ? {
+                          ...p,
+                          todos: Array.concat(todosToMove, p.todos)
+                          ->Array.map(t => {...t, project: p.id})
+                          ->applyNewParent(None),
+                        }
+                      : p
+                }
+              )
+            }
           } else {
             projects->Array.map(p =>
               p
               ->filterOutTodosToMove
               ->{
-                p =>
-                  p.id == itemId
-                    ? {
-                        ...p,
-                        todos: Array.concat(todosToMove, p.todos)->Array.map(
-                          t => {...t, project: p.id},
-                        ),
+                p => {
+                  ...p,
+                  todos: p.todos
+                  ->Array.mapWithIndex(
+                    (t, i) => {
+                      if t.id == itemId {
+                        if fromBelow {
+                          // let newParent =
+                          //   p.todos->Array.get(i - 1)->Option.flatMap(t2 => t2.parentTodo)
+
+                          Array.concat(todosToMove, [t])->applyNewParent(t.parentTodo)
+                        } else if t.hasChildren {
+                          Array.concat([t], todosToMove)->applyNewParent(Some(t.id))
+                        } else {
+                          Array.concat([t], todosToMove)->applyNewParent(t.parentTodo)
+                        }
+                      } else {
+                        [t]
                       }
-                    : p
+                    },
+                  )
+                  ->Belt.Array.concatMany
+                  ->Array.map(t => {...t, project: p.id}),
+                }
               }
             )
           }
-        } else {
-          projects->Array.map(p =>
-            p
-            ->filterOutTodosToMove
-            ->{
-              p => {
-                ...p,
-                todos: p.todos
-                ->Array.map(
-                  t => {
-                    if t.id == itemId {
-                      fromBelow ? Array.concat(todosToMove, [t]) : Array.concat([t], todosToMove)
-                    } else {
-                      [t]
-                    }
-                  },
-                )
-                ->Belt.Array.concatMany
-                ->Array.map(t => {...t, project: p.id}),
-              }
-            }
-          )
-        }
-      })
-    } else {
-      ()
+        })
+      } else {
+        ()
+      }
     }
   }
 
@@ -440,8 +510,6 @@ let make = () => {
     None
   })
 
-  Console.log(projects)
-
   <div className="flex flex-row h-dvh text-[var(--t9)]">
     // <StatusSelector />
     <div className="flex-1 overflow-y-scroll">
@@ -486,17 +554,15 @@ let make = () => {
         ->Array.filter(project => projectsTab == Active ? project.isActive : true)
         ->Array.map(project => {
           let showArchive = showArchive->Array.includes(project.id)
-          let projectTodos =
-            project.todos
-            ->Array.filter(todo => showArchive ? true : todo.box != Archive)
-            ->buildTodoTree
+
+          // ->Array.filter(todo => showArchive ? true : todo.box != Archive)
 
           <Project
             key={getProjectId(project.id)}
             showArchive={showArchive}
             setShowArchive={setShowArchive}
             project
-            todos={projectTodos}
+            todos={project.todos}
             updateProject
             updateTodo
             selectedElement
@@ -505,7 +571,7 @@ let make = () => {
             setDisplayElement
             setFocusIdNext
             setTodos
-            getTodos={() => projectTodos}
+            getTodos={() => project.todos}
             setChecked
             checked
             deleteTodo
