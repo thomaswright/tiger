@@ -62,3 +62,8 @@ module CornerDownRight = {
   external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element =
     "TbCornerDownRight"
 }
+
+module DragDrop = {
+  @react.component @module("react-icons/tb")
+  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "TbDragDrop"
+}

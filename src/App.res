@@ -202,26 +202,27 @@ let make = () => {
   let (focusClassNext, setFocusClassNext) = React.useState(_ => None)
   let (focusIdNext, setFocusIdNext) = React.useState(_ => None)
   let (itemsToMove, setItemsToMove) = React.useState(_ => SSet.empty)
-  let (setAaParent, aaEnable) = Common.useAutoAnimate()
+  // let (setAaParent, aaEnable) = Common.useAutoAnimate()
+
   let aaParentRef: React.ref<RescriptCore.Nullable.t<Dom.element>> = React.useRef(Nullable.null)
 
   let clickDelayTimeout = React.useRef(None)
-  let (lastRelative, setLastRelative) = React.useState(() => None)
+  let lastRelative = React.useRef(None)
 
-  React.useEffect1(() => {
-    switch aaParentRef.current {
-    | Null | Undefined => ()
-    | Value(v) => setAaParent(v)
-    }
+  // React.useEffect1(() => {
+  //   switch aaParentRef.current {
+  //   | Null | Undefined => ()
+  //   | Value(v) => setAaParent(v)
+  //   }
 
-    None
-  }, [aaParentRef])
+  //   None
+  // }, [aaParentRef])
 
   let itemToMoveHandleMouseDown = (itemId, _) => {
     let timeoutId = setTimeout(() => {
       // startXStep(e)
       setItemsToMove(s => s->SSet.add(itemId))
-      aaEnable(true)
+      // aaEnable(true)
     }, 200)
     clickDelayTimeout.current = timeoutId->Some
   }
@@ -229,8 +230,10 @@ let make = () => {
   let itemToMoveHandleMouseEnter = (isProject, itemId, _) => {
     let isInMoveGroup = itemsToMove->SSet.has(itemId)
     if isInMoveGroup {
-      setLastRelative(_ => None)
-    } else if lastRelative->Option.mapOr(true, lastRelativeId => itemId != lastRelativeId) {
+      lastRelative.current = None
+    } else if lastRelative.current->Option.mapOr(true, lastRelativeId => itemId != lastRelativeId) {
+      lastRelative.current = Some(itemId)
+
       setProjects(projects => {
         let todosToMove = projects->Array.reduce([], (pa, pc) => {
           pc.todos->Array.reduce(
@@ -284,16 +287,15 @@ let make = () => {
             )
           })
 
-        // Console.log2(itemIndex, moveIndex)
-
         let fromBelow = itemIndex < moveIndex
 
         let filterOutTodosToMove = p => {
           ...p,
           todos: p.todos->Array.filter(t => !(itemsToMove->SSet.has(t.id))),
         }
-
-        if isProject {
+        if isProject && itemIndex == 0 {
+          projects
+        } else if isProject {
           if fromBelow {
             let projectIndex = projects->Array.findIndex(p => p.id == itemId)
             projects->Array.mapWithIndex((p, i) => {
@@ -304,7 +306,9 @@ let make = () => {
                   i == projectIndex - 1
                     ? {
                         ...p,
-                        todos: Array.concat(p.todos, todosToMove),
+                        todos: Array.concat(p.todos, todosToMove)->Array.map(
+                          t => {...t, project: p.id},
+                        ),
                       }
                     : p
                 }
@@ -319,7 +323,9 @@ let make = () => {
                   p.id == itemId
                     ? {
                         ...p,
-                        todos: Array.concat(todosToMove, p.todos),
+                        todos: Array.concat(todosToMove, p.todos)->Array.map(
+                          t => {...t, project: p.id},
+                        ),
                       }
                     : p
               }
@@ -342,7 +348,8 @@ let make = () => {
                     }
                   },
                 )
-                ->Belt.Array.concatMany,
+                ->Belt.Array.concatMany
+                ->Array.map(t => {...t, project: p.id}),
               }
             }
           )
@@ -356,8 +363,10 @@ let make = () => {
   let handleMouseUp = React.useCallback0(_ => {
     clickDelayTimeout.current->Option.mapOr((), a => clearTimeout(a))
     setItemsToMove(_ => SSet.empty)
-    aaEnable(false)
-    setLastRelative(_ => None)
+
+    // aaEnable(false)
+    lastRelative.current = None
+
     // setItemMap(m => {...m, saved: m.working})
     // setItemOrder(o => {...o, saved: o.working})
 
@@ -365,7 +374,7 @@ let make = () => {
   })
 
   React.useEffect0(() => {
-    aaEnable(false)
+    // aaEnable(false)
     None
   })
 
@@ -470,7 +479,7 @@ let make = () => {
           {"Project"->React.string}
         </button>
       </div>
-      <div className="pb-20" ref={ReactDOM.Ref.domRef(aaParentRef)}>
+      <ul className="pb-20" ref={ReactDOM.Ref.domRef(aaParentRef)}>
         {projects
         ->Array.filter(project => projectsTab == Active ? project.isActive : true)
         ->Array.map(project => {
@@ -479,30 +488,93 @@ let make = () => {
             project.todos
             ->Array.filter(todo => showArchive ? true : todo.box != Archive)
             ->buildTodoTree
-          <Project
-            key={getProjectId(project.id)}
-            showArchive={showArchive}
-            setShowArchive={setShowArchive}
-            project
-            todos={projectTodos}
-            updateProject
-            updateTodo
-            selectedElement
-            setSelectedElement
-            displayElement
-            setDisplayElement
-            setFocusIdNext
-            setTodos
-            getTodos={() => projectTodos}
-            setChecked
-            checked
-            deleteTodo
-            itemToMoveHandleMouseDown
-            itemToMoveHandleMouseEnter
-          />
+
+          let newTodoAfter = (after, parentTodo) => {
+            let newId = Common.uuid()
+
+            let newTodo = {
+              id: newId,
+              text: "",
+              project: project.id,
+              status: Unsorted,
+              box: Working,
+              parentTodo,
+              depth: None,
+              childNumber: None,
+              hasArchivedChildren: false,
+              hasChildren: false,
+            }
+
+            setTodos(project.id, todos => {
+              if after == None {
+                [newTodo]->Array.concat(todos)
+              } else {
+                todos->Array.reduce(
+                  [],
+                  (a, c) => {
+                    Some(c.id) == after
+                      ? a->Array.concat([c])->Array.concat([newTodo])
+                      : a->Array.concat([c])
+                  },
+                )
+              }
+            })
+
+            setFocusIdNext(_ => Some(getTodoInputId(newId)))
+          }
+
+          <React.Fragment>
+            <Project
+              key={getProjectId(project.id)}
+              showArchive={showArchive}
+              setShowArchive={setShowArchive}
+              project
+              todos={projectTodos}
+              updateProject
+              updateTodo
+              selectedElement
+              setSelectedElement
+              displayElement
+              setDisplayElement
+              setFocusIdNext
+              setTodos
+              getTodos={() => projectTodos}
+              setChecked
+              checked
+              deleteTodo
+              itemToMoveHandleMouseDown
+              itemToMoveHandleMouseEnter
+            />
+            {project.todos
+            // ->Array.toSorted((a, b) => a.status->statusToFloat -. b.status->statusToFloat)
+            ->Array.map(todo =>
+              <Project.Todo
+                key={getTodoId(todo.id)}
+                project
+                todo
+                updateTodo
+                showArchive
+                isSelected={selectedElement == Some(Todo(todo.id))}
+                isDisplayElement={displayElement == Some(Todo(todo.id))}
+                setSelectedElement
+                displayElement
+                setDisplayElement
+                setTodos
+                setFocusIdNext
+                newTodoAfter
+                getTodos={() => projectTodos}
+                setChecked
+                deleteTodo
+                isChecked={checked->Array.includes(todo.id)}
+                itemToMoveHandleMouseDown
+                itemToMoveHandleMouseEnter
+              />
+            )
+            ->React.array}
+          </React.Fragment>
         })
         ->React.array}
-      </div>
+      </ul>
     </div>
     <div className=" border-l flex-1">
       <CheckedSummary checked={checked} projects={projects} setChecked={setChecked} setProjects />

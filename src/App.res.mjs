@@ -19,7 +19,6 @@ import * as Tb from "react-icons/tb";
 import * as Caml_splice_call from "rescript/lib/es6/caml_splice_call.js";
 import * as JsxRuntime from "react/jsx-runtime";
 import TigerSvg from "./assets/tiger.svg";
-import * as React$1 from "@formkit/auto-animate/react";
 
 var defaultTodos = [
   {
@@ -225,42 +224,26 @@ function App(props) {
       });
   var setItemsToMove = match$8[1];
   var itemsToMove = match$8[0];
-  var match$9 = React$1.useAutoAnimate();
-  var aaEnable = match$9[1];
-  var setAaParent = match$9[0];
   var aaParentRef = React.useRef(null);
   var clickDelayTimeout = React.useRef(undefined);
-  var match$10 = React.useState(function () {
-        
-      });
-  var setLastRelative = match$10[1];
-  var lastRelative = match$10[0];
-  React.useEffect((function () {
-          var v = aaParentRef.current;
-          if (v === null || v === undefined) {
-            v === null;
-          } else {
-            setAaParent(v);
-          }
-        }), [aaParentRef]);
+  var lastRelative = React.useRef(undefined);
   var itemToMoveHandleMouseDown = function (itemId, param) {
     var timeoutId = setTimeout((function () {
             setItemsToMove(function (s) {
                   return Belt_SetString.add(s, itemId);
                 });
-            aaEnable(true);
           }), 200);
     clickDelayTimeout.current = Caml_option.some(timeoutId);
   };
   var itemToMoveHandleMouseEnter = function (isProject, itemId, param) {
     var isInMoveGroup = Belt_SetString.has(itemsToMove, itemId);
     if (isInMoveGroup) {
-      return setLastRelative(function (param) {
-                  
-                });
-    } else if (Core__Option.mapOr(lastRelative, true, (function (lastRelativeId) {
+      lastRelative.current = undefined;
+      return ;
+    } else if (Core__Option.mapOr(lastRelative.current, true, (function (lastRelativeId) {
               return itemId !== lastRelativeId;
             }))) {
+      lastRelative.current = itemId;
       return setProjects(function (projects) {
                   var todosToMove = Core__Array.reduce(projects, [], (function (pa, pc) {
                           return Core__Array.reduce(pc.todos, pa, (function (ta, tc) {
@@ -296,6 +279,9 @@ function App(props) {
                                 })
                           };
                   };
+                  if (isProject && itemIndex === 0) {
+                    return projects;
+                  }
                   if (!isProject) {
                     return projects.map(function (p) {
                                 var p$1 = filterOutTodosToMove(p);
@@ -304,16 +290,29 @@ function App(props) {
                                         name: p$1.name,
                                         isActive: p$1.isActive,
                                         todos: Belt_Array.concatMany(p$1.todos.map(function (t) {
-                                                  if (t.id === itemId) {
-                                                    if (fromBelow) {
-                                                      return todosToMove.concat([t]);
+                                                    if (t.id === itemId) {
+                                                      if (fromBelow) {
+                                                        return todosToMove.concat([t]);
+                                                      } else {
+                                                        return [t].concat(todosToMove);
+                                                      }
                                                     } else {
-                                                      return [t].concat(todosToMove);
+                                                      return [t];
                                                     }
-                                                  } else {
-                                                    return [t];
-                                                  }
-                                                }))
+                                                  })).map(function (t) {
+                                              return {
+                                                      id: t.id,
+                                                      text: t.text,
+                                                      project: p$1.id,
+                                                      status: t.status,
+                                                      box: t.box,
+                                                      parentTodo: t.parentTodo,
+                                                      depth: t.depth,
+                                                      childNumber: t.childNumber,
+                                                      hasArchivedChildren: t.hasArchivedChildren,
+                                                      hasChildren: t.hasChildren
+                                                    };
+                                            })
                                       };
                               });
                   }
@@ -325,7 +324,20 @@ function App(props) {
                                           id: p$1.id,
                                           name: p$1.name,
                                           isActive: p$1.isActive,
-                                          todos: todosToMove.concat(p$1.todos)
+                                          todos: todosToMove.concat(p$1.todos).map(function (t) {
+                                                return {
+                                                        id: t.id,
+                                                        text: t.text,
+                                                        project: p$1.id,
+                                                        status: t.status,
+                                                        box: t.box,
+                                                        parentTodo: t.parentTodo,
+                                                        depth: t.depth,
+                                                        childNumber: t.childNumber,
+                                                        hasArchivedChildren: t.hasArchivedChildren,
+                                                        hasChildren: t.hasChildren
+                                                      };
+                                              })
                                         };
                                 } else {
                                   return p$1;
@@ -342,7 +354,20 @@ function App(props) {
                                         id: p$1.id,
                                         name: p$1.name,
                                         isActive: p$1.isActive,
-                                        todos: p$1.todos.concat(todosToMove)
+                                        todos: p$1.todos.concat(todosToMove).map(function (t) {
+                                              return {
+                                                      id: t.id,
+                                                      text: t.text,
+                                                      project: p$1.id,
+                                                      status: t.status,
+                                                      box: t.box,
+                                                      parentTodo: t.parentTodo,
+                                                      depth: t.depth,
+                                                      childNumber: t.childNumber,
+                                                      hasArchivedChildren: t.hasArchivedChildren,
+                                                      hasChildren: t.hasChildren
+                                                    };
+                                            })
                                       };
                               } else {
                                 return p$1;
@@ -360,13 +385,10 @@ function App(props) {
           setItemsToMove(function (param) {
                 
               });
-          aaEnable(false);
-          setLastRelative(function (param) {
-                
-              });
+          lastRelative.current = undefined;
         }), []);
   React.useEffect((function () {
-          aaEnable(false);
+          
         }), []);
   React.useEffect((function () {
           document.addEventListener("mouseup", handleMouseUp);
@@ -543,7 +565,7 @@ function App(props) {
                               ],
                               className: "flex flex-row gap-2 justify-between items-center w-full h-10 border-b px-2"
                             }),
-                        JsxRuntime.jsx("div", {
+                        JsxRuntime.jsx("ul", {
                               children: projects.filter(function (project) {
                                       if (projectsTab === "Active") {
                                         return project.isActive;
@@ -559,28 +581,94 @@ function App(props) {
                                                 return todo.box !== "Archive";
                                               }
                                             }));
-                                    return JsxRuntime.jsx(Project.make, {
-                                                project: project,
-                                                todos: projectTodos,
-                                                showArchive: showArchive$1,
-                                                setShowArchive: setShowArchive,
-                                                updateProject: updateProject,
-                                                updateTodo: updateTodo,
-                                                selectedElement: selectedElement,
-                                                setSelectedElement: setSelectedElement,
-                                                displayElement: displayElement,
-                                                setDisplayElement: setDisplayElement,
-                                                setFocusIdNext: setFocusIdNext,
-                                                setTodos: setTodos,
-                                                getTodos: (function () {
-                                                    return projectTodos;
-                                                  }),
-                                                checked: checked,
-                                                setChecked: setChecked,
-                                                deleteTodo: deleteTodo,
-                                                itemToMoveHandleMouseDown: itemToMoveHandleMouseDown,
-                                                itemToMoveHandleMouseEnter: itemToMoveHandleMouseEnter
-                                              }, Types.getProjectId(project.id));
+                                    var newTodoAfter = function (after, parentTodo) {
+                                      var newId = Uuid.v4();
+                                      var newTodo_project = project.id;
+                                      var newTodo = {
+                                        id: newId,
+                                        text: "",
+                                        project: newTodo_project,
+                                        status: "Unsorted",
+                                        box: "Working",
+                                        parentTodo: parentTodo,
+                                        depth: undefined,
+                                        childNumber: undefined,
+                                        hasArchivedChildren: false,
+                                        hasChildren: false
+                                      };
+                                      setTodos(project.id, (function (todos) {
+                                              if (after === undefined) {
+                                                return [newTodo].concat(todos);
+                                              } else {
+                                                return Core__Array.reduce(todos, [], (function (a, c) {
+                                                              if (Caml_obj.equal(c.id, after)) {
+                                                                return a.concat([c]).concat([newTodo]);
+                                                              } else {
+                                                                return a.concat([c]);
+                                                              }
+                                                            }));
+                                              }
+                                            }));
+                                      setFocusIdNext(function (param) {
+                                            return Types.getTodoInputId(newId);
+                                          });
+                                    };
+                                    return JsxRuntime.jsxs(React.Fragment, {
+                                                children: [
+                                                  JsxRuntime.jsx(Project.make, {
+                                                        project: project,
+                                                        todos: projectTodos,
+                                                        showArchive: showArchive$1,
+                                                        setShowArchive: setShowArchive,
+                                                        updateProject: updateProject,
+                                                        updateTodo: updateTodo,
+                                                        selectedElement: selectedElement,
+                                                        setSelectedElement: setSelectedElement,
+                                                        displayElement: displayElement,
+                                                        setDisplayElement: setDisplayElement,
+                                                        setFocusIdNext: setFocusIdNext,
+                                                        setTodos: setTodos,
+                                                        getTodos: (function () {
+                                                            return projectTodos;
+                                                          }),
+                                                        checked: checked,
+                                                        setChecked: setChecked,
+                                                        deleteTodo: deleteTodo,
+                                                        itemToMoveHandleMouseDown: itemToMoveHandleMouseDown,
+                                                        itemToMoveHandleMouseEnter: itemToMoveHandleMouseEnter
+                                                      }, Types.getProjectId(project.id)),
+                                                  project.todos.map(function (todo) {
+                                                        return JsxRuntime.jsx(Project.Todo.make, {
+                                                                    project: project,
+                                                                    todo: todo,
+                                                                    updateTodo: updateTodo,
+                                                                    isSelected: Caml_obj.equal(selectedElement, {
+                                                                          TAG: "Todo",
+                                                                          _0: todo.id
+                                                                        }),
+                                                                    setSelectedElement: setSelectedElement,
+                                                                    displayElement: displayElement,
+                                                                    isDisplayElement: Caml_obj.equal(displayElement, {
+                                                                          TAG: "Todo",
+                                                                          _0: todo.id
+                                                                        }),
+                                                                    setDisplayElement: setDisplayElement,
+                                                                    setTodos: setTodos,
+                                                                    setFocusIdNext: setFocusIdNext,
+                                                                    newTodoAfter: newTodoAfter,
+                                                                    getTodos: (function () {
+                                                                        return projectTodos;
+                                                                      }),
+                                                                    isChecked: checked.includes(todo.id),
+                                                                    setChecked: setChecked,
+                                                                    deleteTodo: deleteTodo,
+                                                                    showArchive: showArchive$1,
+                                                                    itemToMoveHandleMouseDown: itemToMoveHandleMouseDown,
+                                                                    itemToMoveHandleMouseEnter: itemToMoveHandleMouseEnter
+                                                                  }, Types.getTodoId(todo.id));
+                                                      })
+                                                ]
+                                              });
                                   }),
                               ref: Caml_option.some(aaParentRef),
                               className: "pb-20"

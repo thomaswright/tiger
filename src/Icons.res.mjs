@@ -27,6 +27,8 @@ var ArchiveOff = {};
 
 var CornerDownRight = {};
 
+var DragDrop = {};
+
 export {
   EyeClosed ,
   Eye ,
@@ -41,5 +43,6 @@ export {
   Archive ,
   ArchiveOff ,
   CornerDownRight ,
+  DragDrop ,
 }
 /* No side effect */

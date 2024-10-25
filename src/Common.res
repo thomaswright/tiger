@@ -14,6 +14,7 @@ external focusNextClass: (string, Dom.element) => unit = "focusNextClass"
 
 @module("uuid") external uuid: unit => string = "v4"
 
+// (Dom.element, string, unit, unit) => unit
 @module("@formkit/auto-animate") external autoAnimate: Dom.element => unit = "default"
 @module("@formkit/auto-animate/react")
 external useAutoAnimate: unit => (Dom.element => unit, bool => unit) = "useAutoAnimate"

@@ -254,7 +254,7 @@ module Todo = {
       }
     }
 
-    <div
+    <li
       id={getTodoId(todo.id)}
       tabIndex={0}
       ref={ReactDOM.Ref.domRef(containerRef)}
@@ -285,9 +285,6 @@ module Todo = {
           isSelected ? "outline outline-2 -outline-offset-2 " : "",
           isDisplayElement && !isSelected ? "bg-sky-200" : "",
         ]->Array.join(" ")}>
-        <div
-          onMouseDown={e => itemToMoveHandleMouseDown(todo.id, e)} className={"w-4 h-4 bg-black"}
-        />
         <Common.StatusSelect
           isOpen={statusSelectIsOpen}
           isPinned={todo.box == Pinned}
@@ -354,9 +351,14 @@ module Todo = {
               })
             }}
           />
+          <div
+            onMouseDown={e => itemToMoveHandleMouseDown(todo.id, e)}
+            className={"absolute w-4 h-4 text-gray-500 mr-1 hidden group-hover:block right-12  "}>
+            <Icons.DragDrop />
+          </div>
           <button
             className={[
-              "absolute hidden group-hover:block right-6 bg-[var(--t1)] rounded p-0.5  text-xs  ",
+              "absolute hidden group-hover:block right-7 bg-[var(--t1)] rounded p-0.5  text-xs  ",
             ]->Array.join(" ")}
             onClick={_ => {
               newTodoAfter(Some(todo.id), Some(todo.id))
@@ -370,14 +372,14 @@ module Todo = {
             checked={isChecked}
             type_={"checkbox"}
             className={[
-              "absolute right-0.5 border-[var(--t3)]
+              "absolute right-1 border-[var(--t3)]
              rounded mx-1 text-blue-400 h-3.5 w-3.5 focus:ring-offset-0 focus:ring-blue-500",
               isChecked ? "" : " hidden group-hover:block",
             ]->Array.join(" ")}
           />
         </div>
       </div>
-    </div>
+    </li>
   }
 }
 
@@ -528,92 +530,65 @@ let make = (
     }
   }
 
-  <React.Fragment>
-    <div
-      id={getProjectId(project.id)}
-      tabIndex={0}
-      ref={ReactDOM.Ref.domRef(projectRef)}
-      onKeyDown={onKeyDownProject}
+  <li
+    key={getProjectId(project.id)}
+    id={getProjectId(project.id)}
+    tabIndex={0}
+    ref={ReactDOM.Ref.domRef(projectRef)}
+    onKeyDown={onKeyDownProject}
+    onBlur={_ => setSelectedElement(_ => None)}
+    onFocus={_ => {
+      setSelectedElement(_ => Some(Project(project.id)))
+      setDisplayElement(_ => Some(Project(project.id)))
+    }}
+    onMouseEnter={e => itemToMoveHandleMouseEnter(true, project.id, e)}
+    className={[
+      listItemClass,
+      "group  flex flex-row justify-between items-center bg-[var(--t0)] px-1 text-[var(--t9)]
+        gap-1 border-b-[var(--t6)] border-t-[var(--t0)]",
+      isSelected
+        ? "outline outline-2 -outline-offset-2 outline-purple-500 focus:outline-blue-500"
+        : "",
+    ]->Array.join(" ")}>
+    <Common.TextareaAutosize
+      id={getProjectInputId(project.id)}
+      style={{resize: "none"}}
+      ref={ReactDOM.Ref.domRef(inputRef)}
+      className={[
+        todoInputClass,
+        "ml-1 my-1 block text-lg font-black tracking-tight  w-full border-0 px-0 py-0 focus:ring-0 
+               leading-none bg-transparent",
+      ]->Array.join(" ")}
+      placeholder={""}
+      value={project.name}
       onBlur={_ => setSelectedElement(_ => None)}
       onFocus={_ => {
-        setSelectedElement(_ => Some(Project(project.id)))
-        setDisplayElement(_ => Some(Project(project.id)))
+        setSelectedElement(_ => Some(Todo(project.id)))
+        setDisplayElement(_ => Some(Todo(project.id)))
       }}
-      onMouseEnter={e => itemToMoveHandleMouseEnter(true, project.id, e)}
-      className={[
-        listItemClass,
-        "group  flex flex-row justify-between items-center bg-[var(--t0)] px-1 text-[var(--t9)]
-        gap-1 border-b-[var(--t6)] border-t-[var(--t0)]",
-        isSelected
-          ? "outline outline-2 -outline-offset-2 outline-purple-500 focus:outline-blue-500"
-          : "",
-      ]->Array.join(" ")}>
-      <Common.TextareaAutosize
-        id={getProjectInputId(project.id)}
-        style={{resize: "none"}}
-        ref={ReactDOM.Ref.domRef(inputRef)}
-        className={[
-          todoInputClass,
-          "ml-1 my-1 block text-lg font-black tracking-tight  w-full border-0 px-0 py-0 focus:ring-0 
-               leading-none bg-transparent",
-        ]->Array.join(" ")}
-        placeholder={""}
-        value={project.name}
-        onBlur={_ => setSelectedElement(_ => None)}
-        onFocus={_ => {
-          setSelectedElement(_ => Some(Todo(project.id)))
-          setDisplayElement(_ => Some(Todo(project.id)))
-        }}
-        onKeyDown={onKeyDownInput}
-        onChange={e => {
-          updateProject(project.id, t => {
-            ...t,
-            name: ReactEvent.Form.target(e)["value"],
-          })
-        }}
-      />
-      <div className="flex-1" />
-      <button
-        onClick={_ => {
-          newTodoAfter(None, None)
-        }}
-        className="hidden group-hover:block bg-[var(--t1)] p-0.5 text-xs rounded  flex-none mr-2">
-        <Icons.Plus />
-      </button>
-      <button
-        className="text-2xs rounded h-6 w-6 flex-none font-mono strike"
-        onClick={_ => setShowArchive(v => v->arrayToggle(project.id))}>
-        {showArchive ? <Icons.Eye /> : <Icons.EyeClosed />}
-        // {showArchive
-        //   ? <span className="line-through"> {"closed"->React.string} </span>
-        //   : <span> {"closed"->React.string} </span>}
-      </button>
-    </div>
-    {todos
-    // ->Array.toSorted((a, b) => a.status->statusToFloat -. b.status->statusToFloat)
-    ->Array.map(todo =>
-      <Todo
-        key={getTodoId(todo.id)}
-        project
-        todo
-        updateTodo
-        showArchive
-        isSelected={selectedElement == Some(Todo(todo.id))}
-        isDisplayElement={displayElement == Some(Todo(todo.id))}
-        setSelectedElement
-        displayElement
-        setDisplayElement
-        setTodos
-        setFocusIdNext
-        newTodoAfter
-        getTodos
-        setChecked
-        deleteTodo
-        isChecked={checked->Array.includes(todo.id)}
-        itemToMoveHandleMouseDown
-        itemToMoveHandleMouseEnter
-      />
-    )
-    ->React.array}
-  </React.Fragment>
+      onKeyDown={onKeyDownInput}
+      onChange={e => {
+        updateProject(project.id, t => {
+          ...t,
+          name: ReactEvent.Form.target(e)["value"],
+        })
+      }}
+    />
+    <div className="flex-1" />
+    <button
+      onClick={_ => {
+        newTodoAfter(None, None)
+      }}
+      className="hidden group-hover:block bg-[var(--t1)] p-0.5 text-xs rounded  flex-none mr-2">
+      <Icons.Plus />
+    </button>
+    <button
+      className="text-2xs rounded h-6 w-6 flex-none font-mono strike"
+      onClick={_ => setShowArchive(v => v->arrayToggle(project.id))}>
+      {showArchive ? <Icons.Eye /> : <Icons.EyeClosed />}
+      // {showArchive
+      //   ? <span className="line-through"> {"closed"->React.string} </span>
+      //   : <span> {"closed"->React.string} </span>}
+    </button>
+  </li>
 }
