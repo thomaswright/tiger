@@ -29,6 +29,8 @@ var CornerDownRight = {};
 
 var DragDrop = {};
 
+var SquarePlus = {};
+
 export {
   EyeClosed ,
   Eye ,
@@ -44,5 +46,6 @@ export {
   ArchiveOff ,
   CornerDownRight ,
   DragDrop ,
+  SquarePlus ,
 }
 /* No side effect */

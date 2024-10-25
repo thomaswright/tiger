@@ -440,6 +440,8 @@ let make = () => {
     None
   })
 
+  Console.log(projects)
+
   <div className="flex flex-row h-dvh text-[var(--t9)]">
     // <StatusSelector />
     <div className="flex-1 overflow-y-scroll">
@@ -489,89 +491,27 @@ let make = () => {
             ->Array.filter(todo => showArchive ? true : todo.box != Archive)
             ->buildTodoTree
 
-          let newTodoAfter = (after, parentTodo) => {
-            let newId = Common.uuid()
-
-            let newTodo = {
-              id: newId,
-              text: "",
-              project: project.id,
-              status: Unsorted,
-              box: Working,
-              parentTodo,
-              depth: None,
-              childNumber: None,
-              hasArchivedChildren: false,
-              hasChildren: false,
-            }
-
-            setTodos(project.id, todos => {
-              if after == None {
-                [newTodo]->Array.concat(todos)
-              } else {
-                todos->Array.reduce(
-                  [],
-                  (a, c) => {
-                    Some(c.id) == after
-                      ? a->Array.concat([c])->Array.concat([newTodo])
-                      : a->Array.concat([c])
-                  },
-                )
-              }
-            })
-
-            setFocusIdNext(_ => Some(getTodoInputId(newId)))
-          }
-
-          <React.Fragment>
-            <Project
-              key={getProjectId(project.id)}
-              showArchive={showArchive}
-              setShowArchive={setShowArchive}
-              project
-              todos={projectTodos}
-              updateProject
-              updateTodo
-              selectedElement
-              setSelectedElement
-              displayElement
-              setDisplayElement
-              setFocusIdNext
-              setTodos
-              getTodos={() => projectTodos}
-              setChecked
-              checked
-              deleteTodo
-              itemToMoveHandleMouseDown
-              itemToMoveHandleMouseEnter
-            />
-            {project.todos
-            // ->Array.toSorted((a, b) => a.status->statusToFloat -. b.status->statusToFloat)
-            ->Array.map(todo =>
-              <Project.Todo
-                key={getTodoId(todo.id)}
-                project
-                todo
-                updateTodo
-                showArchive
-                isSelected={selectedElement == Some(Todo(todo.id))}
-                isDisplayElement={displayElement == Some(Todo(todo.id))}
-                setSelectedElement
-                displayElement
-                setDisplayElement
-                setTodos
-                setFocusIdNext
-                newTodoAfter
-                getTodos={() => projectTodos}
-                setChecked
-                deleteTodo
-                isChecked={checked->Array.includes(todo.id)}
-                itemToMoveHandleMouseDown
-                itemToMoveHandleMouseEnter
-              />
-            )
-            ->React.array}
-          </React.Fragment>
+          <Project
+            key={getProjectId(project.id)}
+            showArchive={showArchive}
+            setShowArchive={setShowArchive}
+            project
+            todos={projectTodos}
+            updateProject
+            updateTodo
+            selectedElement
+            setSelectedElement
+            displayElement
+            setDisplayElement
+            setFocusIdNext
+            setTodos
+            getTodos={() => projectTodos}
+            setChecked
+            checked
+            deleteTodo
+            itemToMoveHandleMouseDown
+            itemToMoveHandleMouseEnter
+          />
         })
         ->React.array}
       </ul>

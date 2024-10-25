@@ -67,3 +67,8 @@ module DragDrop = {
   @react.component @module("react-icons/tb")
   external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "TbDragDrop"
 }
+
+module SquarePlus = {
+  @react.component @module("react-icons/tb")
+  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "TbSquarePlus"
+}

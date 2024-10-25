@@ -475,6 +475,7 @@ function App(props) {
                     });
               }));
       });
+  console.log(projects);
   var tmp;
   if (displayElement !== undefined) {
     if (displayElement.TAG === "Todo") {
@@ -581,94 +582,28 @@ function App(props) {
                                                 return todo.box !== "Archive";
                                               }
                                             }));
-                                    var newTodoAfter = function (after, parentTodo) {
-                                      var newId = Uuid.v4();
-                                      var newTodo_project = project.id;
-                                      var newTodo = {
-                                        id: newId,
-                                        text: "",
-                                        project: newTodo_project,
-                                        status: "Unsorted",
-                                        box: "Working",
-                                        parentTodo: parentTodo,
-                                        depth: undefined,
-                                        childNumber: undefined,
-                                        hasArchivedChildren: false,
-                                        hasChildren: false
-                                      };
-                                      setTodos(project.id, (function (todos) {
-                                              if (after === undefined) {
-                                                return [newTodo].concat(todos);
-                                              } else {
-                                                return Core__Array.reduce(todos, [], (function (a, c) {
-                                                              if (Caml_obj.equal(c.id, after)) {
-                                                                return a.concat([c]).concat([newTodo]);
-                                                              } else {
-                                                                return a.concat([c]);
-                                                              }
-                                                            }));
-                                              }
-                                            }));
-                                      setFocusIdNext(function (param) {
-                                            return Types.getTodoInputId(newId);
-                                          });
-                                    };
-                                    return JsxRuntime.jsxs(React.Fragment, {
-                                                children: [
-                                                  JsxRuntime.jsx(Project.make, {
-                                                        project: project,
-                                                        todos: projectTodos,
-                                                        showArchive: showArchive$1,
-                                                        setShowArchive: setShowArchive,
-                                                        updateProject: updateProject,
-                                                        updateTodo: updateTodo,
-                                                        selectedElement: selectedElement,
-                                                        setSelectedElement: setSelectedElement,
-                                                        displayElement: displayElement,
-                                                        setDisplayElement: setDisplayElement,
-                                                        setFocusIdNext: setFocusIdNext,
-                                                        setTodos: setTodos,
-                                                        getTodos: (function () {
-                                                            return projectTodos;
-                                                          }),
-                                                        checked: checked,
-                                                        setChecked: setChecked,
-                                                        deleteTodo: deleteTodo,
-                                                        itemToMoveHandleMouseDown: itemToMoveHandleMouseDown,
-                                                        itemToMoveHandleMouseEnter: itemToMoveHandleMouseEnter
-                                                      }, Types.getProjectId(project.id)),
-                                                  project.todos.map(function (todo) {
-                                                        return JsxRuntime.jsx(Project.Todo.make, {
-                                                                    project: project,
-                                                                    todo: todo,
-                                                                    updateTodo: updateTodo,
-                                                                    isSelected: Caml_obj.equal(selectedElement, {
-                                                                          TAG: "Todo",
-                                                                          _0: todo.id
-                                                                        }),
-                                                                    setSelectedElement: setSelectedElement,
-                                                                    displayElement: displayElement,
-                                                                    isDisplayElement: Caml_obj.equal(displayElement, {
-                                                                          TAG: "Todo",
-                                                                          _0: todo.id
-                                                                        }),
-                                                                    setDisplayElement: setDisplayElement,
-                                                                    setTodos: setTodos,
-                                                                    setFocusIdNext: setFocusIdNext,
-                                                                    newTodoAfter: newTodoAfter,
-                                                                    getTodos: (function () {
-                                                                        return projectTodos;
-                                                                      }),
-                                                                    isChecked: checked.includes(todo.id),
-                                                                    setChecked: setChecked,
-                                                                    deleteTodo: deleteTodo,
-                                                                    showArchive: showArchive$1,
-                                                                    itemToMoveHandleMouseDown: itemToMoveHandleMouseDown,
-                                                                    itemToMoveHandleMouseEnter: itemToMoveHandleMouseEnter
-                                                                  }, Types.getTodoId(todo.id));
-                                                      })
-                                                ]
-                                              });
+                                    return JsxRuntime.jsx(Project.make, {
+                                                project: project,
+                                                todos: projectTodos,
+                                                showArchive: showArchive$1,
+                                                setShowArchive: setShowArchive,
+                                                updateProject: updateProject,
+                                                updateTodo: updateTodo,
+                                                selectedElement: selectedElement,
+                                                setSelectedElement: setSelectedElement,
+                                                displayElement: displayElement,
+                                                setDisplayElement: setDisplayElement,
+                                                setFocusIdNext: setFocusIdNext,
+                                                setTodos: setTodos,
+                                                getTodos: (function () {
+                                                    return projectTodos;
+                                                  }),
+                                                checked: checked,
+                                                setChecked: setChecked,
+                                                deleteTodo: deleteTodo,
+                                                itemToMoveHandleMouseDown: itemToMoveHandleMouseDown,
+                                                itemToMoveHandleMouseEnter: itemToMoveHandleMouseEnter
+                                              }, Types.getProjectId(project.id));
                                   }),
                               ref: Caml_option.some(aaParentRef),
                               className: "pb-20"

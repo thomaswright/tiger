@@ -377,32 +377,37 @@ function Project$Todo(props) {
                                                 }));
                                         })
                                     }),
-                                JsxRuntime.jsx("div", {
-                                      children: JsxRuntime.jsx(Tb.TbDragDrop, {}),
-                                      className: "absolute w-4 h-4 text-gray-500 mr-1 hidden group-hover:block right-12  ",
-                                      onMouseDown: (function (e) {
-                                          itemToMoveHandleMouseDown(todo.id, e);
-                                        })
-                                    }),
-                                JsxRuntime.jsx("button", {
-                                      children: JsxRuntime.jsx(Tb.TbPlus, {}),
-                                      className: ["absolute hidden group-hover:block right-7 bg-[var(--t1)] rounded p-0.5  text-xs  "].join(" "),
-                                      onClick: (function (param) {
-                                          newTodoAfter(todo.id, todo.id);
-                                        })
-                                    }),
-                                JsxRuntime.jsx("input", {
+                                JsxRuntime.jsxs("div", {
+                                      children: [
+                                        JsxRuntime.jsx("div", {
+                                              children: JsxRuntime.jsx(Tb.TbDragDrop, {}),
+                                              className: " w-4 h-4 text-gray-500 hidden group-hover:block   ",
+                                              onMouseDown: (function (e) {
+                                                  itemToMoveHandleMouseDown(todo.id, e);
+                                                })
+                                            }),
+                                        JsxRuntime.jsx("button", {
+                                              children: JsxRuntime.jsx(Tb.TbPlus, {}),
+                                              className: [" flex-row items-center justify-center cursor-default hidden group-hover:flex rounded-sm text-sm text-gray-500 border-gray-500  "].join(" "),
+                                              onClick: (function (param) {
+                                                  newTodoAfter(todo.id, todo.id);
+                                                })
+                                            }),
+                                        JsxRuntime.jsx("input", {
+                                              className: ["border-gray-400 rounded text-blue-400 h-3.5 w-3.5 focus:ring-offset-0 focus:ring-blue-500"].join(" "),
+                                              checked: isChecked,
+                                              type: "checkbox",
+                                              onChange: (function (param) {
+                                                  setChecked(function (v) {
+                                                        return Common.arrayToggle(v, todo.id);
+                                                      });
+                                                })
+                                            })
+                                      ],
                                       className: [
-                                          "absolute right-1 border-[var(--t3)]\n             rounded mx-1 text-blue-400 h-3.5 w-3.5 focus:ring-offset-0 focus:ring-blue-500",
-                                          isChecked ? "" : " hidden group-hover:block"
-                                        ].join(" "),
-                                      checked: isChecked,
-                                      type: "checkbox",
-                                      onChange: (function (param) {
-                                          setChecked(function (v) {
-                                                return Common.arrayToggle(v, todo.id);
-                                              });
-                                        })
+                                          "cursor-default absolute right-0 flex-row items-center gap-1.5 pr-1.5",
+                                          isChecked ? "flex" : " hidden group-hover:flex"
+                                        ].join(" ")
                                     })
                               ],
                               className: ["relative flex-1 ml-1 flex flex-row h-full justify-start items-center "].join(" ")
@@ -461,16 +466,25 @@ var Todo = {
 
 function Project(props) {
   var itemToMoveHandleMouseEnter = props.itemToMoveHandleMouseEnter;
+  var itemToMoveHandleMouseDown = props.itemToMoveHandleMouseDown;
+  var deleteTodo = props.deleteTodo;
+  var setChecked = props.setChecked;
+  var checked = props.checked;
+  var getTodos = props.getTodos;
   var setTodos = props.setTodos;
   var setFocusIdNext = props.setFocusIdNext;
   var setDisplayElement = props.setDisplayElement;
+  var displayElement = props.displayElement;
   var setSelectedElement = props.setSelectedElement;
+  var selectedElement = props.selectedElement;
+  var updateTodo = props.updateTodo;
   var updateProject = props.updateProject;
   var setShowArchive = props.setShowArchive;
+  var showArchive = props.showArchive;
   var project = props.project;
   var projectRef = React.useRef(null);
   var inputRef = React.useRef(null);
-  var isSelected = Caml_obj.equal(props.selectedElement, {
+  var isSelected = Caml_obj.equal(selectedElement, {
         TAG: "Project",
         _0: project.id
       });
@@ -588,31 +602,92 @@ function Project(props) {
     }
     
   };
-  return JsxRuntime.jsxs("li", {
+  return JsxRuntime.jsxs(React.Fragment, {
               children: [
-                JsxRuntime.jsx(ReactTextareaAutosize, {
-                      ref: Caml_option.some(inputRef),
+                JsxRuntime.jsxs("li", {
+                      children: [
+                        JsxRuntime.jsx(ReactTextareaAutosize, {
+                              ref: Caml_option.some(inputRef),
+                              className: [
+                                  Types.todoInputClass,
+                                  "ml-1 my-1 block text-lg font-black tracking-tight  w-full border-0 px-0 py-0 focus:ring-0 \n               leading-none bg-transparent"
+                                ].join(" "),
+                              id: Types.getProjectInputId(project.id),
+                              style: {
+                                resize: "none"
+                              },
+                              placeholder: "",
+                              value: project.name,
+                              onKeyDown: onKeyDownInput,
+                              onFocus: (function (param) {
+                                  setSelectedElement(function (param) {
+                                        return {
+                                                TAG: "Todo",
+                                                _0: project.id
+                                              };
+                                      });
+                                  setDisplayElement(function (param) {
+                                        return {
+                                                TAG: "Todo",
+                                                _0: project.id
+                                              };
+                                      });
+                                }),
+                              onBlur: (function (param) {
+                                  setSelectedElement(function (param) {
+                                        
+                                      });
+                                }),
+                              onChange: (function (e) {
+                                  updateProject(project.id, (function (t) {
+                                          return {
+                                                  id: t.id,
+                                                  name: e.target.value,
+                                                  isActive: t.isActive,
+                                                  todos: t.todos
+                                                };
+                                        }));
+                                })
+                            }),
+                        JsxRuntime.jsx("div", {
+                              className: "flex-1"
+                            }),
+                        JsxRuntime.jsx("button", {
+                              children: JsxRuntime.jsx(Tb.TbPlus, {}),
+                              className: "hidden group-hover:block bg-[var(--t1)] p-0.5 text-xs rounded  flex-none mr-2",
+                              onClick: (function (param) {
+                                  newTodoAfter(undefined, undefined);
+                                })
+                            }),
+                        JsxRuntime.jsx("button", {
+                              children: showArchive ? JsxRuntime.jsx(Tb.TbEye, {}) : JsxRuntime.jsx(Tb.TbEyeClosed, {}),
+                              className: "text-2xs rounded h-6 w-6 flex-none font-mono strike",
+                              onClick: (function (param) {
+                                  setShowArchive(function (v) {
+                                        return Common.arrayToggle(v, project.id);
+                                      });
+                                })
+                            })
+                      ],
+                      ref: Caml_option.some(projectRef),
                       className: [
-                          Types.todoInputClass,
-                          "ml-1 my-1 block text-lg font-black tracking-tight  w-full border-0 px-0 py-0 focus:ring-0 \n               leading-none bg-transparent"
+                          Types.listItemClass,
+                          "group  flex flex-row justify-between items-center bg-[var(--t0)] px-1 text-[var(--t9)]\n        gap-1 border-b-[var(--t6)] border-t-[var(--t0)]",
+                          isSelected ? "outline outline-2 -outline-offset-2 outline-purple-500 focus:outline-blue-500" : ""
                         ].join(" "),
-                      id: Types.getProjectInputId(project.id),
-                      style: {
-                        resize: "none"
-                      },
-                      placeholder: "",
-                      value: project.name,
-                      onKeyDown: onKeyDownInput,
+                      id: Types.getProjectId(project.id),
+                      tabIndex: 0,
+                      onKeyDown: onKeyDownProject,
                       onFocus: (function (param) {
                           setSelectedElement(function (param) {
                                 return {
-                                        TAG: "Todo",
+                                        TAG: "Project",
                                         _0: project.id
                                       };
                               });
                           setDisplayElement(function (param) {
                                 return {
-                                        TAG: "Todo",
+                                        TAG: "Project",
                                         _0: project.id
                                       };
                               });
@@ -622,69 +697,40 @@ function Project(props) {
                                 
                               });
                         }),
-                      onChange: (function (e) {
-                          updateProject(project.id, (function (t) {
-                                  return {
-                                          id: t.id,
-                                          name: e.target.value,
-                                          isActive: t.isActive,
-                                          todos: t.todos
-                                        };
-                                }));
+                      onMouseEnter: (function (e) {
+                          itemToMoveHandleMouseEnter(true, project.id, e);
                         })
-                    }),
-                JsxRuntime.jsx("div", {
-                      className: "flex-1"
-                    }),
-                JsxRuntime.jsx("button", {
-                      children: JsxRuntime.jsx(Tb.TbPlus, {}),
-                      className: "hidden group-hover:block bg-[var(--t1)] p-0.5 text-xs rounded  flex-none mr-2",
-                      onClick: (function (param) {
-                          newTodoAfter(undefined, undefined);
-                        })
-                    }),
-                JsxRuntime.jsx("button", {
-                      children: props.showArchive ? JsxRuntime.jsx(Tb.TbEye, {}) : JsxRuntime.jsx(Tb.TbEyeClosed, {}),
-                      className: "text-2xs rounded h-6 w-6 flex-none font-mono strike",
-                      onClick: (function (param) {
-                          setShowArchive(function (v) {
-                                return Common.arrayToggle(v, project.id);
-                              });
-                        })
+                    }, Types.getProjectId(project.id)),
+                props.todos.map(function (todo) {
+                      return JsxRuntime.jsx(Project$Todo, {
+                                  project: project,
+                                  todo: todo,
+                                  updateTodo: updateTodo,
+                                  isSelected: Caml_obj.equal(selectedElement, {
+                                        TAG: "Todo",
+                                        _0: todo.id
+                                      }),
+                                  setSelectedElement: setSelectedElement,
+                                  displayElement: displayElement,
+                                  isDisplayElement: Caml_obj.equal(displayElement, {
+                                        TAG: "Todo",
+                                        _0: todo.id
+                                      }),
+                                  setDisplayElement: setDisplayElement,
+                                  setTodos: setTodos,
+                                  setFocusIdNext: setFocusIdNext,
+                                  newTodoAfter: newTodoAfter,
+                                  getTodos: getTodos,
+                                  isChecked: checked.includes(todo.id),
+                                  setChecked: setChecked,
+                                  deleteTodo: deleteTodo,
+                                  showArchive: showArchive,
+                                  itemToMoveHandleMouseDown: itemToMoveHandleMouseDown,
+                                  itemToMoveHandleMouseEnter: itemToMoveHandleMouseEnter
+                                }, Types.getTodoId(todo.id));
                     })
-              ],
-              ref: Caml_option.some(projectRef),
-              className: [
-                  Types.listItemClass,
-                  "group  flex flex-row justify-between items-center bg-[var(--t0)] px-1 text-[var(--t9)]\n        gap-1 border-b-[var(--t6)] border-t-[var(--t0)]",
-                  isSelected ? "outline outline-2 -outline-offset-2 outline-purple-500 focus:outline-blue-500" : ""
-                ].join(" "),
-              id: Types.getProjectId(project.id),
-              tabIndex: 0,
-              onKeyDown: onKeyDownProject,
-              onFocus: (function (param) {
-                  setSelectedElement(function (param) {
-                        return {
-                                TAG: "Project",
-                                _0: project.id
-                              };
-                      });
-                  setDisplayElement(function (param) {
-                        return {
-                                TAG: "Project",
-                                _0: project.id
-                              };
-                      });
-                }),
-              onBlur: (function (param) {
-                  setSelectedElement(function (param) {
-                        
-                      });
-                }),
-              onMouseEnter: (function (e) {
-                  itemToMoveHandleMouseEnter(true, project.id, e);
-                })
-            }, Types.getProjectId(project.id));
+              ]
+            });
 }
 
 var make = Project;
