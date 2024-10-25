@@ -54,7 +54,7 @@ module Todo = {
 
       // Indents
       if (
-        (e->ReactEvent.Keyboard.key == "Tab" ||
+        ((e->ReactEvent.Keyboard.key == "Tab" && !(e->ReactEvent.Keyboard.shiftKey)) ||
           (e->ReactEvent.Keyboard.key == "]" && e->ReactEvent.Keyboard.metaKey)) &&
           todo.childNumber->Option.mapOr(false, childNumber => childNumber != 0)
       ) {
@@ -119,7 +119,7 @@ module Todo = {
             ->Array.find(t => t.depth == Some(todoDepth - 2))
             ->Option.map(t => t.id)
 
-          setTodos(project.id, todos =>
+          setTodos(project.id, todos => {
             todos->Array.map(
               t => {
                 if t.id == todo.id {
@@ -137,7 +137,7 @@ module Todo = {
                 }
               },
             )
-          )
+          })
         })
       }
     }

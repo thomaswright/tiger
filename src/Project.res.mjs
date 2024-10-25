@@ -49,7 +49,7 @@ function Project$Todo(props) {
     if (e.key === "Tab") {
       e.preventDefault();
     }
-    if ((e.key === "Tab" || e.key === "]" && e.metaKey) && Core__Option.mapOr(todo.childNumber, false, (function (childNumber) {
+    if ((e.key === "Tab" && !e.shiftKey || e.key === "]" && e.metaKey) && Core__Option.mapOr(todo.childNumber, false, (function (childNumber) {
               return childNumber !== 0;
             }))) {
       e.preventDefault();
