@@ -8,6 +8,7 @@ import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
+import * as Belt_SetString from "rescript/lib/es6/belt_SetString.js";
 import * as Tb from "react-icons/tb";
 import * as JsxRuntime from "react/jsx-runtime";
 import ReactTextareaAutosize from "react-textarea-autosize";
@@ -413,7 +414,11 @@ function Project$Todo(props) {
                                               type: "checkbox",
                                               onChange: (function (param) {
                                                   setChecked(function (v) {
-                                                        return Common.arrayToggle(v, todo.id);
+                                                        if (Belt_SetString.has(v, todo.id)) {
+                                                          return Belt_SetString.remove(v, todo.id);
+                                                        } else {
+                                                          return Belt_SetString.add(v, todo.id);
+                                                        }
                                                       });
                                                 })
                                             })
@@ -735,7 +740,7 @@ function Project(props) {
                                   setFocusIdNext: setFocusIdNext,
                                   newTodoAfter: newTodoAfter,
                                   getTodos: getTodos,
-                                  isChecked: checked.includes(todo.id),
+                                  isChecked: Belt_SetString.has(checked, todo.id),
                                   setChecked: setChecked,
                                   deleteTodo: deleteTodo,
                                   showArchive: showArchive,

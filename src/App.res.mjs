@@ -107,11 +107,11 @@ function App$CheckedSummary(props) {
               return p.todos;
             })]);
   var tmp;
-  if (checked.length < 2) {
+  if (Belt_SetString.size(checked) < 2) {
     tmp = null;
   } else {
     var checkedTodos = allTodos.filter(function (t) {
-          return checked.includes(t.id);
+          return Belt_SetString.has(checked, t.id);
         });
     tmp = JsxRuntime.jsxs(React.Fragment, {
           children: [
@@ -132,7 +132,7 @@ function App$CheckedSummary(props) {
                                                 name: project.name,
                                                 isActive: project.isActive,
                                                 todos: project.todos.map(function (t) {
-                                                      if (checked.includes(t.id)) {
+                                                      if (Belt_SetString.has(checked, t.id)) {
                                                         return {
                                                                 id: t.id,
                                                                 text: t.text,
@@ -165,7 +165,7 @@ function App$CheckedSummary(props) {
                           });
                     })
                 }),
-            checked.length.toString() + " Checked",
+            Belt_SetString.size(checked).toString() + " Checked",
             JsxRuntime.jsx("div", {
                   className: "flex-1"
                 }),
@@ -174,7 +174,7 @@ function App$CheckedSummary(props) {
                   className: "px-2",
                   onClick: (function (param) {
                       setChecked(function (param) {
-                            return [];
+                            
                           });
                     })
                 })
@@ -213,7 +213,7 @@ function App(props) {
   var match$1 = Common.useLocalStorage("showArchive", []);
   var setShowArchive = match$1[1];
   var showArchive = match$1[0];
-  var match$2 = Common.useLocalStorage("checked", []);
+  var match$2 = Common.useLocalStorage("checked", undefined);
   var setChecked = match$2[1];
   var checked = match$2[0];
   var match$3 = Common.useLocalStorage("projectsTab", "All");
@@ -284,7 +284,7 @@ function App(props) {
     clickDelayTimeout.current = Caml_option.some(timeoutId);
   };
   var itemToMoveHandleMouseEnter = function (isProject, itemId, param) {
-    var itemsToMove = Belt_SetString.union(Belt_SetString.fromArray(checked), itemsOfDragHandle);
+    var itemsToMove = Belt_SetString.union(checked, itemsOfDragHandle);
     if (Belt_SetString.isEmpty(itemsOfDragHandle)) {
       return ;
     }

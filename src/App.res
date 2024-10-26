@@ -1,5 +1,6 @@
 open Types
 open Webapi.Dom
+open Common
 
 let defaultTodos = [
   {
@@ -132,7 +133,7 @@ module CheckedSummary = {
     let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
     let allTodos = Array.concatMany([], projects->Array.map(p => p.todos))
     <div className="h-8 text-sm px-2 flex flex-row gap-2 items-center border-b">
-      {if checked->Array.length < 2 {
+      {if checked->SSet.size < 2 {
         React.null
       } else {
         <React.Fragment>
@@ -144,7 +145,7 @@ module CheckedSummary = {
               setStatusSelectIsOpen(_ => v)
             }}
             status={
-              let checkedTodos = allTodos->Array.filter(t => checked->Array.includes(t.id))
+              let checkedTodos = allTodos->Array.filter(t => checked->SSet.has(t.id))
               checkedTodos
               ->Array.get(0)
               ->Option.flatMap(first => {
@@ -162,7 +163,7 @@ module CheckedSummary = {
                   ...project,
                   todos: project.todos->Array.map(
                     t => {
-                      if checked->Array.includes(t.id) {
+                      if checked->SSet.has(t.id) {
                         {
                           ...t,
                           status: newStatus,
@@ -176,9 +177,9 @@ module CheckedSummary = {
                 })
               })}
           />
-          {`${checked->Array.length->Int.toString} Checked`->React.string}
+          {`${checked->SSet.size->Int.toString} Checked`->React.string}
           <div className="flex-1" />
-          <button className="px-2" onClick={_ => setChecked(_ => [])}>
+          <button className="px-2" onClick={_ => setChecked(_ => SSet.empty)}>
             {"Clear"->React.string}
           </button>
         </React.Fragment>
@@ -187,8 +188,14 @@ module CheckedSummary = {
   }
 }
 
-module SSet = Belt.Set.String
-module SMap = Belt.Map.String
+let _adjustProject = (projects, f, id) =>
+  projects->Array.map(p => {
+    if p.id == id {
+      f(p)
+    } else {
+      p
+    }
+  })
 
 @react.component
 let make = () => {
@@ -211,7 +218,7 @@ let make = () => {
 
   // let (todos, setTodos, getTodos) = Common.useLocalStorage("todos", defaultTodos)
   let (showArchive, setShowArchive, _) = Common.useLocalStorage("showArchive", [])
-  let (checked, setChecked, _) = Common.useLocalStorage("checked", [])
+  let (checked, setChecked, _) = Common.useLocalStorage("checked", SSet.empty)
   let (projectsTab, _setProjectTab, _) = Common.useLocalStorage("projectsTab", All)
   let (selectedElement, setSelectedElement) = React.useState(_ => None)
   let (displayElement, setDisplayElement) = React.useState(_ => None)
@@ -280,7 +287,7 @@ let make = () => {
   }
 
   let itemToMoveHandleMouseEnter = (isProject, itemId, _) => {
-    let itemsToMove = checked->SSet.fromArray->SSet.union(itemsOfDragHandle)
+    let itemsToMove = SSet.union(checked, itemsOfDragHandle)
 
     if itemsOfDragHandle->SSet.isEmpty {
       ()

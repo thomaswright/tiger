@@ -45,3 +45,6 @@ module TextareaAutosize = {
   @react.component(: ReactDOM.domProps) @module("react-textarea-autosize")
   external make: ReactDOM.domProps => React.element = "default"
 }
+
+module SSet = Belt.Set.String
+module SMap = Belt.Map.String

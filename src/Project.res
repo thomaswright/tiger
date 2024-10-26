@@ -389,7 +389,9 @@ module Todo = {
             </button>
             <input
               onChange={_ => {
-                setChecked(v => v->Common.arrayToggle(todo.id))
+                setChecked(v =>
+                  v->SSet.has(todo.id) ? v->SSet.remove(todo.id) : v->SSet.add(todo.id)
+                )
               }}
               checked={isChecked}
               type_={"checkbox"}
@@ -632,7 +634,7 @@ let make = (
         getTodos={getTodos}
         setChecked
         deleteTodo
-        isChecked={checked->Array.includes(todo.id)}
+        isChecked={checked->SSet.has(todo.id)}
         itemToMoveHandleMouseDown
         itemToMoveHandleMouseEnter
       />
