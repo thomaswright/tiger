@@ -246,6 +246,25 @@ function App(props) {
   var aaParentRef = React.useRef(null);
   var clickDelayTimeout = React.useRef(undefined);
   var lastRelative = React.useRef(undefined);
+  var logExport = function () {
+    console.log(projects.map(function (p) {
+              return {
+                      id: p.id,
+                      name: p.name,
+                      isActive: p.isActive,
+                      todos: p.todos.map(function (t) {
+                            return {
+                                    id: t.id,
+                                    text: t.text,
+                                    project: t.project,
+                                    status: t.status,
+                                    box: t.box,
+                                    parentTodo: t.parentTodo
+                                  };
+                          })
+                    };
+            }));
+  };
   var itemToMoveHandleMouseDown = function (itemId, param) {
     var timeoutId = setTimeout((function () {
             setItemsToMove(function (s) {
@@ -339,7 +358,7 @@ function App(props) {
                                         id: p$1.id,
                                         name: p$1.name,
                                         isActive: p$1.isActive,
-                                        todos: Belt_Array.concatMany(p$1.todos.map(function (t, i) {
+                                        todos: Belt_Array.concatMany(p$1.todos.map(function (t, param) {
                                                     if (t.id === itemId) {
                                                       if (fromBelow) {
                                                         return applyNewParent(todosToMove.concat([t]), t.parentTodo);
@@ -580,6 +599,12 @@ function App(props) {
                                       className: "py-0.5 ",
                                       src: logoUrl,
                                       width: "24"
+                                    }),
+                                JsxRuntime.jsx("button", {
+                                      children: "export",
+                                      onClick: (function (param) {
+                                          logExport();
+                                        })
                                     }),
                                 JsxRuntime.jsxs("button", {
                                       children: [

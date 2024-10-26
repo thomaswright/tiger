@@ -225,6 +225,28 @@ let make = () => {
   let clickDelayTimeout = React.useRef(None)
   let lastRelative = React.useRef(None)
 
+  let logExport = () => {
+    Console.log(
+      projects->Array.map(p =>
+        {
+          "id": p.id,
+          "name": p.name,
+          "isActive": p.isActive,
+          "todos": p.todos->Array.map(t => {
+            {
+              "id": t.id,
+              "text": t.text,
+              "project": t.project,
+              "status": t.status,
+              "box": t.box,
+              "parentTodo": t.parentTodo,
+            }
+          }),
+        }
+      ),
+    )
+  }
+
   // React.useEffect1(() => {
   //   switch aaParentRef.current {
   //   | Null | Undefined => ()
@@ -400,7 +422,7 @@ let make = () => {
                   ...p,
                   todos: p.todos
                   ->Array.mapWithIndex(
-                    (t, i) => {
+                    (t, _) => {
                       if t.id == itemId {
                         if fromBelow {
                           // let newParent =
@@ -522,6 +544,7 @@ let make = () => {
         //     onCheckedChange={() => setProjectTab(v => v == All ? Active : All)}
         //   />
         // </div>
+        <button onClick={_ => logExport()}> {"export"->React.string} </button>
         <button
           onClick={_ => {
             let newProjectId = Common.uuid()
