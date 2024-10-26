@@ -347,7 +347,10 @@ function Project$Todo(props) {
                                       ref: Caml_option.some(inputRef),
                                       className: [
                                           Types.todoInputClass,
-                                          "mx-1 my-1 block text-sm font-medium  w-full h-5 border-0 px-0 py-0 focus:ring-0 \n                bg-transparent text-[var(--t8)]"
+                                          "mx-1 my-1 block text-sm font-medium  w-full h-5 border-0 px-0 py-0 focus:ring-0 focus:z-10\n                 text-[var(--t8)]",
+                                          isChecked ? "bg-sky-50" : (
+                                              isDisplayElement && !isSelected ? "bg-sky-200" : "bg-white"
+                                            )
                                         ].join(" "),
                                       id: Types.getTodoInputId(todo.id),
                                       style: {
@@ -396,20 +399,20 @@ function Project$Todo(props) {
                                       children: [
                                         JsxRuntime.jsx("div", {
                                               children: JsxRuntime.jsx(Tb.TbDragDrop, {}),
-                                              className: " w-4 h-4 text-gray-500 hidden group-hover:block   ",
+                                              className: " w-4 h-4 text-gray-500 hidden group-hover:block bg-white rounded-sm 0 ",
                                               onMouseDown: (function (e) {
                                                   itemToMoveHandleMouseDown(todo.id, e);
                                                 })
                                             }),
                                         JsxRuntime.jsx("button", {
                                               children: JsxRuntime.jsx(Tb.TbPlus, {}),
-                                              className: [" flex-row items-center justify-center cursor-default hidden group-hover:flex rounded-sm text-sm text-gray-500 border-gray-500  "].join(" "),
+                                              className: ["w-4 h-4 flex-row items-center justify-center cursor-default hidden group-hover:flex rounded-sm text-sm text-gray-500 border-gray-500 bg-white "].join(" "),
                                               onClick: (function (param) {
                                                   newTodoAfter(todo.id, todo.id);
                                                 })
                                             }),
                                         JsxRuntime.jsx("input", {
-                                              className: ["border-gray-400 rounded text-blue-400 h-3.5 w-3.5 focus:ring-offset-0 focus:ring-blue-500"].join(" "),
+                                              className: ["border-gray-300 bg-white rounded text-blue-400 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500"].join(" "),
                                               checked: isChecked,
                                               type: "checkbox",
                                               onChange: (function (param) {
@@ -424,7 +427,7 @@ function Project$Todo(props) {
                                             })
                                       ],
                                       className: [
-                                          "cursor-default absolute right-0 flex-row items-center gap-1.5 pr-1.5",
+                                          "cursor-default absolute right-0 flex-row items-center gap-1.5 pr-1.5  h-full\n              \n              ",
                                           isChecked ? "flex" : " hidden group-hover:flex"
                                         ].join(" ")
                                     })

@@ -347,8 +347,9 @@ module Todo = {
             ref={ReactDOM.Ref.domRef(inputRef)}
             className={[
               todoInputClass,
-              "mx-1 my-1 block text-sm font-medium  w-full h-5 border-0 px-0 py-0 focus:ring-0 
-                bg-transparent text-[var(--t8)]",
+              "mx-1 my-1 block text-sm font-medium  w-full h-5 border-0 px-0 py-0 focus:ring-0 focus:z-10
+                 text-[var(--t8)]",
+              isChecked ? "bg-sky-50" : isDisplayElement && !isSelected ? "bg-sky-200" : "bg-white",
             ]->Array.join(" ")}
             placeholder={""}
             style={{resize: "none"}}
@@ -370,17 +371,19 @@ module Todo = {
           />
           <div
             className={[
-              "cursor-default absolute right-0 flex-row items-center gap-1.5 pr-1.5",
+              "cursor-default absolute right-0 flex-row items-center gap-1.5 pr-1.5  h-full
+              
+              ",
               isChecked ? "flex" : " hidden group-hover:flex",
             ]->Array.join(" ")}>
             <div
               onMouseDown={e => itemToMoveHandleMouseDown(todo.id, e)}
-              className={" w-4 h-4 text-gray-500 hidden group-hover:block   "}>
+              className={" w-4 h-4 text-gray-500 hidden group-hover:block bg-white rounded-sm 0 "}>
               <Icons.DragDrop />
             </div>
             <button
               className={[
-                " flex-row items-center justify-center cursor-default hidden group-hover:flex rounded-sm text-sm text-gray-500 border-gray-500  ",
+                "w-4 h-4 flex-row items-center justify-center cursor-default hidden group-hover:flex rounded-sm text-sm text-gray-500 border-gray-500 bg-white ",
               ]->Array.join(" ")}
               onClick={_ => {
                 newTodoAfter(Some(todo.id), Some(todo.id))
@@ -396,7 +399,7 @@ module Todo = {
               checked={isChecked}
               type_={"checkbox"}
               className={[
-                "border-gray-400 rounded text-blue-400 h-3.5 w-3.5 focus:ring-offset-0 focus:ring-blue-500",
+                "border-gray-300 bg-white rounded text-blue-400 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500",
               ]->Array.join(" ")}
             />
           </div>
