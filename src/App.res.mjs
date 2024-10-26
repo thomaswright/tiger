@@ -241,8 +241,8 @@ function App(props) {
   var match$8 = React.useState(function () {
         
       });
-  var setItemsToMove = match$8[1];
-  var itemsToMove = match$8[0];
+  var setItemsOfDragHandle = match$8[1];
+  var itemsOfDragHandle = match$8[0];
   var aaParentRef = React.useRef(null);
   var clickDelayTimeout = React.useRef(undefined);
   var lastRelative = React.useRef(undefined);
@@ -267,7 +267,7 @@ function App(props) {
   };
   var itemToMoveHandleMouseDown = function (itemId, param) {
     var timeoutId = setTimeout((function () {
-            setItemsToMove(function (s) {
+            setItemsOfDragHandle(function (s) {
                   return Core__Array.reduce(projects, Belt_SetString.add(s, itemId), (function (a, c) {
                                 return Core__Array.reduce(c.todos, a, (function (a2, c2) {
                                               if (Core__Option.mapOr(c2.parentTodo, false, (function (x) {
@@ -284,7 +284,8 @@ function App(props) {
     clickDelayTimeout.current = Caml_option.some(timeoutId);
   };
   var itemToMoveHandleMouseEnter = function (isProject, itemId, param) {
-    if (Belt_SetString.isEmpty(itemsToMove)) {
+    var itemsToMove = Belt_SetString.union(Belt_SetString.fromArray(checked), itemsOfDragHandle);
+    if (Belt_SetString.isEmpty(itemsOfDragHandle)) {
       return ;
     }
     var isInMoveGroup = Belt_SetString.has(itemsToMove, itemId);
@@ -453,7 +454,7 @@ function App(props) {
           Core__Option.mapOr(clickDelayTimeout.current, undefined, (function (a) {
                   clearTimeout(a);
                 }));
-          setItemsToMove(function (param) {
+          setItemsOfDragHandle(function (param) {
                 
               });
           lastRelative.current = undefined;

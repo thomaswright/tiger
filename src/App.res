@@ -217,7 +217,7 @@ let make = () => {
   let (displayElement, setDisplayElement) = React.useState(_ => None)
   let (focusClassNext, setFocusClassNext) = React.useState(_ => None)
   let (focusIdNext, setFocusIdNext) = React.useState(_ => None)
-  let (itemsToMove, setItemsToMove) = React.useState(_ => SSet.empty)
+  let (itemsOfDragHandle, setItemsOfDragHandle) = React.useState(_ => SSet.empty)
   // let (setAaParent, aaEnable) = Common.useAutoAnimate()
 
   let aaParentRef: React.ref<RescriptCore.Nullable.t<Dom.element>> = React.useRef(Nullable.null)
@@ -260,7 +260,7 @@ let make = () => {
     let timeoutId = setTimeout(() => {
       // startXStep(e)
 
-      setItemsToMove(s => {
+      setItemsOfDragHandle(s => {
         // s->SSet.add(itemId)
         projects->Array.reduce(
           s->SSet.add(itemId),
@@ -280,7 +280,9 @@ let make = () => {
   }
 
   let itemToMoveHandleMouseEnter = (isProject, itemId, _) => {
-    if itemsToMove->SSet.isEmpty {
+    let itemsToMove = checked->SSet.fromArray->SSet.union(itemsOfDragHandle)
+
+    if itemsOfDragHandle->SSet.isEmpty {
       ()
     } else {
       let isInMoveGroup = itemsToMove->SSet.has(itemId)
@@ -454,7 +456,7 @@ let make = () => {
 
   let handleMouseUp = React.useCallback0(_ => {
     clickDelayTimeout.current->Option.mapOr((), a => clearTimeout(a))
-    setItemsToMove(_ => SSet.empty)
+    setItemsOfDragHandle(_ => SSet.empty)
 
     // aaEnable(false)
     lastRelative.current = None
