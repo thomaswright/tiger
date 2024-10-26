@@ -1,17 +1,14 @@
 type status =
-  | @as("Underway") Underway
-  | @as("Suspended") Suspended
-  | @as("UnderwayWrapUp") UnderwayWrapUp
-  | @as("NowUrgent") NowUrgent
-  | @as("NowWillDo") NowWillDo
+  | @as("Unsorted") Unsorted
+  | @as("Future") Future
   | @as("NowIfTime") NowIfTime
-  | @as("FutureSoon") FutureSoon
-  | @as("FutureWillDo") FutureWillDo
-  | @as("FutureConsider") FutureConsider
+  | @as("NowMustDo") NowMustDo
+  | @as("Underway") Underway
+  | @as("Paused") Paused
   | @as("ResolveDone") ResolveDone
   | @as("ResolveNo") ResolveNo
-  | @as("ResolveScrap") ResolveScrap
-  | @as("Unsorted") Unsorted
+  | @as("ArchiveDone") ArchiveDone
+  | @as("ArchiveNo") ArchiveNo
 
 type box =
   | @as("Working") Working
@@ -23,7 +20,7 @@ type todo = {
   text: string,
   project: string,
   status: status,
-  box: box,
+  // box: box,
   parentTodo: option<string>,
   depth: option<int>,
   childNumber: option<int>,
@@ -51,18 +48,15 @@ type selectElement = Todo(string) | Project(string)
 let statusToFloat = s => {
   [
     Unsorted,
-    Underway,
-    Suspended,
-    UnderwayWrapUp,
-    NowUrgent,
-    NowWillDo,
+    Future,
     NowIfTime,
-    FutureSoon,
-    FutureWillDo,
-    FutureConsider,
+    NowMustDo,
+    Underway,
+    Paused,
     ResolveDone,
     ResolveNo,
-    ResolveScrap,
+    ArchiveDone,
+    ArchiveNo,
   ]
   ->Array.findIndex(a => a == s)
   ->Int.toFloat
@@ -71,78 +65,65 @@ let statusToFloat = s => {
 let statusStringShort = s => {
   switch s {
   | Unsorted => ""
-  | Underway => "Underway"
-  | Suspended => "Paused"
-  | UnderwayWrapUp => "Wrap Up"
-  | NowUrgent => "Must Do"
-  | NowWillDo => "If Time"
+  | Future => "Future"
   | NowIfTime => "If Time"
-  | FutureSoon => "Soon"
-  | FutureWillDo => "Future"
-  | FutureConsider => "Consider"
+  | NowMustDo => "Must Do"
+  | Underway => "Underway"
+  | Paused => "Paused"
   | ResolveDone => "Done"
-  | ResolveNo => "Scrap"
-  | ResolveScrap => "Scrap"
+  | ResolveNo => "No"
+  | ArchiveDone => "Done"
+  | ArchiveNo => "No"
   }
 }
 
 let statusString = s => {
   switch s {
-  | Unsorted => "No Status"
+  | Unsorted => "Unsorted"
+  | Future => "Future"
+  | NowIfTime => "If Time"
+  | NowMustDo => "Must Do"
   | Underway => "Underway"
-  | Suspended => "Underway: Paused"
-  | UnderwayWrapUp => "Underway: Wrap Up"
-  | NowUrgent => "Now: Must Do"
-  | NowWillDo => "Now: If Time"
-  | NowIfTime => "Now: If Time"
-  | FutureSoon => "Future: Soon"
-  | FutureWillDo => "Future"
-  | FutureConsider => "Future: Consider"
-  | ResolveDone => "Resolved: Done"
-  | ResolveNo => "Resolved: Scrap"
-  | ResolveScrap => "Resolved: Scrap"
+  | Paused => "Paused"
+  | ResolveDone => "Done"
+  | ResolveNo => "No"
+  | ArchiveDone => "Done & Archived"
+  | ArchiveNo => "No & Archived"
   }
 }
 
 let statusColor = s =>
   switch s {
-  | Unsorted => "var(--Unsorted)"
-  | Underway => "var(--Underway)"
-  | Suspended => "var(--Suspended)"
-  | UnderwayWrapUp => "var(--UnderwayWrapUp)"
-  | NowUrgent => "var(--NowUrgent)"
-  | NowWillDo => "var(--NowWillDo)"
-  | NowIfTime => "var(--NowIfTime)"
-  | FutureSoon => "var(--FutureSoon)"
-  | FutureWillDo => "var(--FutureWillDo)"
-  | FutureConsider => "var(--FutureConsider)"
-  | ResolveDone => "var(--ResolveDone)"
-  | ResolveNo => "var(--ResolveNo)"
-  | ResolveScrap => "var(--ResolveScrap)"
+  | Unsorted => "var(--lightGray)"
+  | Future => "var(--lightBlue)"
+  | NowIfTime => "var(--lightOrange)"
+  | NowMustDo => "var(--lightOrange)"
+  | Underway => "var(--lightGreen)"
+  | Paused => "var(--lightGreen)"
+  | ResolveDone => "var(--lightPurple)"
+  | ResolveNo => "var(--lightPurple)"
+  | ArchiveDone => "var(--lightPurple)"
+  | ArchiveNo => "var(--lightPurple)"
   }
 
 let statusColorText = s =>
   switch s {
-  | Unsorted => "var(--UnsortedText)"
-  | Underway => "var(--UnderwayText)"
-  | Suspended => "var(--SuspendedText)"
-  | UnderwayWrapUp => "var(--UnderwayWrapUpText)"
-  | NowUrgent => "var(--NowUrgentText)"
-  | NowWillDo => "var(--NowWillDoText)"
-  | NowIfTime => "var(--NowIfTimeText)"
-  | FutureSoon => "var(--FutureSoonText)"
-  | FutureWillDo => "var(--FutureWillDoText)"
-  | FutureConsider => "var(--FutureConsiderText)"
-  | ResolveDone => "var(--ResolveDoneText)"
-  | ResolveNo => "var(--ResolveNoText)"
-  | ResolveScrap => "var(--ResolveScrapText)"
+  | Unsorted => "var(--darkGray)"
+  | Future => "var(--darkBlue)"
+  | NowIfTime => "var(--darkOrange)"
+  | NowMustDo => "var(--darkOrange)"
+  | Underway => "var(--darkGreen)"
+  | Paused => "var(--darkGreen)"
+  | ResolveDone => "var(--darkPurple)"
+  | ResolveNo => "var(--darkPurple)"
+  | ArchiveDone => "var(--darkPurple)"
+  | ArchiveNo => "var(--darkPurple)"
   }
 
 let statusIsResolved = s =>
   switch s {
   | ResolveDone
-  | ResolveNo
-  | ResolveScrap => true
+  | ResolveNo => true
   | _ => false
   }
 

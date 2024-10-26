@@ -5,18 +5,15 @@ import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 function statusToFloat(s) {
   return [
             "Unsorted",
-            "Underway",
-            "Suspended",
-            "UnderwayWrapUp",
-            "NowUrgent",
-            "NowWillDo",
+            "Future",
             "NowIfTime",
-            "FutureSoon",
-            "FutureWillDo",
-            "FutureConsider",
+            "NowMustDo",
+            "Underway",
+            "Paused",
             "ResolveDone",
             "ResolveNo",
-            "ResolveScrap"
+            "ArchiveDone",
+            "ArchiveNo"
           ].findIndex(function (a) {
               return a === s;
             });
@@ -24,124 +21,92 @@ function statusToFloat(s) {
 
 function statusStringShort(s) {
   switch (s) {
-    case "Underway" :
-        return "Underway";
-    case "Suspended" :
-        return "Paused";
-    case "UnderwayWrapUp" :
-        return "Wrap Up";
-    case "NowUrgent" :
-        return "Must Do";
-    case "NowWillDo" :
-    case "NowIfTime" :
-        return "If Time";
-    case "FutureSoon" :
-        return "Soon";
-    case "FutureWillDo" :
-        return "Future";
-    case "FutureConsider" :
-        return "Consider";
-    case "ResolveDone" :
-        return "Done";
-    case "ResolveNo" :
-    case "ResolveScrap" :
-        return "Scrap";
     case "Unsorted" :
         return "";
+    case "Future" :
+        return "Future";
+    case "NowIfTime" :
+        return "If Time";
+    case "NowMustDo" :
+        return "Must Do";
+    case "Underway" :
+        return "Underway";
+    case "Paused" :
+        return "Paused";
+    case "ResolveDone" :
+    case "ArchiveDone" :
+        return "Done";
+    case "ResolveNo" :
+    case "ArchiveNo" :
+        return "No";
     
   }
 }
 
 function statusString(s) {
   switch (s) {
+    case "Unsorted" :
+        return "Unsorted";
+    case "Future" :
+        return "Future";
+    case "NowIfTime" :
+        return "If Time";
+    case "NowMustDo" :
+        return "Must Do";
     case "Underway" :
         return "Underway";
-    case "Suspended" :
-        return "Underway: Paused";
-    case "UnderwayWrapUp" :
-        return "Underway: Wrap Up";
-    case "NowUrgent" :
-        return "Now: Must Do";
-    case "NowWillDo" :
-    case "NowIfTime" :
-        return "Now: If Time";
-    case "FutureSoon" :
-        return "Future: Soon";
-    case "FutureWillDo" :
-        return "Future";
-    case "FutureConsider" :
-        return "Future: Consider";
+    case "Paused" :
+        return "Paused";
     case "ResolveDone" :
-        return "Resolved: Done";
+        return "Done";
     case "ResolveNo" :
-    case "ResolveScrap" :
-        return "Resolved: Scrap";
-    case "Unsorted" :
-        return "No Status";
+        return "No";
+    case "ArchiveDone" :
+        return "Done & Archived";
+    case "ArchiveNo" :
+        return "No & Archived";
     
   }
 }
 
 function statusColor(s) {
   switch (s) {
-    case "Underway" :
-        return "var(--Underway)";
-    case "Suspended" :
-        return "var(--Suspended)";
-    case "UnderwayWrapUp" :
-        return "var(--UnderwayWrapUp)";
-    case "NowUrgent" :
-        return "var(--NowUrgent)";
-    case "NowWillDo" :
-        return "var(--NowWillDo)";
-    case "NowIfTime" :
-        return "var(--NowIfTime)";
-    case "FutureSoon" :
-        return "var(--FutureSoon)";
-    case "FutureWillDo" :
-        return "var(--FutureWillDo)";
-    case "FutureConsider" :
-        return "var(--FutureConsider)";
-    case "ResolveDone" :
-        return "var(--ResolveDone)";
-    case "ResolveNo" :
-        return "var(--ResolveNo)";
-    case "ResolveScrap" :
-        return "var(--ResolveScrap)";
     case "Unsorted" :
-        return "var(--Unsorted)";
+        return "var(--lightGray)";
+    case "Future" :
+        return "var(--lightBlue)";
+    case "NowIfTime" :
+    case "NowMustDo" :
+        return "var(--lightOrange)";
+    case "Underway" :
+    case "Paused" :
+        return "var(--lightGreen)";
+    case "ResolveDone" :
+    case "ResolveNo" :
+    case "ArchiveDone" :
+    case "ArchiveNo" :
+        return "var(--lightPurple)";
     
   }
 }
 
 function statusColorText(s) {
   switch (s) {
-    case "Underway" :
-        return "var(--UnderwayText)";
-    case "Suspended" :
-        return "var(--SuspendedText)";
-    case "UnderwayWrapUp" :
-        return "var(--UnderwayWrapUpText)";
-    case "NowUrgent" :
-        return "var(--NowUrgentText)";
-    case "NowWillDo" :
-        return "var(--NowWillDoText)";
-    case "NowIfTime" :
-        return "var(--NowIfTimeText)";
-    case "FutureSoon" :
-        return "var(--FutureSoonText)";
-    case "FutureWillDo" :
-        return "var(--FutureWillDoText)";
-    case "FutureConsider" :
-        return "var(--FutureConsiderText)";
-    case "ResolveDone" :
-        return "var(--ResolveDoneText)";
-    case "ResolveNo" :
-        return "var(--ResolveNoText)";
-    case "ResolveScrap" :
-        return "var(--ResolveScrapText)";
     case "Unsorted" :
-        return "var(--UnsortedText)";
+        return "var(--darkGray)";
+    case "Future" :
+        return "var(--darkBlue)";
+    case "NowIfTime" :
+    case "NowMustDo" :
+        return "var(--darkOrange)";
+    case "Underway" :
+    case "Paused" :
+        return "var(--darkGreen)";
+    case "ResolveDone" :
+    case "ResolveNo" :
+    case "ArchiveDone" :
+    case "ArchiveNo" :
+        return "var(--darkPurple)";
     
   }
 }
@@ -150,7 +115,6 @@ function statusIsResolved(s) {
   switch (s) {
     case "ResolveDone" :
     case "ResolveNo" :
-    case "ResolveScrap" :
         return true;
     default:
       return false;

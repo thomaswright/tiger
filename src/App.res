@@ -8,7 +8,7 @@ let defaultTodos = [
     project: "1",
     id: "1",
     status: Unsorted,
-    box: Working,
+    // box: Working,
     parentTodo: None,
     depth: None,
     childNumber: None,
@@ -19,8 +19,8 @@ let defaultTodos = [
     text: "Do Something Else",
     project: "1",
     id: "2",
-    status: ResolveScrap,
-    box: Archive,
+    status: ResolveNo,
+    // box: Archive,
     parentTodo: None,
     depth: None,
     childNumber: None,
@@ -62,7 +62,10 @@ let buildTodoTree = (input: array<todo>) => {
 
   let mutParentMap = ref(parentMap)
 
-  let parentAggs = parentMap->Map.map(children => children->Array.some(v => v.box == Archive))
+  let parentAggs =
+    parentMap->Map.map(children =>
+      children->Array.some(v => v.status == ArchiveNo || v.status == ArchiveDone)
+    )
 
   let rec build = (arr, mapId, depth) => {
     let children = mutParentMap.contents->Map.get(mapId)
@@ -138,8 +141,6 @@ module CheckedSummary = {
       } else {
         <React.Fragment>
           <Common.StatusSelect
-            isPinned={false}
-            isArchived={false}
             isOpen={statusSelectIsOpen}
             onOpenChange={v => {
               setStatusSelectIsOpen(_ => v)
@@ -167,7 +168,6 @@ module CheckedSummary = {
                         {
                           ...t,
                           status: newStatus,
-                          box: t.box == Archive && !(newStatus->statusIsResolved) ? Working : t.box,
                         }
                       } else {
                         t
@@ -245,7 +245,6 @@ let make = () => {
               "text": t.text,
               "project": t.project,
               "status": t.status,
-              "box": t.box,
               "parentTodo": t.parentTodo,
             }
           }),

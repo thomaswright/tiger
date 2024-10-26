@@ -26,8 +26,6 @@ module StatusSelect = {
     ~setStatus: status => unit,
     ~focusTodo: unit => unit,
     ~isOpen: bool,
-    ~isPinned: bool,
-    ~isArchived: bool,
     ~onOpenChange: bool => unit,
   ) => React.element = "default"
 }

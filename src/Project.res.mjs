@@ -72,7 +72,6 @@ function Project$Todo(props) {
                                     text: t.text,
                                     project: t.project,
                                     status: t.status,
-                                    box: t.box,
                                     parentTodo: Core__Option.map(newParent, (function (t) {
                                             return t.id;
                                           })),
@@ -87,7 +86,6 @@ function Project$Todo(props) {
                                     text: t.text,
                                     project: t.project,
                                     status: t.status,
-                                    box: t.box,
                                     parentTodo: Core__Option.map(newParent, (function (t) {
                                             return t.id;
                                           })),
@@ -146,7 +144,6 @@ function Project$Todo(props) {
                                           text: t.text,
                                           project: t.project,
                                           status: t.status,
-                                          box: t.box,
                                           parentTodo: newParent,
                                           depth: t.depth,
                                           childNumber: t.childNumber,
@@ -159,7 +156,6 @@ function Project$Todo(props) {
                                           text: t.text,
                                           project: t.project,
                                           status: t.status,
-                                          box: t.box,
                                           parentTodo: todo.id,
                                           depth: t.depth,
                                           childNumber: t.childNumber,
@@ -309,7 +305,6 @@ function Project$Todo(props) {
                                                   text: t.text,
                                                   project: t.project,
                                                   status: newStatus,
-                                                  box: t.box === "Archive" && !Types.statusIsResolved(newStatus) ? "Working" : t.box,
                                                   parentTodo: t.parentTodo,
                                                   depth: t.depth,
                                                   childNumber: t.childNumber,
@@ -324,8 +319,6 @@ function Project$Todo(props) {
                                       });
                                 }),
                               isOpen: match[0],
-                              isPinned: todo.box === "Pinned",
-                              isArchived: todo.box === "Archive",
                               onOpenChange: (function (v) {
                                   if (v) {
                                     return setStatusSelectIsOpen(function (param) {
@@ -385,7 +378,6 @@ function Project$Todo(props) {
                                                           text: e.target.value,
                                                           project: t.project,
                                                           status: t.status,
-                                                          box: t.box,
                                                           parentTodo: t.parentTodo,
                                                           depth: t.depth,
                                                           childNumber: t.childNumber,
@@ -518,7 +510,6 @@ function Project(props) {
       text: "",
       project: newTodo_project,
       status: "Unsorted",
-      box: "Working",
       parentTodo: parentTodo,
       depth: undefined,
       childNumber: undefined,

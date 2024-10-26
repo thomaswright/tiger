@@ -36,33 +36,8 @@ html {
   --darkPurple: oklch(0.32 0.14 310);
   --darkRed: oklch(0.5 0.2 25);
 
-  --FutureConsider: var(--lightBlue);
-  --FutureSoon: var(--lightBlue);
-  --FutureWillDo: var(--lightBlue);
-  --NowIfTime: var(--lightOrange);
-  --NowUrgent: var(--lightOrange);
-  --NowWillDo: var(--lightOrange);
-  --ResolveDone: var(--lightPurple);
-  --ResolveNo: var(--lightPurple);
-  --ResolveScrap: var(--lightPurple);
-  --Suspended: var(--lightGreen);
-  --Underway: var(--lightGreen);
-  --UnderwayWrapUp: var(--lightGreen);
-  --Unsorted: oklch(from var(--tBase) 0.93 calc(c/2) h);
-
-  --FutureConsiderText: var(--darkBlue);
-  --FutureSoonText: var(--darkBlue);
-  --FutureWillDoText: var(--darkBlue);
-  --NowIfTimeText: var(--darkOrange);
-  --NowUrgentText: var(--darkOrange);
-  --NowWillDoText: var(--darkOrange);
-  --ResolveDoneText: var(--darkPurple);
-  --ResolveNoText: var(--darkPurple);
-  --ResolveScrapText: var(--darkPurple);
-  --SuspendedText: var(--darkGreen);
-  --UnderwayText: var(--darkGreen);
-  --UnderwayWrapUpText: var(--darkGreen);
-  --UnsortedText: oklch(from var(--tBase) 0.5 calc(c/2) h);
+  --lightBase: oklch(from var(--tBase) 0.93 calc(c/2) h);
+  --darkBase: oklch(from var(--tBase) 0.5 calc(c/2) h);
 }
 
 .dark {

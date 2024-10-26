@@ -304,8 +304,6 @@ module Todo = {
         ]->Array.join(" ")}>
         <Common.StatusSelect
           isOpen={statusSelectIsOpen}
-          isPinned={todo.box == Pinned}
-          isArchived={todo.box == Archive}
           onOpenChange={v => {
             if !v {
               setStatusSelectIsOpen(_ => v)
@@ -324,7 +322,7 @@ module Todo = {
             updateTodo(project.id, todo.id, t => {
               ...t,
               status: newStatus,
-              box: t.box == Archive && !(newStatus->statusIsResolved) ? Working : t.box,
+              // box: t.box == Archive && !(newStatus->statusIsResolved) ? Working : t.box,
             })}
         />
         <div
@@ -443,7 +441,7 @@ let make = (
       text: "",
       project: project.id,
       status: Unsorted,
-      box: Working,
+      // box: Working,
       parentTodo,
       depth: None,
       childNumber: None,

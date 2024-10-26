@@ -26,7 +26,6 @@ var defaultTodos = [
     text: "Do Something",
     project: "1",
     status: "Unsorted",
-    box: "Working",
     parentTodo: undefined,
     depth: undefined,
     childNumber: undefined,
@@ -37,8 +36,7 @@ var defaultTodos = [
     id: "2",
     text: "Do Something Else",
     project: "1",
-    status: "ResolveScrap",
-    box: "Archive",
+    status: "ResolveNo",
     parentTodo: undefined,
     depth: undefined,
     childNumber: undefined,
@@ -71,7 +69,11 @@ function buildTodoTree(input) {
   };
   var parentAggs = Belt_MapString.map(parentMap, (function (children) {
           return children.some(function (v) {
-                      return v.box === "Archive";
+                      if (v.status === "ArchiveNo") {
+                        return true;
+                      } else {
+                        return v.status === "ArchiveDone";
+                      }
                     });
         }));
   var build = function (arr, mapId, depth) {
@@ -83,7 +85,6 @@ function buildTodoTree(input) {
                                     text: todo.text,
                                     project: todo.project,
                                     status: todo.status,
-                                    box: todo.box,
                                     parentTodo: todo.parentTodo,
                                     depth: depth,
                                     childNumber: i,
@@ -138,7 +139,6 @@ function App$CheckedSummary(props) {
                                                                 text: t.text,
                                                                 project: t.project,
                                                                 status: newStatus,
-                                                                box: t.box === "Archive" && !Types.statusIsResolved(newStatus) ? "Working" : t.box,
                                                                 parentTodo: t.parentTodo,
                                                                 depth: t.depth,
                                                                 childNumber: t.childNumber,
@@ -157,8 +157,6 @@ function App$CheckedSummary(props) {
                       
                     }),
                   isOpen: match[0],
-                  isPinned: false,
-                  isArchived: false,
                   onOpenChange: (function (v) {
                       setStatusSelectIsOpen(function (param) {
                             return v;
@@ -258,7 +256,6 @@ function App(props) {
                                     text: t.text,
                                     project: t.project,
                                     status: t.status,
-                                    box: t.box,
                                     parentTodo: t.parentTodo
                                   };
                           })
@@ -313,7 +310,6 @@ function App(props) {
                                         text: t.text,
                                         project: t.project,
                                         status: t.status,
-                                        box: t.box,
                                         parentTodo: Belt_SetString.has(itemsToMove, t.id) && !Core__Option.mapOr(t.parentTodo, false, (function (currentParentTodo) {
                                                 return Belt_SetString.has(itemsToMove, currentParentTodo);
                                               })) ? newParent : t.parentTodo,
@@ -377,7 +373,6 @@ function App(props) {
                                                       text: t.text,
                                                       project: p$1.id,
                                                       status: t.status,
-                                                      box: t.box,
                                                       parentTodo: t.parentTodo,
                                                       depth: t.depth,
                                                       childNumber: t.childNumber,
@@ -402,7 +397,6 @@ function App(props) {
                                                             text: t.text,
                                                             project: p$1.id,
                                                             status: t.status,
-                                                            box: t.box,
                                                             parentTodo: t.parentTodo,
                                                             depth: t.depth,
                                                             childNumber: t.childNumber,
@@ -435,7 +429,6 @@ function App(props) {
                                                         text: t.text,
                                                         project: p$1.id,
                                                         status: t.status,
-                                                        box: t.box,
                                                         parentTodo: t.parentTodo,
                                                         depth: t.depth,
                                                         childNumber: t.childNumber,
@@ -516,7 +509,6 @@ function App(props) {
                                   text: t.text,
                                   project: t.project,
                                   status: t.status,
-                                  box: t.box,
                                   parentTodo: todo.parentTodo,
                                   depth: t.depth,
                                   childNumber: t.childNumber,

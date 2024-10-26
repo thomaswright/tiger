@@ -11,7 +11,6 @@ import ReactTextareaAutosize from "react-textarea-autosize";
 
 function DisplayTodo(props) {
   var deleteTodo = props.deleteTodo;
-  var setTodos = props.setTodos;
   var updateTodo = props.updateTodo;
   var setFocusIdNext = props.setFocusIdNext;
   var todo = props.todo;
@@ -46,7 +45,6 @@ function DisplayTodo(props) {
                                                 text: e.target.value,
                                                 project: t.project,
                                                 status: t.status,
-                                                box: t.box,
                                                 parentTodo: t.parentTodo,
                                                 depth: t.depth,
                                                 childNumber: t.childNumber,
@@ -69,7 +67,6 @@ function DisplayTodo(props) {
                                                   text: t.text,
                                                   project: t.project,
                                                   status: newStatus,
-                                                  box: t.box === "Archive" && !Types.statusIsResolved(newStatus) ? "Working" : t.box,
                                                   parentTodo: t.parentTodo,
                                                   depth: t.depth,
                                                   childNumber: t.childNumber,
@@ -82,8 +79,6 @@ function DisplayTodo(props) {
                                   
                                 }),
                               isOpen: match[0],
-                              isPinned: todo.box === "Pinned",
-                              isArchived: todo.box === "Archive",
                               onOpenChange: (function (v) {
                                   setStatusSelectIsOpen(function (param) {
                                         return v;
@@ -93,64 +88,6 @@ function DisplayTodo(props) {
                         JsxRuntime.jsx("div", {
                               className: "flex-1"
                             }),
-                        Types.statusIsResolved(todo.status) ? JsxRuntime.jsx("button", {
-                                children: JsxRuntime.jsx(Tb.TbArchive, {}),
-                                className: [
-                                    " px-1 h-6 flex flex-row items-center justify-center rounded border-[var(--t3)] gap-1\n          hover:text-blue-600\n          ",
-                                    todo.box === "Archive" ? "text-blue-600" : "text-[var(--t4)]"
-                                  ].join(" "),
-                                onClick: (function (param) {
-                                    setTodos(project.id, (function (v) {
-                                            return v.map(function (t) {
-                                                        if (t.id === todo.id) {
-                                                          return {
-                                                                  id: t.id,
-                                                                  text: t.text,
-                                                                  project: t.project,
-                                                                  status: Types.statusIsResolved(t.status) ? t.status : "ResolveScrap",
-                                                                  box: t.box !== "Archive" ? "Archive" : "Working",
-                                                                  parentTodo: t.parentTodo,
-                                                                  depth: t.depth,
-                                                                  childNumber: t.childNumber,
-                                                                  hasArchivedChildren: t.hasArchivedChildren,
-                                                                  hasChildren: t.hasChildren
-                                                                };
-                                                        } else {
-                                                          return t;
-                                                        }
-                                                      });
-                                          }));
-                                  })
-                              }) : null,
-                        Types.statusIsResolved(todo.status) ? JsxRuntime.jsx("button", {
-                                children: JsxRuntime.jsx(Tb.TbPin, {}),
-                                className: [
-                                    " px-1 h-6 flex flex-row items-center justify-center rounded border-[var(--t3)]\n          hover:text-blue-600\n          ",
-                                    todo.box === "Pinned" ? "text-blue-600" : "text-[var(--t4)]"
-                                  ].join(" "),
-                                onClick: (function (param) {
-                                    setTodos(project.id, (function (v) {
-                                            return v.map(function (t) {
-                                                        if (t.id === todo.id) {
-                                                          return {
-                                                                  id: t.id,
-                                                                  text: t.text,
-                                                                  project: t.project,
-                                                                  status: t.status,
-                                                                  box: t.box !== "Pinned" ? "Pinned" : "Working",
-                                                                  parentTodo: t.parentTodo,
-                                                                  depth: t.depth,
-                                                                  childNumber: t.childNumber,
-                                                                  hasArchivedChildren: t.hasArchivedChildren,
-                                                                  hasChildren: t.hasChildren
-                                                                };
-                                                        } else {
-                                                          return t;
-                                                        }
-                                                      });
-                                          }));
-                                  })
-                              }) : null,
                         JsxRuntime.jsx("button", {
                               children: JsxRuntime.jsx(Tb.TbTrash, {}),
                               className: ["\n          text-[var(--t4)] px-1 h-6 flex flex-row items-center justify-center rounded border-[var(--t3)]\n          hover:text-blue-600\n        "].join(" "),

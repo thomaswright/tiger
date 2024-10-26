@@ -25,7 +25,7 @@ const Dropdown = ({
   focusTodo,
   isOpen,
   onOpenChange,
-  isPinned,
+  // isPinned,
   isArchived,
 }) => {
   let [hoverStatus, setHoverStatus] = React.useState(status);
@@ -100,7 +100,7 @@ const Dropdown = ({
             aria-label="Customise options"
           >
             {statusStringShort(status)}
-            {isPinned && (
+            {/* {isPinned && (
               <div
                 style={{
                   backgroundColor: statusColor(status),
@@ -111,8 +111,8 @@ const Dropdown = ({
               >
                 <Pin />
               </div>
-            )}
-            {isArchived && (
+            )} */}
+            {(status == "ArchiveDone" || status == "ArchiveNo") && (
               <div
                 style={{
                   backgroundColor: statusColor(status),
@@ -148,22 +148,15 @@ const Dropdown = ({
           <div className="p-1.5 pb-1">
             <div className="grid grid-cols-2 gap-1 ">
               {item("Unsorted")}
-
-              {/* {item("FutureSoon")} */}
-              {item("FutureWillDo")}
-              {/* {item("FutureConsider")} */}
-
-              {item("NowWillDo")}
-              {item("NowUrgent")}
-              {/* {item("NowIfTime")} */}
-
+              {item("Future")}
+              {item("NowIfTime")}
+              {item("NowMustDo")}
               {item("Underway")}
-              {/* {item("UnderwayWrapUp")} */}
-              {item("Suspended")}
-
+              {item("Paused")}
               {item("ResolveDone")}
               {item("ResolveNo")}
-              {/* {item("ResolveScrap")} */}
+              {item("ArchiveDone")}
+              {item("ArchiveNo")}
             </div>
             <div className="h-5 font-bold flex flex-row items-center justify-center">
               {/* <div className=" w-6 flex flex-row items-center justify-center">

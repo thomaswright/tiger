@@ -79,32 +79,6 @@ function DisplayProject(props) {
                       className: "flex flex-row border-y items-center gap-3 p-1 px-2"
                     }),
                 JsxRuntime.jsx("div", {
-                      children: JsxRuntime.jsx("button", {
-                            children: "Archive All Resolved if not Pinned",
-                            className: "rounded bg-[var(--t2)] px-2 py-1 text-xs h-fit flex-none",
-                            onClick: (function (param) {
-                                setTodos(project.id, (function (todos) {
-                                        return todos.map(function (t) {
-                                                    if (t.project !== project.id || !(Types.statusIsResolved(t.status) && t.box !== "Pinned")) {
-                                                      return t;
-                                                    } else {
-                                                      return {
-                                                              id: t.id,
-                                                              text: t.text,
-                                                              project: t.project,
-                                                              status: t.status,
-                                                              box: "Archive",
-                                                              parentTodo: t.parentTodo,
-                                                              depth: t.depth,
-                                                              childNumber: t.childNumber,
-                                                              hasArchivedChildren: t.hasArchivedChildren,
-                                                              hasChildren: t.hasChildren
-                                                            };
-                                                    }
-                                                  });
-                                      }));
-                              })
-                          }),
                       className: "p-2"
                     })
               ]
