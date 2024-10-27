@@ -618,8 +618,12 @@ function App(props) {
                                       src: logoUrl,
                                       width: "24"
                                     }),
+                                JsxRuntime.jsx("div", {
+                                      className: "flex-1"
+                                    }),
                                 JsxRuntime.jsx("button", {
                                       children: "export",
+                                      className: ["bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1 h-5 "].join(" "),
                                       onClick: (function (param) {
                                           logExport();
                                         })

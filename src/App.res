@@ -557,7 +557,14 @@ let make = () => {
         //     onCheckedChange={() => setProjectTab(v => v == All ? Active : All)}
         //   />
         // </div>
-        <button onClick={_ => logExport()}> {"export"->React.string} </button>
+        <div className="flex-1" />
+        <button
+          onClick={_ => logExport()}
+          className={[
+            "bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1 h-5 ",
+          ]->Array.join(" ")}>
+          {"export"->React.string}
+        </button>
         <button
           onClick={_ => {
             let newProjectId = Common.uuid()
