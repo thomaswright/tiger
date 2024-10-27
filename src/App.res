@@ -253,6 +253,7 @@ let make = () => {
               "parentTodo": t.parentTodo,
             }
           }),
+          "hiddenTodos": p.hiddenTodos->SMap.toArray,
         }
       ),
     )

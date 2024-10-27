@@ -267,7 +267,8 @@ function App(props) {
                                     status: t.status,
                                     parentTodo: t.parentTodo
                                   };
-                          })
+                          }),
+                      hiddenTodos: Belt_MapString.toArray(p.hiddenTodos)
                     };
             }));
   };
