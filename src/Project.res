@@ -612,32 +612,47 @@ let make = (
         onClick={_ =>
           updateProject(project.id, p => {
             if p.hideArchived {
-              let mutHiddenTodos = ref(p.hiddenTodos)
+              let parentMap = p.todos->Array.reduce(SMap.empty, (a, c) => {
+                let mapId = c.parentTodo->Option.getOr("None")
+                a->SMap.update(mapId, v => v->Option.mapOr([c], v => Array.concat(v, [c]))->Some)
+              })
+
+              let rec recurse = (todos: array<todo>) => {
+                todos->Array.reduce([], (a, t) => {
+                  let regularTodos =
+                    parentMap
+                    ->SMap.get(t.id)
+                    ->Option.mapOr(
+                      [],
+                      v => {
+                        recurse(v)
+                      },
+                    )
+
+                  let hiddenTodos =
+                    p.hiddenTodos
+                    ->SMap.get(t.id)
+                    ->Option.mapOr(
+                      [],
+                      v => {
+                        recurse(v)
+                      },
+                    )
+                  a
+                  ->Array.concat([t])
+                  ->Array.concat(regularTodos)
+                  ->Array.concat(hiddenTodos)
+                })
+              }
+
               {
                 ...p,
                 todos: p.todos
-                ->Array.toReversed
-                ->Array.reduce([], (a, c) => {
-                  let todosToAdd = c.parentTodo->Option.mapOr(
-                    [],
-                    parentTodo => {
-                      mutHiddenTodos.contents
-                      ->SMap.get(parentTodo)
-                      ->Option.mapOr(
-                        [],
-                        todos => {
-                          mutHiddenTodos := mutHiddenTodos.contents->SMap.remove(parentTodo)
-
-                          todos->Array.reduce([], (a2, c2) => {})
-                        },
-                      )
-                    },
-                  )
-
-                  a->Array.concat(Array.concat(todosToAdd, [c]))
-                })
-                ->Array.concat(mutHiddenTodos.contents->SMap.get("None")->Option.getOr([]))
-                ->Array.toReversed,
+                ->Array.filter(t => t.parentTodo->Option.isNone)
+                ->recurse
+                ->Array.concat(
+                  p.hiddenTodos->SMap.get("None")->Option.mapOr([], todos => todos->recurse),
+                ),
                 hideArchived: false,
                 hiddenTodos: SMap.empty,
               }

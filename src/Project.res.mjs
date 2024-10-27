@@ -686,32 +686,44 @@ function Project(props) {
                               onClick: (function (param) {
                                   updateProject(project.id, (function (p) {
                                           if (p.hideArchived) {
-                                            var mutHiddenTodos = {
-                                              contents: p.hiddenTodos
+                                            var parentMap = Core__Array.reduce(p.todos, undefined, (function (a, c) {
+                                                    var mapId = Core__Option.getOr(c.parentTodo, "None");
+                                                    return Belt_MapString.update(a, mapId, (function (v) {
+                                                                  return Core__Option.mapOr(v, [c], (function (v) {
+                                                                                return v.concat([c]);
+                                                                              }));
+                                                                }));
+                                                  }));
+                                            var recurse = function (todos) {
+                                              return Core__Array.reduce(todos, [], (function (a, t) {
+                                                            var regularTodos = Core__Option.mapOr(Belt_MapString.get(parentMap, t.id), [], (function (v) {
+                                                                    return recurse(v);
+                                                                  }));
+                                                            var hiddenTodos = Core__Option.mapOr(Belt_MapString.get(p.hiddenTodos, t.id), [], (function (v) {
+                                                                    return recurse(v);
+                                                                  }));
+                                                            return a.concat([t]).concat(regularTodos).concat(hiddenTodos);
+                                                          }));
                                             };
                                             return {
                                                     id: p.id,
                                                     name: p.name,
                                                     isActive: p.isActive,
-                                                    todos: Core__Array.reduce(p.todos.toReversed(), [], (function (a, c) {
-                                                                var todosToAdd = Core__Option.mapOr(c.parentTodo, [], (function (parentTodo) {
-                                                                        return Core__Option.mapOr(Belt_MapString.get(mutHiddenTodos.contents, parentTodo), [], (function (todos) {
-                                                                                      mutHiddenTodos.contents = Belt_MapString.remove(mutHiddenTodos.contents, parentTodo);
-                                                                                      return todos;
-                                                                                    }));
-                                                                      }));
-                                                                return a.concat(todosToAdd.concat([c]));
-                                                              })).concat(Core__Option.getOr(Belt_MapString.get(mutHiddenTodos.contents, "None"), [])).toReversed(),
+                                                    todos: recurse(p.todos.filter(function (t) {
+                                                                return Core__Option.isNone(t.parentTodo);
+                                                              })).concat(Core__Option.mapOr(Belt_MapString.get(p.hiddenTodos, "None"), [], (function (todos) {
+                                                                return recurse(todos);
+                                                              }))),
                                                     hideArchived: false,
                                                     hiddenTodos: undefined
                                                   };
                                           }
-                                          var mutHiddenTodos$1 = {
+                                          var mutHiddenTodos = {
                                             contents: undefined
                                           };
                                           var newTodos = Core__Array.reduce(p.todos, [], (function (a, c) {
                                                   if (c.status === "ArchiveDone" || c.status === "ArchiveNo") {
-                                                    mutHiddenTodos$1.contents = Belt_MapString.update(mutHiddenTodos$1.contents, Core__Option.getOr(c.parentTodo, "None"), (function (v) {
+                                                    mutHiddenTodos.contents = Belt_MapString.update(mutHiddenTodos.contents, Core__Option.getOr(c.parentTodo, "None"), (function (v) {
                                                             if (v !== undefined) {
                                                               return v.concat([c]);
                                                             } else {
@@ -720,8 +732,8 @@ function Project(props) {
                                                           }));
                                                     return a;
                                                   } else if (c.ancArchived) {
-                                                    mutHiddenTodos$1.contents = Core__Option.mapOr(c.parentTodo, mutHiddenTodos$1.contents, (function (parentTodo) {
-                                                            return Belt_MapString.update(mutHiddenTodos$1.contents, parentTodo, (function (v) {
+                                                    mutHiddenTodos.contents = Core__Option.mapOr(c.parentTodo, mutHiddenTodos.contents, (function (parentTodo) {
+                                                            return Belt_MapString.update(mutHiddenTodos.contents, parentTodo, (function (v) {
                                                                           if (v !== undefined) {
                                                                             return v.concat([c]);
                                                                           } else {
@@ -740,7 +752,7 @@ function Project(props) {
                                                   isActive: p.isActive,
                                                   todos: newTodos,
                                                   hideArchived: true,
-                                                  hiddenTodos: mutHiddenTodos$1.contents
+                                                  hiddenTodos: mutHiddenTodos.contents
                                                 };
                                         }));
                                 })
