@@ -339,6 +339,11 @@ function Project$Todo(props) {
                             }),
                         JsxRuntime.jsxs("div", {
                               children: [
+                                props.hideArchived && Core__Option.mapOr(Belt_MapString.get(project.hiddenTodos, todo.id), false, (function (hiddenTodos) {
+                                        return hiddenTodos.length > 0;
+                                      })) ? JsxRuntime.jsx("div", {
+                                        className: "absolute border border-[var(--darkPurple)] bg-[var(--lightPurple)] text-xs h-2 w-2 -left-2 top-0 flex flex-row items-center justify-center rounded-full"
+                                      }) : null,
                                 isSelected || isDisplayElement ? null : JsxRuntime.jsx("div", {
                                         className: "h-px w-full absolute bg-[var(--t2)] -bottom-0"
                                       }),
@@ -813,7 +818,7 @@ function Project(props) {
                                   isChecked: Belt_SetString.has(checked, todo.id),
                                   setChecked: setChecked,
                                   deleteTodo: deleteTodo,
-                                  showArchive: !project.hideArchived,
+                                  hideArchived: project.hideArchived,
                                   itemToMoveHandleMouseDown: itemToMoveHandleMouseDown,
                                   itemToMoveHandleMouseEnter: itemToMoveHandleMouseEnter
                                 }, Types.getTodoId(todo.id));

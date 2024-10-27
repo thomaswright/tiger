@@ -20,7 +20,7 @@ module Todo = {
     ~isChecked: bool,
     ~setChecked,
     ~deleteTodo,
-    ~showArchive as _,
+    ~hideArchived,
     ~itemToMoveHandleMouseDown,
     ~itemToMoveHandleMouseEnter,
   ) => {
@@ -329,14 +329,19 @@ module Todo = {
           className={[
             "relative flex-1 ml-1 flex flex-row h-full justify-start items-center ",
           ]->Array.join(" ")}>
-          // {if todo.hasArchivedChildren && showArchive {
-          //   <div
-          //     className="absolute bg-purple-800 text-xs h-1.5 w-1.5 -left-2 top-0 flex flex-row items-center justify-center rounded-full">
-          //     // <Icons.EyeClosed />
-          //   </div>
-          // } else {
-          //   React.null
-          // }}
+          {if (
+            hideArchived &&
+            project.hiddenTodos
+            ->SMap.get(todo.id)
+            ->Option.mapOr(false, hiddenTodos => hiddenTodos->Array.length > 0)
+          ) {
+            <div
+              className="absolute border border-[var(--darkPurple)] bg-[var(--lightPurple)] text-xs h-2 w-2 -left-2 top-0 flex flex-row items-center justify-center rounded-full">
+              // <Icons.EyeClosed />
+            </div>
+          } else {
+            React.null
+          }}
           {isSelected || isDisplayElement
             ? React.null
             : <div className="h-px w-full absolute bg-[var(--t2)] -bottom-0" />}
@@ -716,7 +721,7 @@ let make = (
         project
         todo
         updateTodo
-        showArchive={!project.hideArchived}
+        hideArchived={project.hideArchived}
         isSelected={selectedElement == Some(Todo(todo.id))}
         isDisplayElement={displayElement == Some(Todo(todo.id))}
         setSelectedElement
