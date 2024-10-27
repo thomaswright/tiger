@@ -342,7 +342,8 @@ function Project$Todo(props) {
                                 props.hideArchived && Core__Option.mapOr(Belt_MapString.get(project.hiddenTodos, todo.id), false, (function (hiddenTodos) {
                                         return hiddenTodos.length > 0;
                                       })) ? JsxRuntime.jsx("div", {
-                                        className: "absolute border border-[var(--darkPurple)] bg-[var(--lightPurple)] text-xs h-2 w-2 -left-2 top-0 flex flex-row items-center justify-center rounded-full"
+                                        children: JsxRuntime.jsx(Tb.TbArchive, {}),
+                                        className: "absolute bg-white text-[var(--darkPurple)] bg-[var(--lightPurple)] text-xs h-3 w-3 -left-3 -top-0 flex flex-row items-center justify-center rounded-full"
                                       }) : null,
                                 isSelected || isDisplayElement ? null : JsxRuntime.jsx("div", {
                                         className: "h-px w-full absolute bg-[var(--t2)] -bottom-0"
@@ -626,6 +627,79 @@ function Project(props) {
     }
     
   };
+  var handleHideArchived = function (param) {
+    updateProject(project.id, (function (p) {
+            if (p.hideArchived) {
+              var parentMap = Core__Array.reduce(p.todos, undefined, (function (a, c) {
+                      var mapId = Core__Option.getOr(c.parentTodo, "None");
+                      return Belt_MapString.update(a, mapId, (function (v) {
+                                    return Core__Option.mapOr(v, [c], (function (v) {
+                                                  return v.concat([c]);
+                                                }));
+                                  }));
+                    }));
+              var recurse = function (todos) {
+                return Core__Array.reduce(todos, [], (function (a, t) {
+                              var regularTodos = Core__Option.mapOr(Belt_MapString.get(parentMap, t.id), [], (function (v) {
+                                      return recurse(v);
+                                    }));
+                              var hiddenTodos = Core__Option.mapOr(Belt_MapString.get(p.hiddenTodos, t.id), [], (function (v) {
+                                      return recurse(v);
+                                    }));
+                              return a.concat([t]).concat(regularTodos).concat(hiddenTodos);
+                            }));
+              };
+              return {
+                      id: p.id,
+                      name: p.name,
+                      isActive: p.isActive,
+                      todos: recurse(p.todos.filter(function (t) {
+                                  return Core__Option.isNone(t.parentTodo);
+                                })).concat(Core__Option.mapOr(Belt_MapString.get(p.hiddenTodos, "None"), [], (function (todos) {
+                                  return recurse(todos);
+                                }))),
+                      hideArchived: false,
+                      hiddenTodos: undefined
+                    };
+            }
+            var mutHiddenTodos = {
+              contents: undefined
+            };
+            var newTodos = Core__Array.reduce(p.todos, [], (function (a, c) {
+                    if (c.status === "ArchiveDone" || c.status === "ArchiveNo") {
+                      mutHiddenTodos.contents = Belt_MapString.update(mutHiddenTodos.contents, Core__Option.getOr(c.parentTodo, "None"), (function (v) {
+                              if (v !== undefined) {
+                                return v.concat([c]);
+                              } else {
+                                return [c];
+                              }
+                            }));
+                      return a;
+                    } else if (c.ancArchived) {
+                      mutHiddenTodos.contents = Core__Option.mapOr(c.parentTodo, mutHiddenTodos.contents, (function (parentTodo) {
+                              return Belt_MapString.update(mutHiddenTodos.contents, parentTodo, (function (v) {
+                                            if (v !== undefined) {
+                                              return v.concat([c]);
+                                            } else {
+                                              return [c];
+                                            }
+                                          }));
+                            }));
+                      return a;
+                    } else {
+                      return a.concat([c]);
+                    }
+                  }));
+            return {
+                    id: p.id,
+                    name: p.name,
+                    isActive: p.isActive,
+                    todos: newTodos,
+                    hideArchived: true,
+                    hiddenTodos: mutHiddenTodos.contents
+                  };
+          }));
+  };
   return JsxRuntime.jsxs(React.Fragment, {
               children: [
                 JsxRuntime.jsxs("li", {
@@ -686,81 +760,9 @@ function Project(props) {
                                 })
                             }),
                         JsxRuntime.jsx("button", {
-                              children: project.hideArchived ? JsxRuntime.jsx(Tb.TbEyeClosed, {}) : JsxRuntime.jsx(Tb.TbEye, {}),
+                              children: project.hideArchived ? JsxRuntime.jsx(Tb.TbArchiveOff, {}) : JsxRuntime.jsx(Tb.TbArchive, {}),
                               className: "text-2xs rounded h-6 w-6 flex-none font-mono strike",
-                              onClick: (function (param) {
-                                  updateProject(project.id, (function (p) {
-                                          if (p.hideArchived) {
-                                            var parentMap = Core__Array.reduce(p.todos, undefined, (function (a, c) {
-                                                    var mapId = Core__Option.getOr(c.parentTodo, "None");
-                                                    return Belt_MapString.update(a, mapId, (function (v) {
-                                                                  return Core__Option.mapOr(v, [c], (function (v) {
-                                                                                return v.concat([c]);
-                                                                              }));
-                                                                }));
-                                                  }));
-                                            var recurse = function (todos) {
-                                              return Core__Array.reduce(todos, [], (function (a, t) {
-                                                            var regularTodos = Core__Option.mapOr(Belt_MapString.get(parentMap, t.id), [], (function (v) {
-                                                                    return recurse(v);
-                                                                  }));
-                                                            var hiddenTodos = Core__Option.mapOr(Belt_MapString.get(p.hiddenTodos, t.id), [], (function (v) {
-                                                                    return recurse(v);
-                                                                  }));
-                                                            return a.concat([t]).concat(regularTodos).concat(hiddenTodos);
-                                                          }));
-                                            };
-                                            return {
-                                                    id: p.id,
-                                                    name: p.name,
-                                                    isActive: p.isActive,
-                                                    todos: recurse(p.todos.filter(function (t) {
-                                                                return Core__Option.isNone(t.parentTodo);
-                                                              })).concat(Core__Option.mapOr(Belt_MapString.get(p.hiddenTodos, "None"), [], (function (todos) {
-                                                                return recurse(todos);
-                                                              }))),
-                                                    hideArchived: false,
-                                                    hiddenTodos: undefined
-                                                  };
-                                          }
-                                          var mutHiddenTodos = {
-                                            contents: undefined
-                                          };
-                                          var newTodos = Core__Array.reduce(p.todos, [], (function (a, c) {
-                                                  if (c.status === "ArchiveDone" || c.status === "ArchiveNo") {
-                                                    mutHiddenTodos.contents = Belt_MapString.update(mutHiddenTodos.contents, Core__Option.getOr(c.parentTodo, "None"), (function (v) {
-                                                            if (v !== undefined) {
-                                                              return v.concat([c]);
-                                                            } else {
-                                                              return [c];
-                                                            }
-                                                          }));
-                                                    return a;
-                                                  } else if (c.ancArchived) {
-                                                    mutHiddenTodos.contents = Core__Option.mapOr(c.parentTodo, mutHiddenTodos.contents, (function (parentTodo) {
-                                                            return Belt_MapString.update(mutHiddenTodos.contents, parentTodo, (function (v) {
-                                                                          if (v !== undefined) {
-                                                                            return v.concat([c]);
-                                                                          } else {
-                                                                            return [c];
-                                                                          }
-                                                                        }));
-                                                          }));
-                                                    return a;
-                                                  } else {
-                                                    return a.concat([c]);
-                                                  }
-                                                }));
-                                          return {
-                                                  id: p.id,
-                                                  name: p.name,
-                                                  isActive: p.isActive,
-                                                  todos: newTodos,
-                                                  hideArchived: true,
-                                                  hiddenTodos: mutHiddenTodos.contents
-                                                };
-                                        }));
-                                })
+                              onClick: handleHideArchived
                             })
                       ],
                       ref: Caml_option.some(projectRef),
