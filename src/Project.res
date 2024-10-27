@@ -669,7 +669,7 @@ let make = (
       onMouseEnter={e => itemToMoveHandleMouseEnter(true, project.id, e)}
       className={[
         listItemClass,
-        "first:mt-1 mt-1",
+        // "first:mt-1 mt-1",
         "group  flex flex-row justify-between items-center bg-[var(--t0)] px-1 text-[var(--t9)]
         gap-1 border-b border-b-[var(--t2)] border-t-[var(--t0)]",
         isSelected

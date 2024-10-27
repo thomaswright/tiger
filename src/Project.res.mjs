@@ -768,7 +768,6 @@ function Project(props) {
                       ref: Caml_option.some(projectRef),
                       className: [
                           Types.listItemClass,
-                          "first:mt-1 mt-1",
                           "group  flex flex-row justify-between items-center bg-[var(--t0)] px-1 text-[var(--t9)]\n        gap-1 border-b border-b-[var(--t2)] border-t-[var(--t0)]",
                           isSelected ? "outline outline-2 -outline-offset-2 outline-purple-500 focus:outline-blue-500" : ""
                         ].join(" "),
