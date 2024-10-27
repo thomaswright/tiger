@@ -73,6 +73,18 @@ const Dropdown = ({
         }
       >
         {statusStringShort(s)}
+        {(s == "ArchiveDone" || s == "ArchiveNo") && (
+          <div
+            style={{
+              backgroundColor: statusColor(s),
+              color: statusColorText(s),
+              borderColor: statusColorText(s),
+            }}
+            className="text-xs absolute right-0.5  w-3.5 h-3.5 items-center justify-center flex flex-row "
+          >
+            <Archive />
+          </div>
+        )}
       </DropdownMenu.Item>
     );
   };
