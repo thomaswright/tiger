@@ -4,14 +4,9 @@ open Webapi.Dom
 open Common
 
 @react.component
-let make = (
-  ~project: project,
-  ~todo: todo,
-  ~setFocusIdNext,
-  ~updateTodo,
-  ~setTodos: (string, array<todo> => array<todo>) => unit,
-  ~deleteTodo,
-) => {
+let make = (~project: project, ~todo: todo, ~setFocusIdNext, ~updateTodo, ~deleteTodo) => {
+  // ~setTodos: (string, array<todo> => array<todo>) => unit,
+
   let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
 
   <div className="w-full">

@@ -1,6 +1,5 @@
 open Types
 open Webapi.Dom
-open Common
 
 let defaultTodos = [
   {
@@ -630,7 +629,7 @@ let make = () => {
           a->Option.isSome ? a : c.todos->Array.find(t => t.id == todoId)->Option.map(v => (c, v))
         })
         ->Option.mapOr(React.null, ((project, todo)) => {
-          <DisplayTodo todo project setFocusIdNext updateTodo setTodos deleteTodo />
+          <DisplayTodo todo project setFocusIdNext updateTodo deleteTodo />
         })
       | Some(Project(projectId)) =>
         projects

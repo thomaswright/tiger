@@ -153,12 +153,15 @@ function getIdFromId(s) {
 
 var SMap;
 
+var SSet;
+
 var listItemClass = "class-list-item";
 
 var todoInputClass = "class-list-todo-input";
 
 export {
   SMap ,
+  SSet ,
   statusToFloat ,
   statusStringShort ,
   statusString ,

@@ -588,7 +588,6 @@ function App(props) {
                           todo: param[1],
                           setFocusIdNext: setFocusIdNext,
                           updateTodo: updateTodo,
-                          setTodos: setTodos,
                           deleteTodo: deleteTodo
                         });
             }));

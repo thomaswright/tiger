@@ -1,7 +1,5 @@
 open Types
 open Webapi.Dom
-@warning("-33")
-open Common
 
 @react.component
 let make = (

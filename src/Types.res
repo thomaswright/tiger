@@ -1,4 +1,5 @@
 module SMap = Belt.Map.String
+module SSet = Belt.Set.String
 
 type status =
   | @as("Unsorted") Unsorted
