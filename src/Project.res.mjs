@@ -754,7 +754,7 @@ function Project(props) {
                             }),
                         JsxRuntime.jsx("button", {
                               children: JsxRuntime.jsx(Tb.TbPlus, {}),
-                              className: "hidden group-hover:block bg-[var(--t1)] p-0.5 text-xs rounded  flex-none ",
+                              className: "absolute right-8 hidden group-hover:block bg-[var(--t1)] p-0.5 text-xs rounded  flex-none ",
                               onClick: (function (param) {
                                   newTodoAfter(undefined, undefined);
                                 })
@@ -768,7 +768,7 @@ function Project(props) {
                       ref: Caml_option.some(projectRef),
                       className: [
                           Types.listItemClass,
-                          "group  flex flex-row justify-between items-center bg-[var(--t0)] px-1 text-[var(--t9)]\n        gap-1 border-b border-b-[var(--t2)] border-t-[var(--t0)]",
+                          "relative group  flex flex-row justify-between items-center bg-[var(--t0)] px-1 text-[var(--t9)]\n        gap-1 border-b border-b-[var(--t2)] border-t-[var(--t0)]",
                           isSelected ? "outline outline-2 -outline-offset-2 outline-purple-500 focus:outline-blue-500" : ""
                         ].join(" "),
                       id: Types.getProjectId(project.id),

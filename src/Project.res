@@ -670,7 +670,7 @@ let make = (
       className={[
         listItemClass,
         // "first:mt-1 mt-1",
-        "group  flex flex-row justify-between items-center bg-[var(--t0)] px-1 text-[var(--t9)]
+        "relative group  flex flex-row justify-between items-center bg-[var(--t0)] px-1 text-[var(--t9)]
         gap-1 border-b border-b-[var(--t2)] border-t-[var(--t0)]",
         isSelected
           ? "outline outline-2 -outline-offset-2 outline-purple-500 focus:outline-blue-500"
@@ -705,7 +705,7 @@ let make = (
         onClick={_ => {
           newTodoAfter(None, None)
         }}
-        className="hidden group-hover:block bg-[var(--t1)] p-0.5 text-xs rounded  flex-none ">
+        className="absolute right-8 hidden group-hover:block bg-[var(--t1)] p-0.5 text-xs rounded  flex-none ">
         <Icons.Plus />
       </button>
       <button
