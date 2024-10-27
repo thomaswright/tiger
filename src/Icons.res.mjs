@@ -31,6 +31,10 @@ var DragDrop = {};
 
 var SquarePlus = {};
 
+var ChevronDown = {};
+
+var ChevronUp = {};
+
 export {
   EyeClosed ,
   Eye ,
@@ -47,5 +51,7 @@ export {
   CornerDownRight ,
   DragDrop ,
   SquarePlus ,
+  ChevronDown ,
+  ChevronUp ,
 }
 /* No side effect */

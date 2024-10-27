@@ -53,6 +53,7 @@ var defaultProjects = [{
     isActive: true,
     todos: defaultTodos,
     hideArchived: false,
+    hideAll: false,
     hiddenTodos: undefined
   }];
 
@@ -156,6 +157,7 @@ function App$CheckedSummary(props) {
                                                       }
                                                     }),
                                                 hideArchived: project.hideArchived,
+                                                hideAll: project.hideAll,
                                                 hiddenTodos: project.hiddenTodos
                                               };
                                       });
@@ -201,6 +203,7 @@ function App(props) {
                     isActive: p.isActive,
                     todos: buildTodoTree(p.todos),
                     hideArchived: p.hideArchived,
+                    hideAll: p.hideAll,
                     hiddenTodos: p.hiddenTodos
                   };
           }));
@@ -215,6 +218,7 @@ function App(props) {
                               isActive: p.isActive,
                               todos: buildTodoTree(p.todos),
                               hideArchived: p.hideArchived,
+                              hideAll: p.hideAll,
                               hiddenTodos: p.hiddenTodos
                             };
                     });
@@ -355,6 +359,7 @@ function App(props) {
                                   return !Belt_SetString.has(itemsToMove, t.id);
                                 }),
                             hideArchived: p.hideArchived,
+                            hideAll: p.hideAll,
                             hiddenTodos: p.hiddenTodos
                           };
                   };
@@ -395,6 +400,7 @@ function App(props) {
                                                     };
                                             }),
                                         hideArchived: p$1.hideArchived,
+                                        hideAll: p$1.hideAll,
                                         hiddenTodos: p$1.hiddenTodos
                                       };
                               });
@@ -422,6 +428,7 @@ function App(props) {
                                                           };
                                                   }), undefined),
                                           hideArchived: p$1.hideArchived,
+                                          hideAll: p$1.hideAll,
                                           hiddenTodos: p$1.hiddenTodos
                                         };
                                 } else {
@@ -457,6 +464,7 @@ function App(props) {
                                                       };
                                               }), lastTodo.parentTodo),
                                       hideArchived: p$1.hideArchived,
+                                      hideAll: p$1.hideAll,
                                       hiddenTodos: p$1.hiddenTodos
                                     };
                             });
@@ -508,6 +516,7 @@ function App(props) {
                                 }
                               }),
                           hideArchived: project.hideArchived,
+                          hideAll: project.hideAll,
                           hiddenTodos: project.hiddenTodos
                         };
                 }));
@@ -520,6 +529,7 @@ function App(props) {
                           isActive: project.isActive,
                           todos: f(project.todos),
                           hideArchived: project.hideArchived,
+                          hideAll: project.hideAll,
                           hiddenTodos: project.hiddenTodos
                         };
                 }));
@@ -644,6 +654,7 @@ function App(props) {
                                                             isActive: true,
                                                             todos: [],
                                                             hideArchived: false,
+                                                            hideAll: false,
                                                             hiddenTodos: undefined
                                                           }].concat(v);
                                               });

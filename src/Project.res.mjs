@@ -627,79 +627,96 @@ function Project(props) {
     }
     
   };
-  var handleHideArchived = function (param) {
-    updateProject(project.id, (function (p) {
-            if (p.hideArchived) {
-              var parentMap = Core__Array.reduce(p.todos, undefined, (function (a, c) {
-                      var mapId = Core__Option.getOr(c.parentTodo, "None");
-                      return Belt_MapString.update(a, mapId, (function (v) {
-                                    return Core__Option.mapOr(v, [c], (function (v) {
-                                                  return v.concat([c]);
-                                                }));
-                                  }));
-                    }));
-              var recurse = function (todos) {
-                return Core__Array.reduce(todos, [], (function (a, t) {
-                              var regularTodos = Core__Option.mapOr(Belt_MapString.get(parentMap, t.id), [], (function (v) {
-                                      return recurse(v);
+  var handleHide = function (hideAllMode) {
+    var archivedPred = function (t) {
+      if (t.status === "ArchiveDone") {
+        return true;
+      } else {
+        return t.status === "ArchiveNo";
+      }
+    };
+    var allPred = function (param) {
+      return true;
+    };
+    var pred = hideAllMode ? allPred : archivedPred;
+    return function (param) {
+      updateProject(project.id, (function (p) {
+              if (hideAllMode ? p.hideAll : p.hideArchived) {
+                var parentMap = Core__Array.reduce(p.todos, undefined, (function (a, c) {
+                        var mapId = Core__Option.getOr(c.parentTodo, "None");
+                        return Belt_MapString.update(a, mapId, (function (v) {
+                                      return Core__Option.mapOr(v, [c], (function (v) {
+                                                    return v.concat([c]);
+                                                  }));
                                     }));
-                              var hiddenTodos = Core__Option.mapOr(Belt_MapString.get(p.hiddenTodos, t.id), [], (function (v) {
-                                      return recurse(v);
-                                    }));
-                              return a.concat([t]).concat(regularTodos).concat(hiddenTodos);
-                            }));
+                      }));
+                var recurse = function (todos) {
+                  return Core__Array.reduce(todos, [], (function (a, t) {
+                                var regularTodos = Core__Option.mapOr(Belt_MapString.get(parentMap, t.id), [], (function (v) {
+                                        return recurse(v);
+                                      }));
+                                var hiddenTodos = Core__Option.mapOr(Belt_MapString.get(p.hiddenTodos, t.id), [], (function (v) {
+                                        return recurse(v);
+                                      }));
+                                return a.concat([t]).concat(regularTodos).concat(hiddenTodos);
+                              }));
+                };
+                return {
+                        id: p.id,
+                        name: p.name,
+                        isActive: p.isActive,
+                        todos: recurse(p.todos.filter(function (t) {
+                                    return Core__Option.isNone(t.parentTodo);
+                                  })).concat(Core__Option.mapOr(Belt_MapString.get(p.hiddenTodos, "None"), [], (function (todos) {
+                                    return recurse(todos);
+                                  }))),
+                        hideArchived: hideAllMode ? p.hideArchived : false,
+                        hideAll: hideAllMode ? false : p.hideAll,
+                        hiddenTodos: undefined
+                      };
+              }
+              var mutHiddenTodos = {
+                contents: undefined
               };
+              var newTodos = Core__Array.reduce(p.todos, [], (function (a, c) {
+                      if (pred(c)) {
+                        mutHiddenTodos.contents = Belt_MapString.update(mutHiddenTodos.contents, Core__Option.getOr(c.parentTodo, "None"), (function (v) {
+                                if (v !== undefined) {
+                                  return v.concat([c]);
+                                } else {
+                                  return [c];
+                                }
+                              }));
+                        return a;
+                      } else if (c.ancArchived) {
+                        mutHiddenTodos.contents = Core__Option.mapOr(c.parentTodo, mutHiddenTodos.contents, (function (parentTodo) {
+                                return Belt_MapString.update(mutHiddenTodos.contents, parentTodo, (function (v) {
+                                              if (v !== undefined) {
+                                                return v.concat([c]);
+                                              } else {
+                                                return [c];
+                                              }
+                                            }));
+                              }));
+                        return a;
+                      } else {
+                        return a.concat([c]);
+                      }
+                    }));
               return {
                       id: p.id,
                       name: p.name,
                       isActive: p.isActive,
-                      todos: recurse(p.todos.filter(function (t) {
-                                  return Core__Option.isNone(t.parentTodo);
-                                })).concat(Core__Option.mapOr(Belt_MapString.get(p.hiddenTodos, "None"), [], (function (todos) {
-                                  return recurse(todos);
-                                }))),
-                      hideArchived: false,
-                      hiddenTodos: undefined
+                      todos: newTodos,
+                      hideArchived: hideAllMode ? p.hideArchived : true,
+                      hideAll: hideAllMode ? true : p.hideAll,
+                      hiddenTodos: mutHiddenTodos.contents
                     };
-            }
-            var mutHiddenTodos = {
-              contents: undefined
-            };
-            var newTodos = Core__Array.reduce(p.todos, [], (function (a, c) {
-                    if (c.status === "ArchiveDone" || c.status === "ArchiveNo") {
-                      mutHiddenTodos.contents = Belt_MapString.update(mutHiddenTodos.contents, Core__Option.getOr(c.parentTodo, "None"), (function (v) {
-                              if (v !== undefined) {
-                                return v.concat([c]);
-                              } else {
-                                return [c];
-                              }
-                            }));
-                      return a;
-                    } else if (c.ancArchived) {
-                      mutHiddenTodos.contents = Core__Option.mapOr(c.parentTodo, mutHiddenTodos.contents, (function (parentTodo) {
-                              return Belt_MapString.update(mutHiddenTodos.contents, parentTodo, (function (v) {
-                                            if (v !== undefined) {
-                                              return v.concat([c]);
-                                            } else {
-                                              return [c];
-                                            }
-                                          }));
-                            }));
-                      return a;
-                    } else {
-                      return a.concat([c]);
-                    }
-                  }));
-            return {
-                    id: p.id,
-                    name: p.name,
-                    isActive: p.isActive,
-                    todos: newTodos,
-                    hideArchived: true,
-                    hiddenTodos: mutHiddenTodos.contents
-                  };
-          }));
+            }));
+    };
   };
+  var handleHideAll = handleHide(true);
+  var handleHideArchived = handleHide(false);
   return JsxRuntime.jsxs(React.Fragment, {
               children: [
                 JsxRuntime.jsxs("li", {
@@ -744,25 +761,28 @@ function Project(props) {
                                                   isActive: t.isActive,
                                                   todos: t.todos,
                                                   hideArchived: t.hideArchived,
+                                                  hideAll: t.hideAll,
                                                   hiddenTodos: t.hiddenTodos
                                                 };
                                         }));
                                 })
                             }),
-                        JsxRuntime.jsx("div", {
-                              className: "flex-1"
-                            }),
+                        project.hideAll ? null : JsxRuntime.jsx("button", {
+                                children: JsxRuntime.jsx(Tb.TbPlus, {}),
+                                className: "absolute right-16 hidden group-hover:block bg-[var(--t1)] p-0.5 text-xs rounded  flex-none ",
+                                onClick: (function (param) {
+                                    newTodoAfter(undefined, undefined);
+                                  })
+                              }),
+                        project.hideAll ? null : JsxRuntime.jsx("button", {
+                                children: project.hideArchived ? JsxRuntime.jsx(Tb.TbArchiveOff, {}) : JsxRuntime.jsx(Tb.TbArchive, {}),
+                                className: "text-2xs rounded h-5 w-5 flex-none font-mono flex flex-row justify-center items-center text-[var(--t6)] mr-1",
+                                onClick: handleHideArchived
+                              }),
                         JsxRuntime.jsx("button", {
-                              children: JsxRuntime.jsx(Tb.TbPlus, {}),
-                              className: "absolute right-8 hidden group-hover:block bg-[var(--t1)] p-0.5 text-xs rounded  flex-none ",
-                              onClick: (function (param) {
-                                  newTodoAfter(undefined, undefined);
-                                })
-                            }),
-                        JsxRuntime.jsx("button", {
-                              children: project.hideArchived ? JsxRuntime.jsx(Tb.TbArchiveOff, {}) : JsxRuntime.jsx(Tb.TbArchive, {}),
-                              className: "text-2xs rounded h-6 w-6 flex-none font-mono flex flex-row justify-center items-center text-[var(--t6)] mr-1",
-                              onClick: handleHideArchived
+                              children: project.hideAll ? JsxRuntime.jsx(Tb.TbChevronDown, {}) : JsxRuntime.jsx(Tb.TbChevronUp, {}),
+                              className: "text-2xs rounded h-5 w-5 flex-none font-mono flex flex-row justify-center items-center text-[var(--t6)] mr-1",
+                              onClick: handleHideAll
                             })
                       ],
                       ref: Caml_option.some(projectRef),

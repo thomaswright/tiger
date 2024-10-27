@@ -72,3 +72,13 @@ module SquarePlus = {
   @react.component @module("react-icons/tb")
   external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "TbSquarePlus"
 }
+
+module ChevronDown = {
+  @react.component @module("react-icons/tb")
+  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "TbChevronDown"
+}
+
+module ChevronUp = {
+  @react.component @module("react-icons/tb")
+  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "TbChevronUp"
+}

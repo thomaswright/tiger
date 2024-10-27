@@ -38,6 +38,7 @@ let defaultProjects = [
     todos: defaultTodos,
     hiddenTodos: SMap.empty,
     hideArchived: false,
+    hideAll: false,
   },
 ]
 
@@ -579,6 +580,7 @@ let make = () => {
                     todos: [],
                     hiddenTodos: SMap.empty,
                     hideArchived: false,
+                    hideAll: false,
                   },
                 ],
                 v,

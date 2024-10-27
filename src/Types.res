@@ -38,6 +38,7 @@ type project = {
   isActive: bool,
   todos: array<todo>,
   hideArchived: bool,
+  hideAll: bool,
   hiddenTodos: SMap.t<array<todo>>,
 }
 

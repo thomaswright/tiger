@@ -32,6 +32,7 @@ function DisplayProject(props) {
                                                 isActive: p.isActive,
                                                 todos: p.todos,
                                                 hideArchived: p.hideArchived,
+                                                hideAll: p.hideAll,
                                                 hiddenTodos: p.hiddenTodos
                                               };
                                       }));
@@ -52,6 +53,7 @@ function DisplayProject(props) {
                                                   isActive: !p.isActive,
                                                   todos: p.todos,
                                                   hideArchived: p.hideArchived,
+                                                  hideAll: p.hideAll,
                                                   hiddenTodos: p.hiddenTodos
                                                 };
                                         }));
