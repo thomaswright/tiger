@@ -1,3 +1,5 @@
+module SMap = Belt.Map.String
+
 type status =
   | @as("Unsorted") Unsorted
   | @as("Future") Future
@@ -26,6 +28,7 @@ type todo = {
   childNumber: option<int>,
   hasArchivedChildren: bool,
   hasChildren: bool,
+  ancArchived: bool,
 }
 
 type project = {
@@ -33,6 +36,8 @@ type project = {
   name: string,
   isActive: bool,
   todos: array<todo>,
+  hideArchived: bool,
+  hiddenTodos: SMap.t<array<todo>>,
 }
 
 type projectsTab = | @as("All") All | @as("Active") Active

@@ -411,8 +411,8 @@ module Todo = {
 let make = (
   ~project: project,
   ~todos: array<todo>,
-  ~showArchive,
-  ~setShowArchive,
+  // ~showArchive,
+  // ~setShowArchive,
   ~updateProject,
   ~updateTodo,
   ~selectedElement,
@@ -447,6 +447,7 @@ let make = (
       childNumber: None,
       hasArchivedChildren: false,
       hasChildren: false,
+      ancArchived: false,
     }
 
     setTodos(project.id, todos => {
@@ -608,8 +609,85 @@ let make = (
       </button>
       <button
         className="text-2xs rounded h-6 w-6 flex-none font-mono strike"
-        onClick={_ => setShowArchive(v => v->arrayToggle(project.id))}>
-        {showArchive ? <Icons.Eye /> : <Icons.EyeClosed />}
+        onClick={_ =>
+          updateProject(project.id, p => {
+            if p.hideArchived {
+              let mutHiddenTodos = ref(p.hiddenTodos)
+              {
+                ...p,
+                todos: p.todos
+                ->Array.toReversed
+                ->Array.reduce([], (a, c) => {
+                  let todosToAdd = c.parentTodo->Option.mapOr(
+                    [],
+                    parentTodo => {
+                      mutHiddenTodos.contents
+                      ->SMap.get(parentTodo)
+                      ->Option.mapOr(
+                        [],
+                        todos => {
+                          mutHiddenTodos := mutHiddenTodos.contents->SMap.remove(parentTodo)
+
+                          todos->Array.reduce([], (a2, c2) => {})
+                        },
+                      )
+                    },
+                  )
+
+                  a->Array.concat(Array.concat(todosToAdd, [c]))
+                })
+                ->Array.concat(mutHiddenTodos.contents->SMap.get("None")->Option.getOr([]))
+                ->Array.toReversed,
+                hideArchived: false,
+                hiddenTodos: SMap.empty,
+              }
+            } else {
+              let mutHiddenTodos = ref(SMap.empty)
+
+              let newTodos = p.todos->Array.reduce([], (a, c) => {
+                if c.status == ArchiveDone || c.status == ArchiveNo {
+                  mutHiddenTodos :=
+                    mutHiddenTodos.contents->SMap.update(
+                      c.parentTodo->Option.getOr("None"),
+                      v => {
+                        switch v {
+                        | None => Some([c])
+                        | Some(x) => Some(Array.concat(x, [c]))
+                        }
+                      },
+                    )
+                  a
+                } else if c.ancArchived {
+                  mutHiddenTodos :=
+                    c.parentTodo->Option.mapOr(
+                      mutHiddenTodos.contents,
+                      parentTodo => {
+                        mutHiddenTodos.contents->SMap.update(
+                          parentTodo,
+                          v => {
+                            switch v {
+                            | None => Some([c])
+                            | Some(x) => Some(Array.concat(x, [c]))
+                            }
+                          },
+                        )
+                      },
+                    )
+
+                  a
+                } else {
+                  a->Array.concat([c])
+                }
+              })
+              {
+                ...p,
+                todos: newTodos,
+                hideArchived: true,
+                hiddenTodos: mutHiddenTodos.contents,
+              }
+            }
+          })}>
+        {project.hideArchived ? <Icons.EyeClosed /> : <Icons.Eye />}
         // {showArchive
         //   ? <span className="line-through"> {"closed"->React.string} </span>
         //   : <span> {"closed"->React.string} </span>}
@@ -623,7 +701,7 @@ let make = (
         project
         todo
         updateTodo
-        showArchive
+        showArchive={!project.hideArchived}
         isSelected={selectedElement == Some(Todo(todo.id))}
         isDisplayElement={displayElement == Some(Todo(todo.id))}
         setSelectedElement

@@ -8,6 +8,7 @@ import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
+import * as Belt_MapString from "rescript/lib/es6/belt_MapString.js";
 import * as Belt_SetString from "rescript/lib/es6/belt_SetString.js";
 import * as Tb from "react-icons/tb";
 import * as JsxRuntime from "react/jsx-runtime";
@@ -78,7 +79,8 @@ function Project$Todo(props) {
                                     depth: t.depth,
                                     childNumber: t.childNumber,
                                     hasArchivedChildren: t.hasArchivedChildren,
-                                    hasChildren: t.hasChildren
+                                    hasChildren: t.hasChildren,
+                                    ancArchived: t.ancArchived
                                   };
                           } else if (Caml_obj.equal(t.parentTodo, todo.id)) {
                             return {
@@ -92,7 +94,8 @@ function Project$Todo(props) {
                                     depth: t.depth,
                                     childNumber: t.childNumber,
                                     hasArchivedChildren: t.hasArchivedChildren,
-                                    hasChildren: t.hasChildren
+                                    hasChildren: t.hasChildren,
+                                    ancArchived: t.ancArchived
                                   };
                           } else {
                             return t;
@@ -148,7 +151,8 @@ function Project$Todo(props) {
                                           depth: t.depth,
                                           childNumber: t.childNumber,
                                           hasArchivedChildren: t.hasArchivedChildren,
-                                          hasChildren: t.hasChildren
+                                          hasChildren: t.hasChildren,
+                                          ancArchived: t.ancArchived
                                         };
                                 } else if (newChildren.contents.includes(t.id)) {
                                   return {
@@ -160,7 +164,8 @@ function Project$Todo(props) {
                                           depth: t.depth,
                                           childNumber: t.childNumber,
                                           hasArchivedChildren: t.hasArchivedChildren,
-                                          hasChildren: t.hasChildren
+                                          hasChildren: t.hasChildren,
+                                          ancArchived: t.ancArchived
                                         };
                                 } else {
                                   return t;
@@ -309,7 +314,8 @@ function Project$Todo(props) {
                                                   depth: t.depth,
                                                   childNumber: t.childNumber,
                                                   hasArchivedChildren: t.hasArchivedChildren,
-                                                  hasChildren: t.hasChildren
+                                                  hasChildren: t.hasChildren,
+                                                  ancArchived: t.ancArchived
                                                 };
                                         }));
                                 }),
@@ -382,7 +388,8 @@ function Project$Todo(props) {
                                                           depth: t.depth,
                                                           childNumber: t.childNumber,
                                                           hasArchivedChildren: t.hasArchivedChildren,
-                                                          hasChildren: t.hasChildren
+                                                          hasChildren: t.hasChildren,
+                                                          ancArchived: t.ancArchived
                                                         };
                                                 }));
                                         })
@@ -493,8 +500,6 @@ function Project(props) {
   var selectedElement = props.selectedElement;
   var updateTodo = props.updateTodo;
   var updateProject = props.updateProject;
-  var setShowArchive = props.setShowArchive;
-  var showArchive = props.showArchive;
   var project = props.project;
   var projectRef = React.useRef(null);
   var inputRef = React.useRef(null);
@@ -514,7 +519,8 @@ function Project(props) {
       depth: undefined,
       childNumber: undefined,
       hasArchivedChildren: false,
-      hasChildren: false
+      hasChildren: false,
+      ancArchived: false
     };
     setTodos(project.id, (function (todos) {
             if (after === undefined) {
@@ -657,7 +663,9 @@ function Project(props) {
                                                   id: t.id,
                                                   name: e.target.value,
                                                   isActive: t.isActive,
-                                                  todos: t.todos
+                                                  todos: t.todos,
+                                                  hideArchived: t.hideArchived,
+                                                  hiddenTodos: t.hiddenTodos
                                                 };
                                         }));
                                 })
@@ -673,12 +681,68 @@ function Project(props) {
                                 })
                             }),
                         JsxRuntime.jsx("button", {
-                              children: showArchive ? JsxRuntime.jsx(Tb.TbEye, {}) : JsxRuntime.jsx(Tb.TbEyeClosed, {}),
+                              children: project.hideArchived ? JsxRuntime.jsx(Tb.TbEyeClosed, {}) : JsxRuntime.jsx(Tb.TbEye, {}),
                               className: "text-2xs rounded h-6 w-6 flex-none font-mono strike",
                               onClick: (function (param) {
-                                  setShowArchive(function (v) {
-                                        return Common.arrayToggle(v, project.id);
-                                      });
+                                  updateProject(project.id, (function (p) {
+                                          if (p.hideArchived) {
+                                            var mutHiddenTodos = {
+                                              contents: p.hiddenTodos
+                                            };
+                                            return {
+                                                    id: p.id,
+                                                    name: p.name,
+                                                    isActive: p.isActive,
+                                                    todos: Core__Array.reduce(p.todos.toReversed(), [], (function (a, c) {
+                                                                var todosToAdd = Core__Option.mapOr(c.parentTodo, [], (function (parentTodo) {
+                                                                        return Core__Option.mapOr(Belt_MapString.get(mutHiddenTodos.contents, parentTodo), [], (function (todos) {
+                                                                                      mutHiddenTodos.contents = Belt_MapString.remove(mutHiddenTodos.contents, parentTodo);
+                                                                                      return todos;
+                                                                                    }));
+                                                                      }));
+                                                                return a.concat(todosToAdd.concat([c]));
+                                                              })).concat(Core__Option.getOr(Belt_MapString.get(mutHiddenTodos.contents, "None"), [])).toReversed(),
+                                                    hideArchived: false,
+                                                    hiddenTodos: undefined
+                                                  };
+                                          }
+                                          var mutHiddenTodos$1 = {
+                                            contents: undefined
+                                          };
+                                          var newTodos = Core__Array.reduce(p.todos, [], (function (a, c) {
+                                                  if (c.status === "ArchiveDone" || c.status === "ArchiveNo") {
+                                                    mutHiddenTodos$1.contents = Belt_MapString.update(mutHiddenTodos$1.contents, Core__Option.getOr(c.parentTodo, "None"), (function (v) {
+                                                            if (v !== undefined) {
+                                                              return v.concat([c]);
+                                                            } else {
+                                                              return [c];
+                                                            }
+                                                          }));
+                                                    return a;
+                                                  } else if (c.ancArchived) {
+                                                    mutHiddenTodos$1.contents = Core__Option.mapOr(c.parentTodo, mutHiddenTodos$1.contents, (function (parentTodo) {
+                                                            return Belt_MapString.update(mutHiddenTodos$1.contents, parentTodo, (function (v) {
+                                                                          if (v !== undefined) {
+                                                                            return v.concat([c]);
+                                                                          } else {
+                                                                            return [c];
+                                                                          }
+                                                                        }));
+                                                          }));
+                                                    return a;
+                                                  } else {
+                                                    return a.concat([c]);
+                                                  }
+                                                }));
+                                          return {
+                                                  id: p.id,
+                                                  name: p.name,
+                                                  isActive: p.isActive,
+                                                  todos: newTodos,
+                                                  hideArchived: true,
+                                                  hiddenTodos: mutHiddenTodos$1.contents
+                                                };
+                                        }));
                                 })
                             })
                       ],
@@ -737,7 +801,7 @@ function Project(props) {
                                   isChecked: Belt_SetString.has(checked, todo.id),
                                   setChecked: setChecked,
                                   deleteTodo: deleteTodo,
-                                  showArchive: showArchive,
+                                  showArchive: !project.hideArchived,
                                   itemToMoveHandleMouseDown: itemToMoveHandleMouseDown,
                                   itemToMoveHandleMouseEnter: itemToMoveHandleMouseEnter
                                 }, Types.getTodoId(todo.id));

@@ -49,7 +49,8 @@ function DisplayTodo(props) {
                                                 depth: t.depth,
                                                 childNumber: t.childNumber,
                                                 hasArchivedChildren: t.hasArchivedChildren,
-                                                hasChildren: t.hasChildren
+                                                hasChildren: t.hasChildren,
+                                                ancArchived: t.ancArchived
                                               };
                                       }));
                               })
@@ -71,7 +72,8 @@ function DisplayTodo(props) {
                                                   depth: t.depth,
                                                   childNumber: t.childNumber,
                                                   hasArchivedChildren: t.hasArchivedChildren,
-                                                  hasChildren: t.hasChildren
+                                                  hasChildren: t.hasChildren,
+                                                  ancArchived: t.ancArchived
                                                 };
                                         }));
                                 }),

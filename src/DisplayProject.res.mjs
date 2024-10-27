@@ -30,7 +30,9 @@ function DisplayProject(props) {
                                                 id: p.id,
                                                 name: e.target.value,
                                                 isActive: p.isActive,
-                                                todos: p.todos
+                                                todos: p.todos,
+                                                hideArchived: p.hideArchived,
+                                                hiddenTodos: p.hiddenTodos
                                               };
                                       }));
                               })
@@ -48,7 +50,9 @@ function DisplayProject(props) {
                                                   id: p.id,
                                                   name: p.name,
                                                   isActive: !p.isActive,
-                                                  todos: p.todos
+                                                  todos: p.todos,
+                                                  hideArchived: p.hideArchived,
+                                                  hiddenTodos: p.hiddenTodos
                                                 };
                                         }));
                                 })

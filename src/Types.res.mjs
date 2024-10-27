@@ -151,11 +151,14 @@ function getIdFromId(s) {
   }
 }
 
+var SMap;
+
 var listItemClass = "class-list-item";
 
 var todoInputClass = "class-list-todo-input";
 
 export {
+  SMap ,
   statusToFloat ,
   statusStringShort ,
   statusString ,

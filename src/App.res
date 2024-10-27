@@ -14,6 +14,7 @@ let defaultTodos = [
     childNumber: None,
     hasArchivedChildren: false,
     hasChildren: false,
+    ancArchived: false,
   },
   {
     text: "Do Something Else",
@@ -26,6 +27,7 @@ let defaultTodos = [
     childNumber: None,
     hasArchivedChildren: false,
     hasChildren: false,
+    ancArchived: false,
   },
 ]
 
@@ -35,6 +37,8 @@ let defaultProjects = [
     name: "Project Omega",
     isActive: true,
     todos: defaultTodos,
+    hiddenTodos: SMap.empty,
+    hideArchived: false,
   },
 ]
 
@@ -67,7 +71,7 @@ let buildTodoTree = (input: array<todo>) => {
       children->Array.some(v => v.status == ArchiveNo || v.status == ArchiveDone)
     )
 
-  let rec build = (arr, mapId, depth) => {
+  let rec build = (arr, mapId, ancArchived, depth) => {
     let children = mutParentMap.contents->Map.get(mapId)
     // this is to prevent accidental inf loops
     mutParentMap := mutParentMap.contents->Map.remove(mapId)
@@ -82,15 +86,17 @@ let buildTodoTree = (input: array<todo>) => {
             childNumber: Some(i),
             hasArchivedChildren: parentAggs->Map.getWithDefault(todo.id, false),
             hasChildren: parentMap->Map.getWithDefault(todo.id, [])->Array.length > 0,
+            ancArchived,
           },
         ]),
         todo.id,
+        ancArchived || todo.status == ArchiveNo || todo.status == ArchiveDone,
         depth + 1,
       )
     })
   }
 
-  build([], rootMapId, 0)
+  build([], rootMapId, false, 0)
 }
 
 // const groupedItems = items.reduce((group, item) => {
@@ -217,7 +223,7 @@ let make = () => {
     })
 
   // let (todos, setTodos, getTodos) = Common.useLocalStorage("todos", defaultTodos)
-  let (showArchive, setShowArchive, _) = Common.useLocalStorage("showArchive", [])
+  // let (showArchive, setShowArchive, _) = Common.useLocalStorage("showArchive", [])
   let (checked, setChecked, _) = Common.useLocalStorage("checked", SSet.empty)
   let (projectsTab, _setProjectTab, _) = Common.useLocalStorage("projectsTab", All)
   let (selectedElement, setSelectedElement) = React.useState(_ => None)
@@ -564,6 +570,8 @@ let make = () => {
                     name: "",
                     isActive: true,
                     todos: [],
+                    hiddenTodos: SMap.empty,
+                    hideArchived: false,
                   },
                 ],
                 v,
@@ -584,14 +592,14 @@ let make = () => {
         {projects
         ->Array.filter(project => projectsTab == Active ? project.isActive : true)
         ->Array.map(project => {
-          let showArchive = showArchive->Array.includes(project.id)
+          // let showArchive = showArchive->Array.includes(project.id)
 
           // ->Array.filter(todo => showArchive ? true : todo.box != Archive)
 
           <Project
             key={getProjectId(project.id)}
-            showArchive={showArchive}
-            setShowArchive={setShowArchive}
+            // showArchive={showArchive}
+            // setShowArchive={setShowArchive}
             project
             todos={project.todos}
             updateProject

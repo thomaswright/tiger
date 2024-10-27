@@ -30,7 +30,8 @@ var defaultTodos = [
     depth: undefined,
     childNumber: undefined,
     hasArchivedChildren: false,
-    hasChildren: false
+    hasChildren: false,
+    ancArchived: false
   },
   {
     id: "2",
@@ -41,7 +42,8 @@ var defaultTodos = [
     depth: undefined,
     childNumber: undefined,
     hasArchivedChildren: false,
-    hasChildren: false
+    hasChildren: false,
+    ancArchived: false
   }
 ];
 
@@ -49,7 +51,9 @@ var defaultProjects = [{
     id: "1",
     name: "Project Omega",
     isActive: true,
-    todos: defaultTodos
+    todos: defaultTodos,
+    hideArchived: false,
+    hiddenTodos: undefined
   }];
 
 var logoUrl = TigerSvg;
@@ -76,7 +80,7 @@ function buildTodoTree(input) {
                       }
                     });
         }));
-  var build = function (arr, mapId, depth) {
+  var build = function (arr, mapId, ancArchived, depth) {
     var children = Belt_MapString.get(mutParentMap.contents, mapId);
     mutParentMap.contents = Belt_MapString.remove(mutParentMap.contents, mapId);
     return Core__Array.reduceWithIndex(Core__Option.getOr(children, []), arr, (function (a, todo, i) {
@@ -89,11 +93,12 @@ function buildTodoTree(input) {
                                     depth: depth,
                                     childNumber: i,
                                     hasArchivedChildren: Belt_MapString.getWithDefault(parentAggs, todo.id, false),
-                                    hasChildren: Belt_MapString.getWithDefault(parentMap, todo.id, []).length > 0
-                                  }]), todo.id, depth + 1 | 0);
+                                    hasChildren: Belt_MapString.getWithDefault(parentMap, todo.id, []).length > 0,
+                                    ancArchived: ancArchived
+                                  }]), todo.id, ancArchived || todo.status === "ArchiveNo" || todo.status === "ArchiveDone", depth + 1 | 0);
                 }));
   };
-  return build([], rootMapId, 0);
+  return build([], rootMapId, false, 0);
 }
 
 function App$CheckedSummary(props) {
@@ -143,12 +148,15 @@ function App$CheckedSummary(props) {
                                                                 depth: t.depth,
                                                                 childNumber: t.childNumber,
                                                                 hasArchivedChildren: t.hasArchivedChildren,
-                                                                hasChildren: t.hasChildren
+                                                                hasChildren: t.hasChildren,
+                                                                ancArchived: t.ancArchived
                                                               };
                                                       } else {
                                                         return t;
                                                       }
-                                                    })
+                                                    }),
+                                                hideArchived: project.hideArchived,
+                                                hiddenTodos: project.hiddenTodos
                                               };
                                       });
                           });
@@ -191,7 +199,9 @@ function App(props) {
                     id: p.id,
                     name: p.name,
                     isActive: p.isActive,
-                    todos: buildTodoTree(p.todos)
+                    todos: buildTodoTree(p.todos),
+                    hideArchived: p.hideArchived,
+                    hiddenTodos: p.hiddenTodos
                   };
           }));
   var setProjectsPreCompute = match[1];
@@ -203,44 +213,43 @@ function App(props) {
                               id: p.id,
                               name: p.name,
                               isActive: p.isActive,
-                              todos: buildTodoTree(p.todos)
+                              todos: buildTodoTree(p.todos),
+                              hideArchived: p.hideArchived,
+                              hiddenTodos: p.hiddenTodos
                             };
                     });
         });
   };
-  var match$1 = Common.useLocalStorage("showArchive", []);
-  var setShowArchive = match$1[1];
-  var showArchive = match$1[0];
-  var match$2 = Common.useLocalStorage("checked", undefined);
-  var setChecked = match$2[1];
-  var checked = match$2[0];
-  var match$3 = Common.useLocalStorage("projectsTab", "All");
-  var projectsTab = match$3[0];
+  var match$1 = Common.useLocalStorage("checked", undefined);
+  var setChecked = match$1[1];
+  var checked = match$1[0];
+  var match$2 = Common.useLocalStorage("projectsTab", "All");
+  var projectsTab = match$2[0];
+  var match$3 = React.useState(function () {
+        
+      });
+  var setSelectedElement = match$3[1];
+  var selectedElement = match$3[0];
   var match$4 = React.useState(function () {
         
       });
-  var setSelectedElement = match$4[1];
-  var selectedElement = match$4[0];
+  var setDisplayElement = match$4[1];
+  var displayElement = match$4[0];
   var match$5 = React.useState(function () {
         
       });
-  var setDisplayElement = match$5[1];
-  var displayElement = match$5[0];
+  var setFocusClassNext = match$5[1];
+  var focusClassNext = match$5[0];
   var match$6 = React.useState(function () {
         
       });
-  var setFocusClassNext = match$6[1];
-  var focusClassNext = match$6[0];
+  var setFocusIdNext = match$6[1];
+  var focusIdNext = match$6[0];
   var match$7 = React.useState(function () {
         
       });
-  var setFocusIdNext = match$7[1];
-  var focusIdNext = match$7[0];
-  var match$8 = React.useState(function () {
-        
-      });
-  var setItemsOfDragHandle = match$8[1];
-  var itemsOfDragHandle = match$8[0];
+  var setItemsOfDragHandle = match$7[1];
+  var itemsOfDragHandle = match$7[0];
   var aaParentRef = React.useRef(null);
   var clickDelayTimeout = React.useRef(undefined);
   var lastRelative = React.useRef(undefined);
@@ -316,7 +325,8 @@ function App(props) {
                                         depth: t.depth,
                                         childNumber: t.childNumber,
                                         hasArchivedChildren: t.hasArchivedChildren,
-                                        hasChildren: t.hasChildren
+                                        hasChildren: t.hasChildren,
+                                        ancArchived: t.ancArchived
                                       };
                               });
                   };
@@ -342,7 +352,9 @@ function App(props) {
                             isActive: p.isActive,
                             todos: p.todos.filter(function (t) {
                                   return !Belt_SetString.has(itemsToMove, t.id);
-                                })
+                                }),
+                            hideArchived: p.hideArchived,
+                            hiddenTodos: p.hiddenTodos
                           };
                   };
                   if (isProject && itemIndex === 0) {
@@ -377,9 +389,12 @@ function App(props) {
                                                       depth: t.depth,
                                                       childNumber: t.childNumber,
                                                       hasArchivedChildren: t.hasArchivedChildren,
-                                                      hasChildren: t.hasChildren
+                                                      hasChildren: t.hasChildren,
+                                                      ancArchived: t.ancArchived
                                                     };
-                                            })
+                                            }),
+                                        hideArchived: p$1.hideArchived,
+                                        hiddenTodos: p$1.hiddenTodos
                                       };
                               });
                   }
@@ -401,9 +416,12 @@ function App(props) {
                                                             depth: t.depth,
                                                             childNumber: t.childNumber,
                                                             hasArchivedChildren: t.hasArchivedChildren,
-                                                            hasChildren: t.hasChildren
+                                                            hasChildren: t.hasChildren,
+                                                            ancArchived: t.ancArchived
                                                           };
-                                                  }), undefined)
+                                                  }), undefined),
+                                          hideArchived: p$1.hideArchived,
+                                          hiddenTodos: p$1.hiddenTodos
                                         };
                                 } else {
                                   return p$1;
@@ -433,9 +451,12 @@ function App(props) {
                                                         depth: t.depth,
                                                         childNumber: t.childNumber,
                                                         hasArchivedChildren: t.hasArchivedChildren,
-                                                        hasChildren: t.hasChildren
+                                                        hasChildren: t.hasChildren,
+                                                        ancArchived: t.ancArchived
                                                       };
-                                              }), lastTodo.parentTodo)
+                                              }), lastTodo.parentTodo),
+                                      hideArchived: p$1.hideArchived,
+                                      hiddenTodos: p$1.hiddenTodos
                                     };
                             });
                 });
@@ -484,7 +505,9 @@ function App(props) {
                                 } else {
                                   return todo;
                                 }
-                              })
+                              }),
+                          hideArchived: project.hideArchived,
+                          hiddenTodos: project.hiddenTodos
                         };
                 }));
         }), []);
@@ -494,7 +517,9 @@ function App(props) {
                           id: project.id,
                           name: project.name,
                           isActive: project.isActive,
-                          todos: f(project.todos)
+                          todos: f(project.todos),
+                          hideArchived: project.hideArchived,
+                          hiddenTodos: project.hiddenTodos
                         };
                 }));
         }), []);
@@ -513,7 +538,8 @@ function App(props) {
                                   depth: t.depth,
                                   childNumber: t.childNumber,
                                   hasArchivedChildren: t.hasArchivedChildren,
-                                  hasChildren: t.hasChildren
+                                  hasChildren: t.hasChildren,
+                                  ancArchived: t.ancArchived
                                 };
                         } else {
                           return t;
@@ -612,7 +638,9 @@ function App(props) {
                                                             id: newProjectId,
                                                             name: "",
                                                             isActive: true,
-                                                            todos: []
+                                                            todos: [],
+                                                            hideArchived: false,
+                                                            hiddenTodos: undefined
                                                           }].concat(v);
                                               });
                                           setSelectedElement(function (param) {
@@ -643,12 +671,9 @@ function App(props) {
                                         return true;
                                       }
                                     }).map(function (project) {
-                                    var showArchive$1 = showArchive.includes(project.id);
                                     return JsxRuntime.jsx(Project.make, {
                                                 project: project,
                                                 todos: project.todos,
-                                                showArchive: showArchive$1,
-                                                setShowArchive: setShowArchive,
                                                 updateProject: updateProject,
                                                 updateTodo: updateTodo,
                                                 selectedElement: selectedElement,
