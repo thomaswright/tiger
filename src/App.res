@@ -50,6 +50,9 @@ let defaultProjects = [
 
 @module("./assets/tiger.svg") external logoUrl: string = "default"
 
+@module("./exportFunctions.js")
+external exportToJsonFile: string => unit = "exportToJsonFile"
+
 module Switch = {
   @module("./Switch.jsx") @react.component
   external make: (~checked: bool, ~onCheckedChange: unit => unit) => React.element = "Switch"
@@ -239,26 +242,27 @@ let make = () => {
   let (projectOfDragHandle, setProjectOfDragHandle) = React.useState(_ => None)
   let projectLastRelative = React.useRef(None)
 
-  let logExport = () => {
-    Console.log(
-      projects->Array.map(p =>
-        {
-          "id": p.id,
-          "name": p.name,
-          "isActive": p.isActive,
-          "todos": p.todos->Array.map(t => {
-            {
-              "id": t.id,
-              "text": t.text,
-              "project": t.project,
-              "status": t.status,
-              "parentTodo": t.parentTodo,
-            }
-          }),
-          "hiddenTodos": p.hiddenTodos->SMap.toArray,
-        }
-      ),
+  let onExportJson = () => {
+    projects
+    ->Array.map(p =>
+      {
+        "id": p.id,
+        "name": p.name,
+        "isActive": p.isActive,
+        "todos": p.todos->Array.map(t => {
+          {
+            "id": t.id,
+            "text": t.text,
+            "project": t.project,
+            "status": t.status,
+            "parentTodo": t.parentTodo,
+          }
+        }),
+        "hiddenTodos": p.hiddenTodos->SMap.toArray,
+      }
     )
+    ->Js.Json.stringifyAny
+    ->Option.mapOr((), exportToJsonFile)
   }
 
   // React.useEffect1(() => {
@@ -616,7 +620,7 @@ let make = () => {
         // </div>
         <div className="flex-1" />
         <button
-          onClick={_ => logExport()}
+          onClick={_ => onExportJson()}
           className={[
             "bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1 h-5 ",
           ]->Array.join(" ")}>

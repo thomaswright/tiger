@@ -19,6 +19,7 @@ import * as Tb from "react-icons/tb";
 import * as Caml_splice_call from "rescript/lib/es6/caml_splice_call.js";
 import * as JsxRuntime from "react/jsx-runtime";
 import TigerSvg from "./assets/tiger.svg";
+import * as ExportFunctionsJs from "./exportFunctions.js";
 
 var defaultTodos = [
   {
@@ -58,6 +59,10 @@ var defaultProjects = [{
   }];
 
 var logoUrl = TigerSvg;
+
+function exportToJsonFile(prim) {
+  ExportFunctionsJs.exportToJsonFile(prim);
+}
 
 function buildTodoTree(input) {
   var rootMapId = "_";
@@ -264,24 +269,24 @@ function App(props) {
   var setProjectOfDragHandle = match$8[1];
   var projectOfDragHandle = match$8[0];
   var projectLastRelative = React.useRef(undefined);
-  var logExport = function () {
-    console.log(projects.map(function (p) {
-              return {
-                      id: p.id,
-                      name: p.name,
-                      isActive: p.isActive,
-                      todos: p.todos.map(function (t) {
-                            return {
-                                    id: t.id,
-                                    text: t.text,
-                                    project: t.project,
-                                    status: t.status,
-                                    parentTodo: t.parentTodo
-                                  };
-                          }),
-                      hiddenTodos: Belt_MapString.toArray(p.hiddenTodos)
-                    };
-            }));
+  var onExportJson = function () {
+    Core__Option.mapOr(JSON.stringify(projects.map(function (p) {
+                  return {
+                          id: p.id,
+                          name: p.name,
+                          isActive: p.isActive,
+                          todos: p.todos.map(function (t) {
+                                return {
+                                        id: t.id,
+                                        text: t.text,
+                                        project: t.project,
+                                        status: t.status,
+                                        parentTodo: t.parentTodo
+                                      };
+                              }),
+                          hiddenTodos: Belt_MapString.toArray(p.hiddenTodos)
+                        };
+                })), undefined, exportToJsonFile);
   };
   var projectToMoveHandleMouseDown = function (projectId, param) {
     var timeoutId = setTimeout((function () {
@@ -703,7 +708,7 @@ function App(props) {
                                       children: "export",
                                       className: ["bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1 h-5 "].join(" "),
                                       onClick: (function (param) {
-                                          logExport();
+                                          onExportJson();
                                         })
                                     }),
                                 JsxRuntime.jsxs("button", {
