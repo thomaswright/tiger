@@ -832,17 +832,6 @@ function App(props) {
                                 JsxRuntime.jsx(make, {
                                       onImportJson: onImportJson
                                     }),
-                                JsxRuntime.jsx("button", {
-                                      children: allProjectsHidden ? JsxRuntime.jsx(Tb.TbChevronDown, {}) : JsxRuntime.jsx(Tb.TbChevronUp, {}),
-                                      className: ["rounded flex flex-row items-center justify-center gap-1 h-5 w-5 "].join(" "),
-                                      onClick: (function (param) {
-                                          setProjects(function (projects) {
-                                                return projects.map(function (p) {
-                                                            return handleHide(true, allProjectsHidden, p);
-                                                          });
-                                              });
-                                        })
-                                    }),
                                 JsxRuntime.jsxs("button", {
                                       children: [
                                         JsxRuntime.jsx(Tb.TbPlus, {}),
@@ -907,6 +896,17 @@ function App(props) {
                                               });
                                           setFocusIdNext(function (param) {
                                                 return Types.getProjectInputId(newProjectId);
+                                              });
+                                        })
+                                    }),
+                                JsxRuntime.jsx("button", {
+                                      children: allProjectsHidden ? JsxRuntime.jsx(Tb.TbChevronDown, {}) : JsxRuntime.jsx(Tb.TbChevronUp, {}),
+                                      className: ["rounded flex flex-row items-center justify-center gap-1 h-5 w-5 "].join(" "),
+                                      onClick: (function (param) {
+                                          setProjects(function (projects) {
+                                                return projects.map(function (p) {
+                                                            return handleHide(true, allProjectsHidden, p);
+                                                          });
                                               });
                                         })
                                     })

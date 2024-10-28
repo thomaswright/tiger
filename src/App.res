@@ -749,16 +749,6 @@ let make = () => {
         </button>
         <ImportButton onImportJson />
         <button
-          onClick={_ =>
-            setProjects(projects =>
-              projects->Array.map(p => handleHide(true, Some(allProjectsHidden), p))
-            )}
-          className={[
-            "rounded flex flex-row items-center justify-center gap-1 h-5 w-5 ",
-          ]->Array.join(" ")}>
-          {allProjectsHidden ? <Icons.ChevronDown /> : <Icons.ChevronUp />}
-        </button>
-        <button
           onClick={_ => {
             let newProjectId = Common.uuid()
             let newProject = {
@@ -804,6 +794,16 @@ let make = () => {
           ]->Array.join(" ")}>
           <Icons.Plus />
           {"Project"->React.string}
+        </button>
+        <button
+          onClick={_ =>
+            setProjects(projects =>
+              projects->Array.map(p => handleHide(true, Some(allProjectsHidden), p))
+            )}
+          className={[
+            "rounded flex flex-row items-center justify-center gap-1 h-5 w-5 ",
+          ]->Array.join(" ")}>
+          {allProjectsHidden ? <Icons.ChevronDown /> : <Icons.ChevronUp />}
         </button>
       </div>
       <ul className="pb-20 flex-1 overflow-y-scroll" ref={ReactDOM.Ref.domRef(aaParentRef)}>
