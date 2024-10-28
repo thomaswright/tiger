@@ -290,7 +290,7 @@ function App(props) {
   };
   var projectToMoveHandleMouseDown = function (projectId, param) {
     var timeoutId = setTimeout((function () {
-            setProjectOfDragHandle(function (s) {
+            setProjectOfDragHandle(function (param) {
                   return projectId;
                 });
           }), 200);
@@ -719,16 +719,47 @@ function App(props) {
                                       className: ["bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1 h-5 "].join(" "),
                                       onClick: (function (param) {
                                           var newProjectId = Uuid.v4();
+                                          var newProject_todos = [];
+                                          var newProject = {
+                                            id: newProjectId,
+                                            name: "",
+                                            isActive: true,
+                                            todos: newProject_todos,
+                                            hideArchived: false,
+                                            hideAll: false,
+                                            hiddenTodos: undefined
+                                          };
                                           setProjects(function (v) {
-                                                return [{
-                                                            id: newProjectId,
-                                                            name: "",
-                                                            isActive: true,
-                                                            todos: [],
-                                                            hideArchived: false,
-                                                            hideAll: false,
-                                                            hiddenTodos: undefined
-                                                          }].concat(v);
+                                                var relativeProject;
+                                                if (displayElement !== undefined) {
+                                                  if (displayElement.TAG === "Todo") {
+                                                    var todoId = displayElement._0;
+                                                    relativeProject = Core__Array.reduce(v, undefined, (function (a, c) {
+                                                            if (Core__Option.isSome(a)) {
+                                                              return a;
+                                                            } else if (Core__Option.isSome(c.todos.find(function (t) {
+                                                                        return t.id === todoId;
+                                                                      }))) {
+                                                              return c.id;
+                                                            } else {
+                                                              return ;
+                                                            }
+                                                          }));
+                                                  } else {
+                                                    relativeProject = displayElement._0;
+                                                  }
+                                                } else {
+                                                  relativeProject = undefined;
+                                                }
+                                                return Core__Option.mapOr(relativeProject, [newProject].concat(v), (function (relativeProject) {
+                                                              return Core__Array.reduce(v, [], (function (a, c) {
+                                                                            if (c.id === relativeProject) {
+                                                                              return a.concat([c]).concat([newProject]);
+                                                                            } else {
+                                                                              return a.concat([c]);
+                                                                            }
+                                                                          }));
+                                                            }));
                                               });
                                           setSelectedElement(function (param) {
                                                 return {
@@ -748,7 +779,7 @@ function App(props) {
                                         })
                                     })
                               ],
-                              className: "flex flex-row gap-2 justify-between items-center w-full h-10 border-b px-2"
+                              className: "flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b px-2"
                             }),
                         JsxRuntime.jsx("ul", {
                               children: projects.filter(function (project) {
@@ -785,10 +816,10 @@ function App(props) {
                                               }, Types.getProjectId(project.id));
                                   }),
                               ref: Caml_option.some(aaParentRef),
-                              className: "pb-20"
+                              className: "pb-20 flex-1 overflow-y-scroll"
                             })
                       ],
-                      className: "flex-1 overflow-y-scroll"
+                      className: "flex-1 h-full flex flex-col"
                     }),
                 JsxRuntime.jsxs("div", {
                       children: [

@@ -278,7 +278,7 @@ let make = () => {
     let timeoutId = setTimeout(() => {
       // startXStep(e)
 
-      setProjectOfDragHandle(s => Some(projectId))
+      setProjectOfDragHandle(_ => Some(projectId))
     }, 200)
     projectClickDelayTimeout.current = timeoutId->Some
   }
@@ -608,8 +608,9 @@ let make = () => {
 
   <div className="flex flex-row h-dvh text-[var(--t9)]">
     // <StatusSelector />
-    <div className="flex-1 overflow-y-scroll">
-      <div className="flex flex-row gap-2 justify-between items-center w-full h-10 border-b px-2">
+    <div className="flex-1 h-full flex flex-col">
+      <div
+        className="flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b px-2">
         <img src={logoUrl} width={"24"} className="py-0.5 " />
         // <div className="flex flex-row gap-2 ">
         //   <div className="text-sm"> {"Show Inactive"->React.string} </div>
@@ -629,22 +630,40 @@ let make = () => {
         <button
           onClick={_ => {
             let newProjectId = Common.uuid()
-            setProjects(v =>
-              Array.concat(
-                [
-                  {
-                    id: newProjectId,
-                    name: "",
-                    isActive: true,
-                    todos: [],
-                    hiddenTodos: SMap.empty,
-                    hideArchived: false,
-                    hideAll: false,
+            let newProject = {
+              id: newProjectId,
+              name: "",
+              isActive: true,
+              todos: [],
+              hiddenTodos: SMap.empty,
+              hideArchived: false,
+              hideAll: false,
+            }
+            setProjects(v => {
+              let relativeProject = switch displayElement {
+              | Some(Project(projectId)) => Some(projectId)
+              | Some(Todo(todoId)) =>
+                v->Array.reduce(None, (a, c) => {
+                  a->Option.isSome
+                    ? a
+                    : c.todos->Array.find(t => t.id == todoId)->Option.isSome
+                    ? Some(c.id)
+                    : None
+                })
+              | _ => None
+              }
+
+              relativeProject->Option.mapOr(Array.concat([newProject], v), relativeProject =>
+                v->Array.reduce(
+                  [],
+                  (a, c) => {
+                    c.id == relativeProject
+                      ? a->Array.concat([c])->Array.concat([newProject])
+                      : a->Array.concat([c])
                   },
-                ],
-                v,
+                )
               )
-            )
+            })
             setSelectedElement(_ => Some(Project(newProjectId)))
             setDisplayElement(_ => Some(Project(newProjectId)))
             setFocusIdNext(_ => Some(getProjectInputId(newProjectId)))
@@ -656,7 +675,7 @@ let make = () => {
           {"Project"->React.string}
         </button>
       </div>
-      <ul className="pb-20" ref={ReactDOM.Ref.domRef(aaParentRef)}>
+      <ul className="pb-20 flex-1 overflow-y-scroll" ref={ReactDOM.Ref.domRef(aaParentRef)}>
         {projects
         ->Array.filter(project => projectsTab == Active ? project.isActive : true)
         ->Array.map(project => {
