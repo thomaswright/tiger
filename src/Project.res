@@ -356,7 +356,13 @@ module Todo = {
               todoInputClass,
               "mx-1 my-1 block text-sm font-medium  w-full h-5 border-0 px-0 py-0 focus:ring-0 focus:z-10
                  text-[var(--t8)]",
-              isChecked ? "bg-sky-50" : isDisplayElement && !isSelected ? "bg-sky-200" : "bg-white",
+              stagedForDelete
+                ? "bg-red-200 "
+                : isChecked
+                ? "bg-sky-50"
+                : isDisplayElement && !isSelected
+                ? "bg-sky-200"
+                : "bg-white",
             ]->Array.join(" ")}
             placeholder={""}
             style={{resize: "none"}}
