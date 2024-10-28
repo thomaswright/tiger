@@ -390,7 +390,7 @@ module Todo = {
             </div>
             <button
               className={[
-                "w-4 h-4 flex-row items-center justify-center cursor-default hidden group-hover:flex rounded-sm text-sm text-gray-500 border-gray-500 bg-white ",
+                "w-4 h-4 flex-row items-center justify-center cursor-default hidden group-hover:flex rounded-sm text-sm text-gray-500  bg-white ",
               ]->Array.join(" ")}
               onClick={_ => {
                 newTodoAfter(Some(todo.id), Some(todo.id))
@@ -722,24 +722,27 @@ let make = (
           })
         }}
       />
-      {<div
+      <div
         onMouseDown={e => projectToMoveHandleMouseDown(project.id, e)}
-        className={" w-4 h-4 text-gray-500 hidden group-hover:block bg-white rounded-sm 0 "}>
+        className={[
+          project.hideAll ? "right-8" : "right-20",
+          "absolute w-4 h-4 text-gray-500 hidden group-hover:block bg-white rounded-sm ",
+        ]->Array.join(" ")}>
         <Icons.DragDrop />
-      </div>}
+      </div>
       {project.hideAll
         ? React.null
         : <button
             onClick={_ => {
               newTodoAfter(None, None)
             }}
-            className=" hidden group-hover:block p-0.5 text-xs rounded  flex-none ">
+            className="absolute right-14 hidden group-hover:block h-4 w-4 text-sm rounded flex-none text-gray-500 bg-white ">
             <Icons.Plus />
           </button>}
       {project.hideAll
         ? React.null
         : <button
-            className="text-2xs rounded h-5 w-5 flex-none font-mono flex flex-row justify-center items-center text-[var(--t6)] mr-1"
+            className="text-2xs rounded h-4 w-4 flex-none font-mono flex flex-row justify-center items-center text-[var(--t6)] mr-1"
             onClick={handleHideArchived}>
             {project.hideArchived ? <Icons.ArchiveOff /> : <Icons.Archive />}
             // {showArchive
@@ -747,7 +750,7 @@ let make = (
             //   : <span> {"closed"->React.string} </span>}
           </button>}
       <button
-        className="text-2xs rounded h-5 w-5 flex-none font-mono flex flex-row justify-center items-center text-[var(--t6)] mr-1"
+        className="text-2xs rounded h-4 w-4 flex-none font-mono flex flex-row justify-center items-center text-[var(--t6)] mr-1"
         onClick={handleHideAll}>
         {project.hideAll ? <Icons.ChevronDown /> : <Icons.ChevronUp />}
       </button>

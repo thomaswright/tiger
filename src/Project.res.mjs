@@ -412,7 +412,7 @@ function Project$Todo(props) {
                                             }),
                                         JsxRuntime.jsx("button", {
                                               children: JsxRuntime.jsx(Tb.TbPlus, {}),
-                                              className: ["w-4 h-4 flex-row items-center justify-center cursor-default hidden group-hover:flex rounded-sm text-sm text-gray-500 border-gray-500 bg-white "].join(" "),
+                                              className: ["w-4 h-4 flex-row items-center justify-center cursor-default hidden group-hover:flex rounded-sm text-sm text-gray-500  bg-white "].join(" "),
                                               onClick: (function (param) {
                                                   newTodoAfter(todo.id, todo.id);
                                                 })
@@ -774,26 +774,29 @@ function Project(props) {
                             }),
                         JsxRuntime.jsx("div", {
                               children: JsxRuntime.jsx(Tb.TbDragDrop, {}),
-                              className: " w-4 h-4 text-gray-500 hidden group-hover:block bg-white rounded-sm 0 ",
+                              className: [
+                                  project.hideAll ? "right-8" : "right-20",
+                                  "absolute w-4 h-4 text-gray-500 hidden group-hover:block bg-white rounded-sm "
+                                ].join(" "),
                               onMouseDown: (function (e) {
                                   projectToMoveHandleMouseDown(project.id, e);
                                 })
                             }),
                         project.hideAll ? null : JsxRuntime.jsx("button", {
                                 children: JsxRuntime.jsx(Tb.TbPlus, {}),
-                                className: " hidden group-hover:block p-0.5 text-xs rounded  flex-none ",
+                                className: "absolute right-14 hidden group-hover:block h-4 w-4 text-sm rounded flex-none text-gray-500 bg-white ",
                                 onClick: (function (param) {
                                     newTodoAfter(undefined, undefined);
                                   })
                               }),
                         project.hideAll ? null : JsxRuntime.jsx("button", {
                                 children: project.hideArchived ? JsxRuntime.jsx(Tb.TbArchiveOff, {}) : JsxRuntime.jsx(Tb.TbArchive, {}),
-                                className: "text-2xs rounded h-5 w-5 flex-none font-mono flex flex-row justify-center items-center text-[var(--t6)] mr-1",
+                                className: "text-2xs rounded h-4 w-4 flex-none font-mono flex flex-row justify-center items-center text-[var(--t6)] mr-1",
                                 onClick: handleHideArchived
                               }),
                         JsxRuntime.jsx("button", {
                               children: project.hideAll ? JsxRuntime.jsx(Tb.TbChevronDown, {}) : JsxRuntime.jsx(Tb.TbChevronUp, {}),
-                              className: "text-2xs rounded h-5 w-5 flex-none font-mono flex flex-row justify-center items-center text-[var(--t6)] mr-1",
+                              className: "text-2xs rounded h-4 w-4 flex-none font-mono flex flex-row justify-center items-center text-[var(--t6)] mr-1",
                               onClick: handleHideAll
                             })
                       ],
