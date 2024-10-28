@@ -15,6 +15,7 @@ import * as JsxRuntime from "react/jsx-runtime";
 import ReactTextareaAutosize from "react-textarea-autosize";
 
 function Project$Todo(props) {
+  var clearProjectLastRelative = props.clearProjectLastRelative;
   var itemToMoveHandleMouseEnter = props.itemToMoveHandleMouseEnter;
   var itemToMoveHandleMouseDown = props.itemToMoveHandleMouseDown;
   var deleteTodo = props.deleteTodo;
@@ -482,6 +483,7 @@ function Project$Todo(props) {
                       });
                 }),
               onMouseEnter: (function (e) {
+                  clearProjectLastRelative();
                   itemToMoveHandleMouseEnter(false, todo.id, e);
                 })
             });
@@ -492,6 +494,9 @@ var Todo = {
 };
 
 function Project(props) {
+  var clearProjectLastRelative = props.clearProjectLastRelative;
+  var projectToMoveHandleMouseEnter = props.projectToMoveHandleMouseEnter;
+  var projectToMoveHandleMouseDown = props.projectToMoveHandleMouseDown;
   var itemToMoveHandleMouseEnter = props.itemToMoveHandleMouseEnter;
   var itemToMoveHandleMouseDown = props.itemToMoveHandleMouseDown;
   var deleteTodo = props.deleteTodo;
@@ -767,9 +772,16 @@ function Project(props) {
                                         }));
                                 })
                             }),
+                        JsxRuntime.jsx("div", {
+                              children: JsxRuntime.jsx(Tb.TbDragDrop, {}),
+                              className: " w-4 h-4 text-gray-500 hidden group-hover:block bg-white rounded-sm 0 ",
+                              onMouseDown: (function (e) {
+                                  projectToMoveHandleMouseDown(project.id, e);
+                                })
+                            }),
                         project.hideAll ? null : JsxRuntime.jsx("button", {
                                 children: JsxRuntime.jsx(Tb.TbPlus, {}),
-                                className: "absolute right-16 hidden group-hover:block bg-[var(--t1)] p-0.5 text-xs rounded  flex-none ",
+                                className: " hidden group-hover:block p-0.5 text-xs rounded  flex-none ",
                                 onClick: (function (param) {
                                     newTodoAfter(undefined, undefined);
                                   })
@@ -814,6 +826,7 @@ function Project(props) {
                               });
                         }),
                       onMouseEnter: (function (e) {
+                          projectToMoveHandleMouseEnter(project.id, e);
                           itemToMoveHandleMouseEnter(true, project.id, e);
                         })
                     }, Types.getProjectId(project.id)),
@@ -842,7 +855,8 @@ function Project(props) {
                                   deleteTodo: deleteTodo,
                                   hideArchived: project.hideArchived,
                                   itemToMoveHandleMouseDown: itemToMoveHandleMouseDown,
-                                  itemToMoveHandleMouseEnter: itemToMoveHandleMouseEnter
+                                  itemToMoveHandleMouseEnter: itemToMoveHandleMouseEnter,
+                                  clearProjectLastRelative: clearProjectLastRelative
                                 }, Types.getTodoId(todo.id));
                     })
               ]

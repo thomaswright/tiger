@@ -222,21 +222,22 @@ let make = () => {
       })
     })
 
-  // let (todos, setTodos, getTodos) = Common.useLocalStorage("todos", defaultTodos)
-  // let (showArchive, setShowArchive, _) = Common.useLocalStorage("showArchive", [])
   let (checked, setChecked, _) = Common.useLocalStorage("checked", SSet.empty)
   let (projectsTab, _setProjectTab, _) = Common.useLocalStorage("projectsTab", All)
   let (selectedElement, setSelectedElement) = React.useState(_ => None)
   let (displayElement, setDisplayElement) = React.useState(_ => None)
   let (focusClassNext, setFocusClassNext) = React.useState(_ => None)
   let (focusIdNext, setFocusIdNext) = React.useState(_ => None)
-  let (itemsOfDragHandle, setItemsOfDragHandle) = React.useState(_ => SSet.empty)
-  // let (setAaParent, aaEnable) = Common.useAutoAnimate()
 
   let aaParentRef: React.ref<RescriptCore.Nullable.t<Dom.element>> = React.useRef(Nullable.null)
 
-  let clickDelayTimeout = React.useRef(None)
-  let lastRelative = React.useRef(None)
+  let todosClickDelayTimeout = React.useRef(None)
+  let (todosOfDragHandle, setTodosOfDragHandle) = React.useState(_ => SSet.empty)
+  let todosLastRelative = React.useRef(None)
+
+  let projectClickDelayTimeout = React.useRef(None)
+  let (projectOfDragHandle, setProjectOfDragHandle) = React.useState(_ => None)
+  let projectLastRelative = React.useRef(None)
 
   let logExport = () => {
     Console.log(
@@ -269,11 +270,20 @@ let make = () => {
   //   None
   // }, [aaParentRef])
 
+  let projectToMoveHandleMouseDown = (projectId, _) => {
+    let timeoutId = setTimeout(() => {
+      // startXStep(e)
+
+      setProjectOfDragHandle(s => Some(projectId))
+    }, 200)
+    projectClickDelayTimeout.current = timeoutId->Some
+  }
+
   let itemToMoveHandleMouseDown = (itemId, _) => {
     let timeoutId = setTimeout(() => {
       // startXStep(e)
 
-      setItemsOfDragHandle(s => {
+      setTodosOfDragHandle(s => {
         // s->SSet.add(itemId)
         projects->Array.reduce(
           s->SSet.add(itemId),
@@ -289,22 +299,66 @@ let make = () => {
       })
       // aaEnable(true)
     }, 200)
-    clickDelayTimeout.current = timeoutId->Some
+    todosClickDelayTimeout.current = timeoutId->Some
+  }
+
+  let projectToMoveHandleMouseEnter = (itemId, _) => {
+    switch projectOfDragHandle {
+    | None => ()
+    | Some(projectId) =>
+      if itemId == projectId {
+        projectLastRelative.current = None
+      } else if (
+        projectLastRelative.current->Option.mapOr(true, projectLastRelativeId =>
+          itemId != projectLastRelativeId
+        )
+      ) {
+        projectLastRelative.current = Some(itemId)
+        setProjects(projects => {
+          let itemIndex = projects->Array.findIndex(p => p.id == itemId)
+          let moveIndex = projects->Array.findIndex(p => p.id == projectId)
+          let fromBelow = itemIndex < moveIndex
+
+          let projectToMove = projects->Array.find(p => p.id == projectId)
+          let projectsWithout = projects->Array.filter(p => p.id != projectId)
+
+          projectsWithout->Array.reduce([], (a, c) => {
+            if c.id == itemId {
+              if fromBelow {
+                a
+                ->Array.concat(projectToMove->Option.mapOr([], v => [v]))
+                ->Array.concat([c])
+              } else {
+                a
+                ->Array.concat([c])
+                ->Array.concat(projectToMove->Option.mapOr([], v => [v]))
+              }
+            } else {
+              a->Array.concat([c])
+            }
+          })
+        })
+      } else {
+        ()
+      }
+    }
   }
 
   let itemToMoveHandleMouseEnter = (isProject, itemId, _) => {
-    let itemsToMove = SSet.union(checked, itemsOfDragHandle)
+    let itemsToMove = SSet.union(checked, todosOfDragHandle)
 
-    if itemsOfDragHandle->SSet.isEmpty {
+    if todosOfDragHandle->SSet.isEmpty {
       ()
     } else {
       let isInMoveGroup = itemsToMove->SSet.has(itemId)
       if isInMoveGroup {
-        lastRelative.current = None
+        todosLastRelative.current = None
       } else if (
-        lastRelative.current->Option.mapOr(true, lastRelativeId => itemId != lastRelativeId)
+        todosLastRelative.current->Option.mapOr(true, todosLastRelativeId =>
+          itemId != todosLastRelativeId
+        )
       ) {
-        lastRelative.current = Some(itemId)
+        todosLastRelative.current = Some(itemId)
 
         setProjects(projects => {
           let todosToMove = projects->Array.reduce([], (pa, pc) => {
@@ -468,14 +522,15 @@ let make = () => {
   }
 
   let handleMouseUp = React.useCallback0(_ => {
-    clickDelayTimeout.current->Option.mapOr((), a => clearTimeout(a))
-    setItemsOfDragHandle(_ => SSet.empty)
+    todosClickDelayTimeout.current->Option.mapOr((), a => clearTimeout(a))
+    setTodosOfDragHandle(_ => SSet.empty)
+    todosLastRelative.current = None
+
+    projectClickDelayTimeout.current->Option.mapOr((), a => clearTimeout(a))
+    setProjectOfDragHandle(_ => None)
+    projectLastRelative.current = None
 
     // aaEnable(false)
-    lastRelative.current = None
-
-    // setItemMap(m => {...m, saved: m.working})
-    // setItemOrder(o => {...o, saved: o.working})
 
     // endXStep()
   })
@@ -625,6 +680,11 @@ let make = () => {
             deleteTodo
             itemToMoveHandleMouseDown
             itemToMoveHandleMouseEnter
+            projectToMoveHandleMouseDown
+            projectToMoveHandleMouseEnter
+            clearProjectLastRelative={() => {
+              projectLastRelative.current = None
+            }}
           />
         })
         ->React.array}

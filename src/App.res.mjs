@@ -249,14 +249,21 @@ function App(props) {
       });
   var setFocusIdNext = match$6[1];
   var focusIdNext = match$6[0];
+  var aaParentRef = React.useRef(null);
+  var todosClickDelayTimeout = React.useRef(undefined);
   var match$7 = React.useState(function () {
         
       });
-  var setItemsOfDragHandle = match$7[1];
-  var itemsOfDragHandle = match$7[0];
-  var aaParentRef = React.useRef(null);
-  var clickDelayTimeout = React.useRef(undefined);
-  var lastRelative = React.useRef(undefined);
+  var setTodosOfDragHandle = match$7[1];
+  var todosOfDragHandle = match$7[0];
+  var todosLastRelative = React.useRef(undefined);
+  var projectClickDelayTimeout = React.useRef(undefined);
+  var match$8 = React.useState(function () {
+        
+      });
+  var setProjectOfDragHandle = match$8[1];
+  var projectOfDragHandle = match$8[0];
+  var projectLastRelative = React.useRef(undefined);
   var logExport = function () {
     console.log(projects.map(function (p) {
               return {
@@ -276,9 +283,17 @@ function App(props) {
                     };
             }));
   };
+  var projectToMoveHandleMouseDown = function (projectId, param) {
+    var timeoutId = setTimeout((function () {
+            setProjectOfDragHandle(function (s) {
+                  return projectId;
+                });
+          }), 200);
+    projectClickDelayTimeout.current = Caml_option.some(timeoutId);
+  };
   var itemToMoveHandleMouseDown = function (itemId, param) {
     var timeoutId = setTimeout((function () {
-            setItemsOfDragHandle(function (s) {
+            setTodosOfDragHandle(function (s) {
                   return Core__Array.reduce(projects, Belt_SetString.add(s, itemId), (function (a, c) {
                                 return Core__Array.reduce(c.todos, a, (function (a2, c2) {
                                               if (Core__Option.mapOr(c2.parentTodo, false, (function (x) {
@@ -292,21 +307,66 @@ function App(props) {
                               }));
                 });
           }), 200);
-    clickDelayTimeout.current = Caml_option.some(timeoutId);
+    todosClickDelayTimeout.current = Caml_option.some(timeoutId);
+  };
+  var projectToMoveHandleMouseEnter = function (itemId, param) {
+    if (projectOfDragHandle !== undefined) {
+      if (itemId === projectOfDragHandle) {
+        projectLastRelative.current = undefined;
+        return ;
+      } else if (Core__Option.mapOr(projectLastRelative.current, true, (function (projectLastRelativeId) {
+                return itemId !== projectLastRelativeId;
+              }))) {
+        projectLastRelative.current = itemId;
+        return setProjects(function (projects) {
+                    var itemIndex = projects.findIndex(function (p) {
+                          return p.id === itemId;
+                        });
+                    var moveIndex = projects.findIndex(function (p) {
+                          return p.id === projectOfDragHandle;
+                        });
+                    var fromBelow = itemIndex < moveIndex;
+                    var projectToMove = projects.find(function (p) {
+                          return p.id === projectOfDragHandle;
+                        });
+                    var projectsWithout = projects.filter(function (p) {
+                          return p.id !== projectOfDragHandle;
+                        });
+                    return Core__Array.reduce(projectsWithout, [], (function (a, c) {
+                                  if (c.id === itemId) {
+                                    if (fromBelow) {
+                                      return a.concat(Core__Option.mapOr(projectToMove, [], (function (v) {
+                                                          return [v];
+                                                        }))).concat([c]);
+                                    } else {
+                                      return a.concat([c]).concat(Core__Option.mapOr(projectToMove, [], (function (v) {
+                                                        return [v];
+                                                      })));
+                                    }
+                                  } else {
+                                    return a.concat([c]);
+                                  }
+                                }));
+                  });
+      } else {
+        return ;
+      }
+    }
+    
   };
   var itemToMoveHandleMouseEnter = function (isProject, itemId, param) {
-    var itemsToMove = Belt_SetString.union(checked, itemsOfDragHandle);
-    if (Belt_SetString.isEmpty(itemsOfDragHandle)) {
+    var itemsToMove = Belt_SetString.union(checked, todosOfDragHandle);
+    if (Belt_SetString.isEmpty(todosOfDragHandle)) {
       return ;
     }
     var isInMoveGroup = Belt_SetString.has(itemsToMove, itemId);
     if (isInMoveGroup) {
-      lastRelative.current = undefined;
+      todosLastRelative.current = undefined;
       return ;
-    } else if (Core__Option.mapOr(lastRelative.current, true, (function (lastRelativeId) {
-              return itemId !== lastRelativeId;
+    } else if (Core__Option.mapOr(todosLastRelative.current, true, (function (todosLastRelativeId) {
+              return itemId !== todosLastRelativeId;
             }))) {
-      lastRelative.current = itemId;
+      todosLastRelative.current = itemId;
       return setProjects(function (projects) {
                   var todosToMove = Core__Array.reduce(projects, [], (function (pa, pc) {
                           return Core__Array.reduce(pc.todos, pa, (function (ta, tc) {
@@ -474,13 +534,20 @@ function App(props) {
     }
   };
   var handleMouseUp = React.useCallback((function (param) {
-          Core__Option.mapOr(clickDelayTimeout.current, undefined, (function (a) {
+          Core__Option.mapOr(todosClickDelayTimeout.current, undefined, (function (a) {
                   clearTimeout(a);
                 }));
-          setItemsOfDragHandle(function (param) {
+          setTodosOfDragHandle(function (param) {
                 
               });
-          lastRelative.current = undefined;
+          todosLastRelative.current = undefined;
+          Core__Option.mapOr(projectClickDelayTimeout.current, undefined, (function (a) {
+                  clearTimeout(a);
+                }));
+          setProjectOfDragHandle(function (param) {
+                
+              });
+          projectLastRelative.current = undefined;
         }), []);
   React.useEffect((function () {
           
@@ -704,7 +771,12 @@ function App(props) {
                                                 setChecked: setChecked,
                                                 deleteTodo: deleteTodo,
                                                 itemToMoveHandleMouseDown: itemToMoveHandleMouseDown,
-                                                itemToMoveHandleMouseEnter: itemToMoveHandleMouseEnter
+                                                itemToMoveHandleMouseEnter: itemToMoveHandleMouseEnter,
+                                                projectToMoveHandleMouseDown: projectToMoveHandleMouseDown,
+                                                projectToMoveHandleMouseEnter: projectToMoveHandleMouseEnter,
+                                                clearProjectLastRelative: (function () {
+                                                    projectLastRelative.current = undefined;
+                                                  })
                                               }, Types.getProjectId(project.id));
                                   }),
                               ref: Caml_option.some(aaParentRef),

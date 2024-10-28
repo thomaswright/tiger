@@ -23,6 +23,7 @@ module Todo = {
     ~hideArchived,
     ~itemToMoveHandleMouseDown,
     ~itemToMoveHandleMouseEnter,
+    ~clearProjectLastRelative,
   ) => {
     let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
     let inputRef = React.useRef(Nullable.null)
@@ -284,7 +285,10 @@ module Todo = {
         setDisplayElement(_ => Some(Todo(todo.id)))
       }}
       onKeyDown={onKeyDownContainer}
-      onMouseEnter={e => itemToMoveHandleMouseEnter(false, todo.id, e)}
+      onMouseEnter={e => {
+        clearProjectLastRelative()
+        itemToMoveHandleMouseEnter(false, todo.id, e)
+      }}
       className={[
         listItemClass,
         "group flex flex-row justify-start items-center outline-none  pl-1",
@@ -432,6 +436,9 @@ let make = (
   ~deleteTodo,
   ~itemToMoveHandleMouseDown,
   ~itemToMoveHandleMouseEnter,
+  ~projectToMoveHandleMouseDown,
+  ~projectToMoveHandleMouseEnter,
+  ~clearProjectLastRelative,
 ) => {
   let projectRef = React.useRef(Nullable.null)
   let inputRef = React.useRef(Nullable.null)
@@ -678,7 +685,10 @@ let make = (
         setSelectedElement(_ => Some(Project(project.id)))
         setDisplayElement(_ => Some(Project(project.id)))
       }}
-      onMouseEnter={e => itemToMoveHandleMouseEnter(true, project.id, e)}
+      onMouseEnter={e => {
+        projectToMoveHandleMouseEnter(project.id, e)
+        itemToMoveHandleMouseEnter(true, project.id, e)
+      }}
       className={[
         listItemClass,
         // "first:mt-1 mt-1",
@@ -712,13 +722,18 @@ let make = (
           })
         }}
       />
+      {<div
+        onMouseDown={e => projectToMoveHandleMouseDown(project.id, e)}
+        className={" w-4 h-4 text-gray-500 hidden group-hover:block bg-white rounded-sm 0 "}>
+        <Icons.DragDrop />
+      </div>}
       {project.hideAll
         ? React.null
         : <button
             onClick={_ => {
               newTodoAfter(None, None)
             }}
-            className="absolute right-16 hidden group-hover:block bg-[var(--t1)] p-0.5 text-xs rounded  flex-none ">
+            className=" hidden group-hover:block p-0.5 text-xs rounded  flex-none ">
             <Icons.Plus />
           </button>}
       {project.hideAll
@@ -760,6 +775,7 @@ let make = (
         isChecked={checked->SSet.has(todo.id)}
         itemToMoveHandleMouseDown
         itemToMoveHandleMouseEnter
+        clearProjectLastRelative
       />
     )
     ->React.array}
