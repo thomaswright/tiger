@@ -385,12 +385,12 @@ module Todo = {
             ]->Array.join(" ")}>
             <div
               onMouseDown={e => itemToMoveHandleMouseDown(todo.id, e)}
-              className={" w-4 h-4 text-gray-500 hidden group-hover:block bg-white rounded-sm 0 "}>
+              className={" w-4 h-4 text-[var(--t6)] hidden group-hover:block bg-white rounded-sm 0 "}>
               <Icons.DragDrop />
             </div>
             <button
               className={[
-                "w-4 h-4 flex-row items-center justify-center cursor-default hidden group-hover:flex rounded-sm text-sm text-gray-500  bg-white ",
+                "w-4 h-4 flex-row items-center justify-center cursor-default hidden group-hover:flex rounded-sm text-sm text-[var(--t6)]  bg-white ",
               ]->Array.join(" ")}
               onClick={_ => {
                 newTodoAfter(Some(todo.id), Some(todo.id))
@@ -726,7 +726,7 @@ let make = (
         onMouseDown={e => projectToMoveHandleMouseDown(project.id, e)}
         className={[
           project.hideAll ? "right-8" : "right-20",
-          "absolute w-4 h-4 text-gray-500 hidden group-hover:block bg-white rounded-sm ",
+          "absolute w-4 h-4 text-[var(--t6)] hidden group-hover:block bg-white rounded-sm ",
         ]->Array.join(" ")}>
         <Icons.DragDrop />
       </div>
@@ -736,13 +736,13 @@ let make = (
             onClick={_ => {
               newTodoAfter(None, None)
             }}
-            className="absolute right-14 hidden group-hover:block h-4 w-4 text-sm rounded flex-none text-gray-500 bg-white ">
+            className="absolute right-14 hidden group-hover:block h-4 w-4 text-sm rounded flex-none text-[var(--t6)] bg-white ">
             <Icons.Plus />
           </button>}
       {project.hideAll
         ? React.null
         : <button
-            className="text-2xs rounded h-4 w-4 flex-none font-mono flex flex-row justify-center items-center text-[var(--t6)] mr-1"
+            className="text-sm rounded h-4 w-4 flex-none font-mono flex flex-row justify-center items-center text-[var(--t6)] mr-1"
             onClick={handleHideArchived}>
             {project.hideArchived ? <Icons.ArchiveOff /> : <Icons.Archive />}
             // {showArchive
@@ -750,7 +750,7 @@ let make = (
             //   : <span> {"closed"->React.string} </span>}
           </button>}
       <button
-        className="text-2xs rounded h-4 w-4 flex-none font-mono flex flex-row justify-center items-center text-[var(--t6)] mr-1"
+        className="text-sm rounded h-4 w-4 flex-none font-mono flex flex-row justify-center items-center text-[var(--t6)] mr-1"
         onClick={handleHideAll}>
         {project.hideAll ? <Icons.ChevronDown /> : <Icons.ChevronUp />}
       </button>
