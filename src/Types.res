@@ -21,6 +21,7 @@ type box =
 type todo = {
   id: string,
   text: string,
+  additionalText: string,
   project: string,
   status: status,
   // box: box,
@@ -35,6 +36,7 @@ type todo = {
 type project = {
   id: string,
   name: string,
+  additionalText: string,
   isActive: bool,
   todos: array<todo>,
   hideArchived: bool,

@@ -72,6 +72,7 @@ function Project$Todo(props) {
                             return {
                                     id: t.id,
                                     text: t.text,
+                                    additionalText: t.additionalText,
                                     project: t.project,
                                     status: t.status,
                                     parentTodo: Core__Option.map(newParent, (function (t) {
@@ -87,6 +88,7 @@ function Project$Todo(props) {
                             return {
                                     id: t.id,
                                     text: t.text,
+                                    additionalText: t.additionalText,
                                     project: t.project,
                                     status: t.status,
                                     parentTodo: Core__Option.map(newParent, (function (t) {
@@ -146,6 +148,7 @@ function Project$Todo(props) {
                                   return {
                                           id: t.id,
                                           text: t.text,
+                                          additionalText: t.additionalText,
                                           project: t.project,
                                           status: t.status,
                                           parentTodo: newParent,
@@ -159,6 +162,7 @@ function Project$Todo(props) {
                                   return {
                                           id: t.id,
                                           text: t.text,
+                                          additionalText: t.additionalText,
                                           project: t.project,
                                           status: t.status,
                                           parentTodo: todo.id,
@@ -309,6 +313,7 @@ function Project$Todo(props) {
                                           return {
                                                   id: t.id,
                                                   text: t.text,
+                                                  additionalText: t.additionalText,
                                                   project: t.project,
                                                   status: newStatus,
                                                   parentTodo: t.parentTodo,
@@ -391,6 +396,7 @@ function Project$Todo(props) {
                                                   return {
                                                           id: t.id,
                                                           text: e.target.value,
+                                                          additionalText: t.additionalText,
                                                           project: t.project,
                                                           status: t.status,
                                                           parentTodo: t.parentTodo,
@@ -527,6 +533,7 @@ function Project(props) {
     var newTodo = {
       id: newId,
       text: "",
+      additionalText: "",
       project: newTodo_project,
       status: "Unsorted",
       parentTodo: parentTodo,
@@ -686,6 +693,7 @@ function Project(props) {
                                           return {
                                                   id: t.id,
                                                   name: e.target.value,
+                                                  additionalText: t.additionalText,
                                                   isActive: t.isActive,
                                                   todos: t.todos,
                                                   hideArchived: t.hideArchived,

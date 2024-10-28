@@ -17,7 +17,7 @@ let make = (~project: project, ~todo: todo, ~setFocusIdNext, ~updateTodo, ~delet
         }}
         id="id-display-title"
         className={[
-          "text-lg flex-1 bg-inherit text-[--t10] w-full outline-none 
+          "text-lg flex-1 bg-inherit text-[var(--t10)] w-full outline-none 
           focus:ring-0
           font-medium 
            border-none p-0 ",
@@ -120,6 +120,26 @@ let make = (~project: project, ~todo: todo, ~setFocusIdNext, ~updateTodo, ~delet
         ]->Array.join(" ")}>
         <Icons.Trash />
       </button>
+    </div>
+    <div className="p-1">
+      <Common.TextareaAutosize
+        style={{
+          resize: "none",
+        }}
+        id="id-display-title"
+        className={[
+          "placeholder:text-[var(--t4)] text-sm flex-1 border-none rounded-lg text-[var(--t10)] w-full outline-none bg-[var(--t1)]
+          focus:ring-0 font-medium",
+        ]->Array.join(" ")}
+        placeholder={"Additional Todo Details"}
+        value={todo.additionalText}
+        onChange={e => {
+          updateTodo(project.id, todo.id, t => {
+            ...t,
+            additionalText: ReactEvent.Form.target(e)["value"],
+          })
+        }}
+      />
     </div>
   </div>
 }

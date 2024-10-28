@@ -26,6 +26,7 @@ var defaultTodos = [
   {
     id: "1",
     text: "Do Something",
+    additionalText: "",
     project: "1",
     status: "Unsorted",
     parentTodo: undefined,
@@ -38,6 +39,7 @@ var defaultTodos = [
   {
     id: "2",
     text: "Do Something Else",
+    additionalText: "",
     project: "1",
     status: "ResolveNo",
     parentTodo: undefined,
@@ -52,6 +54,7 @@ var defaultTodos = [
 var defaultProjects = [{
     id: "1",
     name: "Project Omega",
+    additionalText: "",
     isActive: true,
     todos: defaultTodos,
     hideArchived: false,
@@ -96,6 +99,7 @@ function buildTodoTree(input) {
                   return build(a.concat([{
                                     id: todo.id,
                                     text: todo.text,
+                                    additionalText: todo.additionalText,
                                     project: todo.project,
                                     status: todo.status,
                                     parentTodo: todo.parentTodo,
@@ -145,12 +149,14 @@ function App$CheckedSummary(props) {
                                         return {
                                                 id: project.id,
                                                 name: project.name,
+                                                additionalText: project.additionalText,
                                                 isActive: project.isActive,
                                                 todos: project.todos.map(function (t) {
                                                       if (Belt_SetString.has(checked, t.id)) {
                                                         return {
                                                                 id: t.id,
                                                                 text: t.text,
+                                                                additionalText: t.additionalText,
                                                                 project: t.project,
                                                                 status: newStatus,
                                                                 parentTodo: t.parentTodo,
@@ -208,6 +214,7 @@ function App(props) {
             return {
                     id: p.id,
                     name: p.name,
+                    additionalText: p.additionalText,
                     isActive: p.isActive,
                     todos: buildTodoTree(p.todos),
                     hideArchived: p.hideArchived,
@@ -223,6 +230,7 @@ function App(props) {
                       return {
                               id: p.id,
                               name: p.name,
+                              additionalText: p.additionalText,
                               isActive: p.isActive,
                               todos: buildTodoTree(p.todos),
                               hideArchived: p.hideArchived,
@@ -297,11 +305,13 @@ function App(props) {
                       return {
                               id: jsonProject.id,
                               name: jsonProject.name,
+                              additionalText: jsonProject.additionalText,
                               isActive: jsonProject.isActive,
                               todos: jsonProject.todos.map(function (t) {
                                     return {
                                             id: t.id,
                                             text: t.text,
+                                            additionalText: t.additionalText,
                                             project: t.project,
                                             status: t.status,
                                             parentTodo: t.parentTodo,
@@ -418,6 +428,7 @@ function App(props) {
                                 return {
                                         id: t.id,
                                         text: t.text,
+                                        additionalText: t.additionalText,
                                         project: t.project,
                                         status: t.status,
                                         parentTodo: Belt_SetString.has(itemsToMove, t.id) && !Core__Option.mapOr(t.parentTodo, false, (function (currentParentTodo) {
@@ -450,6 +461,7 @@ function App(props) {
                     return {
                             id: p.id,
                             name: p.name,
+                            additionalText: p.additionalText,
                             isActive: p.isActive,
                             todos: p.todos.filter(function (t) {
                                   return !Belt_SetString.has(itemsToMove, t.id);
@@ -468,6 +480,7 @@ function App(props) {
                                 return {
                                         id: p$1.id,
                                         name: p$1.name,
+                                        additionalText: p$1.additionalText,
                                         isActive: p$1.isActive,
                                         todos: Belt_Array.concatMany(p$1.todos.map(function (t, param) {
                                                     if (t.id === itemId) {
@@ -485,6 +498,7 @@ function App(props) {
                                               return {
                                                       id: t.id,
                                                       text: t.text,
+                                                      additionalText: t.additionalText,
                                                       project: p$1.id,
                                                       status: t.status,
                                                       parentTodo: t.parentTodo,
@@ -508,11 +522,13 @@ function App(props) {
                                   return {
                                           id: p$1.id,
                                           name: p$1.name,
+                                          additionalText: p$1.additionalText,
                                           isActive: p$1.isActive,
                                           todos: applyNewParent(todosToMove.concat(p$1.todos).map(function (t) {
                                                     return {
                                                             id: t.id,
                                                             text: t.text,
+                                                            additionalText: t.additionalText,
                                                             project: p$1.id,
                                                             status: t.status,
                                                             parentTodo: t.parentTodo,
@@ -544,11 +560,13 @@ function App(props) {
                               return {
                                       id: p$1.id,
                                       name: p$1.name,
+                                      additionalText: p$1.additionalText,
                                       isActive: p$1.isActive,
                                       todos: applyNewParent(p$1.todos.concat(todosToMove).map(function (t) {
                                                 return {
                                                         id: t.id,
                                                         text: t.text,
+                                                        additionalText: t.additionalText,
                                                         project: p$1.id,
                                                         status: t.status,
                                                         parentTodo: t.parentTodo,
@@ -610,6 +628,7 @@ function App(props) {
                   return {
                           id: project.id,
                           name: project.name,
+                          additionalText: project.additionalText,
                           isActive: project.isActive,
                           todos: project.todos.map(function (todo) {
                                 if (todo.id === todoId) {
@@ -629,6 +648,7 @@ function App(props) {
                   return {
                           id: project.id,
                           name: project.name,
+                          additionalText: project.additionalText,
                           isActive: project.isActive,
                           todos: f(project.todos),
                           hideArchived: project.hideArchived,
@@ -646,6 +666,7 @@ function App(props) {
                           return {
                                   id: t.id,
                                   text: t.text,
+                                  additionalText: t.additionalText,
                                   project: t.project,
                                   status: t.status,
                                   parentTodo: todo.parentTodo,
@@ -714,6 +735,7 @@ function App(props) {
       return {
               id: p.id,
               name: p.name,
+              additionalText: p.additionalText,
               isActive: p.isActive,
               todos: recurse(p.todos.filter(function (t) {
                           return Core__Option.isNone(t.parentTodo);
@@ -756,6 +778,7 @@ function App(props) {
     return {
             id: p.id,
             name: p.name,
+            additionalText: p.additionalText,
             isActive: p.isActive,
             todos: newTodos,
             hideArchived: hideAllMode ? p.hideArchived : true,
@@ -844,6 +867,7 @@ function App(props) {
                                           var newProject = {
                                             id: newProjectId,
                                             name: "",
+                                            additionalText: "",
                                             isActive: true,
                                             todos: newProject_todos,
                                             hideArchived: false,

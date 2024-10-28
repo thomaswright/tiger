@@ -29,6 +29,7 @@ function DisplayProject(props) {
                                         return {
                                                 id: p.id,
                                                 name: e.target.value,
+                                                additionalText: p.additionalText,
                                                 isActive: p.isActive,
                                                 todos: p.todos,
                                                 hideArchived: p.hideArchived,
@@ -50,6 +51,7 @@ function DisplayProject(props) {
                                           return {
                                                   id: p.id,
                                                   name: p.name,
+                                                  additionalText: p.additionalText,
                                                   isActive: !p.isActive,
                                                   todos: p.todos,
                                                   hideArchived: p.hideArchived,
@@ -85,7 +87,30 @@ function DisplayProject(props) {
                       className: "flex flex-row border-y items-center gap-3 p-1 px-2"
                     }),
                 JsxRuntime.jsx("div", {
-                      className: "p-2"
+                      children: JsxRuntime.jsx(ReactTextareaAutosize, {
+                            className: ["placeholder:text-[var(--t4)] text-sm flex-1 border-none rounded-lg text-[var(--t10)] w-full outline-none bg-[var(--t1)]\n          focus:ring-0 font-medium"].join(" "),
+                            id: "id-display-title",
+                            style: {
+                              resize: "none"
+                            },
+                            placeholder: "Additional Project Details",
+                            value: project.additionalText,
+                            onChange: (function (e) {
+                                updateProject(project.id, (function (t) {
+                                        return {
+                                                id: t.id,
+                                                name: t.name,
+                                                additionalText: e.target.value,
+                                                isActive: t.isActive,
+                                                todos: t.todos,
+                                                hideArchived: t.hideArchived,
+                                                hideAll: t.hideAll,
+                                                hiddenTodos: t.hiddenTodos
+                                              };
+                                      }));
+                              })
+                          }),
+                      className: "p-1"
                     })
               ]
             });

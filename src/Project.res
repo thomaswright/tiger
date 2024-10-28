@@ -458,6 +458,7 @@ let make = (
     let newTodo = {
       id: newId,
       text: "",
+      additionalText: "",
       project: project.id,
       status: Unsorted,
       // box: Working,

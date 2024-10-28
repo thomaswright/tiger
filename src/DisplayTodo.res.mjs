@@ -23,7 +23,7 @@ function DisplayTodo(props) {
               children: [
                 JsxRuntime.jsx("div", {
                       children: JsxRuntime.jsx(ReactTextareaAutosize, {
-                            className: ["text-lg flex-1 bg-inherit text-[--t10] w-full outline-none \n          focus:ring-0\n          font-medium \n           border-none p-0 "].join(" "),
+                            className: ["text-lg flex-1 bg-inherit text-[var(--t10)] w-full outline-none \n          focus:ring-0\n          font-medium \n           border-none p-0 "].join(" "),
                             id: "id-display-title",
                             style: {
                               resize: "none"
@@ -43,6 +43,7 @@ function DisplayTodo(props) {
                                         return {
                                                 id: t.id,
                                                 text: e.target.value,
+                                                additionalText: t.additionalText,
                                                 project: t.project,
                                                 status: t.status,
                                                 parentTodo: t.parentTodo,
@@ -66,6 +67,7 @@ function DisplayTodo(props) {
                                           return {
                                                   id: t.id,
                                                   text: t.text,
+                                                  additionalText: t.additionalText,
                                                   project: t.project,
                                                   status: newStatus,
                                                   parentTodo: t.parentTodo,
@@ -102,6 +104,35 @@ function DisplayTodo(props) {
                             })
                       ],
                       className: "flex flex-row border-y items-center gap-3 p-1 px-2"
+                    }),
+                JsxRuntime.jsx("div", {
+                      children: JsxRuntime.jsx(ReactTextareaAutosize, {
+                            className: ["placeholder:text-[var(--t4)] text-sm flex-1 border-none rounded-lg text-[var(--t10)] w-full outline-none bg-[var(--t1)]\n          focus:ring-0 font-medium"].join(" "),
+                            id: "id-display-title",
+                            style: {
+                              resize: "none"
+                            },
+                            placeholder: "Additional Todo Details",
+                            value: todo.additionalText,
+                            onChange: (function (e) {
+                                updateTodo(project.id, todo.id, (function (t) {
+                                        return {
+                                                id: t.id,
+                                                text: t.text,
+                                                additionalText: e.target.value,
+                                                project: t.project,
+                                                status: t.status,
+                                                parentTodo: t.parentTodo,
+                                                depth: t.depth,
+                                                childNumber: t.childNumber,
+                                                hasArchivedChildren: t.hasArchivedChildren,
+                                                hasChildren: t.hasChildren,
+                                                ancArchived: t.ancArchived
+                                              };
+                                      }));
+                              })
+                          }),
+                      className: "p-1"
                     })
               ],
               className: "w-full"

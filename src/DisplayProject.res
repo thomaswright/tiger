@@ -60,26 +60,44 @@ let make = (
         <Icons.Trash />
       </button>
     </div>
-    <div className="p-2">
-      // <button
-      //   className="rounded bg-[var(--t2)] px-2 py-1 text-xs h-fit flex-none"
-      //   onClick={_ =>
-      //     setTodos(project.id, todos => {
-      //       todos->Array.map(t => {
-      //         if t.project != project.id {
-      //           t
-      //         } else if t.status->statusIsResolved && t.box != Pinned {
-      //           {
-      //             ...t,
-      //             box: Archive,
-      //           }
-      //         } else {
-      //           t
-      //         }
-      //       })
-      //     })}>
-      //   {"Archive All Resolved if not Pinned"->React.string}
-      // </button>
+    // <button
+    //   className="rounded bg-[var(--t2)] px-2 py-1 text-xs h-fit flex-none"
+    //   onClick={_ =>
+    //     setTodos(project.id, todos => {
+    //       todos->Array.map(t => {
+    //         if t.project != project.id {
+    //           t
+    //         } else if t.status->statusIsResolved && t.box != Pinned {
+    //           {
+    //             ...t,
+    //             box: Archive,
+    //           }
+    //         } else {
+    //           t
+    //         }
+    //       })
+    //     })}>
+    //   {"Archive All Resolved if not Pinned"->React.string}
+    // </button>
+    <div className="p-1">
+      <Common.TextareaAutosize
+        style={{
+          resize: "none",
+        }}
+        id="id-display-title"
+        className={[
+          "placeholder:text-[var(--t4)] text-sm flex-1 border-none rounded-lg text-[var(--t10)] w-full outline-none bg-[var(--t1)]
+          focus:ring-0 font-medium",
+        ]->Array.join(" ")}
+        placeholder={"Additional Project Details"}
+        value={project.additionalText}
+        onChange={e => {
+          updateProject(project.id, t => {
+            ...t,
+            additionalText: ReactEvent.Form.target(e)["value"],
+          })
+        }}
+      />
     </div>
   </div>
 }

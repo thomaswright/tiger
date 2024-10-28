@@ -4,6 +4,7 @@ open Webapi.Dom
 let defaultTodos = [
   {
     text: "Do Something",
+    additionalText: "",
     project: "1",
     id: "1",
     status: Unsorted,
@@ -17,6 +18,7 @@ let defaultTodos = [
   },
   {
     text: "Do Something Else",
+    additionalText: "",
     project: "1",
     id: "2",
     status: ResolveNo,
@@ -34,6 +36,7 @@ let defaultProjects = [
   {
     id: "1",
     name: "Project Omega",
+    additionalText: "",
     isActive: true,
     todos: defaultTodos,
     hiddenTodos: SMap.empty,
@@ -275,11 +278,13 @@ let make = () => {
       json->Array.map(jsonProject => {
         id: jsonProject["id"],
         name: jsonProject["name"],
+        additionalText: jsonProject["additionalText"],
         isActive: jsonProject["isActive"],
         todos: jsonProject["todos"]->Array.map(
           t => {
             id: t["id"],
             text: t["text"],
+            additionalText: t["additionalText"],
             project: t["project"],
             status: t["status"],
             parentTodo: t["parentTodo"],
@@ -754,6 +759,7 @@ let make = () => {
             let newProject = {
               id: newProjectId,
               name: "",
+              additionalText: "",
               isActive: true,
               todos: [],
               hiddenTodos: SMap.empty,
