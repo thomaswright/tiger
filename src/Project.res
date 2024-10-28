@@ -445,6 +445,7 @@ let make = (
   ~projectToMoveHandleMouseDown,
   ~projectToMoveHandleMouseEnter,
   ~clearProjectLastRelative,
+  ~handleHide,
 ) => {
   let projectRef = React.useRef(Nullable.null)
   let inputRef = React.useRef(Nullable.null)
@@ -573,111 +574,8 @@ let make = (
     }
   }
 
-  let handleHide = hideAllMode => {
-    let archivedPred = t => t.status == ArchiveDone || t.status == ArchiveNo
-    let allPred = _ => true
-
-    let pred = hideAllMode ? allPred : archivedPred
-
-    _ =>
-      updateProject(project.id, p => {
-        if hideAllMode ? p.hideAll : p.hideArchived {
-          let parentMap = p.todos->Array.reduce(SMap.empty, (a, c) => {
-            let mapId = c.parentTodo->Option.getOr("None")
-            a->SMap.update(mapId, v => v->Option.mapOr([c], v => Array.concat(v, [c]))->Some)
-          })
-
-          let rec recurse = (todos: array<todo>) => {
-            todos->Array.reduce([], (a, t) => {
-              let regularTodos =
-                parentMap
-                ->SMap.get(t.id)
-                ->Option.mapOr(
-                  [],
-                  v => {
-                    recurse(v)
-                  },
-                )
-
-              let hiddenTodos =
-                p.hiddenTodos
-                ->SMap.get(t.id)
-                ->Option.mapOr(
-                  [],
-                  v => {
-                    recurse(v)
-                  },
-                )
-              a
-              ->Array.concat([t])
-              ->Array.concat(regularTodos)
-              ->Array.concat(hiddenTodos)
-            })
-          }
-
-          {
-            ...p,
-            todos: p.todos
-            ->Array.filter(t => t.parentTodo->Option.isNone)
-            ->recurse
-            ->Array.concat(
-              p.hiddenTodos->SMap.get("None")->Option.mapOr([], todos => todos->recurse),
-            ),
-            hiddenTodos: SMap.empty,
-            hideArchived: hideAllMode ? p.hideArchived : false,
-            hideAll: hideAllMode ? false : p.hideAll,
-          }
-        } else {
-          let mutHiddenTodos = ref(SMap.empty)
-
-          let newTodos = p.todos->Array.reduce([], (a, c) => {
-            if pred(c) {
-              mutHiddenTodos :=
-                mutHiddenTodos.contents->SMap.update(
-                  c.parentTodo->Option.getOr("None"),
-                  v => {
-                    switch v {
-                    | None => Some([c])
-                    | Some(x) => Some(Array.concat(x, [c]))
-                    }
-                  },
-                )
-              a
-            } else if c.ancArchived {
-              mutHiddenTodos :=
-                c.parentTodo->Option.mapOr(
-                  mutHiddenTodos.contents,
-                  parentTodo => {
-                    mutHiddenTodos.contents->SMap.update(
-                      parentTodo,
-                      v => {
-                        switch v {
-                        | None => Some([c])
-                        | Some(x) => Some(Array.concat(x, [c]))
-                        }
-                      },
-                    )
-                  },
-                )
-
-              a
-            } else {
-              a->Array.concat([c])
-            }
-          })
-          {
-            ...p,
-            todos: newTodos,
-            hiddenTodos: mutHiddenTodos.contents,
-            hideArchived: hideAllMode ? p.hideArchived : true,
-            hideAll: hideAllMode ? true : p.hideAll,
-          }
-        }
-      })
-  }
-
-  let handleHideAll = handleHide(true)
-  let handleHideArchived = handleHide(false)
+  let handleHideAll = _ => updateProject(project.id, p => handleHide(true, None, p))
+  let handleHideArchived = _ => updateProject(project.id, p => handleHide(false, None, p))
 
   <React.Fragment>
     <li

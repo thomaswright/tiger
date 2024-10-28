@@ -58,6 +58,11 @@ module Switch = {
   external make: (~checked: bool, ~onCheckedChange: unit => unit) => React.element = "Switch"
 }
 
+module ImportButton = {
+  @module("./Import.jsx") @react.component
+  external make: (~onImportJson: array<'a> => unit) => React.element = "default"
+}
+
 module Map = Belt.Map.String
 
 let buildTodoTree = (input: array<todo>) => {
@@ -263,6 +268,33 @@ let make = () => {
     )
     ->Js.Json.stringifyAny
     ->Option.mapOr((), exportToJsonFile)
+  }
+
+  let onImportJson = json => {
+    setProjects(_ =>
+      json->Array.map(jsonProject => {
+        id: jsonProject["id"],
+        name: jsonProject["name"],
+        isActive: jsonProject["isActive"],
+        todos: jsonProject["todos"]->Array.map(
+          t => {
+            id: t["id"],
+            text: t["text"],
+            project: t["project"],
+            status: t["status"],
+            parentTodo: t["parentTodo"],
+            depth: None,
+            childNumber: None,
+            hasArchivedChildren: false,
+            hasChildren: false,
+            ancArchived: false,
+          },
+        ),
+        hiddenTodos: jsonProject["hiddenTodos"]->SMap.fromArray,
+        hideAll: jsonProject["todos"]->Array.length == 0,
+        hideArchived: jsonProject["hiddenTodos"]->Array.length > 0,
+      })
+    )
   }
 
   // React.useEffect1(() => {
@@ -606,6 +638,94 @@ let make = () => {
     None
   })
 
+  let handleHide = (hideAllMode, forcedShow, p) => {
+    let archivedPred = t => t.status == ArchiveDone || t.status == ArchiveNo
+    let allPred = _ => true
+
+    let pred = hideAllMode ? allPred : archivedPred
+
+    if forcedShow->Option.getOr(hideAllMode ? p.hideAll : p.hideArchived) {
+      let parentMap = p.todos->Array.reduce(SMap.empty, (a, c) => {
+        let mapId = c.parentTodo->Option.getOr("None")
+        a->SMap.update(mapId, v => v->Option.mapOr([c], v => Array.concat(v, [c]))->Some)
+      })
+
+      let rec recurse = (todos: array<todo>) => {
+        todos->Array.reduce([], (a, t) => {
+          let regularTodos =
+            parentMap
+            ->SMap.get(t.id)
+            ->Option.mapOr([], v => {
+              recurse(v)
+            })
+
+          let hiddenTodos =
+            p.hiddenTodos
+            ->SMap.get(t.id)
+            ->Option.mapOr([], v => {
+              recurse(v)
+            })
+          a
+          ->Array.concat([t])
+          ->Array.concat(regularTodos)
+          ->Array.concat(hiddenTodos)
+        })
+      }
+
+      {
+        ...p,
+        todos: p.todos
+        ->Array.filter(t => t.parentTodo->Option.isNone)
+        ->recurse
+        ->Array.concat(p.hiddenTodos->SMap.get("None")->Option.mapOr([], todos => todos->recurse)),
+        hiddenTodos: SMap.empty,
+        hideArchived: hideAllMode ? p.hideArchived : false,
+        hideAll: hideAllMode ? false : p.hideAll,
+      }
+    } else {
+      let mutHiddenTodos = ref(p.hiddenTodos)
+
+      let newTodos = p.todos->Array.reduce([], (a, c) => {
+        if pred(c) {
+          mutHiddenTodos :=
+            mutHiddenTodos.contents->SMap.update(c.parentTodo->Option.getOr("None"), v => {
+              switch v {
+              | None => Some([c])
+              | Some(x) => Some(Array.concat(x, [c]))
+              }
+            })
+          a
+        } else if c.ancArchived {
+          mutHiddenTodos :=
+            c.parentTodo->Option.mapOr(mutHiddenTodos.contents, parentTodo => {
+              mutHiddenTodos.contents->SMap.update(
+                parentTodo,
+                v => {
+                  switch v {
+                  | None => Some([c])
+                  | Some(x) => Some(Array.concat(x, [c]))
+                  }
+                },
+              )
+            })
+
+          a
+        } else {
+          a->Array.concat([c])
+        }
+      })
+      {
+        ...p,
+        todos: newTodos,
+        hiddenTodos: mutHiddenTodos.contents,
+        hideArchived: hideAllMode ? p.hideArchived : true,
+        hideAll: hideAllMode ? true : p.hideAll,
+      }
+    }
+  }
+
+  let allProjectsHidden = projects->Array.every(p => p.hideAll)
+
   <div className="flex flex-row h-dvh text-[var(--t9)]">
     // <StatusSelector />
     <div className="flex-1 h-full flex flex-col">
@@ -625,7 +745,18 @@ let make = () => {
           className={[
             "bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1 h-5 ",
           ]->Array.join(" ")}>
-          {"export"->React.string}
+          {"Export"->React.string}
+        </button>
+        <ImportButton onImportJson />
+        <button
+          onClick={_ =>
+            setProjects(projects =>
+              projects->Array.map(p => handleHide(true, Some(allProjectsHidden), p))
+            )}
+          className={[
+            "rounded flex flex-row items-center justify-center gap-1 h-5 w-5 ",
+          ]->Array.join(" ")}>
+          {allProjectsHidden ? <Icons.ChevronDown /> : <Icons.ChevronUp />}
         </button>
         <button
           onClick={_ => {
@@ -705,6 +836,7 @@ let make = () => {
             itemToMoveHandleMouseEnter
             projectToMoveHandleMouseDown
             projectToMoveHandleMouseEnter
+            handleHide
             clearProjectLastRelative={() => {
               projectLastRelative.current = None
             }}

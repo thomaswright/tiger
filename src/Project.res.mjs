@@ -496,6 +496,7 @@ var Todo = {
 };
 
 function Project(props) {
+  var handleHide = props.handleHide;
   var clearProjectLastRelative = props.clearProjectLastRelative;
   var projectToMoveHandleMouseEnter = props.projectToMoveHandleMouseEnter;
   var projectToMoveHandleMouseDown = props.projectToMoveHandleMouseDown;
@@ -634,96 +635,16 @@ function Project(props) {
     }
     
   };
-  var handleHide = function (hideAllMode) {
-    var archivedPred = function (t) {
-      if (t.status === "ArchiveDone") {
-        return true;
-      } else {
-        return t.status === "ArchiveNo";
-      }
-    };
-    var allPred = function (param) {
-      return true;
-    };
-    var pred = hideAllMode ? allPred : archivedPred;
-    return function (param) {
-      updateProject(project.id, (function (p) {
-              if (hideAllMode ? p.hideAll : p.hideArchived) {
-                var parentMap = Core__Array.reduce(p.todos, undefined, (function (a, c) {
-                        var mapId = Core__Option.getOr(c.parentTodo, "None");
-                        return Belt_MapString.update(a, mapId, (function (v) {
-                                      return Core__Option.mapOr(v, [c], (function (v) {
-                                                    return v.concat([c]);
-                                                  }));
-                                    }));
-                      }));
-                var recurse = function (todos) {
-                  return Core__Array.reduce(todos, [], (function (a, t) {
-                                var regularTodos = Core__Option.mapOr(Belt_MapString.get(parentMap, t.id), [], (function (v) {
-                                        return recurse(v);
-                                      }));
-                                var hiddenTodos = Core__Option.mapOr(Belt_MapString.get(p.hiddenTodos, t.id), [], (function (v) {
-                                        return recurse(v);
-                                      }));
-                                return a.concat([t]).concat(regularTodos).concat(hiddenTodos);
-                              }));
-                };
-                return {
-                        id: p.id,
-                        name: p.name,
-                        isActive: p.isActive,
-                        todos: recurse(p.todos.filter(function (t) {
-                                    return Core__Option.isNone(t.parentTodo);
-                                  })).concat(Core__Option.mapOr(Belt_MapString.get(p.hiddenTodos, "None"), [], (function (todos) {
-                                    return recurse(todos);
-                                  }))),
-                        hideArchived: hideAllMode ? p.hideArchived : false,
-                        hideAll: hideAllMode ? false : p.hideAll,
-                        hiddenTodos: undefined
-                      };
-              }
-              var mutHiddenTodos = {
-                contents: undefined
-              };
-              var newTodos = Core__Array.reduce(p.todos, [], (function (a, c) {
-                      if (pred(c)) {
-                        mutHiddenTodos.contents = Belt_MapString.update(mutHiddenTodos.contents, Core__Option.getOr(c.parentTodo, "None"), (function (v) {
-                                if (v !== undefined) {
-                                  return v.concat([c]);
-                                } else {
-                                  return [c];
-                                }
-                              }));
-                        return a;
-                      } else if (c.ancArchived) {
-                        mutHiddenTodos.contents = Core__Option.mapOr(c.parentTodo, mutHiddenTodos.contents, (function (parentTodo) {
-                                return Belt_MapString.update(mutHiddenTodos.contents, parentTodo, (function (v) {
-                                              if (v !== undefined) {
-                                                return v.concat([c]);
-                                              } else {
-                                                return [c];
-                                              }
-                                            }));
-                              }));
-                        return a;
-                      } else {
-                        return a.concat([c]);
-                      }
-                    }));
-              return {
-                      id: p.id,
-                      name: p.name,
-                      isActive: p.isActive,
-                      todos: newTodos,
-                      hideArchived: hideAllMode ? p.hideArchived : true,
-                      hideAll: hideAllMode ? true : p.hideAll,
-                      hiddenTodos: mutHiddenTodos.contents
-                    };
-            }));
-    };
+  var handleHideAll = function (param) {
+    updateProject(project.id, (function (p) {
+            return handleHide(true, undefined, p);
+          }));
   };
-  var handleHideAll = handleHide(true);
-  var handleHideArchived = handleHide(false);
+  var handleHideArchived = function (param) {
+    updateProject(project.id, (function (p) {
+            return handleHide(false, undefined, p);
+          }));
+  };
   return JsxRuntime.jsxs(React.Fragment, {
               children: [
                 JsxRuntime.jsxs("li", {

@@ -10,6 +10,7 @@ import * as Belt_Array from "rescript/lib/es6/belt_Array.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as DisplayTodo from "./DisplayTodo.res.mjs";
+import ImportJsx from "./Import.jsx";
 import * as SwitchJsx from "./Switch.jsx";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as Belt_MapString from "rescript/lib/es6/belt_MapString.js";
@@ -63,6 +64,8 @@ var logoUrl = TigerSvg;
 function exportToJsonFile(prim) {
   ExportFunctionsJs.exportToJsonFile(prim);
 }
+
+var make = ImportJsx;
 
 function buildTodoTree(input) {
   var rootMapId = "_";
@@ -287,6 +290,34 @@ function App(props) {
                           hiddenTodos: Belt_MapString.toArray(p.hiddenTodos)
                         };
                 })), undefined, exportToJsonFile);
+  };
+  var onImportJson = function (json) {
+    setProjects(function (param) {
+          return json.map(function (jsonProject) {
+                      return {
+                              id: jsonProject.id,
+                              name: jsonProject.name,
+                              isActive: jsonProject.isActive,
+                              todos: jsonProject.todos.map(function (t) {
+                                    return {
+                                            id: t.id,
+                                            text: t.text,
+                                            project: t.project,
+                                            status: t.status,
+                                            parentTodo: t.parentTodo,
+                                            depth: undefined,
+                                            childNumber: undefined,
+                                            hasArchivedChildren: false,
+                                            hasChildren: false,
+                                            ancArchived: false
+                                          };
+                                  }),
+                              hideArchived: jsonProject.hiddenTodos.length > 0,
+                              hideAll: jsonProject.todos.length === 0,
+                              hiddenTodos: Belt_MapString.fromArray(jsonProject.hiddenTodos)
+                            };
+                    });
+        });
   };
   var projectToMoveHandleMouseDown = function (projectId, param) {
     var timeoutId = setTimeout((function () {
@@ -648,6 +679,93 @@ function App(props) {
                     });
               }));
       });
+  var handleHide = function (hideAllMode, forcedShow, p) {
+    var archivedPred = function (t) {
+      if (t.status === "ArchiveDone") {
+        return true;
+      } else {
+        return t.status === "ArchiveNo";
+      }
+    };
+    var allPred = function (param) {
+      return true;
+    };
+    var pred = hideAllMode ? allPred : archivedPred;
+    if (Core__Option.getOr(forcedShow, hideAllMode ? p.hideAll : p.hideArchived)) {
+      var parentMap = Core__Array.reduce(p.todos, undefined, (function (a, c) {
+              var mapId = Core__Option.getOr(c.parentTodo, "None");
+              return Belt_MapString.update(a, mapId, (function (v) {
+                            return Core__Option.mapOr(v, [c], (function (v) {
+                                          return v.concat([c]);
+                                        }));
+                          }));
+            }));
+      var recurse = function (todos) {
+        return Core__Array.reduce(todos, [], (function (a, t) {
+                      var regularTodos = Core__Option.mapOr(Belt_MapString.get(parentMap, t.id), [], (function (v) {
+                              return recurse(v);
+                            }));
+                      var hiddenTodos = Core__Option.mapOr(Belt_MapString.get(p.hiddenTodos, t.id), [], (function (v) {
+                              return recurse(v);
+                            }));
+                      return a.concat([t]).concat(regularTodos).concat(hiddenTodos);
+                    }));
+      };
+      return {
+              id: p.id,
+              name: p.name,
+              isActive: p.isActive,
+              todos: recurse(p.todos.filter(function (t) {
+                          return Core__Option.isNone(t.parentTodo);
+                        })).concat(Core__Option.mapOr(Belt_MapString.get(p.hiddenTodos, "None"), [], (function (todos) {
+                          return recurse(todos);
+                        }))),
+              hideArchived: hideAllMode ? p.hideArchived : false,
+              hideAll: hideAllMode ? false : p.hideAll,
+              hiddenTodos: undefined
+            };
+    }
+    var mutHiddenTodos = {
+      contents: p.hiddenTodos
+    };
+    var newTodos = Core__Array.reduce(p.todos, [], (function (a, c) {
+            if (pred(c)) {
+              mutHiddenTodos.contents = Belt_MapString.update(mutHiddenTodos.contents, Core__Option.getOr(c.parentTodo, "None"), (function (v) {
+                      if (v !== undefined) {
+                        return v.concat([c]);
+                      } else {
+                        return [c];
+                      }
+                    }));
+              return a;
+            } else if (c.ancArchived) {
+              mutHiddenTodos.contents = Core__Option.mapOr(c.parentTodo, mutHiddenTodos.contents, (function (parentTodo) {
+                      return Belt_MapString.update(mutHiddenTodos.contents, parentTodo, (function (v) {
+                                    if (v !== undefined) {
+                                      return v.concat([c]);
+                                    } else {
+                                      return [c];
+                                    }
+                                  }));
+                    }));
+              return a;
+            } else {
+              return a.concat([c]);
+            }
+          }));
+    return {
+            id: p.id,
+            name: p.name,
+            isActive: p.isActive,
+            todos: newTodos,
+            hideArchived: hideAllMode ? p.hideArchived : true,
+            hideAll: hideAllMode ? true : p.hideAll,
+            hiddenTodos: mutHiddenTodos.contents
+          };
+  };
+  var allProjectsHidden = projects.every(function (p) {
+        return p.hideAll;
+      });
   var tmp;
   if (displayElement !== undefined) {
     if (displayElement.TAG === "Todo") {
@@ -705,10 +823,24 @@ function App(props) {
                                       className: "flex-1"
                                     }),
                                 JsxRuntime.jsx("button", {
-                                      children: "export",
+                                      children: "Export",
                                       className: ["bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1 h-5 "].join(" "),
                                       onClick: (function (param) {
                                           onExportJson();
+                                        })
+                                    }),
+                                JsxRuntime.jsx(make, {
+                                      onImportJson: onImportJson
+                                    }),
+                                JsxRuntime.jsx("button", {
+                                      children: allProjectsHidden ? JsxRuntime.jsx(Tb.TbChevronDown, {}) : JsxRuntime.jsx(Tb.TbChevronUp, {}),
+                                      className: ["rounded flex flex-row items-center justify-center gap-1 h-5 w-5 "].join(" "),
+                                      onClick: (function (param) {
+                                          setProjects(function (projects) {
+                                                return projects.map(function (p) {
+                                                            return handleHide(true, allProjectsHidden, p);
+                                                          });
+                                              });
                                         })
                                     }),
                                 JsxRuntime.jsxs("button", {
@@ -812,7 +944,8 @@ function App(props) {
                                                 projectToMoveHandleMouseEnter: projectToMoveHandleMouseEnter,
                                                 clearProjectLastRelative: (function () {
                                                     projectLastRelative.current = undefined;
-                                                  })
+                                                  }),
+                                                handleHide: handleHide
                                               }, Types.getProjectId(project.id));
                                   }),
                               ref: Caml_option.some(aaParentRef),
@@ -838,9 +971,9 @@ function App(props) {
             });
 }
 
-var make = App;
+var make$1 = App;
 
 export {
-  make ,
+  make$1 as make,
 }
 /* logoUrl Not a pure module */
