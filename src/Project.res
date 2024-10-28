@@ -596,9 +596,9 @@ let make = (
       }}
       className={[
         listItemClass,
-        // "first:mt-1 mt-1",
-        "relative group  flex flex-row justify-between items-center bg-[var(--t1)] px-1 text-[var(--t9)]
-        gap-1 border-b border-b-[var(--t3)] border-t-[var(--t9)]",
+        "first:mt-1 mt-2",
+        "relative group  flex flex-row justify-between items-center bg-[var(--t0)] px-1 text-[var(--t9)]
+        gap-1 border-b-[var(--t3)] border-t-[var(--t9)]",
         isSelected
           ? "outline outline-2 -outline-offset-2 outline-purple-500 focus:outline-blue-500"
           : "",
