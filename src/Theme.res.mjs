@@ -4,7 +4,7 @@ import * as React from "react";
 import * as Common from "./Common.res.mjs";
 
 function useTheme() {
-  var match = Common.useLocalStorage("theme", "dark");
+  var match = Common.useLocalStorage("theme", "light");
   var theme = match[0];
   React.useEffect((function () {
           var match = theme === "dark" ? [

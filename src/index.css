@@ -41,23 +41,22 @@ html {
   --darkOrange: oklch(0.66 0.23 35.22);
   --darkPurple: oklch(0.32 0.14 310);
   --darkRed: oklch(0.5 0.2 25);
-
-  --lightBase: oklch(from var(--tBase) 0.93 calc(c/2) h);
-  --darkBase: oklch(from var(--tBase) 0.5 calc(c/2) h);
 }
 
 .dark {
   background-color: black;
   color: white;
-  --background: black;
-  --foreground: white;
-  --foreground-100: #101010;
-  --foreground-200: #202020;
-  --foreground-300: #404040;
-  --foreground-400: #606060;
-  --foreground-500: #808080;
-  --foreground-600: #a0a0a0;
-  --foreground-700: #c0c0c0;
-  --foreground-800: #e0e0e0;
-  --foreground-900: #f0f0f0;
+  --tBase: var(--blueBase);
+
+  --t0: black;
+  --t1: oklch(from var(--tBase) 0.03 c h);
+  --t2: oklch(from var(--tBase) 0.05 c h);
+  --t3: oklch(from var(--tBase) 0.1 c h);
+  --t4: oklch(from var(--tBase) 0.15 c h);
+  --t5: oklch(from var(--tBase) 0.25 c h);
+  --t6: oklch(from var(--tBase) 0.6 c h);
+  --t7: oklch(from var(--tBase) 0.8 c h);
+  --t8: oklch(from var(--tBase) 0.9 c h);
+  --t9: oklch(from var(--tBase) 0.95 c h);
+  --t10: white;
 }

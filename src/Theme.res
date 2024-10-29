@@ -9,7 +9,7 @@ external addClassToHtmlElement: string => unit = "add"
 external removeClassToHtmlElement: string => unit = "remove"
 
 let useTheme = () => {
-  let (theme, setTheme, _getTheme) = Common.useLocalStorage("theme", Dark)
+  let (theme, setTheme, _getTheme) = Common.useLocalStorage("theme", Light)
 
   React.useEffect1(() => {
     let (remove, add) = theme == Dark ? ("light", "dark") : ("dark", "light")

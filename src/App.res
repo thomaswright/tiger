@@ -233,14 +233,6 @@ let make = () => {
       })
     })
 
-  let (baseColor, setBaseColor, _) = Common.useLocalStorage("baseColor", "--baseBlue")
-
-  React.useEffect1(() => {
-    Common.setRootStyleProperty("--tBase", baseColor)
-
-    None
-  }, [baseColor])
-
   let (checked, setChecked) = React.useState(() => SSet.empty)
   let (projectsTab, _setProjectTab, _) = Common.useLocalStorage("projectsTab", All)
   let (selectedElement, setSelectedElement) = React.useState(_ => None)
@@ -260,6 +252,15 @@ let make = () => {
   let (projectOfDragHandle, setProjectOfDragHandle) = React.useState(_ => None)
   let projectLastRelative = React.useRef(None)
 
+  let (theme, setTheme) = Theme.useTheme()
+
+  let (baseColor, setBaseColor, _) = Common.useLocalStorage("baseColor", "--baseBlue")
+
+  React.useEffect1(() => {
+    Common.setRootStyleProperty("--tBase", baseColor)
+
+    None
+  }, [baseColor])
   let onExportJson = () => {
     projects
     ->Array.map(p =>
@@ -920,6 +921,16 @@ let make = () => {
                 />
               })
               ->React.array}
+            </div>
+            <div className="flex flex-row gap-2 py-2">
+              <button
+                className="text-sm px-2 bg-[var(--t2)] rounded" onClick={_ => setTheme(_ => Dark)}>
+                {"Dark Mode"->React.string}
+              </button>
+              <button
+                className="text-sm px-2 bg-[var(--t2)] rounded" onClick={_ => setTheme(_ => Light)}>
+                {"Light Mode"->React.string}
+              </button>
             </div>
           </div>
         </div>

@@ -349,7 +349,7 @@ function Project$Todo(props) {
                                         return hiddenTodos.length > 0;
                                       })) ? JsxRuntime.jsx("div", {
                                         children: JsxRuntime.jsx(Tb.TbArchive, {}),
-                                        className: "absolute bg-white text-[var(--darkPurple)] bg-[var(--lightPurple)] text-xs h-3 w-3 -left-3 -top-0 flex flex-row items-center justify-center rounded-full"
+                                        className: "absolute  text-[var(--darkPurple)] bg-[var(--lightPurple)] text-xs h-3 w-3 -left-3 -top-0 flex flex-row items-center justify-center rounded-full"
                                       }) : null,
                                 isSelected || isDisplayElement ? null : JsxRuntime.jsx("div", {
                                         className: "h-px w-full absolute bg-[var(--t2)] -bottom-0"
@@ -361,7 +361,7 @@ function Project$Todo(props) {
                                           "mx-1 my-1 block text-sm font-medium  w-full h-5 border-0 px-0 py-0 focus:ring-0 focus:z-10\n                 text-[var(--t8)]",
                                           stagedForDelete ? "bg-red-200 " : (
                                               isChecked ? "bg-sky-50" : (
-                                                  isDisplayElement && !isSelected ? "bg-sky-200" : "bg-white"
+                                                  isDisplayElement && !isSelected ? "bg-sky-200" : "bg-[var(--t0)]"
                                                 )
                                             )
                                         ].join(" "),
@@ -413,20 +413,20 @@ function Project$Todo(props) {
                                       children: [
                                         JsxRuntime.jsx("div", {
                                               children: JsxRuntime.jsx(Tb.TbDragDrop, {}),
-                                              className: " w-4 h-4 text-[var(--t6)] hidden group-hover:block bg-white rounded-sm 0 ",
+                                              className: " w-4 h-4 text-[var(--t6)] hidden group-hover:block bg-[var(--t0)] rounded-sm 0 ",
                                               onMouseDown: (function (e) {
                                                   itemToMoveHandleMouseDown(todo.id, e);
                                                 })
                                             }),
                                         JsxRuntime.jsx("button", {
                                               children: JsxRuntime.jsx(Tb.TbPlus, {}),
-                                              className: ["w-4 h-4 flex-row items-center justify-center cursor-default hidden group-hover:flex rounded-sm text-sm text-[var(--t6)]  bg-white "].join(" "),
+                                              className: ["w-4 h-4 flex-row items-center justify-center cursor-default hidden group-hover:flex rounded-sm text-sm text-[var(--t6)]  bg-[var(--t0)] "].join(" "),
                                               onClick: (function (param) {
                                                   newTodoAfter(todo.id, todo.id);
                                                 })
                                             }),
                                         JsxRuntime.jsx("input", {
-                                              className: ["border-gray-300 bg-white rounded text-blue-400 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500"].join(" "),
+                                              className: ["border-gray-300 bg-[var(--t0)] rounded text-blue-400 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500"].join(" "),
                                               checked: isChecked,
                                               type: "checkbox",
                                               onChange: (function (param) {
@@ -707,7 +707,7 @@ function Project(props) {
                               children: JsxRuntime.jsx(Tb.TbDragDrop, {}),
                               className: [
                                   project.hideAll ? "right-8" : "right-20",
-                                  "absolute w-4 h-4 text-[var(--t6)] hidden group-hover:block bg-white rounded-sm "
+                                  "absolute w-4 h-4 text-[var(--t6)] hidden group-hover:block bg-[var(--t0)] rounded-sm "
                                 ].join(" "),
                               onMouseDown: (function (e) {
                                   projectToMoveHandleMouseDown(project.id, e);
@@ -715,7 +715,7 @@ function Project(props) {
                             }),
                         project.hideAll ? null : JsxRuntime.jsx("button", {
                                 children: JsxRuntime.jsx(Tb.TbPlus, {}),
-                                className: "absolute right-14 hidden group-hover:block h-4 w-4 text-sm rounded flex-none text-[var(--t6)] bg-white ",
+                                className: "absolute right-14 hidden group-hover:block h-4 w-4 text-sm rounded flex-none text-[var(--t6)] bg-[var(--t0)] ",
                                 onClick: (function (param) {
                                     newTodoAfter(undefined, undefined);
                                   })

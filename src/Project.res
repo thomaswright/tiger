@@ -340,7 +340,7 @@ module Todo = {
             ->Option.mapOr(false, hiddenTodos => hiddenTodos->Array.length > 0)
           ) {
             <div
-              className="absolute bg-white text-[var(--darkPurple)] bg-[var(--lightPurple)] text-xs h-3 w-3 -left-3 -top-0 flex flex-row items-center justify-center rounded-full">
+              className="absolute  text-[var(--darkPurple)] bg-[var(--lightPurple)] text-xs h-3 w-3 -left-3 -top-0 flex flex-row items-center justify-center rounded-full">
               <Icons.Archive />
             </div>
           } else {
@@ -362,7 +362,7 @@ module Todo = {
                 ? "bg-sky-50"
                 : isDisplayElement && !isSelected
                 ? "bg-sky-200"
-                : "bg-white",
+                : "bg-[var(--t0)]",
             ]->Array.join(" ")}
             placeholder={""}
             style={{resize: "none"}}
@@ -391,12 +391,12 @@ module Todo = {
             ]->Array.join(" ")}>
             <div
               onMouseDown={e => itemToMoveHandleMouseDown(todo.id, e)}
-              className={" w-4 h-4 text-[var(--t6)] hidden group-hover:block bg-white rounded-sm 0 "}>
+              className={" w-4 h-4 text-[var(--t6)] hidden group-hover:block bg-[var(--t0)] rounded-sm 0 "}>
               <Icons.DragDrop />
             </div>
             <button
               className={[
-                "w-4 h-4 flex-row items-center justify-center cursor-default hidden group-hover:flex rounded-sm text-sm text-[var(--t6)]  bg-white ",
+                "w-4 h-4 flex-row items-center justify-center cursor-default hidden group-hover:flex rounded-sm text-sm text-[var(--t6)]  bg-[var(--t0)] ",
               ]->Array.join(" ")}
               onClick={_ => {
                 newTodoAfter(Some(todo.id), Some(todo.id))
@@ -412,7 +412,7 @@ module Todo = {
               checked={isChecked}
               type_={"checkbox"}
               className={[
-                "border-gray-300 bg-white rounded text-blue-400 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500",
+                "border-gray-300 bg-[var(--t0)] rounded text-blue-400 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500",
               ]->Array.join(" ")}
             />
           </div>
@@ -631,7 +631,7 @@ let make = (
         onMouseDown={e => projectToMoveHandleMouseDown(project.id, e)}
         className={[
           project.hideAll ? "right-8" : "right-20",
-          "absolute w-4 h-4 text-[var(--t6)] hidden group-hover:block bg-white rounded-sm ",
+          "absolute w-4 h-4 text-[var(--t6)] hidden group-hover:block bg-[var(--t0)] rounded-sm ",
         ]->Array.join(" ")}>
         <Icons.DragDrop />
       </div>
@@ -641,7 +641,7 @@ let make = (
             onClick={_ => {
               newTodoAfter(None, None)
             }}
-            className="absolute right-14 hidden group-hover:block h-4 w-4 text-sm rounded flex-none text-[var(--t6)] bg-white ">
+            className="absolute right-14 hidden group-hover:block h-4 w-4 text-sm rounded flex-none text-[var(--t6)] bg-[var(--t0)] ">
             <Icons.Plus />
           </button>}
       {project.hideAll
