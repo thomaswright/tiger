@@ -26,7 +26,7 @@ html {
   --t1: oklch(from var(--tBase) 0.97 c h);
   --t0: white;
 
-  --lightGray: oklch(from var(--tBase) 0.93 0.07 h);
+  --lightGray: var(--t2);
   --lightBlue: oklch(0.93 0.07 232);
   --lightBrown: oklch(0.93 0.07 90);
   --lightGreen: oklch(0.93 0.07 150);
@@ -34,7 +34,7 @@ html {
   --lightPurple: oklch(0.93 0.07 310);
   --lightRed: oklch(0.93 0.07 25);
 
-  --darkGray: oklch(from var(--tBase) 0.44 c h);
+  --darkGray: var(--t8);
   --darkBlue: oklch(0.4 0.21 232);
   --darkBrown: oklch(0.37 0.08 97.88);
   --darkGreen: oklch(0.43 0.14 150);

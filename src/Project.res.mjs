@@ -349,7 +349,7 @@ function Project$Todo(props) {
                                         return hiddenTodos.length > 0;
                                       })) ? JsxRuntime.jsx("div", {
                                         children: JsxRuntime.jsx(Tb.TbArchive, {}),
-                                        className: "absolute  text-[var(--darkPurple)] bg-[var(--lightPurple)] text-xs h-3 w-3 -left-3 -top-0 flex flex-row items-center justify-center rounded-full"
+                                        className: "absolute  text-[var(--darkPurple)] bg-[var(--lightPurple)] \n              text-xs h-3 w-3 -left-3 -top-0 flex flex-row items-center justify-center rounded-full"
                                       }) : null,
                                 isSelected || isDisplayElement ? null : JsxRuntime.jsx("div", {
                                         className: "h-px w-full absolute bg-[var(--t2)] -bottom-0"
@@ -358,7 +358,7 @@ function Project$Todo(props) {
                                       ref: Caml_option.some(inputRef),
                                       className: [
                                           Types.todoInputClass,
-                                          "mx-1 my-1 block text-sm font-medium  w-full h-5 border-0 px-0 py-0 focus:ring-0 focus:z-10\n                 text-[var(--t8)]",
+                                          "mx-1 my-1 block text-sm font-medium  w-full h-5 border-0 px-0 py-0 focus:ring-0 focus:z-10 text-[var(--t10)]",
                                           stagedForDelete ? "bg-red-200 dark:bg-red-950" : (
                                               isChecked ? "bg-sky-50 dark:bg-sky-950" : (
                                                   isDisplayElement && !isSelected ? "bg-sky-200 dark:bg-sky-900" : "bg-[var(--t0)]"
@@ -420,13 +420,13 @@ function Project$Todo(props) {
                                             }),
                                         JsxRuntime.jsx("button", {
                                               children: JsxRuntime.jsx(Tb.TbPlus, {}),
-                                              className: ["w-4 h-4 flex-row items-center justify-center cursor-default hidden group-hover:flex rounded-sm text-sm text-[var(--t6)]  bg-[var(--t0)] "].join(" "),
+                                              className: ["w-4 h-4 flex-row items-center justify-center cursor-default \n                hidden group-hover:flex rounded-sm text-sm text-[var(--t6)]  bg-[var(--t0)] "].join(" "),
                                               onClick: (function (param) {
                                                   newTodoAfter(todo.id, todo.id);
                                                 })
                                             }),
                                         JsxRuntime.jsx("input", {
-                                              className: ["border-[var(--t6)] bg-[var(--t0)] rounded text-blue-400 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500"].join(" "),
+                                              className: ["border-[var(--t6)] bg-[var(--t0)] rounded text-blue-400 dark:text-blue-800 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500"].join(" "),
                                               checked: isChecked,
                                               type: "checkbox",
                                               onChange: (function (param) {
@@ -736,7 +736,7 @@ function Project(props) {
                       className: [
                           Types.listItemClass,
                           "first:mt-1 mt-2",
-                          "relative group  flex flex-row justify-between items-center bg-[var(--t0)] px-1 text-[var(--t9)]\n        gap-1 border-b-[var(--t3)] border-t-[var(--t9)]",
+                          "relative group  flex flex-row justify-between items-center bg-[var(--t0)] px-1 text-[var(--t10)]\n        gap-1 border-b-[var(--t3)] border-t-[var(--t9)]",
                           isSelected ? "outline outline-2 -outline-offset-2 outline-purple-500 focus:outline-blue-500" : ""
                         ].join(" "),
                       id: Types.getProjectId(project.id),

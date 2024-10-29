@@ -347,7 +347,8 @@ module Todo = {
             ->Option.mapOr(false, hiddenTodos => hiddenTodos->Array.length > 0)
           ) {
             <div
-              className="absolute  text-[var(--darkPurple)] bg-[var(--lightPurple)] text-xs h-3 w-3 -left-3 -top-0 flex flex-row items-center justify-center rounded-full">
+              className="absolute  text-[var(--darkPurple)] bg-[var(--lightPurple)] 
+              text-xs h-3 w-3 -left-3 -top-0 flex flex-row items-center justify-center rounded-full">
               <Icons.Archive />
             </div>
           } else {
@@ -361,8 +362,7 @@ module Todo = {
             ref={ReactDOM.Ref.domRef(inputRef)}
             className={[
               todoInputClass,
-              "mx-1 my-1 block text-sm font-medium  w-full h-5 border-0 px-0 py-0 focus:ring-0 focus:z-10
-                 text-[var(--t8)]",
+              "mx-1 my-1 block text-sm font-medium  w-full h-5 border-0 px-0 py-0 focus:ring-0 focus:z-10 text-[var(--t10)]",
               stagedForDelete
                 ? "bg-red-200 dark:bg-red-950"
                 : isChecked
@@ -403,7 +403,8 @@ module Todo = {
             </div>
             <button
               className={[
-                "w-4 h-4 flex-row items-center justify-center cursor-default hidden group-hover:flex rounded-sm text-sm text-[var(--t6)]  bg-[var(--t0)] ",
+                "w-4 h-4 flex-row items-center justify-center cursor-default 
+                hidden group-hover:flex rounded-sm text-sm text-[var(--t6)]  bg-[var(--t0)] ",
               ]->Array.join(" ")}
               onClick={_ => {
                 newTodoAfter(Some(todo.id), Some(todo.id))
@@ -419,7 +420,7 @@ module Todo = {
               checked={isChecked}
               type_={"checkbox"}
               className={[
-                "border-[var(--t6)] bg-[var(--t0)] rounded text-blue-400 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500",
+                "border-[var(--t6)] bg-[var(--t0)] rounded text-blue-400 dark:text-blue-800 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500",
               ]->Array.join(" ")}
             />
           </div>
@@ -604,7 +605,7 @@ let make = (
       className={[
         listItemClass,
         "first:mt-1 mt-2",
-        "relative group  flex flex-row justify-between items-center bg-[var(--t0)] px-1 text-[var(--t9)]
+        "relative group  flex flex-row justify-between items-center bg-[var(--t0)] px-1 text-[var(--t10)]
         gap-1 border-b-[var(--t3)] border-t-[var(--t9)]",
         isSelected
           ? "outline outline-2 -outline-offset-2 outline-purple-500 focus:outline-blue-500"
