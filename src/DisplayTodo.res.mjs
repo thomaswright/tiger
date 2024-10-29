@@ -107,7 +107,7 @@ function DisplayTodo(props) {
                     }),
                 JsxRuntime.jsx("div", {
                       children: JsxRuntime.jsx(ReactTextareaAutosize, {
-                            className: ["placeholder:text-[var(--t4)] text-sm flex-1 border-none rounded-lg text-[var(--t10)] w-full outline-none bg-[var(--t1)]\n          focus:ring-0 font-medium"].join(" "),
+                            className: ["placeholder:text-[var(--t5)] text-sm flex-1 border-none rounded-lg text-[var(--t10)] w-full outline-none bg-[var(--t2)]\n          focus:ring-0 font-medium"].join(" "),
                             id: "id-display-title",
                             style: {
                               resize: "none"
@@ -132,7 +132,7 @@ function DisplayTodo(props) {
                                       }));
                               })
                           }),
-                      className: "p-1"
+                      className: "p-2"
                     })
               ],
               className: "w-full"

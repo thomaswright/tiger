@@ -121,14 +121,14 @@ let make = (~project: project, ~todo: todo, ~setFocusIdNext, ~updateTodo, ~delet
         <Icons.Trash />
       </button>
     </div>
-    <div className="p-1">
+    <div className="p-2">
       <Common.TextareaAutosize
         style={{
           resize: "none",
         }}
         id="id-display-title"
         className={[
-          "placeholder:text-[var(--t4)] text-sm flex-1 border-none rounded-lg text-[var(--t10)] w-full outline-none bg-[var(--t1)]
+          "placeholder:text-[var(--t5)] text-sm flex-1 border-none rounded-lg text-[var(--t10)] w-full outline-none bg-[var(--t2)]
           focus:ring-0 font-medium",
         ]->Array.join(" ")}
         placeholder={"Additional Todo Details"}
