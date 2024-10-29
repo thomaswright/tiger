@@ -240,51 +240,57 @@ function App(props) {
                     });
         });
   };
-  var match$1 = React.useState(function () {
+  var match$1 = Common.useLocalStorage("baseColor", "--baseBlue");
+  var setBaseColor = match$1[1];
+  var baseColor = match$1[0];
+  React.useEffect((function () {
+          document.documentElement.style.setProperty("--tBase", baseColor);
+        }), [baseColor]);
+  var match$2 = React.useState(function () {
         
       });
-  var setChecked = match$1[1];
-  var checked = match$1[0];
-  var match$2 = Common.useLocalStorage("projectsTab", "All");
-  var projectsTab = match$2[0];
-  var match$3 = React.useState(function () {
-        
-      });
-  var setSelectedElement = match$3[1];
-  var selectedElement = match$3[0];
+  var setChecked = match$2[1];
+  var checked = match$2[0];
+  var match$3 = Common.useLocalStorage("projectsTab", "All");
+  var projectsTab = match$3[0];
   var match$4 = React.useState(function () {
         
       });
-  var setDisplayElement = match$4[1];
-  var displayElement = match$4[0];
+  var setSelectedElement = match$4[1];
+  var selectedElement = match$4[0];
   var match$5 = React.useState(function () {
-        return true;
-      });
-  var setViewSettings = match$5[1];
-  var match$6 = React.useState(function () {
         
       });
-  var setFocusClassNext = match$6[1];
-  var focusClassNext = match$6[0];
+  var setDisplayElement = match$5[1];
+  var displayElement = match$5[0];
+  var match$6 = React.useState(function () {
+        return true;
+      });
+  var setViewSettings = match$6[1];
   var match$7 = React.useState(function () {
         
       });
-  var setFocusIdNext = match$7[1];
-  var focusIdNext = match$7[0];
-  var aaParentRef = React.useRef(null);
-  var todosClickDelayTimeout = React.useRef(undefined);
+  var setFocusClassNext = match$7[1];
+  var focusClassNext = match$7[0];
   var match$8 = React.useState(function () {
         
       });
-  var setTodosOfDragHandle = match$8[1];
-  var todosOfDragHandle = match$8[0];
-  var todosLastRelative = React.useRef(undefined);
-  var projectClickDelayTimeout = React.useRef(undefined);
+  var setFocusIdNext = match$8[1];
+  var focusIdNext = match$8[0];
+  var aaParentRef = React.useRef(null);
+  var todosClickDelayTimeout = React.useRef(undefined);
   var match$9 = React.useState(function () {
         
       });
-  var setProjectOfDragHandle = match$9[1];
-  var projectOfDragHandle = match$9[0];
+  var setTodosOfDragHandle = match$9[1];
+  var todosOfDragHandle = match$9[0];
+  var todosLastRelative = React.useRef(undefined);
+  var projectClickDelayTimeout = React.useRef(undefined);
+  var match$10 = React.useState(function () {
+        
+      });
+  var setProjectOfDragHandle = match$10[1];
+  var projectOfDragHandle = match$10[0];
   var projectLastRelative = React.useRef(undefined);
   var onExportJson = function () {
     Core__Option.mapOr(JSON.stringify(projects.map(function (p) {
@@ -843,7 +849,7 @@ function App(props) {
           children: tmp$1
         });
   } else {
-    tmp = match$5[0] ? JsxRuntime.jsxs("div", {
+    tmp = match$6[0] ? JsxRuntime.jsxs("div", {
             children: [
               JsxRuntime.jsx("div", {
                     children: "Settings",
@@ -879,7 +885,9 @@ function App(props) {
                                                 backgroundColor: "oklch(from " + v + " 0.8 0.2 h)"
                                               },
                                               onClick: (function (param) {
-                                                  document.documentElement.style.setProperty("--tBase", v);
+                                                  setBaseColor(function (param) {
+                                                        return v;
+                                                      });
                                                 })
                                             });
                                 }),

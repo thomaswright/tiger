@@ -233,6 +233,14 @@ let make = () => {
       })
     })
 
+  let (baseColor, setBaseColor, _) = Common.useLocalStorage("baseColor", "--baseBlue")
+
+  React.useEffect1(() => {
+    Common.setRootStyleProperty("--tBase", baseColor)
+
+    None
+  }, [baseColor])
+
   let (checked, setChecked) = React.useState(() => SSet.empty)
   let (projectsTab, _setProjectTab, _) = Common.useLocalStorage("projectsTab", All)
   let (selectedElement, setSelectedElement) = React.useState(_ => None)
@@ -882,8 +890,6 @@ let make = () => {
           }}
         </React.Fragment>
       } else if viewSettings {
-        let setColor = v => Common.setRootStyleProperty("--tBase", v)
-
         <div className="px-3 py-2 flex flex-col gap-2 items-start">
           <div className="font-black text-lg"> {"Settings"->React.string} </div>
           <button
@@ -906,7 +912,7 @@ let make = () => {
               ]
               ->Array.map(v => {
                 <button
-                  onClick={_ => setColor(v)}
+                  onClick={_ => setBaseColor(_ => v)}
                   style={{
                     backgroundColor: `oklch(from ${v} 0.8 0.2 h)`,
                   }}
