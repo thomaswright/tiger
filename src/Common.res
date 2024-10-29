@@ -1,5 +1,8 @@
 open Types
 
+@val @scope(("document", "documentElement", "style"))
+external setRootStyleProperty: (string, string) => unit = "setProperty"
+
 @module("./useLocalStorage.js")
 external useLocalStorage: (string, 'a) => ('a, ('a => 'a) => unit, unit => 'a) = "default"
 

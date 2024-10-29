@@ -858,6 +858,35 @@ function App(props) {
                   }),
               JsxRuntime.jsx(make, {
                     onImportJson: onImportJson
+                  }),
+              JsxRuntime.jsxs("div", {
+                    children: [
+                      JsxRuntime.jsx("div", {
+                            children: "Color",
+                            className: "font-bold text-sm"
+                          }),
+                      JsxRuntime.jsx("div", {
+                            children: [
+                                "var(--greenBase)",
+                                "var(--tealBase)",
+                                "var(--blueBase)",
+                                "var(--purpleBase)",
+                                "var(--pinkBase)"
+                              ].map(function (v) {
+                                  return JsxRuntime.jsx("button", {
+                                              className: "h-6 w-6 rounded-full",
+                                              style: {
+                                                backgroundColor: "oklch(from " + v + " 0.8 0.2 h)"
+                                              },
+                                              onClick: (function (param) {
+                                                  document.documentElement.style.setProperty("--tBase", v);
+                                                })
+                                            });
+                                }),
+                            className: "flex flex-row gap-2 py-1"
+                          })
+                    ],
+                    className: "pt-2"
                   })
             ],
             className: "px-3 py-2 flex flex-col gap-2 items-start"

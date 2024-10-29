@@ -882,6 +882,8 @@ let make = () => {
           }}
         </React.Fragment>
       } else if viewSettings {
+        let setColor = v => Common.setRootStyleProperty("--tBase", v)
+
         <div className="px-3 py-2 flex flex-col gap-2 items-start">
           <div className="font-black text-lg"> {"Settings"->React.string} </div>
           <button
@@ -892,6 +894,28 @@ let make = () => {
             {"Export"->React.string}
           </button>
           <ImportButton onImportJson />
+          <div className="pt-2">
+            <div className="font-bold text-sm"> {"Color"->React.string} </div>
+            <div className="flex flex-row gap-2 py-1">
+              {[
+                "var(--greenBase)",
+                "var(--tealBase)",
+                "var(--blueBase)",
+                "var(--purpleBase)",
+                "var(--pinkBase)",
+              ]
+              ->Array.map(v => {
+                <button
+                  onClick={_ => setColor(v)}
+                  style={{
+                    backgroundColor: `oklch(from ${v} 0.8 0.2 h)`,
+                  }}
+                  className="h-6 w-6 rounded-full"
+                />
+              })
+              ->React.array}
+            </div>
+          </div>
         </div>
       } else {
         React.null

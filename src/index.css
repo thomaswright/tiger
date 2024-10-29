@@ -6,7 +6,13 @@
 html {
   background-color: white;
   color: black;
-  --tBase: oklch(0.27 0.05 273.03);
+  --pinkBase: oklch(0.27 0.05 350.03);
+  --purpleBase: oklch(0.27 0.05 310.03);
+  --blueBase: oklch(0.27 0.05 273.03);
+  --tealBase: oklch(0.27 0.05 200.03);
+  --greenBase: oklch(0.27 0.05 150.03);
+
+  --tBase: var(--blueBase);
 
   --t10: black;
   --t9: oklch(from var(--tBase) 0.2 c h);
