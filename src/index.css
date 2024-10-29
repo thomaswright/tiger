@@ -50,13 +50,29 @@ html {
 
   --t0: black;
   --t1: oklch(from var(--tBase) 0.2 c h);
-  --t2: oklch(from var(--tBase) 0.3 c h);
-  --t3: oklch(from var(--tBase) 0.4 c h);
-  --t4: oklch(from var(--tBase) 0.5 c h);
-  --t5: oklch(from var(--tBase) 0.6 c h);
-  --t6: oklch(from var(--tBase) 0.7 c h);
-  --t7: oklch(from var(--tBase) 0.8 c h);
-  --t8: oklch(from var(--tBase) 0.9 c h);
+  --t2: oklch(from var(--tBase) 0.25 c h);
+  --t3: oklch(from var(--tBase) 0.3 c h);
+  --t4: oklch(from var(--tBase) 0.35 c h);
+  --t5: oklch(from var(--tBase) 0.4 c h);
+  --t6: oklch(from var(--tBase) 0.5 c h);
+  --t7: oklch(from var(--tBase) 0.6 c h);
+  --t8: oklch(from var(--tBase) 0.75 c h);
   --t9: oklch(from var(--tBase) 0.95 c h);
   --t10: white;
+
+  --lightGray: var(--t2);
+  --lightBlue: oklch(0.25 0.15 232);
+  --lightBrown: oklch(0.25 0.15 90);
+  --lightGreen: oklch(0.25 0.15 150);
+  --lightOrange: oklch(0.25 0.15 50);
+  --lightPurple: oklch(0.25 0.15 310);
+  --lightRed: oklch(0.25 0.15 25);
+
+  --darkGray: var(--t8);
+  --darkBlue: oklch(0.95 0.1 232);
+  --darkBrown: oklch(0.95 0.1 97.88);
+  --darkGreen: oklch(0.95 0.1 150);
+  --darkOrange: oklch(0.95 0.1 90.22);
+  --darkPurple: oklch(0.95 0.1 310);
+  --darkRed: oklch(0.95 0.1 25);
 }
