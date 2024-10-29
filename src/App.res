@@ -152,7 +152,7 @@ module CheckedSummary = {
   ) => {
     let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
     let allTodos = Array.concatMany([], projects->Array.map(p => p.todos))
-    <div className="h-8 text-sm px-2 flex flex-row gap-2 items-center border-b">
+    <div className="flex-1 h-full text-sm border-r flex flex-row gap-2 items-center">
       {if checked->SSet.size < 2 {
         React.null
       } else {
@@ -196,7 +196,7 @@ module CheckedSummary = {
           />
           {`${checked->SSet.size->Int.toString} Checked`->React.string}
           <div className="flex-1" />
-          <button className="px-2" onClick={_ => setChecked(_ => SSet.empty)}>
+          <button className="px-2 mr-2" onClick={_ => setChecked(_ => SSet.empty)}>
             {"Clear"->React.string}
           </button>
         </React.Fragment>
@@ -233,11 +233,13 @@ let make = () => {
       })
     })
 
-  let (checked, setChecked, _) = Common.useLocalStorage("checked", SSet.empty)
+  let (checked, setChecked) = React.useState(() => SSet.empty)
   let (projectsTab, _setProjectTab, _) = Common.useLocalStorage("projectsTab", All)
   let (selectedElement, setSelectedElement) = React.useState(_ => None)
   let (displayElement, setDisplayElement) = React.useState(_ => None)
+  let (viewSettings, setViewSettings) = React.useState(_ => true)
   let (focusClassNext, setFocusClassNext) = React.useState(_ => None)
+
   let (focusIdNext, setFocusIdNext) = React.useState(_ => None)
 
   let aaParentRef: React.ref<RescriptCore.Nullable.t<Dom.element>> = React.useRef(Nullable.null)
@@ -730,13 +732,12 @@ let make = () => {
   }
 
   let allProjectsHidden = projects->Array.every(p => p.hideAll)
-
   <div className="flex flex-row h-dvh text-[var(--t9)]">
     // <StatusSelector />
     <div className="flex-1 h-full flex flex-col">
       <div
         className="flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b px-2">
-        <img src={logoUrl} width={"24"} className="py-0.5 " />
+        // <img src={logoUrl} width={"24"} className="py-0.5 " />
         // <div className="flex flex-row gap-2 ">
         //   <div className="text-sm"> {"Show Inactive"->React.string} </div>
         //   <Switch
@@ -744,73 +745,67 @@ let make = () => {
         //     onCheckedChange={() => setProjectTab(v => v == All ? Active : All)}
         //   />
         // </div>
-        <div className="flex-1" />
-        <button
-          onClick={_ => onExportJson()}
-          className={[
-            "bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1 h-5 ",
-          ]->Array.join(" ")}>
-          {"Export"->React.string}
-        </button>
-        <ImportButton onImportJson />
-        <button
-          onClick={_ => {
-            let newProjectId = Common.uuid()
-            let newProject = {
-              id: newProjectId,
-              name: "",
-              additionalText: "",
-              isActive: true,
-              todos: [],
-              hiddenTodos: SMap.empty,
-              hideArchived: false,
-              hideAll: false,
-            }
-            setProjects(v => {
-              let relativeProject = switch displayElement {
-              | Some(Project(projectId)) => Some(projectId)
-              | Some(Todo(todoId)) =>
-                v->Array.reduce(None, (a, c) => {
-                  a->Option.isSome
-                    ? a
-                    : c.todos->Array.find(t => t.id == todoId)->Option.isSome
-                    ? Some(c.id)
-                    : None
-                })
-              | _ => None
+        <CheckedSummary checked={checked} projects={projects} setChecked={setChecked} setProjects />
+        <div className="flex flex-row items-center justify-center gap-2">
+          <button
+            onClick={_ => {
+              let newProjectId = Common.uuid()
+              let newProject = {
+                id: newProjectId,
+                name: "",
+                additionalText: "",
+                isActive: true,
+                todos: [],
+                hiddenTodos: SMap.empty,
+                hideArchived: false,
+                hideAll: false,
               }
+              setProjects(v => {
+                let relativeProject = switch displayElement {
+                | Some(Project(projectId)) => Some(projectId)
+                | Some(Todo(todoId)) =>
+                  v->Array.reduce(None, (a, c) => {
+                    a->Option.isSome
+                      ? a
+                      : c.todos->Array.find(t => t.id == todoId)->Option.isSome
+                      ? Some(c.id)
+                      : None
+                  })
+                | _ => None
+                }
 
-              relativeProject->Option.mapOr(Array.concat([newProject], v), relativeProject =>
-                v->Array.reduce(
-                  [],
-                  (a, c) => {
-                    c.id == relativeProject
-                      ? a->Array.concat([c])->Array.concat([newProject])
-                      : a->Array.concat([c])
-                  },
+                relativeProject->Option.mapOr(Array.concat([newProject], v), relativeProject =>
+                  v->Array.reduce(
+                    [],
+                    (a, c) => {
+                      c.id == relativeProject
+                        ? a->Array.concat([c])->Array.concat([newProject])
+                        : a->Array.concat([c])
+                    },
+                  )
                 )
-              )
-            })
-            setSelectedElement(_ => Some(Project(newProjectId)))
-            setDisplayElement(_ => Some(Project(newProjectId)))
-            setFocusIdNext(_ => Some(getProjectInputId(newProjectId)))
-          }}
-          className={[
-            "bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1 h-5 ",
-          ]->Array.join(" ")}>
-          <Icons.Plus />
-          {"Project"->React.string}
-        </button>
-        <button
-          onClick={_ =>
-            setProjects(projects =>
-              projects->Array.map(p => handleHide(true, Some(allProjectsHidden), p))
-            )}
-          className={[
-            "rounded flex flex-row items-center justify-center gap-1 h-5 w-5 ",
-          ]->Array.join(" ")}>
-          {allProjectsHidden ? <Icons.ChevronDown /> : <Icons.ChevronUp />}
-        </button>
+              })
+              setSelectedElement(_ => Some(Project(newProjectId)))
+              setDisplayElement(_ => Some(Project(newProjectId)))
+              setFocusIdNext(_ => Some(getProjectInputId(newProjectId)))
+            }}
+            className={[
+              "bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1 h-5 ",
+            ]->Array.join(" ")}>
+            <Icons.Plus />
+            {"Project"->React.string}
+          </button>
+          <button
+            onClick={_ =>
+              setProjects(projects =>
+                projects->Array.map(p => handleHide(true, Some(allProjectsHidden), p))
+              )}
+            className={[
+              "rounded flex flex-row items-center justify-center gap-1 h-5 w-5 ",
+            ]->Array.join(" ")}>
+            {allProjectsHidden ? <Icons.ChevronDown /> : <Icons.ChevronUp />}
+          </button>
+        </div>
       </div>
       <ul className="pb-20 flex-1 overflow-y-scroll" ref={ReactDOM.Ref.domRef(aaParentRef)}>
         {projects
@@ -852,23 +847,54 @@ let make = () => {
       </ul>
     </div>
     <div className=" border-l flex-1">
-      <CheckedSummary checked={checked} projects={projects} setChecked={setChecked} setProjects />
-      {switch displayElement {
-      | Some(Todo(todoId)) =>
-        projects
-        ->Array.reduce(None, (a, c) => {
-          a->Option.isSome ? a : c.todos->Array.find(t => t.id == todoId)->Option.map(v => (c, v))
-        })
-        ->Option.mapOr(React.null, ((project, todo)) => {
-          <DisplayTodo todo project setFocusIdNext updateTodo deleteTodo />
-        })
-      | Some(Project(projectId)) =>
-        projects
-        ->Array.find(p => p.id == projectId)
-        ->Option.mapOr(React.null, project => {
-          <DisplayProject project updateProject setProjects setTodos />
-        })
-      | _ => React.null
+      <div
+        className="flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b px-2">
+        <div className="flex-1" />
+        <button
+          onClick={_ => {
+            setViewSettings(_ => true)
+            setDisplayElement(_ => None)
+            setSelectedElement(_ => None)
+          }}>
+          <img src={logoUrl} width={"24"} className="py-0.5 " />
+        </button>
+      </div>
+      {if displayElement->Option.isSome || selectedElement->Option.isSome {
+        <React.Fragment>
+          {switch displayElement {
+          | Some(Todo(todoId)) =>
+            projects
+            ->Array.reduce(None, (a, c) => {
+              a->Option.isSome
+                ? a
+                : c.todos->Array.find(t => t.id == todoId)->Option.map(v => (c, v))
+            })
+            ->Option.mapOr(React.null, ((project, todo)) => {
+              <DisplayTodo todo project setFocusIdNext updateTodo deleteTodo />
+            })
+          | Some(Project(projectId)) =>
+            projects
+            ->Array.find(p => p.id == projectId)
+            ->Option.mapOr(React.null, project => {
+              <DisplayProject project updateProject setProjects setTodos />
+            })
+          | _ => React.null
+          }}
+        </React.Fragment>
+      } else if viewSettings {
+        <div className="px-3 py-2 flex flex-col gap-2 items-start">
+          <div className="font-black text-lg"> {"Settings"->React.string} </div>
+          <button
+            onClick={_ => onExportJson()}
+            className={[
+              "bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1 h-5 ",
+            ]->Array.join(" ")}>
+            {"Export"->React.string}
+          </button>
+          <ImportButton onImportJson />
+        </div>
+      } else {
+        React.null
       }}
     </div>
   </div>

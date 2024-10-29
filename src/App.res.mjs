@@ -193,7 +193,7 @@ function App$CheckedSummary(props) {
                 }),
             JsxRuntime.jsx("button", {
                   children: "Clear",
-                  className: "px-2",
+                  className: "px-2 mr-2",
                   onClick: (function (param) {
                       setChecked(function (param) {
                             
@@ -205,7 +205,7 @@ function App$CheckedSummary(props) {
   }
   return JsxRuntime.jsx("div", {
               children: tmp,
-              className: "h-8 text-sm px-2 flex flex-row gap-2 items-center border-b"
+              className: "flex-1 h-full text-sm border-r flex flex-row gap-2 items-center"
             });
 }
 
@@ -240,7 +240,9 @@ function App(props) {
                     });
         });
   };
-  var match$1 = Common.useLocalStorage("checked", undefined);
+  var match$1 = React.useState(function () {
+        
+      });
   var setChecked = match$1[1];
   var checked = match$1[0];
   var match$2 = Common.useLocalStorage("projectsTab", "All");
@@ -256,29 +258,33 @@ function App(props) {
   var setDisplayElement = match$4[1];
   var displayElement = match$4[0];
   var match$5 = React.useState(function () {
-        
+        return true;
       });
-  var setFocusClassNext = match$5[1];
-  var focusClassNext = match$5[0];
+  var setViewSettings = match$5[1];
   var match$6 = React.useState(function () {
         
       });
-  var setFocusIdNext = match$6[1];
-  var focusIdNext = match$6[0];
-  var aaParentRef = React.useRef(null);
-  var todosClickDelayTimeout = React.useRef(undefined);
+  var setFocusClassNext = match$6[1];
+  var focusClassNext = match$6[0];
   var match$7 = React.useState(function () {
         
       });
-  var setTodosOfDragHandle = match$7[1];
-  var todosOfDragHandle = match$7[0];
-  var todosLastRelative = React.useRef(undefined);
-  var projectClickDelayTimeout = React.useRef(undefined);
+  var setFocusIdNext = match$7[1];
+  var focusIdNext = match$7[0];
+  var aaParentRef = React.useRef(null);
+  var todosClickDelayTimeout = React.useRef(undefined);
   var match$8 = React.useState(function () {
         
       });
-  var setProjectOfDragHandle = match$8[1];
-  var projectOfDragHandle = match$8[0];
+  var setTodosOfDragHandle = match$8[1];
+  var todosOfDragHandle = match$8[0];
+  var todosLastRelative = React.useRef(undefined);
+  var projectClickDelayTimeout = React.useRef(undefined);
+  var match$9 = React.useState(function () {
+        
+      });
+  var setProjectOfDragHandle = match$9[1];
+  var projectOfDragHandle = match$9[0];
   var projectLastRelative = React.useRef(undefined);
   var onExportJson = function () {
     Core__Option.mapOr(JSON.stringify(projects.map(function (p) {
@@ -790,46 +796,72 @@ function App(props) {
         return p.hideAll;
       });
   var tmp;
-  if (displayElement !== undefined) {
-    if (displayElement.TAG === "Todo") {
-      var todoId = displayElement._0;
-      tmp = Core__Option.mapOr(Core__Array.reduce(projects, undefined, (function (a, c) {
-                  if (Core__Option.isSome(a)) {
-                    return a;
-                  } else {
-                    return Core__Option.map(c.todos.find(function (t) {
-                                    return t.id === todoId;
-                                  }), (function (v) {
-                                  return [
-                                          c,
-                                          v
-                                        ];
-                                }));
-                  }
-                })), null, (function (param) {
-              return JsxRuntime.jsx(DisplayTodo.make, {
-                          project: param[0],
-                          todo: param[1],
-                          setFocusIdNext: setFocusIdNext,
-                          updateTodo: updateTodo,
-                          deleteTodo: deleteTodo
-                        });
-            }));
+  if (Core__Option.isSome(displayElement) || Core__Option.isSome(selectedElement)) {
+    var tmp$1;
+    if (displayElement !== undefined) {
+      if (displayElement.TAG === "Todo") {
+        var todoId = displayElement._0;
+        tmp$1 = Core__Option.mapOr(Core__Array.reduce(projects, undefined, (function (a, c) {
+                    if (Core__Option.isSome(a)) {
+                      return a;
+                    } else {
+                      return Core__Option.map(c.todos.find(function (t) {
+                                      return t.id === todoId;
+                                    }), (function (v) {
+                                    return [
+                                            c,
+                                            v
+                                          ];
+                                  }));
+                    }
+                  })), null, (function (param) {
+                return JsxRuntime.jsx(DisplayTodo.make, {
+                            project: param[0],
+                            todo: param[1],
+                            setFocusIdNext: setFocusIdNext,
+                            updateTodo: updateTodo,
+                            deleteTodo: deleteTodo
+                          });
+              }));
+      } else {
+        var projectId = displayElement._0;
+        tmp$1 = Core__Option.mapOr(projects.find(function (p) {
+                  return p.id === projectId;
+                }), null, (function (project) {
+                return JsxRuntime.jsx(DisplayProject.make, {
+                            project: project,
+                            updateProject: updateProject,
+                            setProjects: setProjects,
+                            setTodos: setTodos
+                          });
+              }));
+      }
     } else {
-      var projectId = displayElement._0;
-      tmp = Core__Option.mapOr(projects.find(function (p) {
-                return p.id === projectId;
-              }), null, (function (project) {
-              return JsxRuntime.jsx(DisplayProject.make, {
-                          project: project,
-                          updateProject: updateProject,
-                          setProjects: setProjects,
-                          setTodos: setTodos
-                        });
-            }));
+      tmp$1 = null;
     }
+    tmp = JsxRuntime.jsx(React.Fragment, {
+          children: tmp$1
+        });
   } else {
-    tmp = null;
+    tmp = match$5[0] ? JsxRuntime.jsxs("div", {
+            children: [
+              JsxRuntime.jsx("div", {
+                    children: "Settings",
+                    className: "font-black text-lg"
+                  }),
+              JsxRuntime.jsx("button", {
+                    children: "Export",
+                    className: ["bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1 h-5 "].join(" "),
+                    onClick: (function (param) {
+                        onExportJson();
+                      })
+                  }),
+              JsxRuntime.jsx(make, {
+                    onImportJson: onImportJson
+                  })
+            ],
+            className: "px-3 py-2 flex flex-col gap-2 items-start"
+          }) : null;
   }
   return JsxRuntime.jsxs("div", {
               children: [
@@ -837,102 +869,95 @@ function App(props) {
                       children: [
                         JsxRuntime.jsxs("div", {
                               children: [
-                                JsxRuntime.jsx("img", {
-                                      className: "py-0.5 ",
-                                      src: logoUrl,
-                                      width: "24"
+                                JsxRuntime.jsx(App$CheckedSummary, {
+                                      checked: checked,
+                                      projects: projects,
+                                      setChecked: setChecked,
+                                      setProjects: setProjects
                                     }),
-                                JsxRuntime.jsx("div", {
-                                      className: "flex-1"
-                                    }),
-                                JsxRuntime.jsx("button", {
-                                      children: "Export",
-                                      className: ["bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1 h-5 "].join(" "),
-                                      onClick: (function (param) {
-                                          onExportJson();
-                                        })
-                                    }),
-                                JsxRuntime.jsx(make, {
-                                      onImportJson: onImportJson
-                                    }),
-                                JsxRuntime.jsxs("button", {
+                                JsxRuntime.jsxs("div", {
                                       children: [
-                                        JsxRuntime.jsx(Tb.TbPlus, {}),
-                                        "Project"
+                                        JsxRuntime.jsxs("button", {
+                                              children: [
+                                                JsxRuntime.jsx(Tb.TbPlus, {}),
+                                                "Project"
+                                              ],
+                                              className: ["bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1 h-5 "].join(" "),
+                                              onClick: (function (param) {
+                                                  var newProjectId = Uuid.v4();
+                                                  var newProject_todos = [];
+                                                  var newProject = {
+                                                    id: newProjectId,
+                                                    name: "",
+                                                    additionalText: "",
+                                                    isActive: true,
+                                                    todos: newProject_todos,
+                                                    hideArchived: false,
+                                                    hideAll: false,
+                                                    hiddenTodos: undefined
+                                                  };
+                                                  setProjects(function (v) {
+                                                        var relativeProject;
+                                                        if (displayElement !== undefined) {
+                                                          if (displayElement.TAG === "Todo") {
+                                                            var todoId = displayElement._0;
+                                                            relativeProject = Core__Array.reduce(v, undefined, (function (a, c) {
+                                                                    if (Core__Option.isSome(a)) {
+                                                                      return a;
+                                                                    } else if (Core__Option.isSome(c.todos.find(function (t) {
+                                                                                return t.id === todoId;
+                                                                              }))) {
+                                                                      return c.id;
+                                                                    } else {
+                                                                      return ;
+                                                                    }
+                                                                  }));
+                                                          } else {
+                                                            relativeProject = displayElement._0;
+                                                          }
+                                                        } else {
+                                                          relativeProject = undefined;
+                                                        }
+                                                        return Core__Option.mapOr(relativeProject, [newProject].concat(v), (function (relativeProject) {
+                                                                      return Core__Array.reduce(v, [], (function (a, c) {
+                                                                                    if (c.id === relativeProject) {
+                                                                                      return a.concat([c]).concat([newProject]);
+                                                                                    } else {
+                                                                                      return a.concat([c]);
+                                                                                    }
+                                                                                  }));
+                                                                    }));
+                                                      });
+                                                  setSelectedElement(function (param) {
+                                                        return {
+                                                                TAG: "Project",
+                                                                _0: newProjectId
+                                                              };
+                                                      });
+                                                  setDisplayElement(function (param) {
+                                                        return {
+                                                                TAG: "Project",
+                                                                _0: newProjectId
+                                                              };
+                                                      });
+                                                  setFocusIdNext(function (param) {
+                                                        return Types.getProjectInputId(newProjectId);
+                                                      });
+                                                })
+                                            }),
+                                        JsxRuntime.jsx("button", {
+                                              children: allProjectsHidden ? JsxRuntime.jsx(Tb.TbChevronDown, {}) : JsxRuntime.jsx(Tb.TbChevronUp, {}),
+                                              className: ["rounded flex flex-row items-center justify-center gap-1 h-5 w-5 "].join(" "),
+                                              onClick: (function (param) {
+                                                  setProjects(function (projects) {
+                                                        return projects.map(function (p) {
+                                                                    return handleHide(true, allProjectsHidden, p);
+                                                                  });
+                                                      });
+                                                })
+                                            })
                                       ],
-                                      className: ["bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1 h-5 "].join(" "),
-                                      onClick: (function (param) {
-                                          var newProjectId = Uuid.v4();
-                                          var newProject_todos = [];
-                                          var newProject = {
-                                            id: newProjectId,
-                                            name: "",
-                                            additionalText: "",
-                                            isActive: true,
-                                            todos: newProject_todos,
-                                            hideArchived: false,
-                                            hideAll: false,
-                                            hiddenTodos: undefined
-                                          };
-                                          setProjects(function (v) {
-                                                var relativeProject;
-                                                if (displayElement !== undefined) {
-                                                  if (displayElement.TAG === "Todo") {
-                                                    var todoId = displayElement._0;
-                                                    relativeProject = Core__Array.reduce(v, undefined, (function (a, c) {
-                                                            if (Core__Option.isSome(a)) {
-                                                              return a;
-                                                            } else if (Core__Option.isSome(c.todos.find(function (t) {
-                                                                        return t.id === todoId;
-                                                                      }))) {
-                                                              return c.id;
-                                                            } else {
-                                                              return ;
-                                                            }
-                                                          }));
-                                                  } else {
-                                                    relativeProject = displayElement._0;
-                                                  }
-                                                } else {
-                                                  relativeProject = undefined;
-                                                }
-                                                return Core__Option.mapOr(relativeProject, [newProject].concat(v), (function (relativeProject) {
-                                                              return Core__Array.reduce(v, [], (function (a, c) {
-                                                                            if (c.id === relativeProject) {
-                                                                              return a.concat([c]).concat([newProject]);
-                                                                            } else {
-                                                                              return a.concat([c]);
-                                                                            }
-                                                                          }));
-                                                            }));
-                                              });
-                                          setSelectedElement(function (param) {
-                                                return {
-                                                        TAG: "Project",
-                                                        _0: newProjectId
-                                                      };
-                                              });
-                                          setDisplayElement(function (param) {
-                                                return {
-                                                        TAG: "Project",
-                                                        _0: newProjectId
-                                                      };
-                                              });
-                                          setFocusIdNext(function (param) {
-                                                return Types.getProjectInputId(newProjectId);
-                                              });
-                                        })
-                                    }),
-                                JsxRuntime.jsx("button", {
-                                      children: allProjectsHidden ? JsxRuntime.jsx(Tb.TbChevronDown, {}) : JsxRuntime.jsx(Tb.TbChevronUp, {}),
-                                      className: ["rounded flex flex-row items-center justify-center gap-1 h-5 w-5 "].join(" "),
-                                      onClick: (function (param) {
-                                          setProjects(function (projects) {
-                                                return projects.map(function (p) {
-                                                            return handleHide(true, allProjectsHidden, p);
-                                                          });
-                                              });
-                                        })
+                                      className: "flex flex-row items-center justify-center gap-2"
                                     })
                               ],
                               className: "flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b px-2"
@@ -980,11 +1005,31 @@ function App(props) {
                     }),
                 JsxRuntime.jsxs("div", {
                       children: [
-                        JsxRuntime.jsx(App$CheckedSummary, {
-                              checked: checked,
-                              projects: projects,
-                              setChecked: setChecked,
-                              setProjects: setProjects
+                        JsxRuntime.jsxs("div", {
+                              children: [
+                                JsxRuntime.jsx("div", {
+                                      className: "flex-1"
+                                    }),
+                                JsxRuntime.jsx("button", {
+                                      children: JsxRuntime.jsx("img", {
+                                            className: "py-0.5 ",
+                                            src: logoUrl,
+                                            width: "24"
+                                          }),
+                                      onClick: (function (param) {
+                                          setViewSettings(function (param) {
+                                                return true;
+                                              });
+                                          setDisplayElement(function (param) {
+                                                
+                                              });
+                                          setSelectedElement(function (param) {
+                                                
+                                              });
+                                        })
+                                    })
+                              ],
+                              className: "flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b px-2"
                             }),
                         tmp
                       ],
