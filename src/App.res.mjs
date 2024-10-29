@@ -206,7 +206,7 @@ function App$CheckedSummary(props) {
   }
   return JsxRuntime.jsx("div", {
               children: tmp,
-              className: "flex-1 h-full text-sm border-r flex flex-row gap-2 items-center"
+              className: "flex-1 h-full text-sm border-r border-[var(--t3)] flex flex-row gap-2 items-center"
             });
 }
 
@@ -1023,7 +1023,7 @@ function App(props) {
                                       className: "flex flex-row items-center justify-center gap-2"
                                     })
                               ],
-                              className: "flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b px-2"
+                              className: "flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b border-[var(--t3)] px-2"
                             }),
                         JsxRuntime.jsx("ul", {
                               children: projects.filter(function (project) {
@@ -1092,14 +1092,14 @@ function App(props) {
                                         })
                                     })
                               ],
-                              className: "flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b px-2"
+                              className: "flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b border-[var(--t3)] px-2"
                             }),
                         tmp
                       ],
-                      className: " border-l flex-1"
+                      className: " border-l border-[var(--t3)] flex-1"
                     })
               ],
-              className: "flex flex-row h-dvh text-[var(--t9)]"
+              className: "flex flex-row h-dvh text-[var(--t9)] "
             });
 }
 

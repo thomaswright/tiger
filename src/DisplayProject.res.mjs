@@ -84,7 +84,7 @@ function DisplayProject(props) {
                                 })
                             })
                       ],
-                      className: "flex flex-row border-y items-center gap-3 p-1 px-2"
+                      className: "flex flex-row border-y border-[var(--t3)] items-center gap-3 p-1 px-2"
                     }),
                 JsxRuntime.jsx("div", {
                       children: JsxRuntime.jsx(ReactTextareaAutosize, {

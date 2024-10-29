@@ -152,7 +152,8 @@ module CheckedSummary = {
   ) => {
     let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
     let allTodos = Array.concatMany([], projects->Array.map(p => p.todos))
-    <div className="flex-1 h-full text-sm border-r flex flex-row gap-2 items-center">
+    <div
+      className="flex-1 h-full text-sm border-r border-[var(--t3)] flex flex-row gap-2 items-center">
       {if checked->SSet.size < 2 {
         React.null
       } else {
@@ -741,11 +742,11 @@ let make = () => {
   }
 
   let allProjectsHidden = projects->Array.every(p => p.hideAll)
-  <div className="flex flex-row h-dvh text-[var(--t9)]">
+  <div className="flex flex-row h-dvh text-[var(--t9)] ">
     // <StatusSelector />
     <div className="flex-1 h-full flex flex-col">
       <div
-        className="flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b px-2">
+        className="flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b border-[var(--t3)] px-2">
         // <img src={logoUrl} width={"24"} className="py-0.5 " />
         // <div className="flex flex-row gap-2 ">
         //   <div className="text-sm"> {"Show Inactive"->React.string} </div>
@@ -855,9 +856,9 @@ let make = () => {
         ->React.array}
       </ul>
     </div>
-    <div className=" border-l flex-1">
+    <div className=" border-l border-[var(--t3)] flex-1">
       <div
-        className="flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b px-2">
+        className="flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b border-[var(--t3)] px-2">
         <div className="flex-1" />
         <button
           onClick={_ => {

@@ -29,7 +29,7 @@ let make = (
         }}
       />
     </div>
-    <div className="flex flex-row border-y items-center gap-3 p-1 px-2">
+    <div className="flex flex-row border-y border-[var(--t3)] items-center gap-3 p-1 px-2">
       <button
         className="rounded bg-[var(--t2)] px-2 text-xs h-fit flex-none"
         onClick={_ =>

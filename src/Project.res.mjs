@@ -359,9 +359,9 @@ function Project$Todo(props) {
                                       className: [
                                           Types.todoInputClass,
                                           "mx-1 my-1 block text-sm font-medium  w-full h-5 border-0 px-0 py-0 focus:ring-0 focus:z-10\n                 text-[var(--t8)]",
-                                          stagedForDelete ? "bg-red-200 " : (
-                                              isChecked ? "bg-sky-50" : (
-                                                  isDisplayElement && !isSelected ? "bg-sky-200" : "bg-[var(--t0)]"
+                                          stagedForDelete ? "bg-red-200 dark:bg-red-950" : (
+                                              isChecked ? "bg-sky-50 dark:bg-sky-950" : (
+                                                  isDisplayElement && !isSelected ? "bg-sky-200 dark:bg-sky-900" : "bg-[var(--t0)]"
                                                 )
                                             )
                                         ].join(" "),
@@ -426,7 +426,7 @@ function Project$Todo(props) {
                                                 })
                                             }),
                                         JsxRuntime.jsx("input", {
-                                              className: ["border-gray-300 bg-[var(--t0)] rounded text-blue-400 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500"].join(" "),
+                                              className: ["border-[var(--t6)] bg-[var(--t0)] rounded text-blue-400 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500"].join(" "),
                                               checked: isChecked,
                                               type: "checkbox",
                                               onChange: (function (param) {
@@ -451,12 +451,13 @@ function Project$Todo(props) {
                       ],
                       className: [
                           "group flex flex-row justify-start items-center h-full flex-1 pl-1 rounded-sm",
-                          stagedForDelete ? "outline-red-700" : "focus-within:outline-purple-500 outline-blue-500",
-                          stagedForDelete ? "bg-red-200 " : (
-                              isChecked ? "bg-sky-50" : ""
+                          stagedForDelete ? "outline-red-700 dark:outline-red-500" : "focus-within:outline-purple-500 outline-blue-500 ",
+                          stagedForDelete ? "bg-red-200 dark:bg-red-950" : (
+                              isChecked ? "bg-sky-50 dark:bg-sky-950" : (
+                                  isDisplayElement && !isSelected ? "bg-sky-200 dark:bg-sky-900" : ""
+                                )
                             ),
-                          isSelected ? "outline outline-2 -outline-offset-2 " : "",
-                          isDisplayElement && !isSelected ? "bg-sky-200" : ""
+                          isSelected ? "outline outline-2 -outline-offset-2 " : ""
                         ].join(" ")
                     })
               ],

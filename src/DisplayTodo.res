@@ -37,7 +37,7 @@ let make = (~project: project, ~todo: todo, ~setFocusIdNext, ~updateTodo, ~delet
         }}
       />
     </div>
-    <div className="flex flex-row border-y items-center gap-3 p-1 px-2">
+    <div className="flex flex-row border-y border-[var(--t3)] items-center gap-3 p-1 px-2">
       <Common.StatusSelect
         isOpen={statusSelectIsOpen}
         // isPinned={todo.box == Pinned}
