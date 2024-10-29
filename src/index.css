@@ -6,14 +6,14 @@
 html {
   background-color: white;
   color: black;
-  --pinkBase: oklch(0.5 0.05 350);
+  --pinkBase: oklch(0.5 0.05 345);
   --purpleBase: oklch(0.5 0.05 310);
   --blueBase: oklch(0.5 0.05 270);
   --tealBase: oklch(0.5 0.05 210);
   --greenBase: oklch(0.5 0.05 150);
   --yellowBase: oklch(0.5 0.05 95);
-  --orangeBase: oklch(0.5 0.05 50);
-  --redBase: oklch(0.5 0.05 25);
+  --orangeBase: oklch(0.5 0.05 60);
+  --redBase: oklch(0.5 0.05 20);
 
   --tBase: var(--blueBase);
 
