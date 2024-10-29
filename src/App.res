@@ -906,6 +906,9 @@ let make = () => {
             <div className="font-bold text-sm"> {"Color"->React.string} </div>
             <div className="flex flex-row gap-2 py-1">
               {[
+                "var(--redBase)",
+                "var(--orangeBase)",
+                "var(--yellowBase)",
                 "var(--greenBase)",
                 "var(--tealBase)",
                 "var(--blueBase)",

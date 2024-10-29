@@ -877,6 +877,9 @@ function App(props) {
                           }),
                       JsxRuntime.jsx("div", {
                             children: [
+                                "var(--redBase)",
+                                "var(--orangeBase)",
+                                "var(--yellowBase)",
                                 "var(--greenBase)",
                                 "var(--tealBase)",
                                 "var(--blueBase)",
