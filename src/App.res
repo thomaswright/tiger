@@ -916,7 +916,9 @@ let make = () => {
                 <button
                   onClick={_ => setBaseColor(_ => v)}
                   style={{
-                    backgroundColor: `oklch(from ${v} 0.8 0.2 h)`,
+                    backgroundColor: theme == Dark
+                      ? `oklch(from ${v} 0.4 0.2 h)`
+                      : `oklch(from ${v} 0.8 0.2 h)`,
                   }}
                   className="h-6 w-6 rounded-full"
                 />

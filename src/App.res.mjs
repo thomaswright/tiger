@@ -289,6 +289,7 @@ function App(props) {
   var projectLastRelative = React.useRef(undefined);
   var match$10 = Theme.useTheme();
   var setTheme = match$10[1];
+  var theme = match$10[0];
   var match$11 = Common.useLocalStorage("baseColor", "--baseBlue");
   var setBaseColor = match$11[1];
   var baseColor = match$11[0];
@@ -885,7 +886,7 @@ function App(props) {
                                   return JsxRuntime.jsx("button", {
                                               className: "h-6 w-6 rounded-full",
                                               style: {
-                                                backgroundColor: "oklch(from " + v + " 0.8 0.2 h)"
+                                                backgroundColor: theme === "dark" ? "oklch(from " + v + " 0.4 0.2 h)" : "oklch(from " + v + " 0.8 0.2 h)"
                                               },
                                               onClick: (function (param) {
                                                   setBaseColor(function (param) {
