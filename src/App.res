@@ -811,7 +811,7 @@ let make = () => {
                 projects->Array.map(p => handleHide(true, Some(allProjectsHidden), p))
               )}
             className={[
-              "rounded flex flex-row items-center justify-center gap-1 h-5 w-5 ",
+              "rounded flex flex-row items-center justify-center gap-1 h-5 w-5 text-[var(--t6)] ",
             ]->Array.join(" ")}>
             {allProjectsHidden ? <Icons.ChevronDown /> : <Icons.ChevronUp />}
           </button>

@@ -1010,7 +1010,7 @@ function App(props) {
                                             }),
                                         JsxRuntime.jsx("button", {
                                               children: allProjectsHidden ? JsxRuntime.jsx(Tb.TbChevronDown, {}) : JsxRuntime.jsx(Tb.TbChevronUp, {}),
-                                              className: ["rounded flex flex-row items-center justify-center gap-1 h-5 w-5 "].join(" "),
+                                              className: ["rounded flex flex-row items-center justify-center gap-1 h-5 w-5 text-[var(--t6)] "].join(" "),
                                               onClick: (function (param) {
                                                   setProjects(function (projects) {
                                                         return projects.map(function (p) {
