@@ -9,8 +9,8 @@ let make = (~project: project, ~todo: todo, ~setFocusIdNext, ~updateTodo, ~delet
 
   let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
 
-  <div className="w-full">
-    <div className="w-full px-2 py-1">
+  <div className="w-full flex-1 overflow-y-scroll">
+    <div className=" w-full px-2 py-1">
       <Common.TextareaAutosize
         style={{
           resize: "none",

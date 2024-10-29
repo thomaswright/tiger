@@ -927,7 +927,7 @@ function App(props) {
                     className: "pt-2"
                   })
             ],
-            className: "px-3 py-2 flex flex-col gap-2 items-start"
+            className: "flex-1 overflow-y-scroll px-3 py-2 flex flex-col gap-2 items-start"
           }) : null;
   }
   return JsxRuntime.jsxs("div", {
@@ -1100,7 +1100,7 @@ function App(props) {
                             }),
                         tmp
                       ],
-                      className: " border-l border-[var(--t3)] flex-1"
+                      className: " border-l border-[var(--t3)] flex-1 flex flex-col"
                     })
               ],
               className: "flex flex-row h-dvh text-[var(--t9)] "

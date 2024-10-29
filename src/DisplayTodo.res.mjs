@@ -56,7 +56,7 @@ function DisplayTodo(props) {
                                       }));
                               })
                           }),
-                      className: "w-full px-2 py-1"
+                      className: " w-full px-2 py-1"
                     }),
                 JsxRuntime.jsxs("div", {
                       children: [
@@ -135,7 +135,7 @@ function DisplayTodo(props) {
                       className: "p-2"
                     })
               ],
-              className: "w-full"
+              className: "w-full flex-1 overflow-y-scroll"
             });
 }
 

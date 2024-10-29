@@ -856,7 +856,7 @@ let make = () => {
         ->React.array}
       </ul>
     </div>
-    <div className=" border-l border-[var(--t3)] flex-1">
+    <div className=" border-l border-[var(--t3)] flex-1 flex flex-col">
       <div
         className="flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b border-[var(--t3)] px-2">
         <div className="flex-1" />
@@ -892,7 +892,7 @@ let make = () => {
           }}
         </React.Fragment>
       } else if viewSettings {
-        <div className="px-3 py-2 flex flex-col gap-2 items-start">
+        <div className="flex-1 overflow-y-scroll px-3 py-2 flex flex-col gap-2 items-start">
           <div className="font-black text-lg"> {"Settings"->React.string} </div>
           <button
             onClick={_ => onExportJson()}
