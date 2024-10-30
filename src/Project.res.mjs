@@ -38,11 +38,16 @@ function Project$Todo(props) {
   var setStatusSelectIsOpen = match[1];
   var inputRef = React.useRef(null);
   var containerRef = React.useRef(null);
+  React.useRef(null);
   var match$1 = React.useState(function () {
         return false;
       });
-  var setStagedForDelete = match$1[1];
-  var stagedForDelete = match$1[0];
+  var setDatePickerOpen = match$1[1];
+  var match$2 = React.useState(function () {
+        return false;
+      });
+  var setStagedForDelete = match$2[1];
+  var stagedForDelete = match$2[0];
   var focusContainer = function () {
     Common.mapNullable(containerRef.current, (function (dom) {
             dom.focus();
@@ -82,7 +87,8 @@ function Project$Todo(props) {
                                     childNumber: t.childNumber,
                                     hasArchivedChildren: t.hasArchivedChildren,
                                     hasChildren: t.hasChildren,
-                                    ancArchived: t.ancArchived
+                                    ancArchived: t.ancArchived,
+                                    targetDate: t.targetDate
                                   };
                           } else if (Caml_obj.equal(t.parentTodo, todo.id)) {
                             return {
@@ -98,7 +104,8 @@ function Project$Todo(props) {
                                     childNumber: t.childNumber,
                                     hasArchivedChildren: t.hasArchivedChildren,
                                     hasChildren: t.hasChildren,
-                                    ancArchived: t.ancArchived
+                                    ancArchived: t.ancArchived,
+                                    targetDate: t.targetDate
                                   };
                           } else {
                             return t;
@@ -156,7 +163,8 @@ function Project$Todo(props) {
                                           childNumber: t.childNumber,
                                           hasArchivedChildren: t.hasArchivedChildren,
                                           hasChildren: t.hasChildren,
-                                          ancArchived: t.ancArchived
+                                          ancArchived: t.ancArchived,
+                                          targetDate: t.targetDate
                                         };
                                 } else if (newChildren.contents.includes(t.id)) {
                                   return {
@@ -170,7 +178,8 @@ function Project$Todo(props) {
                                           childNumber: t.childNumber,
                                           hasArchivedChildren: t.hasArchivedChildren,
                                           hasChildren: t.hasChildren,
-                                          ancArchived: t.ancArchived
+                                          ancArchived: t.ancArchived,
+                                          targetDate: t.targetDate
                                         };
                                 } else {
                                   return t;
@@ -321,7 +330,8 @@ function Project$Todo(props) {
                                                   childNumber: t.childNumber,
                                                   hasArchivedChildren: t.hasArchivedChildren,
                                                   hasChildren: t.hasChildren,
-                                                  ancArchived: t.ancArchived
+                                                  ancArchived: t.ancArchived,
+                                                  targetDate: t.targetDate
                                                 };
                                         }));
                                 }),
@@ -404,7 +414,8 @@ function Project$Todo(props) {
                                                           childNumber: t.childNumber,
                                                           hasArchivedChildren: t.hasArchivedChildren,
                                                           hasChildren: t.hasChildren,
-                                                          ancArchived: t.ancArchived
+                                                          ancArchived: t.ancArchived,
+                                                          targetDate: t.targetDate
                                                         };
                                                 }));
                                         })
@@ -447,6 +458,17 @@ function Project$Todo(props) {
                                     })
                               ],
                               className: ["relative flex-1 ml-1 flex flex-row h-full justify-start items-center "].join(" ")
+                            }),
+                        JsxRuntime.jsx("button", {
+                              children: Core__Option.mapOr(todo.targetDate, "", (function (targetDate) {
+                                      return targetDate.toDateString();
+                                    })),
+                              className: "w-12 h-6 rounded bg-[var(--t2)]",
+                              onClick: (function (param) {
+                                  setDatePickerOpen(function (v) {
+                                        return !v;
+                                      });
+                                })
                             })
                       ],
                       className: [
@@ -542,7 +564,8 @@ function Project(props) {
       childNumber: undefined,
       hasArchivedChildren: false,
       hasChildren: false,
-      ancArchived: false
+      ancArchived: false,
+      targetDate: undefined
     };
     setTodos(project.id, (function (todos) {
             if (after === undefined) {

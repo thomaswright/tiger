@@ -28,6 +28,8 @@ module Todo = {
     let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
     let inputRef = React.useRef(Nullable.null)
     let containerRef = React.useRef(Nullable.null)
+    let datePickerRef = React.useRef(Nullable.null)
+    let (datePickerOpen, setDatePickerOpen) = React.useState(() => false)
 
     let (stagedForDelete, setStagedForDelete) = React.useState(_ => false)
     let focusContainer = () => {
@@ -425,6 +427,19 @@ module Todo = {
             />
           </div>
         </div>
+        <button
+          onClick={_ => {
+            setDatePickerOpen(v => !v)
+            // datePickerRef.current->mapNullable(datePickerEl => {
+            //   Console.log("click")
+            //   datePickerEl->Obj.magic->HtmlFormElement.click
+            // })
+          }}
+          className="w-12 h-6 rounded bg-[var(--t2)]">
+          {todo.targetDate->Option.mapOr(""->React.string, targetDate => {
+            targetDate->Date.toDateString->React.string
+          })}
+        </button>
       </div>
     </li>
   }
@@ -476,6 +491,7 @@ let make = (
       hasArchivedChildren: false,
       hasChildren: false,
       ancArchived: false,
+      targetDate: None,
     }
 
     setTodos(project.id, todos => {

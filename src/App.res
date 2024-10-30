@@ -15,6 +15,7 @@ let defaultTodos = [
     hasArchivedChildren: false,
     hasChildren: false,
     ancArchived: false,
+    targetDate: None,
   },
   {
     text: "Do Something Else",
@@ -29,6 +30,7 @@ let defaultTodos = [
     hasArchivedChildren: false,
     hasChildren: false,
     ancArchived: false,
+    targetDate: None,
   },
 ]
 
@@ -305,6 +307,7 @@ let make = () => {
             hasArchivedChildren: false,
             hasChildren: false,
             ancArchived: false,
+            targetDate: None,
           },
         ),
         hiddenTodos: jsonProject["hiddenTodos"]->SMap.fromArray,

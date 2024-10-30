@@ -35,6 +35,10 @@ var ChevronDown = {};
 
 var ChevronUp = {};
 
+var ArrowLeft = {};
+
+var ArrowRight = {};
+
 export {
   EyeClosed ,
   Eye ,
@@ -53,5 +57,7 @@ export {
   SquarePlus ,
   ChevronDown ,
   ChevronUp ,
+  ArrowLeft ,
+  ArrowRight ,
 }
 /* No side effect */

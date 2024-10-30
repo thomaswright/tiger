@@ -51,7 +51,8 @@ function DisplayTodo(props) {
                                                 childNumber: t.childNumber,
                                                 hasArchivedChildren: t.hasArchivedChildren,
                                                 hasChildren: t.hasChildren,
-                                                ancArchived: t.ancArchived
+                                                ancArchived: t.ancArchived,
+                                                targetDate: t.targetDate
                                               };
                                       }));
                               })
@@ -75,7 +76,8 @@ function DisplayTodo(props) {
                                                   childNumber: t.childNumber,
                                                   hasArchivedChildren: t.hasArchivedChildren,
                                                   hasChildren: t.hasChildren,
-                                                  ancArchived: t.ancArchived
+                                                  ancArchived: t.ancArchived,
+                                                  targetDate: t.targetDate
                                                 };
                                         }));
                                 }),
@@ -127,7 +129,8 @@ function DisplayTodo(props) {
                                                 childNumber: t.childNumber,
                                                 hasArchivedChildren: t.hasArchivedChildren,
                                                 hasChildren: t.hasChildren,
-                                                ancArchived: t.ancArchived
+                                                ancArchived: t.ancArchived,
+                                                targetDate: t.targetDate
                                               };
                                       }));
                               })

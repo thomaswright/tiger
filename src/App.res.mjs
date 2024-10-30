@@ -35,7 +35,8 @@ var defaultTodos = [
     childNumber: undefined,
     hasArchivedChildren: false,
     hasChildren: false,
-    ancArchived: false
+    ancArchived: false,
+    targetDate: undefined
   },
   {
     id: "2",
@@ -48,7 +49,8 @@ var defaultTodos = [
     childNumber: undefined,
     hasArchivedChildren: false,
     hasChildren: false,
-    ancArchived: false
+    ancArchived: false,
+    targetDate: undefined
   }
 ];
 
@@ -108,7 +110,8 @@ function buildTodoTree(input) {
                                     childNumber: i,
                                     hasArchivedChildren: Belt_MapString.getWithDefault(parentAggs, todo.id, false),
                                     hasChildren: Belt_MapString.getWithDefault(parentMap, todo.id, []).length > 0,
-                                    ancArchived: ancArchived
+                                    ancArchived: ancArchived,
+                                    targetDate: todo.targetDate
                                   }]), todo.id, ancArchived || todo.status === "ArchiveNo" || todo.status === "ArchiveDone", depth + 1 | 0);
                 }));
   };
@@ -165,7 +168,8 @@ function App$CheckedSummary(props) {
                                                                 childNumber: t.childNumber,
                                                                 hasArchivedChildren: t.hasArchivedChildren,
                                                                 hasChildren: t.hasChildren,
-                                                                ancArchived: t.ancArchived
+                                                                ancArchived: t.ancArchived,
+                                                                targetDate: t.targetDate
                                                               };
                                                       } else {
                                                         return t;
@@ -335,7 +339,8 @@ function App(props) {
                                             childNumber: undefined,
                                             hasArchivedChildren: false,
                                             hasChildren: false,
-                                            ancArchived: false
+                                            ancArchived: false,
+                                            targetDate: undefined
                                           };
                                   }),
                               hideArchived: jsonProject.hiddenTodos.length > 0,
@@ -454,7 +459,8 @@ function App(props) {
                                         childNumber: t.childNumber,
                                         hasArchivedChildren: t.hasArchivedChildren,
                                         hasChildren: t.hasChildren,
-                                        ancArchived: t.ancArchived
+                                        ancArchived: t.ancArchived,
+                                        targetDate: t.targetDate
                                       };
                               });
                   };
@@ -522,7 +528,8 @@ function App(props) {
                                                       childNumber: t.childNumber,
                                                       hasArchivedChildren: t.hasArchivedChildren,
                                                       hasChildren: t.hasChildren,
-                                                      ancArchived: t.ancArchived
+                                                      ancArchived: t.ancArchived,
+                                                      targetDate: t.targetDate
                                                     };
                                             }),
                                         hideArchived: p$1.hideArchived,
@@ -552,7 +559,8 @@ function App(props) {
                                                             childNumber: t.childNumber,
                                                             hasArchivedChildren: t.hasArchivedChildren,
                                                             hasChildren: t.hasChildren,
-                                                            ancArchived: t.ancArchived
+                                                            ancArchived: t.ancArchived,
+                                                            targetDate: t.targetDate
                                                           };
                                                   }), undefined),
                                           hideArchived: p$1.hideArchived,
@@ -590,7 +598,8 @@ function App(props) {
                                                         childNumber: t.childNumber,
                                                         hasArchivedChildren: t.hasArchivedChildren,
                                                         hasChildren: t.hasChildren,
-                                                        ancArchived: t.ancArchived
+                                                        ancArchived: t.ancArchived,
+                                                        targetDate: t.targetDate
                                                       };
                                               }), lastTodo.parentTodo),
                                       hideArchived: p$1.hideArchived,
@@ -690,7 +699,8 @@ function App(props) {
                                   childNumber: t.childNumber,
                                   hasArchivedChildren: t.hasArchivedChildren,
                                   hasChildren: t.hasChildren,
-                                  ancArchived: t.ancArchived
+                                  ancArchived: t.ancArchived,
+                                  targetDate: t.targetDate
                                 };
                         } else {
                           return t;
