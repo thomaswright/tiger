@@ -16,11 +16,13 @@ let isFirstDayOfMonth = date => {
   DateFns.isSameDay(DateFns.startOfMonth(date), date)
 }
 
+// Todo: focusTodo on escape
+
 @react.component
 let make = (~onClick, ~value: option<Js.Date.t>) => {
-  Console.log(value)
-  let valueString = value->Option.mapOr("", x => x->Date.toString)
+  let now = Date.make()
 
+  let valueString = value->Option.mapOr("", x => x->Date.toString)
   let defaultStartAdj = 1
   let defaultEndAdj = 3
   let defaultWindowAdj = defaultStartAdj + defaultEndAdj
@@ -29,7 +31,12 @@ let make = (~onClick, ~value: option<Js.Date.t>) => {
     defaultEndAdj,
   ))
 
-  let centerDate = Js.Date.make()
+  let centerDate = value->Option.mapOr(Js.Date.make(), v => {
+    v->DateFns.isAfter(DateFns.startOfMonth(DateFns.addMonths(Js.Date.make(), startAdj))) ||
+      v->DateFns.isBefore(DateFns.endOfMonth(DateFns.addMonths(Js.Date.make(), endAdj)))
+      ? v
+      : Js.Date.make()
+  })
 
   let start = DateFns.startOfMonth(DateFns.addMonths(centerDate, startAdj))
   let end_ = DateFns.endOfMonth(DateFns.addMonths(centerDate, endAdj))
@@ -103,6 +110,7 @@ let make = (~onClick, ~value: option<Js.Date.t>) => {
               let className =
                 [
                   " text-2xs flex items-center justify-center hover:bg-blue-100 cursor-default border-r first:border-l h-7 ",
+                  DateFns.isSameDay(day_, now) ? "text-red-500 font-bold" : "",
                   isValue ? "bg-blue-200" : "",
                   mod(day_->DateFns.getMonth, 2) == 0 ? "" : "",
                   day_->DateFns.getDate > day_->DateFns.getDaysInMonth - 7
