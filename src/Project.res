@@ -427,7 +427,14 @@ module Todo = {
             />
           </div>
         </div>
-        <Common.DateSelect value={todo.targetDate} onClick={newDate => Console.log(newDate)} />
+        <Common.DateSelect
+          value={todo.targetDate->Option.map(Date.fromString)}
+          onClick={newDate =>
+            updateTodo(project.id, todo.id, t => {
+              ...t,
+              targetDate: newDate->Option.map(Date.toString),
+            })}
+        />
         // <button
         //   onClick={_ => {
         //     setDatePickerOpen(v => !v)

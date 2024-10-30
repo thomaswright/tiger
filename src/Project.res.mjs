@@ -459,9 +459,28 @@ function Project$Todo(props) {
                               className: ["relative flex-1 ml-1 flex flex-row h-full justify-start items-center "].join(" ")
                             }),
                         JsxRuntime.jsx(Common.DateSelect.make, {
-                              value: todo.targetDate,
+                              value: Core__Option.map(todo.targetDate, (function (prim) {
+                                      return new Date(prim);
+                                    })),
                               onClick: (function (newDate) {
-                                  console.log(newDate);
+                                  updateTodo(project.id, todo.id, (function (t) {
+                                          return {
+                                                  id: t.id,
+                                                  text: t.text,
+                                                  additionalText: t.additionalText,
+                                                  project: t.project,
+                                                  status: t.status,
+                                                  parentTodo: t.parentTodo,
+                                                  depth: t.depth,
+                                                  childNumber: t.childNumber,
+                                                  hasArchivedChildren: t.hasArchivedChildren,
+                                                  hasChildren: t.hasChildren,
+                                                  ancArchived: t.ancArchived,
+                                                  targetDate: Core__Option.map(newDate, (function (prim) {
+                                                          return prim.toString();
+                                                        }))
+                                                };
+                                        }));
                                 })
                             })
                       ],

@@ -46,9 +46,11 @@ function isFirstDayOfMonth(date) {
 }
 
 function Calendar(props) {
+  var value = props.value;
   var onClick = props.onClick;
-  var valueDateString = Core__Option.mapOr(props.value, "", (function (x) {
-          return x.toDateString();
+  console.log(value);
+  var valueString = Core__Option.mapOr(value, "", (function (x) {
+          return x.toString();
         }));
   var defaultWindowAdj = 4;
   var match = React.useState(function () {
@@ -150,10 +152,10 @@ function Calendar(props) {
                                                           });
                                               }
                                               var day_ = Caml_option.valFromOption(day);
-                                              var isValue = day_.toDateString() === valueDateString;
+                                              var isValue = day_.toString() === valueString;
                                               var className = [
                                                   " text-2xs flex items-center justify-center hover:bg-blue-100 cursor-default border-r first:border-l h-7 ",
-                                                  isValue ? "bg-amber-200" : "",
+                                                  isValue ? "bg-blue-200" : "",
                                                   (GetMonth(day_) % 2 === 0, ""),
                                                   GetDate(day_) > (GetDaysInMonth(day_) - 7 | 0) ? "border-b border-b-black" : "border-b",
                                                   GetDate(day_) === GetDaysInMonth(day_) && GetDay(day_) !== 6 ? "border-r-black" : "",

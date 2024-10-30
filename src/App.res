@@ -259,6 +259,24 @@ let make = () => {
 
   let (baseColor, setBaseColor, _) = Common.useLocalStorage("baseColor", "--baseBlue")
 
+  // React.useEffect0(() => {
+  //   setProjects(projects =>
+  //     projects->Array.map(
+  //       p => {
+  //         ...p,
+  //         todos: p.todos->Array.map(
+  //           t => {
+  //             ...t,
+  //             targetDate: None,
+  //           },
+  //         ),
+  //       },
+  //     )
+  //   )
+
+  //   None
+  // })
+
   React.useEffect1(() => {
     Common.setRootStyleProperty("--tBase", baseColor)
 

@@ -31,7 +31,7 @@ type todo = {
   hasArchivedChildren: bool,
   hasChildren: bool,
   ancArchived: bool,
-  targetDate: option<Date.t>,
+  targetDate: option<string>,
 }
 
 type project = {
