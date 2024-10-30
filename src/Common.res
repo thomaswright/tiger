@@ -33,6 +33,12 @@ module StatusSelect = {
   ) => React.element = "default"
 }
 
+module DateSelect = {
+  @react.component @module("./DateSelect.jsx")
+  external make: (~value: option<Date.t>, ~onClick: option<Date.t> => unit) => React.element =
+    "default"
+}
+
 let mapNullable = (n, f) =>
   n
   ->Nullable.toOption

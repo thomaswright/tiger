@@ -47,6 +47,9 @@ function isFirstDayOfMonth(date) {
 
 function Calendar(props) {
   var onClick = props.onClick;
+  var valueDateString = Core__Option.mapOr(props.value, "", (function (x) {
+          return x.toDateString();
+        }));
   var defaultWindowAdj = 4;
   var match = React.useState(function () {
         return [
@@ -147,8 +150,10 @@ function Calendar(props) {
                                                           });
                                               }
                                               var day_ = Caml_option.valFromOption(day);
+                                              var isValue = day_.toDateString() === valueDateString;
                                               var className = [
                                                   " text-2xs flex items-center justify-center hover:bg-blue-100 cursor-default border-r first:border-l h-7 ",
+                                                  isValue ? "bg-amber-200" : "",
                                                   (GetMonth(day_) % 2 === 0, ""),
                                                   GetDate(day_) > (GetDaysInMonth(day_) - 7 | 0) ? "border-b border-b-black" : "border-b",
                                                   GetDate(day_) === GetDaysInMonth(day_) && GetDay(day_) !== 6 ? "border-r-black" : "",
@@ -188,10 +193,13 @@ function Calendar(props) {
 
 var make = Calendar;
 
+var $$default = Calendar;
+
 export {
   getFirstSome ,
   isFirstInstanceOfDay ,
   isFirstDayOfMonth ,
   make ,
+  $$default as default,
 }
 /* react Not a pure module */

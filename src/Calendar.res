@@ -18,6 +18,8 @@ let isFirstDayOfMonth = date => {
 
 @react.component
 let make = (~onClick, ~value: option<Js.Date.t>) => {
+  let valueDateString = value->Option.mapOr("", x => x->Date.toDateString)
+
   let defaultStartAdj = 1
   let defaultEndAdj = 3
   let defaultWindowAdj = defaultStartAdj + defaultEndAdj
@@ -96,9 +98,11 @@ let make = (~onClick, ~value: option<Js.Date.t>) => {
             switch day {
             | None => <div className=""> {""->React.string} </div>
             | Some(day_) =>
+              let isValue = day_->Date.toDateString == valueDateString
               let className =
                 [
                   " text-2xs flex items-center justify-center hover:bg-blue-100 cursor-default border-r first:border-l h-7 ",
+                  isValue ? "bg-amber-200" : "",
                   mod(day_->DateFns.getMonth, 2) == 0 ? "" : "",
                   day_->DateFns.getDate > day_->DateFns.getDaysInMonth - 7
                     ? "border-b border-b-black"
@@ -112,6 +116,7 @@ let make = (~onClick, ~value: option<Js.Date.t>) => {
                     ? "border-l border-l-black"
                     : "",
                 ]->Array.join(" ")
+
               <React.Fragment>
                 <div key={day_->DateFns.formatISO ++ "day"} onClick={_ => onClick(day_)} className>
                   {day_->DateFns.format("d")->React.string}
@@ -134,3 +139,5 @@ let make = (~onClick, ~value: option<Js.Date.t>) => {
     {shifter}
   </div>
 }
+
+let default = make

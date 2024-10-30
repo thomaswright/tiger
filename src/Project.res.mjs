@@ -39,15 +39,14 @@ function Project$Todo(props) {
   var inputRef = React.useRef(null);
   var containerRef = React.useRef(null);
   React.useRef(null);
+  React.useState(function () {
+        return false;
+      });
   var match$1 = React.useState(function () {
         return false;
       });
-  var setDatePickerOpen = match$1[1];
-  var match$2 = React.useState(function () {
-        return false;
-      });
-  var setStagedForDelete = match$2[1];
-  var stagedForDelete = match$2[0];
+  var setStagedForDelete = match$1[1];
+  var stagedForDelete = match$1[0];
   var focusContainer = function () {
     Common.mapNullable(containerRef.current, (function (dom) {
             dom.focus();
@@ -459,15 +458,10 @@ function Project$Todo(props) {
                               ],
                               className: ["relative flex-1 ml-1 flex flex-row h-full justify-start items-center "].join(" ")
                             }),
-                        JsxRuntime.jsx("button", {
-                              children: Core__Option.mapOr(todo.targetDate, "", (function (targetDate) {
-                                      return targetDate.toDateString();
-                                    })),
-                              className: "w-12 h-6 rounded bg-[var(--t2)]",
-                              onClick: (function (param) {
-                                  setDatePickerOpen(function (v) {
-                                        return !v;
-                                      });
+                        JsxRuntime.jsx(Common.DateSelect.make, {
+                              value: todo.targetDate,
+                              onClick: (function (newDate) {
+                                  console.log(newDate);
                                 })
                             })
                       ],

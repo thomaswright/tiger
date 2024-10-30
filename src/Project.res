@@ -427,19 +427,20 @@ module Todo = {
             />
           </div>
         </div>
-        <button
-          onClick={_ => {
-            setDatePickerOpen(v => !v)
-            // datePickerRef.current->mapNullable(datePickerEl => {
-            //   Console.log("click")
-            //   datePickerEl->Obj.magic->HtmlFormElement.click
-            // })
-          }}
-          className="w-12 h-6 rounded bg-[var(--t2)]">
-          {todo.targetDate->Option.mapOr(""->React.string, targetDate => {
-            targetDate->Date.toDateString->React.string
-          })}
-        </button>
+        <Common.DateSelect value={todo.targetDate} onClick={newDate => Console.log(newDate)} />
+        // <button
+        //   onClick={_ => {
+        //     setDatePickerOpen(v => !v)
+        //     // datePickerRef.current->mapNullable(datePickerEl => {
+        //     //   Console.log("click")
+        //     //   datePickerEl->Obj.magic->HtmlFormElement.click
+        //     // })
+        //   }}
+        //   className="w-12 h-6 rounded bg-[var(--t2)]">
+        //   {todo.targetDate->Option.mapOr(""->React.string, targetDate => {
+        //     targetDate->Date.toDateString->React.string
+        //   })}
+        // </button>
       </div>
     </li>
   }

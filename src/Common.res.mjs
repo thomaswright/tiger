@@ -4,6 +4,7 @@ import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
 import * as OtherJs from "./other.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
+import DateSelectJsx from "./DateSelect.jsx";
 import StatusSelectJsx from "./StatusSelect.jsx";
 import * as UseLocalStorageJs from "./useLocalStorage.js";
 import UseLocalStorageJs$1 from "./useLocalStorage.js";
@@ -30,6 +31,12 @@ var StatusSelect = {
   make: make
 };
 
+var make$1 = DateSelectJsx;
+
+var DateSelect = {
+  make: make$1
+};
+
 function mapNullable(n, f) {
   Core__Option.mapOr((n == null) ? undefined : Caml_option.some(n), undefined, f);
 }
@@ -52,6 +59,7 @@ export {
   focusPreviousClass ,
   focusNextClass ,
   StatusSelect ,
+  DateSelect ,
   mapNullable ,
   arrayToggle ,
   TextareaAutosize ,
