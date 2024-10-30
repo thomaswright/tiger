@@ -481,7 +481,8 @@ function Project$Todo(props) {
                                                         }))
                                                 };
                                         }));
-                                })
+                                }),
+                              className: "mr-1 ml-1"
                             })
                       ],
                       className: [

@@ -50,9 +50,6 @@ function Calendar(props) {
   var value = props.value;
   var onClick = props.onClick;
   var now = new Date();
-  var valueString = Core__Option.mapOr(value, "", (function (x) {
-          return x.toString();
-        }));
   var defaultWindowAdj = 4;
   var match = React.useState(function () {
         return [
@@ -161,7 +158,9 @@ function Calendar(props) {
                                                           });
                                               }
                                               var day_ = Caml_option.valFromOption(day);
-                                              var isValue = day_.toString() === valueString;
+                                              var isValue = Core__Option.mapOr(value, false, (function (value) {
+                                                      return IsSameDay(day_, value);
+                                                    }));
                                               var className = [
                                                   " text-2xs flex items-center justify-center hover:bg-blue-100 cursor-default border-r first:border-l h-7 ",
                                                   IsSameDay(day_, now) ? "text-red-500 font-bold" : "",

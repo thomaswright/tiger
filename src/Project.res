@@ -428,6 +428,7 @@ module Todo = {
           </div>
         </div>
         <Common.DateSelect
+          className="mr-1 ml-1"
           value={todo.targetDate->Option.map(Date.fromString)}
           onClick={newDate =>
             updateTodo(project.id, todo.id, t => {

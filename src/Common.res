@@ -35,8 +35,11 @@ module StatusSelect = {
 
 module DateSelect = {
   @react.component @module("./DateSelect.jsx")
-  external make: (~value: option<Date.t>, ~onClick: option<Date.t> => unit) => React.element =
-    "default"
+  external make: (
+    ~value: option<Date.t>,
+    ~onClick: option<Date.t> => unit,
+    ~className: string,
+  ) => React.element = "default"
 }
 
 let mapNullable = (n, f) =>

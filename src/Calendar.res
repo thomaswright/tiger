@@ -21,8 +21,6 @@ let isFirstDayOfMonth = date => {
 @react.component
 let make = (~onClick, ~value: option<Js.Date.t>) => {
   let now = Date.make()
-
-  let valueString = value->Option.mapOr("", x => x->Date.toString)
   let defaultStartAdj = 1
   let defaultEndAdj = 3
   let defaultWindowAdj = defaultStartAdj + defaultEndAdj
@@ -106,7 +104,7 @@ let make = (~onClick, ~value: option<Js.Date.t>) => {
             switch day {
             | None => <div className=""> {""->React.string} </div>
             | Some(day_) =>
-              let isValue = day_->Date.toString == valueString
+              let isValue = value->Option.mapOr(false, value => DateFns.isSameDay(day_, value))
               let className =
                 [
                   " text-2xs flex items-center justify-center hover:bg-blue-100 cursor-default border-r first:border-l h-7 ",
