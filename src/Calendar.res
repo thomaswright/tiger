@@ -18,6 +18,20 @@ let isFirstDayOfMonth = date => {
 
 // Todo: focusTodo on escape
 
+@send
+external scrollIntoView: (Dom.element, {"behavior": string, "block": string}) => unit =
+  "scrollIntoView"
+
+@val @scope("document")
+external getElementById: string => Js.Nullable.t<Dom.element> = "getElementById"
+
+let getElementByIdOp = s =>
+  s
+  ->getElementById
+  ->Js.Nullable.toOption
+
+let calDateId = v => "cal-date-" ++ v->DateFns.format("y-MM-dd")
+
 @react.component
 let make = (~onClick, ~value: option<Js.Date.t>) => {
   let now = Date.make()
@@ -28,6 +42,23 @@ let make = (~onClick, ~value: option<Js.Date.t>) => {
     defaultStartAdj * -1,
     defaultEndAdj,
   ))
+
+  React.useEffect0(() => {
+    Console.log("load")
+    value
+    ->Option.getOr(now)
+    ->calDateId
+    ->getElementByIdOp
+    ->Option.mapOr((), element => {
+      Console.log("scroll")
+      element->scrollIntoView({
+        "behavior": "smooth",
+        "block": "start",
+      })
+    })
+
+    None
+  })
 
   let centerDate = value->Option.mapOr(Js.Date.make(), v => {
     v->DateFns.isAfter(DateFns.startOfMonth(DateFns.addMonths(Js.Date.make(), startAdj))) ||
@@ -108,7 +139,7 @@ let make = (~onClick, ~value: option<Js.Date.t>) => {
               let className =
                 [
                   " text-2xs flex items-center justify-center hover:bg-blue-100 cursor-default border-r first:border-l h-7 ",
-                  DateFns.isSameDay(day_, now) ? "text-red-500 font-bold" : "",
+                  DateFns.isSameDay(day_, now) ? " text-red-500 font-bold" : "",
                   isValue ? "bg-blue-200" : "",
                   mod(day_->DateFns.getMonth, 2) == 0 ? "" : "",
                   day_->DateFns.getDate > day_->DateFns.getDaysInMonth - 7
@@ -125,7 +156,11 @@ let make = (~onClick, ~value: option<Js.Date.t>) => {
                 ]->Array.join(" ")
 
               <React.Fragment>
-                <div key={day_->DateFns.formatISO ++ "day"} onClick={_ => onClick(day_)} className>
+                <div
+                  id={calDateId(day_)}
+                  key={day_->DateFns.formatISO ++ "day"}
+                  onClick={_ => onClick(day_)}
+                  className>
                   {day_->DateFns.format("d")->React.string}
                 </div>
                 {day_->DateFns.getDate == 15

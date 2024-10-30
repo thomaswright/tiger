@@ -419,6 +419,32 @@ function Project$Todo(props) {
                                                 }));
                                         })
                                     }),
+                                JsxRuntime.jsx(Common.DateSelect.make, {
+                                      value: Core__Option.map(todo.targetDate, (function (prim) {
+                                              return new Date(prim);
+                                            })),
+                                      onClick: (function (newDate) {
+                                          updateTodo(project.id, todo.id, (function (t) {
+                                                  return {
+                                                          id: t.id,
+                                                          text: t.text,
+                                                          additionalText: t.additionalText,
+                                                          project: t.project,
+                                                          status: t.status,
+                                                          parentTodo: t.parentTodo,
+                                                          depth: t.depth,
+                                                          childNumber: t.childNumber,
+                                                          hasArchivedChildren: t.hasArchivedChildren,
+                                                          hasChildren: t.hasChildren,
+                                                          ancArchived: t.ancArchived,
+                                                          targetDate: Core__Option.map(newDate, (function (prim) {
+                                                                  return prim.toString();
+                                                                }))
+                                                        };
+                                                }));
+                                        }),
+                                      className: "mr-1 ml-1"
+                                    }),
                                 JsxRuntime.jsxs("div", {
                                       children: [
                                         JsxRuntime.jsx("div", {
@@ -426,13 +452,6 @@ function Project$Todo(props) {
                                               className: " w-4 h-4 text-[var(--t6)] hidden group-hover:block bg-[var(--t0)] rounded-sm 0 ",
                                               onMouseDown: (function (e) {
                                                   itemToMoveHandleMouseDown(todo.id, e);
-                                                })
-                                            }),
-                                        JsxRuntime.jsx("button", {
-                                              children: JsxRuntime.jsx(Tb.TbPlus, {}),
-                                              className: ["w-4 h-4 flex-row items-center justify-center cursor-default \n                hidden group-hover:flex rounded-sm text-sm text-[var(--t6)]  bg-[var(--t0)] "].join(" "),
-                                              onClick: (function (param) {
-                                                  newTodoAfter(todo.id, todo.id);
                                                 })
                                             }),
                                         JsxRuntime.jsx("input", {
@@ -451,38 +470,12 @@ function Project$Todo(props) {
                                             })
                                       ],
                                       className: [
-                                          "cursor-default absolute right-0 flex-row items-center gap-1.5 pr-1.5  h-full\n              \n              ",
+                                          "cursor-default absolute right-10 flex-row items-center gap-1.5 pr-1.5  h-full",
                                           isChecked ? "flex" : " hidden group-hover:flex"
                                         ].join(" ")
                                     })
                               ],
                               className: ["relative flex-1 ml-1 flex flex-row h-full justify-start items-center "].join(" ")
-                            }),
-                        JsxRuntime.jsx(Common.DateSelect.make, {
-                              value: Core__Option.map(todo.targetDate, (function (prim) {
-                                      return new Date(prim);
-                                    })),
-                              onClick: (function (newDate) {
-                                  updateTodo(project.id, todo.id, (function (t) {
-                                          return {
-                                                  id: t.id,
-                                                  text: t.text,
-                                                  additionalText: t.additionalText,
-                                                  project: t.project,
-                                                  status: t.status,
-                                                  parentTodo: t.parentTodo,
-                                                  depth: t.depth,
-                                                  childNumber: t.childNumber,
-                                                  hasArchivedChildren: t.hasArchivedChildren,
-                                                  hasChildren: t.hasChildren,
-                                                  ancArchived: t.ancArchived,
-                                                  targetDate: Core__Option.map(newDate, (function (prim) {
-                                                          return prim.toString();
-                                                        }))
-                                                };
-                                        }));
-                                }),
-                              className: "mr-1 ml-1"
                             })
                       ],
                       className: [

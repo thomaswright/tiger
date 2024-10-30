@@ -391,11 +391,18 @@ module Todo = {
               })
             }}
           />
+          <Common.DateSelect
+            className="mr-1 ml-1"
+            value={todo.targetDate->Option.map(Date.fromString)}
+            onClick={newDate =>
+              updateTodo(project.id, todo.id, t => {
+                ...t,
+                targetDate: newDate->Option.map(Date.toString),
+              })}
+          />
           <div
             className={[
-              "cursor-default absolute right-0 flex-row items-center gap-1.5 pr-1.5  h-full
-              
-              ",
+              "cursor-default absolute right-10 flex-row items-center gap-1.5 pr-1.5  h-full",
               isChecked ? "flex" : " hidden group-hover:flex",
             ]->Array.join(" ")}>
             <div
@@ -403,16 +410,16 @@ module Todo = {
               className={" w-4 h-4 text-[var(--t6)] hidden group-hover:block bg-[var(--t0)] rounded-sm 0 "}>
               <Icons.DragDrop />
             </div>
-            <button
-              className={[
-                "w-4 h-4 flex-row items-center justify-center cursor-default 
-                hidden group-hover:flex rounded-sm text-sm text-[var(--t6)]  bg-[var(--t0)] ",
-              ]->Array.join(" ")}
-              onClick={_ => {
-                newTodoAfter(Some(todo.id), Some(todo.id))
-              }}>
-              <Icons.Plus />
-            </button>
+            // <button
+            //   className={[
+            //     "w-4 h-4 flex-row items-center justify-center cursor-default
+            //     hidden group-hover:flex rounded-sm text-sm text-[var(--t6)]  bg-[var(--t0)] ",
+            //   ]->Array.join(" ")}
+            //   onClick={_ => {
+            //     newTodoAfter(Some(todo.id), Some(todo.id))
+            //   }}>
+            //   <Icons.Plus />
+            // </button>
             <input
               onChange={_ => {
                 setChecked(v =>
@@ -427,15 +434,7 @@ module Todo = {
             />
           </div>
         </div>
-        <Common.DateSelect
-          className="mr-1 ml-1"
-          value={todo.targetDate->Option.map(Date.fromString)}
-          onClick={newDate =>
-            updateTodo(project.id, todo.id, t => {
-              ...t,
-              targetDate: newDate->Option.map(Date.toString),
-            })}
-        />
+
         // <button
         //   onClick={_ => {
         //     setDatePickerOpen(v => !v)

@@ -46,6 +46,14 @@ function isFirstDayOfMonth(date) {
   return IsSameDay(StartOfMonth(date), date);
 }
 
+function getElementByIdOp(s) {
+  return Caml_option.nullable_to_opt(document.getElementById(s));
+}
+
+function calDateId(v) {
+  return "cal-date-" + Format(v, "y-MM-dd");
+}
+
 function Calendar(props) {
   var value = props.value;
   var onClick = props.onClick;
@@ -61,6 +69,17 @@ function Calendar(props) {
   var match$1 = match[0];
   var endAdj = match$1[1];
   var startAdj = match$1[0];
+  React.useEffect((function () {
+          console.log("load");
+          var s = calDateId(Core__Option.getOr(value, now));
+          Core__Option.mapOr(Caml_option.nullable_to_opt(document.getElementById(s)), undefined, (function (element) {
+                  console.log("scroll");
+                  element.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                      });
+                }));
+        }), []);
   var centerDate = Core__Option.mapOr(value, new Date(), (function (v) {
           if (DateFns.isAfter(v, StartOfMonth(AddMonths(new Date(), startAdj))) || DateFns.isBefore(v, EndOfMonth(AddMonths(new Date(), endAdj)))) {
             return v;
@@ -163,7 +182,7 @@ function Calendar(props) {
                                                     }));
                                               var className = [
                                                   " text-2xs flex items-center justify-center hover:bg-blue-100 cursor-default border-r first:border-l h-7 ",
-                                                  IsSameDay(day_, now) ? "text-red-500 font-bold" : "",
+                                                  IsSameDay(day_, now) ? " text-red-500 font-bold" : "",
                                                   isValue ? "bg-blue-200" : "",
                                                   (GetMonth(day_) % 2 === 0, ""),
                                                   GetDate(day_) > (GetDaysInMonth(day_) - 7 | 0) ? "border-b border-b-black" : "border-b",
@@ -176,6 +195,7 @@ function Calendar(props) {
                                                             JsxRuntime.jsx("div", {
                                                                   children: Format(day_, "d"),
                                                                   className: className,
+                                                                  id: calDateId(day_),
                                                                   onClick: (function (param) {
                                                                       onClick(day_);
                                                                     })
@@ -210,6 +230,8 @@ export {
   getFirstSome ,
   isFirstInstanceOfDay ,
   isFirstDayOfMonth ,
+  getElementByIdOp ,
+  calDateId ,
   make ,
   $$default as default,
 }
