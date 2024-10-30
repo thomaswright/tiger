@@ -104,7 +104,7 @@ let statusString = s => {
 
 let statusColor = s =>
   switch s {
-  | Unsorted => "var(--lightGray)"
+  | Unsorted => "var(--t2)"
   | Future => "var(--lightBlue)"
   | NowIfTime => "var(--lightOrange)"
   | NowMustDo => "var(--lightOrange)"
@@ -112,13 +112,13 @@ let statusColor = s =>
   | Paused => "var(--lightGreen)"
   | ResolveDone => "var(--lightPurple)"
   | ResolveNo => "var(--lightPurple)"
-  | ArchiveDone => "var(--lightPurple)"
-  | ArchiveNo => "var(--lightPurple)"
+  | ArchiveDone => "var(--lightGray)"
+  | ArchiveNo => "var(--lightGray)"
   }
 
 let statusColorText = s =>
   switch s {
-  | Unsorted => "var(--darkGray)"
+  | Unsorted => "var(--t8)"
   | Future => "var(--darkBlue)"
   | NowIfTime => "var(--darkOrange)"
   | NowMustDo => "var(--darkOrange)"
@@ -126,8 +126,8 @@ let statusColorText = s =>
   | Paused => "var(--darkGreen)"
   | ResolveDone => "var(--darkPurple)"
   | ResolveNo => "var(--darkPurple)"
-  | ArchiveDone => "var(--darkPurple)"
-  | ArchiveNo => "var(--darkPurple)"
+  | ArchiveDone => "var(--darkGray)"
+  | ArchiveNo => "var(--darkGray)"
   }
 
 let statusIsResolved = s =>

@@ -72,7 +72,7 @@ function statusString(s) {
 function statusColor(s) {
   switch (s) {
     case "Unsorted" :
-        return "var(--lightGray)";
+        return "var(--t2)";
     case "Future" :
         return "var(--lightBlue)";
     case "NowIfTime" :
@@ -83,9 +83,10 @@ function statusColor(s) {
         return "var(--lightGreen)";
     case "ResolveDone" :
     case "ResolveNo" :
+        return "var(--lightPurple)";
     case "ArchiveDone" :
     case "ArchiveNo" :
-        return "var(--lightPurple)";
+        return "var(--lightGray)";
     
   }
 }
@@ -93,7 +94,7 @@ function statusColor(s) {
 function statusColorText(s) {
   switch (s) {
     case "Unsorted" :
-        return "var(--darkGray)";
+        return "var(--t8)";
     case "Future" :
         return "var(--darkBlue)";
     case "NowIfTime" :
@@ -104,9 +105,10 @@ function statusColorText(s) {
         return "var(--darkGreen)";
     case "ResolveDone" :
     case "ResolveNo" :
+        return "var(--darkPurple)";
     case "ArchiveDone" :
     case "ArchiveNo" :
-        return "var(--darkPurple)";
+        return "var(--darkGray)";
     
   }
 }
