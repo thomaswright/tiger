@@ -16,7 +16,7 @@ const DateSelect = ({ value, onClick, className }) => {
             Boolean(value)
               ? "text-[var(--t6)] "
               : "invisible group-hover:visible text-[var(--t4)] ",
-            "w-10 h-5 text-xs rounded-lg font-medium bg-[var(--t0)]",
+            "w-10 h-5 text-xs rounded-lg font-medium bg-[var(--t0)] px-0.5",
             className,
           ].join(" ")}
         >

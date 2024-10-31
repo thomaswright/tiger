@@ -120,7 +120,7 @@ let make = (~onClick, ~value: option<Js.Date.t>) => {
       </button>
     </div>
 
-  <div className={"h-64 w-64 overflow-y-scroll p-3 border rounded border-plain-300 "}>
+  <div className={"h-64 w-64 overflow-y-scroll p-3 border rounded border-[var(--t2)] "}>
     {shifter}
     <div className={"py-2"}>
       {allDays
@@ -138,20 +138,22 @@ let make = (~onClick, ~value: option<Js.Date.t>) => {
               let isValue = value->Option.mapOr(false, value => DateFns.isSameDay(day_, value))
               let className =
                 [
-                  " text-2xs flex items-center justify-center hover:bg-blue-100 cursor-default border-r first:border-l h-7 ",
+                  "border-[var(--t3)]  text-2xs flex items-center justify-center hover:bg-blue-200 dark:hover:bg-blue-800 cursor-default border-r first:border-l h-7 ",
                   DateFns.isSameDay(day_, now) ? " text-red-500 font-bold" : "",
-                  isValue ? "bg-blue-200" : "",
+                  isValue ? "bg-blue-200 dark:bg-blue-800" : "",
                   mod(day_->DateFns.getMonth, 2) == 0 ? "" : "",
                   day_->DateFns.getDate > day_->DateFns.getDaysInMonth - 7
-                    ? "border-b border-b-black"
+                    ? "border-b border-b-[var(--t8)]"
                     : "border-b",
                   day_->DateFns.getDate == day_->DateFns.getDaysInMonth &&
                     !(day_->DateFns.getDay == 6)
-                    ? "border-r-black"
+                    ? "border-r-[var(--t8)]"
                     : "",
-                  (i == 0 || i == 1) && day_->DateFns.getDate <= 7 ? "border-t border-t-black" : "",
+                  (i == 0 || i == 1) && day_->DateFns.getDate <= 7
+                    ? "border-t border-t-[var(--t8)]"
+                    : "",
                   i == 0 && day_->DateFns.getDate == 1 && day_->DateFns.getDay > 0
-                    ? "border-l border-l-black"
+                    ? "border-l border-l-[var(--t8)]"
                     : "",
                 ]->Array.join(" ")
 

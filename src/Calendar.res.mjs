@@ -181,14 +181,14 @@ function Calendar(props) {
                                                       return IsSameDay(day_, value);
                                                     }));
                                               var className = [
-                                                  " text-2xs flex items-center justify-center hover:bg-blue-100 cursor-default border-r first:border-l h-7 ",
+                                                  "border-[var(--t3)]  text-2xs flex items-center justify-center hover:bg-blue-200 dark:hover:bg-blue-800 cursor-default border-r first:border-l h-7 ",
                                                   IsSameDay(day_, now) ? " text-red-500 font-bold" : "",
-                                                  isValue ? "bg-blue-200" : "",
+                                                  isValue ? "bg-blue-200 dark:bg-blue-800" : "",
                                                   (GetMonth(day_) % 2 === 0, ""),
-                                                  GetDate(day_) > (GetDaysInMonth(day_) - 7 | 0) ? "border-b border-b-black" : "border-b",
-                                                  GetDate(day_) === GetDaysInMonth(day_) && GetDay(day_) !== 6 ? "border-r-black" : "",
-                                                  (i === 0 || i === 1) && GetDate(day_) <= 7 ? "border-t border-t-black" : "",
-                                                  i === 0 && GetDate(day_) === 1 && GetDay(day_) > 0 ? "border-l border-l-black" : ""
+                                                  GetDate(day_) > (GetDaysInMonth(day_) - 7 | 0) ? "border-b border-b-[var(--t8)]" : "border-b",
+                                                  GetDate(day_) === GetDaysInMonth(day_) && GetDay(day_) !== 6 ? "border-r-[var(--t8)]" : "",
+                                                  (i === 0 || i === 1) && GetDate(day_) <= 7 ? "border-t border-t-[var(--t8)]" : "",
+                                                  i === 0 && GetDate(day_) === 1 && GetDay(day_) > 0 ? "border-l border-l-[var(--t8)]" : ""
                                                 ].join(" ");
                                               return JsxRuntime.jsxs(React.Fragment, {
                                                           children: [
@@ -218,7 +218,7 @@ function Calendar(props) {
                     }),
                 shifter
               ],
-              className: "h-64 w-64 overflow-y-scroll p-3 border rounded border-plain-300 "
+              className: "h-64 w-64 overflow-y-scroll p-3 border rounded border-[var(--t2)] "
             });
 }
 
