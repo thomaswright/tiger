@@ -449,13 +449,13 @@ function Project$Todo(props) {
                                       children: [
                                         JsxRuntime.jsx("div", {
                                               children: JsxRuntime.jsx(Tb.TbDragDrop, {}),
-                                              className: " w-4 h-4 text-[var(--t6)] hidden group-hover:block bg-[var(--t0)] rounded-sm 0 ",
+                                              className: " w-4 h-4 text-[var(--t4)] hidden group-hover:block bg-[var(--t0)] rounded-sm 0 ",
                                               onMouseDown: (function (e) {
                                                   itemToMoveHandleMouseDown(todo.id, e);
                                                 })
                                             }),
                                         JsxRuntime.jsx("input", {
-                                              className: ["border-[var(--t6)] bg-[var(--t0)] rounded text-blue-400 dark:text-blue-800 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500"].join(" "),
+                                              className: ["border-[var(--t4)] bg-[var(--t0)] rounded text-blue-400 dark:text-blue-800 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500"].join(" "),
                                               checked: isChecked,
                                               type: "checkbox",
                                               onChange: (function (param) {
@@ -470,7 +470,7 @@ function Project$Todo(props) {
                                             })
                                       ],
                                       className: [
-                                          "cursor-default absolute right-10 flex-row items-center gap-1.5 pr-1.5  h-full",
+                                          "cursor-default absolute right-10 flex-row items-center gap-3 pr-1.5  h-full",
                                           isChecked ? "flex" : " hidden group-hover:flex"
                                         ].join(" ")
                                     })
