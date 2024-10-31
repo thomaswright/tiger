@@ -38,10 +38,6 @@ function Project$Todo(props) {
   var setStatusSelectIsOpen = match[1];
   var inputRef = React.useRef(null);
   var containerRef = React.useRef(null);
-  React.useRef(null);
-  React.useState(function () {
-        return false;
-      });
   var match$1 = React.useState(function () {
         return false;
       });

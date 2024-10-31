@@ -55,3 +55,13 @@ module TextareaAutosize = {
   @react.component(: ReactDOM.domProps) @module("react-textarea-autosize")
   external make: ReactDOM.domProps => React.element = "default"
 }
+
+@module("./assets/tiger.svg") external logoUrl: string = "default"
+
+@module("./exportFunctions.js")
+external exportToJsonFile: string => unit = "exportToJsonFile"
+
+module ImportButton = {
+  @module("./Import.jsx") @react.component
+  external make: (~onImportJson: array<'a> => unit) => React.element = "default"
+}

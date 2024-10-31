@@ -28,8 +28,6 @@ module Todo = {
     let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
     let inputRef = React.useRef(Nullable.null)
     let containerRef = React.useRef(Nullable.null)
-    let datePickerRef = React.useRef(Nullable.null)
-    let (datePickerOpen, setDatePickerOpen) = React.useState(() => false)
 
     let (stagedForDelete, setStagedForDelete) = React.useState(_ => false)
     let focusContainer = () => {
@@ -608,7 +606,7 @@ let make = (
   }
 
   let handleHideAll = _ => updateProject(project.id, p => handleHide(true, None, p))
-  let handleHideArchived = _ => updateProject(project.id, p => handleHide(false, None, p))
+  // let handleHideArchived = _ => updateProject(project.id, p => handleHide(false, None, p))
 
   <React.Fragment>
     <li
