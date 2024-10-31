@@ -67,7 +67,10 @@ function DisplayProject(props) {
                                         }));
                                 })
                             }),
-                        project.hideAll ? null : JsxRuntime.jsx("button", {
+                        project.hideAll ? JsxRuntime.jsx("span", {
+                                children: "All Hidden",
+                                className: "text-xs "
+                              }) : JsxRuntime.jsx("button", {
                                 children: project.hideArchived ? JsxRuntime.jsx("span", {
                                         children: "Hiding Archived"
                                       }) : JsxRuntime.jsx("span", {

@@ -43,7 +43,7 @@ let make = (
         {(project.isActive ? "Active" : "Inactive")->React.string}
       </button>
       {project.hideAll
-        ? React.null
+        ? <span className="text-xs "> {"All Hidden"->React.string} </span>
         : <button
             className="rounded bg-[var(--t2)] px-2 text-xs h-fit flex-none flex flex-row justify-center items-center"
             onClick={handleHideArchived}>
