@@ -56,24 +56,6 @@ function DisplayProject(props) {
                     }),
                 JsxRuntime.jsxs("div", {
                       children: [
-                        JsxRuntime.jsx("button", {
-                              children: project.isActive ? "Active" : "Inactive",
-                              className: "rounded bg-[var(--t2)] px-2 text-xs h-fit flex-none",
-                              onClick: (function (param) {
-                                  updateProject(project.id, (function (p) {
-                                          return {
-                                                  id: p.id,
-                                                  name: p.name,
-                                                  additionalText: p.additionalText,
-                                                  isActive: !p.isActive,
-                                                  todos: p.todos,
-                                                  hideArchived: p.hideArchived,
-                                                  hideAll: p.hideAll,
-                                                  hiddenTodos: p.hiddenTodos
-                                                };
-                                        }));
-                                })
-                            }),
                         project.hideAll ? JsxRuntime.jsx("span", {
                                 children: "All Hidden",
                                 className: "text-xs "
@@ -166,7 +148,7 @@ function DisplayProject(props) {
                                 children: [
                                   JsxRuntime.jsx("button", {
                                         children: "Cancel",
-                                        className: "rounded bg-gray-100 px-2 font-medium  text-xs h-fit flex-none mr-2 ",
+                                        className: "rounded bg-[var(--t8)] text-[var(--t2)] px-2 font-medium  text-xs h-fit flex-none mr-2 ",
                                         onClick: (function (param) {
                                             setStagedForDelete(function (param) {
                                                   return false;
@@ -195,7 +177,7 @@ function DisplayProject(props) {
                                 ]
                               }) : JsxRuntime.jsx("button", {
                                 children: JsxRuntime.jsx(Tb.TbTrash, {}),
-                                className: ["\n          text-[var(--t4)] px-1 h-6 flex flex-row items-center justify-center rounded border-[var(--t3)]\n          hover:text-blue-600\n        "].join(" "),
+                                className: ["\n          text-[var(--t4)] px-1 h-6 flex flex-row items-center justify-center rounded border-[var(--t3)]\n          hover:text-red-600\n        "].join(" "),
                                 onClick: (function (param) {
                                     setStagedForDelete(function (param) {
                                           return true;

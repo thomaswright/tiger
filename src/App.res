@@ -913,7 +913,7 @@ let make = () => {
           }}
         </React.Fragment>
       } else if viewSettings {
-        <div className="flex-1 overflow-y-scroll px-3 py-2 flex flex-col gap-2 items-start">
+        <div className="flex-1 overflow-y-scroll px-3 py-2 flex flex-col gap-2 items-start pb-10">
           <div className="flex flex-row gap-3 ml-0.5">
             <img src={logoUrl} width={"40"} className="py-0.5 " />
             <div className="font-black text-5xl tracking-tighter">
@@ -923,7 +923,7 @@ let make = () => {
           <div className="font-normal text-sm">
             <div className=" mb-4 mt-2">
               {"Tiger is a todo app with one special feature: it is designed exclusively for my girlfriend.
-            You can use it too, but don't complain about it not having everything you want.
+            You can use it too if you like it.
             "->React.string}
             </div>
             <div className="mb-2"> {"Here are the features:"->React.string} </div>
@@ -932,26 +932,30 @@ let make = () => {
               <li> {"Group todos by project."->React.string} </li>
               <li> {"Give the todos statuses."->React.string} </li>
               <li>
-                {"Make sub-todos by indenting tab or cmd + ] deindent with shift + tab or cmd + [."->React.string}
+                {"Make sub-todos by indenting with tab or cmd + ] deindent with shift + tab or cmd + [."->React.string}
               </li>
               <li>
                 {"Drag by the drag handle to reorder. Click the clickbox to drag multiple."->React.string}
               </li>
               <li> {"Click the clickbox to change the status of multiple."->React.string} </li>
               <li>
-                {"Navigate with arrow keys. Hit enter to change the text. Escape to go back to nav mode."->React.string}
+                {"Navigate with arrow keys. Hit enter to change the text. Escape to go back to nav mode. \"s\" opens the status picker."->React.string}
               </li>
               <li>
-                {"Hit enter from in a todo to make new todo or click the plus on the project."->React.string}
+                {"Hit enter from in a todo to make a new todo or click the plus on the project."->React.string}
+              </li>
+              <li>
+                {"Delete a todo by either deleting all text and then hitting Backspace twice, hitting cmd + Backspace, or click the trash icon on the details panel."->React.string}
               </li>
               <li> {"Add a date."->React.string} </li>
               <li> {"Add additional details per todo."->React.string} </li>
-              <li> {"Select the project to order by date or status."->React.string} </li>
-              <li> {"Hide archived todos."->React.string} </li>
               <li>
-                {"Delete a todo by either deleting all text and then hitting Backspace twice, hitting cmd + Backspace, or with the trash icon on the todo details panel."->React.string}
+                {"Order by date or status in the project details. Can also hide archived todos here."->React.string}
               </li>
-              <li> {"The todos are stored locally, not in the cloud."->React.string} </li>
+              <li> {"Collapse all projects."->React.string} </li>
+              <li>
+                {"The todos are stored locally, not in the cloud. The import will override all data."->React.string}
+              </li>
               <li>
                 {"It has light and dark mode and multiple color options for each. It is cute when you want to be cute and serious when you need to be serious."->React.string}
               </li>

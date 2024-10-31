@@ -883,7 +883,7 @@ function App(props) {
               JsxRuntime.jsxs("div", {
                     children: [
                       JsxRuntime.jsx("div", {
-                            children: "Tiger is a todo app with one special feature: it is designed exclusively for my girlfriend.\n            You can use it too, but don't complain about it not having everything you want.\n            ",
+                            children: "Tiger is a todo app with one special feature: it is designed exclusively for my girlfriend.\n            You can use it too if you like it.\n            ",
                             className: " mb-4 mt-2"
                           }),
                       JsxRuntime.jsx("div", {
@@ -902,7 +902,7 @@ function App(props) {
                                     children: "Give the todos statuses."
                                   }),
                               JsxRuntime.jsx("li", {
-                                    children: "Make sub-todos by indenting tab or cmd + ] deindent with shift + tab or cmd + [."
+                                    children: "Make sub-todos by indenting with tab or cmd + ] deindent with shift + tab or cmd + [."
                                   }),
                               JsxRuntime.jsx("li", {
                                     children: "Drag by the drag handle to reorder. Click the clickbox to drag multiple."
@@ -911,10 +911,13 @@ function App(props) {
                                     children: "Click the clickbox to change the status of multiple."
                                   }),
                               JsxRuntime.jsx("li", {
-                                    children: "Navigate with arrow keys. Hit enter to change the text. Escape to go back to nav mode."
+                                    children: "Navigate with arrow keys. Hit enter to change the text. Escape to go back to nav mode. \"s\" opens the status picker."
                                   }),
                               JsxRuntime.jsx("li", {
-                                    children: "Hit enter from in a todo to make new todo or click the plus on the project."
+                                    children: "Hit enter from in a todo to make a new todo or click the plus on the project."
+                                  }),
+                              JsxRuntime.jsx("li", {
+                                    children: "Delete a todo by either deleting all text and then hitting Backspace twice, hitting cmd + Backspace, or click the trash icon on the details panel."
                                   }),
                               JsxRuntime.jsx("li", {
                                     children: "Add a date."
@@ -923,16 +926,13 @@ function App(props) {
                                     children: "Add additional details per todo."
                                   }),
                               JsxRuntime.jsx("li", {
-                                    children: "Select the project to order by date or status."
+                                    children: "Order by date or status in the project details. Can also hide archived todos here."
                                   }),
                               JsxRuntime.jsx("li", {
-                                    children: "Hide archived todos."
+                                    children: "Collapse all projects."
                                   }),
                               JsxRuntime.jsx("li", {
-                                    children: "Delete a todo by either deleting all text and then hitting Backspace twice, hitting cmd + Backspace, or with the trash icon on the todo details panel."
-                                  }),
-                              JsxRuntime.jsx("li", {
-                                    children: "The todos are stored locally, not in the cloud."
+                                    children: "The todos are stored locally, not in the cloud. The import will override all data."
                                   }),
                               JsxRuntime.jsx("li", {
                                     children: "It has light and dark mode and multiple color options for each. It is cute when you want to be cute and serious when you need to be serious."
@@ -1024,7 +1024,7 @@ function App(props) {
                     className: "pt-2"
                   })
             ],
-            className: "flex-1 overflow-y-scroll px-3 py-2 flex flex-col gap-2 items-start"
+            className: "flex-1 overflow-y-scroll px-3 py-2 flex flex-col gap-2 items-start pb-10"
           }) : null;
   }
   return JsxRuntime.jsxs("div", {

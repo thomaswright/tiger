@@ -35,15 +35,15 @@ let make = (
     </div>
     <div
       className="flex flex-row flex-wrap border-y border-[var(--t3)] items-center gap-3 p-1 px-2">
-      <button
-        className="rounded bg-[var(--t2)] px-2 text-xs h-fit flex-none"
-        onClick={_ =>
-          updateProject(project.id, p => {
-            ...p,
-            isActive: !p.isActive,
-          })}>
-        {(project.isActive ? "Active" : "Inactive")->React.string}
-      </button>
+      // <button
+      //   className="rounded bg-[var(--t2)] px-2 text-xs h-fit flex-none"
+      //   onClick={_ =>
+      //     updateProject(project.id, p => {
+      //       ...p,
+      //       isActive: !p.isActive,
+      //     })}>
+      //   {(project.isActive ? "Active" : "Inactive")->React.string}
+      // </button>
       {project.hideAll
         ? <span className="text-xs "> {"All Hidden"->React.string} </span>
         : <button
@@ -106,7 +106,7 @@ let make = (
               onClick={_ => {
                 setStagedForDelete(_ => false)
               }}
-              className="rounded bg-gray-100 px-2 font-medium  text-xs h-fit flex-none mr-2 ">
+              className="rounded bg-[var(--t8)] text-[var(--t2)] px-2 font-medium  text-xs h-fit flex-none mr-2 ">
               {"Cancel"->React.string}
             </button>
             <button
@@ -129,7 +129,7 @@ let make = (
             className={[
               "
           text-[var(--t4)] px-1 h-6 flex flex-row items-center justify-center rounded border-[var(--t3)]
-          hover:text-blue-600
+          hover:text-red-600
         ",
             ]->Array.join(" ")}>
             <Icons.Trash />
