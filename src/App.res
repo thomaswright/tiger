@@ -914,15 +914,61 @@ let make = () => {
         </React.Fragment>
       } else if viewSettings {
         <div className="flex-1 overflow-y-scroll px-3 py-2 flex flex-col gap-2 items-start">
+          <div className="flex flex-row gap-3 ml-0.5">
+            <img src={logoUrl} width={"40"} className="py-0.5 " />
+            <div className="font-black text-5xl tracking-tighter">
+              {"Tiger Todo"->React.string}
+            </div>
+          </div>
+          <div className="font-normal text-sm">
+            <div className=" mb-4 mt-2">
+              {"Tiger is a todo app with one special feature: it is designed exclusively for my girlfriend.
+            You can use it too, but don't complain about it not having everything you want.
+            "->React.string}
+            </div>
+            <div className="mb-2"> {"Here are the features:"->React.string} </div>
+            <ul className="list-disc ml-4">
+              <li> {"By design it has only one page. There are no \"views\"."->React.string} </li>
+              <li> {"Group todos by project."->React.string} </li>
+              <li> {"Give the todos statuses."->React.string} </li>
+              <li>
+                {"Make sub-todos by indenting tab or cmd + ] deindent with shift + tab or cmd + [."->React.string}
+              </li>
+              <li>
+                {"Drag by the drag handle to reorder. Click the clickbox to drag multiple."->React.string}
+              </li>
+              <li> {"Click the clickbox to change the status of multiple."->React.string} </li>
+              <li>
+                {"Navigate with arrow keys. Hit enter to change the text. Escape to go back to nav mode."->React.string}
+              </li>
+              <li>
+                {"Hit enter from in a todo to make new todo or click the plus on the project."->React.string}
+              </li>
+              <li> {"Add a date."->React.string} </li>
+              <li> {"Add additional details per todo."->React.string} </li>
+              <li> {"Select the project to order by date or status."->React.string} </li>
+              <li> {"Hide archived todos."->React.string} </li>
+              <li>
+                {"Delete a todo by either deleting all text and then hitting Backspace twice, hitting cmd + Backspace, or with the trash icon on the todo details panel."->React.string}
+              </li>
+              <li> {"The todos are stored locally, not in the cloud."->React.string} </li>
+              <li>
+                {"It has light and dark mode and multiple color options for each. It is cute when you want to be cute and serious when you need to be serious."->React.string}
+              </li>
+            </ul>
+          </div>
           <div className="font-black text-lg"> {"Settings"->React.string} </div>
-          <button
-            onClick={_ => onExportJson()}
-            className={[
-              "bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1 h-5 ",
-            ]->Array.join(" ")}>
-            {"Export"->React.string}
-          </button>
-          <ImportButton onImportJson />
+          <div className="font-bold text-sm"> {"Backup"->React.string} </div>
+          <div className="flex flex-row gap-2">
+            <button
+              onClick={_ => onExportJson()}
+              className={[
+                "bg-[var(--t2)] px-2 rounded text-sm flex flex-row items-center gap-1 h-5 ",
+              ]->Array.join(" ")}>
+              {"Export"->React.string}
+            </button>
+            <ImportButton onImportJson />
+          </div>
           <div className="pt-2">
             <div className="font-bold text-sm"> {"Color"->React.string} </div>
             <div className="flex flex-row gap-2 py-1">

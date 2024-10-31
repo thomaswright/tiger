@@ -6,7 +6,7 @@ const Import = ({ onImportJson }) => {
   return (
     <React.Fragment>
       <button
-        className="bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1 h-5 "
+        className="bg-[var(--t2)] px-2 rounded text-sm flex flex-row items-center gap-1 h-5 "
         onClick={(event) => {
           event.preventDefault();
           importJsonInputRef.current.click();

@@ -866,19 +866,105 @@ function App(props) {
   } else {
     tmp = match$5[0] ? JsxRuntime.jsxs("div", {
             children: [
+              JsxRuntime.jsxs("div", {
+                    children: [
+                      JsxRuntime.jsx("img", {
+                            className: "py-0.5 ",
+                            src: logoUrl,
+                            width: "40"
+                          }),
+                      JsxRuntime.jsx("div", {
+                            children: "Tiger Todo",
+                            className: "font-black text-5xl tracking-tighter"
+                          })
+                    ],
+                    className: "flex flex-row gap-3 ml-0.5"
+                  }),
+              JsxRuntime.jsxs("div", {
+                    children: [
+                      JsxRuntime.jsx("div", {
+                            children: "Tiger is a todo app with one special feature: it is designed exclusively for my girlfriend.\n            You can use it too, but don't complain about it not having everything you want.\n            ",
+                            className: " mb-4 mt-2"
+                          }),
+                      JsxRuntime.jsx("div", {
+                            children: "Here are the features:",
+                            className: "mb-2"
+                          }),
+                      JsxRuntime.jsxs("ul", {
+                            children: [
+                              JsxRuntime.jsx("li", {
+                                    children: "By design it has only one page. There are no \"views\"."
+                                  }),
+                              JsxRuntime.jsx("li", {
+                                    children: "Group todos by project."
+                                  }),
+                              JsxRuntime.jsx("li", {
+                                    children: "Give the todos statuses."
+                                  }),
+                              JsxRuntime.jsx("li", {
+                                    children: "Make sub-todos by indenting tab or cmd + ] deindent with shift + tab or cmd + [."
+                                  }),
+                              JsxRuntime.jsx("li", {
+                                    children: "Drag by the drag handle to reorder. Click the clickbox to drag multiple."
+                                  }),
+                              JsxRuntime.jsx("li", {
+                                    children: "Click the clickbox to change the status of multiple."
+                                  }),
+                              JsxRuntime.jsx("li", {
+                                    children: "Navigate with arrow keys. Hit enter to change the text. Escape to go back to nav mode."
+                                  }),
+                              JsxRuntime.jsx("li", {
+                                    children: "Hit enter from in a todo to make new todo or click the plus on the project."
+                                  }),
+                              JsxRuntime.jsx("li", {
+                                    children: "Add a date."
+                                  }),
+                              JsxRuntime.jsx("li", {
+                                    children: "Add additional details per todo."
+                                  }),
+                              JsxRuntime.jsx("li", {
+                                    children: "Select the project to order by date or status."
+                                  }),
+                              JsxRuntime.jsx("li", {
+                                    children: "Hide archived todos."
+                                  }),
+                              JsxRuntime.jsx("li", {
+                                    children: "Delete a todo by either deleting all text and then hitting Backspace twice, hitting cmd + Backspace, or with the trash icon on the todo details panel."
+                                  }),
+                              JsxRuntime.jsx("li", {
+                                    children: "The todos are stored locally, not in the cloud."
+                                  }),
+                              JsxRuntime.jsx("li", {
+                                    children: "It has light and dark mode and multiple color options for each. It is cute when you want to be cute and serious when you need to be serious."
+                                  })
+                            ],
+                            className: "list-disc ml-4"
+                          })
+                    ],
+                    className: "font-normal text-sm"
+                  }),
               JsxRuntime.jsx("div", {
                     children: "Settings",
                     className: "font-black text-lg"
                   }),
-              JsxRuntime.jsx("button", {
-                    children: "Export",
-                    className: ["bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1 h-5 "].join(" "),
-                    onClick: (function (param) {
-                        onExportJson();
-                      })
+              JsxRuntime.jsx("div", {
+                    children: "Backup",
+                    className: "font-bold text-sm"
                   }),
-              JsxRuntime.jsx(make, {
-                    onImportJson: onImportJson
+              JsxRuntime.jsxs("div", {
+                    children: [
+                      JsxRuntime.jsx("button", {
+                            children: "Export",
+                            className: ["bg-[var(--t2)] px-2 rounded text-sm flex flex-row items-center gap-1 h-5 "].join(" "),
+                            onClick: (function (param) {
+                                onExportJson();
+                              })
+                          }),
+                      JsxRuntime.jsx(make, {
+                            onImportJson: onImportJson
+                          })
+                    ],
+                    className: "flex flex-row gap-2"
                   }),
               JsxRuntime.jsxs("div", {
                     children: [
