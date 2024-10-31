@@ -364,7 +364,7 @@ module Todo = {
             ref={ReactDOM.Ref.domRef(inputRef)}
             className={[
               todoInputClass,
-              "mx-1 my-1 block text-sm font-medium  w-full h-5 border-0 px-0 py-0 focus:ring-0 focus:z-10 text-[var(--t10)]",
+              "mx-1 my-1 block text-sm font-medium  w-full h-5 border-0 pl-0 py-0 focus:ring-0 focus:z-10 text-[var(--t10)]",
               stagedForDelete
                 ? "bg-red-200 dark:bg-red-950"
                 : isChecked
@@ -402,7 +402,7 @@ module Todo = {
           />
           <div
             className={[
-              "cursor-default absolute right-10 flex-row items-center gap-3 pr-1.5  h-full",
+              "cursor-default absolute right-10 flex-row items-center gap-3 pr-2 h-full",
               isChecked ? "flex" : " hidden group-hover:flex",
             ]->Array.join(" ")}>
             <div
@@ -662,8 +662,8 @@ let make = (
       <div
         onMouseDown={e => projectToMoveHandleMouseDown(project.id, e)}
         className={[
-          project.hideAll ? "right-8" : "right-20",
-          "absolute w-4 h-4 text-[var(--t6)] hidden group-hover:block bg-[var(--t0)] rounded-sm ",
+          project.hideAll ? "right-8" : "right-[72px]",
+          "absolute w-4 h-4 text-[var(--t4)] hidden group-hover:block bg-[var(--t0)] rounded-sm ",
         ]->Array.join(" ")}>
         <Icons.DragDrop />
       </div>
@@ -673,7 +673,7 @@ let make = (
             onClick={_ => {
               newTodoAfter(None, None)
             }}
-            className="absolute right-14 hidden group-hover:block h-4 w-4 text-sm rounded flex-none text-[var(--t6)] bg-[var(--t0)] ">
+            className="absolute right-10 hidden group-hover:block h-4 w-4 text-sm rounded flex-none text-[var(--t4)] bg-[var(--t0)] ">
             <Icons.Plus />
           </button>}
       // {project.hideAll
