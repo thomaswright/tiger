@@ -1,13 +1,13 @@
 open Types
 open Webapi.Dom
 
-let defaultTodos = [
+let p1DefaultTodos = [
   {
-    text: "Do Something",
+    text: "Call Amber",
     additionalText: "",
-    project: "1",
+    project: "p1",
     id: "1",
-    status: Unsorted,
+    status: Future,
     // box: Working,
     parentTodo: None,
     depth: None,
@@ -18,11 +18,44 @@ let defaultTodos = [
     targetDate: None,
   },
   {
-    text: "Do Something Else",
+    text: "Confirm Cyan Flux",
     additionalText: "",
-    project: "1",
+    project: "p1",
     id: "2",
-    status: ResolveNo,
+    status: NowIfTime,
+    // box: Archive,
+    parentTodo: None,
+    depth: None,
+    childNumber: None,
+    hasArchivedChildren: false,
+    hasChildren: false,
+    ancArchived: false,
+    targetDate: None,
+  },
+  {
+    text: "Initiate Azul Bending",
+    additionalText: "",
+    project: "p1",
+    id: "3",
+    status: ResolveDone,
+    // box: Archive,
+    parentTodo: None,
+    depth: None,
+    childNumber: None,
+    hasArchivedChildren: false,
+    hasChildren: false,
+    ancArchived: false,
+    targetDate: None,
+  },
+]
+
+let p2DefaultTodos = [
+  {
+    text: "Chroma degradation",
+    additionalText: "",
+    project: "p2",
+    id: "4",
+    status: Unsorted,
     // box: Archive,
     parentTodo: None,
     depth: None,
@@ -36,11 +69,21 @@ let defaultTodos = [
 
 let defaultProjects = [
   {
-    id: "1",
-    name: "Project Omega",
+    id: "p1",
+    name: "Project Indigo",
     additionalText: "",
     isActive: true,
-    todos: defaultTodos,
+    todos: p1DefaultTodos,
+    hiddenTodos: SMap.empty,
+    hideArchived: false,
+    hideAll: false,
+  },
+  {
+    id: "p2",
+    name: "Project Grayscale",
+    additionalText: "",
+    isActive: true,
+    todos: p2DefaultTodos,
     hiddenTodos: SMap.empty,
     hideArchived: false,
     hideAll: false,
@@ -245,7 +288,7 @@ let make = () => {
   let (projectOfDragHandle, setProjectOfDragHandle) = React.useState(_ => None)
   let projectLastRelative = React.useRef(None)
 
-  let (baseColor, setBaseColor, _) = Common.useLocalStorage("baseColor", "--baseBlue")
+  let (baseColor, setBaseColor, _) = Common.useLocalStorage("baseColor", "var(--blueBase)")
 
   React.useEffect1(() => {
     Common.setRootStyleProperty("--tBase", baseColor)

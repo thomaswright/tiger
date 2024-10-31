@@ -19,13 +19,13 @@ import * as Tb from "react-icons/tb";
 import * as Caml_splice_call from "rescript/lib/es6/caml_splice_call.js";
 import * as JsxRuntime from "react/jsx-runtime";
 
-var defaultTodos = [
+var p1DefaultTodos = [
   {
     id: "1",
-    text: "Do Something",
+    text: "Call Amber",
     additionalText: "",
-    project: "1",
-    status: "Unsorted",
+    project: "p1",
+    status: "Future",
     parentTodo: undefined,
     depth: undefined,
     childNumber: undefined,
@@ -36,10 +36,24 @@ var defaultTodos = [
   },
   {
     id: "2",
-    text: "Do Something Else",
+    text: "Confirm Cyan Flux",
     additionalText: "",
-    project: "1",
-    status: "ResolveNo",
+    project: "p1",
+    status: "NowIfTime",
+    parentTodo: undefined,
+    depth: undefined,
+    childNumber: undefined,
+    hasArchivedChildren: false,
+    hasChildren: false,
+    ancArchived: false,
+    targetDate: undefined
+  },
+  {
+    id: "3",
+    text: "Initiate Azul Bending",
+    additionalText: "",
+    project: "p1",
+    status: "ResolveDone",
     parentTodo: undefined,
     depth: undefined,
     childNumber: undefined,
@@ -50,16 +64,43 @@ var defaultTodos = [
   }
 ];
 
-var defaultProjects = [{
-    id: "1",
-    name: "Project Omega",
+var p2DefaultTodos = [{
+    id: "4",
+    text: "Chroma degradation",
+    additionalText: "",
+    project: "p2",
+    status: "Unsorted",
+    parentTodo: undefined,
+    depth: undefined,
+    childNumber: undefined,
+    hasArchivedChildren: false,
+    hasChildren: false,
+    ancArchived: false,
+    targetDate: undefined
+  }];
+
+var defaultProjects = [
+  {
+    id: "p1",
+    name: "Project Indigo",
     additionalText: "",
     isActive: true,
-    todos: defaultTodos,
+    todos: p1DefaultTodos,
     hideArchived: false,
     hideAll: false,
     hiddenTodos: undefined
-  }];
+  },
+  {
+    id: "p2",
+    name: "Project Grayscale",
+    additionalText: "",
+    isActive: true,
+    todos: p2DefaultTodos,
+    hideArchived: false,
+    hideAll: false,
+    hiddenTodos: undefined
+  }
+];
 
 function buildTodoTree(input) {
   var rootMapId = "_";
@@ -279,7 +320,7 @@ function App(props) {
   var setProjectOfDragHandle = match$9[1];
   var projectOfDragHandle = match$9[0];
   var projectLastRelative = React.useRef(undefined);
-  var match$10 = Common.useLocalStorage("baseColor", "--baseBlue");
+  var match$10 = Common.useLocalStorage("baseColor", "var(--blueBase)");
   var baseColor = match$10[0];
   React.useEffect((function () {
           document.documentElement.style.setProperty("--tBase", baseColor);
