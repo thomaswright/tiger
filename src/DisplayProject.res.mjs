@@ -9,10 +9,16 @@ import * as JsxRuntime from "react/jsx-runtime";
 import ReactTextareaAutosize from "react-textarea-autosize";
 
 function DisplayProject(props) {
+  var handleHide = props.handleHide;
   var setTodos = props.setTodos;
   var setProjects = props.setProjects;
   var updateProject = props.updateProject;
   var project = props.project;
+  var handleHideArchived = function (param) {
+    updateProject(project.id, (function (p) {
+            return handleHide(false, undefined, p);
+          }));
+  };
   return JsxRuntime.jsxs("div", {
               children: [
                 JsxRuntime.jsx("div", {
@@ -61,6 +67,15 @@ function DisplayProject(props) {
                                         }));
                                 })
                             }),
+                        project.hideAll ? null : JsxRuntime.jsx("button", {
+                                children: project.hideArchived ? JsxRuntime.jsx("span", {
+                                        children: "Hiding Archived"
+                                      }) : JsxRuntime.jsx("span", {
+                                        children: "Showing Archived"
+                                      }),
+                                className: "rounded bg-[var(--t2)] px-2 text-xs h-fit flex-none flex flex-row justify-center items-center",
+                                onClick: handleHideArchived
+                              }),
                         JsxRuntime.jsx("div", {
                               className: "flex-1"
                             }),

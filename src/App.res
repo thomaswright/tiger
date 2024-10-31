@@ -907,7 +907,7 @@ let make = () => {
             projects
             ->Array.find(p => p.id == projectId)
             ->Option.mapOr(React.null, project => {
-              <DisplayProject project updateProject setProjects setTodos />
+              <DisplayProject project updateProject setProjects setTodos handleHide />
             })
           | _ => React.null
           }}

@@ -7,7 +7,10 @@ let make = (
   ~updateProject,
   ~setProjects,
   ~setTodos: (string, array<todo> => array<todo>) => unit,
+  ~handleHide,
 ) => {
+  let handleHideArchived = _ => updateProject(project.id, p => handleHide(false, None, p))
+
   <div>
     <div className="w-full px-2 py-1">
       <Common.TextareaAutosize
@@ -39,6 +42,16 @@ let make = (
           })}>
         {(project.isActive ? "Active" : "Inactive")->React.string}
       </button>
+      {project.hideAll
+        ? React.null
+        : <button
+            className="rounded bg-[var(--t2)] px-2 text-xs h-fit flex-none flex flex-row justify-center items-center"
+            onClick={handleHideArchived}>
+            // {project.hideArchived ? <Icons.ArchiveOff /> : <Icons.Archive />}
+            {project.hideArchived
+              ? <span> {"Hiding Archived"->React.string} </span>
+              : <span> {"Showing Archived"->React.string} </span>}
+          </button>}
       <div className={"flex-1"} />
       <button
         onClick={_ => {

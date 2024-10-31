@@ -852,7 +852,8 @@ function App(props) {
                             project: project,
                             updateProject: updateProject,
                             setProjects: setProjects,
-                            setTodos: setTodos
+                            setTodos: setTodos,
+                            handleHide: handleHide
                           });
               }));
       }

@@ -676,16 +676,16 @@ let make = (
             className="absolute right-14 hidden group-hover:block h-4 w-4 text-sm rounded flex-none text-[var(--t6)] bg-[var(--t0)] ">
             <Icons.Plus />
           </button>}
-      {project.hideAll
-        ? React.null
-        : <button
-            className="text-sm rounded h-4 w-4 flex-none font-mono flex flex-row justify-center items-center text-[var(--t6)] mr-1"
-            onClick={handleHideArchived}>
-            {project.hideArchived ? <Icons.ArchiveOff /> : <Icons.Archive />}
-            // {showArchive
-            //   ? <span className="line-through"> {"closed"->React.string} </span>
-            //   : <span> {"closed"->React.string} </span>}
-          </button>}
+      // {project.hideAll
+      //   ? React.null
+      //   : <button
+      //       className="text-sm rounded h-4 w-4 flex-none font-mono flex flex-row justify-center items-center text-[var(--t6)] mr-1"
+      //       onClick={handleHideArchived}>
+      //       {project.hideArchived ? <Icons.ArchiveOff /> : <Icons.Archive />}
+      //       // {showArchive
+      //       //   ? <span className="line-through"> {"closed"->React.string} </span>
+      //       //   : <span> {"closed"->React.string} </span>}
+      //     </button>}
       <button
         className="text-sm rounded h-4 w-4 flex-none font-mono flex flex-row justify-center items-center text-[var(--t6)] mr-1"
         onClick={handleHideAll}>

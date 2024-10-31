@@ -678,11 +678,6 @@ function Project(props) {
             return handleHide(true, undefined, p);
           }));
   };
-  var handleHideArchived = function (param) {
-    updateProject(project.id, (function (p) {
-            return handleHide(false, undefined, p);
-          }));
-  };
   return JsxRuntime.jsxs(React.Fragment, {
               children: [
                 JsxRuntime.jsxs("li", {
@@ -750,11 +745,6 @@ function Project(props) {
                                 onClick: (function (param) {
                                     newTodoAfter(undefined, undefined);
                                   })
-                              }),
-                        project.hideAll ? null : JsxRuntime.jsx("button", {
-                                children: project.hideArchived ? JsxRuntime.jsx(Tb.TbArchiveOff, {}) : JsxRuntime.jsx(Tb.TbArchive, {}),
-                                className: "text-sm rounded h-4 w-4 flex-none font-mono flex flex-row justify-center items-center text-[var(--t6)] mr-1",
-                                onClick: handleHideArchived
                               }),
                         JsxRuntime.jsx("button", {
                               children: project.hideAll ? JsxRuntime.jsx(Tb.TbChevronDown, {}) : JsxRuntime.jsx(Tb.TbChevronUp, {}),
