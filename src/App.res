@@ -18,7 +18,7 @@ let p1DefaultTodos = [
     targetDate: None,
   },
   {
-    text: "Confirm Cyan Flux",
+    text: "Confirm cyan flux",
     additionalText: "",
     project: "p1",
     id: "2",
@@ -33,7 +33,7 @@ let p1DefaultTodos = [
     targetDate: None,
   },
   {
-    text: "Initiate Azul Bending",
+    text: "Initiate azul bending",
     additionalText: "",
     project: "p1",
     id: "3",

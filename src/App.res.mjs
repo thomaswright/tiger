@@ -36,7 +36,7 @@ var p1DefaultTodos = [
   },
   {
     id: "2",
-    text: "Confirm Cyan Flux",
+    text: "Confirm cyan flux",
     additionalText: "",
     project: "p1",
     status: "NowIfTime",
@@ -50,7 +50,7 @@ var p1DefaultTodos = [
   },
   {
     id: "3",
-    text: "Initiate Azul Bending",
+    text: "Initiate azul bending",
     additionalText: "",
     project: "p1",
     status: "ResolveDone",
