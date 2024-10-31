@@ -2,6 +2,8 @@
 
 Tiger is a todo app.
 
+See more at: https://thomaswright.github.io/tiger
+
 ## Development
 
 Run ReScript in dev mode:
