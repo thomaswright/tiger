@@ -10,6 +10,7 @@ let make = (
   ~handleHide,
 ) => {
   let handleHideArchived = _ => updateProject(project.id, p => handleHide(false, None, p))
+  let (stagedForDelete, setStagedForDelete) = React.useState(_ => false)
 
   <div>
     <div className="w-full px-2 py-1">
@@ -32,7 +33,8 @@ let make = (
         }}
       />
     </div>
-    <div className="flex flex-row border-y border-[var(--t3)] items-center gap-3 p-1 px-2">
+    <div
+      className="flex flex-row flex-wrap border-y border-[var(--t3)] items-center gap-3 p-1 px-2">
       <button
         className="rounded bg-[var(--t2)] px-2 text-xs h-fit flex-none"
         onClick={_ =>
@@ -57,7 +59,6 @@ let make = (
         onClick={_ =>
           updateProject(project.id, p => {
             let projectAllHidden = handleHide(true, Some(false), p)
-            Console.log(projectAllHidden)
             let orderedPerTodo = {
               ...projectAllHidden,
               hiddenTodos: projectAllHidden.hiddenTodos->SMap.map(todos =>
@@ -79,26 +80,60 @@ let make = (
           })}>
         {"Sort by Date"->React.string}
       </button>
-      <div className={"flex-1"} />
       <button
-        onClick={_ => {
-          Webapi.Dom.document
-          ->Document.getElementById(getProjectId(project.id))
-          ->Option.mapOr((), projectEl => {
-            Common.focusPreviousClass(listItemClass, projectEl)
-          })
+        className="rounded bg-[var(--t2)] px-2 text-xs h-fit flex-none"
+        onClick={_ =>
+          updateProject(project.id, p => {
+            let projectAllHidden = handleHide(true, Some(false), p)
+            let orderedPerTodo = {
+              ...projectAllHidden,
+              hiddenTodos: projectAllHidden.hiddenTodos->SMap.map(todos =>
+                todos->Array.toSorted(
+                  (a, b) => {
+                    a.status->Types.statusToFloat -. b.status->Types.statusToFloat
+                  },
+                )
+              ),
+            }
+            let newProjects = handleHide(true, Some(true), orderedPerTodo)
+            newProjects
+          })}>
+        {"Sort by Status"->React.string}
+      </button>
+      {stagedForDelete
+        ? <span>
+            <button
+              onClick={_ => {
+                setStagedForDelete(_ => false)
+              }}
+              className="rounded bg-gray-100 px-2 font-medium  text-xs h-fit flex-none mr-2 ">
+              {"Cancel"->React.string}
+            </button>
+            <button
+              onClick={_ => {
+                Webapi.Dom.document
+                ->Document.getElementById(getProjectId(project.id))
+                ->Option.mapOr((), projectEl => {
+                  Common.focusPreviousClass(listItemClass, projectEl)
+                })
 
-          setProjects(v => v->Array.filter(p => p.id != project.id))
-          setTodos(project.id, v => v->Array.filter(p => p.project != project.id))
-        }}
-        className={[
-          "
+                setProjects(v => v->Array.filter(p => p.id != project.id))
+                setTodos(project.id, v => v->Array.filter(p => p.project != project.id))
+              }}
+              className="rounded bg-red-100 text-red-600 font-medium px-2 text-xs h-fit flex-none">
+              {"Delete Project"->React.string}
+            </button>
+          </span>
+        : <button
+            onClick={_ => setStagedForDelete(_ => true)}
+            className={[
+              "
           text-[var(--t4)] px-1 h-6 flex flex-row items-center justify-center rounded border-[var(--t3)]
           hover:text-blue-600
         ",
-        ]->Array.join(" ")}>
-        <Icons.Trash />
-      </button>
+            ]->Array.join(" ")}>
+            <Icons.Trash />
+          </button>}
     </div>
     // <button
     //   className="rounded bg-[var(--t2)] px-2 py-1 text-xs h-fit flex-none"
