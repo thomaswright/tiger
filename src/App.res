@@ -905,7 +905,7 @@ let make = () => {
             />
             {project.todos
             ->Array.map(todo =>
-              <Project.Todo
+              <Todo
                 key={getTodoId(todo.id)}
                 project
                 todo
