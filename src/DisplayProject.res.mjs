@@ -4,8 +4,10 @@ import * as Types from "./Types.res.mjs";
 import * as Common from "./Common.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
+import * as Belt_MapString from "rescript/lib/es6/belt_MapString.js";
 import * as Tb from "react-icons/tb";
 import * as JsxRuntime from "react/jsx-runtime";
+import CompareAsc from "date-fns/compareAsc";
 import ReactTextareaAutosize from "react-textarea-autosize";
 
 function DisplayProject(props) {
@@ -79,6 +81,51 @@ function DisplayProject(props) {
                                 className: "rounded bg-[var(--t2)] px-2 text-xs h-fit flex-none flex flex-row justify-center items-center",
                                 onClick: handleHideArchived
                               }),
+                        JsxRuntime.jsx("button", {
+                              children: "Sort by Date",
+                              className: "rounded bg-[var(--t2)] px-2 text-xs h-fit flex-none",
+                              onClick: (function (param) {
+                                  updateProject(project.id, (function (p) {
+                                          var projectAllHidden = handleHide(true, false, p);
+                                          console.log(projectAllHidden);
+                                          var orderedPerTodo_id = projectAllHidden.id;
+                                          var orderedPerTodo_name = projectAllHidden.name;
+                                          var orderedPerTodo_additionalText = projectAllHidden.additionalText;
+                                          var orderedPerTodo_isActive = projectAllHidden.isActive;
+                                          var orderedPerTodo_todos = projectAllHidden.todos;
+                                          var orderedPerTodo_hideArchived = projectAllHidden.hideArchived;
+                                          var orderedPerTodo_hideAll = projectAllHidden.hideAll;
+                                          var orderedPerTodo_hiddenTodos = Belt_MapString.map(projectAllHidden.hiddenTodos, (function (todos) {
+                                                  return todos.toSorted(function (a, b) {
+                                                              var match = a.targetDate;
+                                                              var match$1 = b.targetDate;
+                                                              if (match !== undefined) {
+                                                                if (match$1 !== undefined) {
+                                                                  return CompareAsc(new Date(match), new Date(match$1));
+                                                                } else {
+                                                                  return -1;
+                                                                }
+                                                              } else if (match$1 !== undefined) {
+                                                                return 1;
+                                                              } else {
+                                                                return 2;
+                                                              }
+                                                            });
+                                                }));
+                                          var orderedPerTodo = {
+                                            id: orderedPerTodo_id,
+                                            name: orderedPerTodo_name,
+                                            additionalText: orderedPerTodo_additionalText,
+                                            isActive: orderedPerTodo_isActive,
+                                            todos: orderedPerTodo_todos,
+                                            hideArchived: orderedPerTodo_hideArchived,
+                                            hideAll: orderedPerTodo_hideAll,
+                                            hiddenTodos: orderedPerTodo_hiddenTodos
+                                          };
+                                          return handleHide(true, true, orderedPerTodo);
+                                        }));
+                                })
+                            }),
                         JsxRuntime.jsx("div", {
                               className: "flex-1"
                             }),

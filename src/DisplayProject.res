@@ -52,6 +52,33 @@ let make = (
               ? <span> {"Hiding Archived"->React.string} </span>
               : <span> {"Showing Archived"->React.string} </span>}
           </button>}
+      <button
+        className="rounded bg-[var(--t2)] px-2 text-xs h-fit flex-none"
+        onClick={_ =>
+          updateProject(project.id, p => {
+            let projectAllHidden = handleHide(true, Some(false), p)
+            Console.log(projectAllHidden)
+            let orderedPerTodo = {
+              ...projectAllHidden,
+              hiddenTodos: projectAllHidden.hiddenTodos->SMap.map(todos =>
+                todos->Array.toSorted(
+                  (a, b) => {
+                    switch (a.targetDate, b.targetDate) {
+                    | (Some(ad), Some(bd)) =>
+                      DateFns.compareAsc(ad->Date.fromString, bd->Date.fromString)->Int.toFloat
+                    | (Some(_), None) => -1.
+                    | (None, Some(_)) => 1.
+                    | _ => 2.
+                    }
+                  },
+                )
+              ),
+            }
+            let newProjects = handleHide(true, Some(true), orderedPerTodo)
+            newProjects
+          })}>
+        {"Sort by Date"->React.string}
+      </button>
       <div className={"flex-1"} />
       <button
         onClick={_ => {
