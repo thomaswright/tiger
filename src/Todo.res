@@ -6,11 +6,10 @@ open Common
 let make = (
   ~project: project,
   ~todo: todo,
-  ~updateTodo,
-  ~isSelected,
+  ~updateTodo: (string, string, Types.todo => Types.todo) => unit,
+  ~isSelected: bool,
   ~setSelectedElement,
-  ~displayElement as _,
-  ~isDisplayElement,
+  ~isDisplayElement: bool,
   ~setDisplayElement,
   ~setTodos: (string, array<Types.todo> => array<Types.todo>) => unit,
   ~setFocusIdNext,
@@ -446,3 +445,24 @@ let make = (
     </div>
   </li>
 }
+
+let make = React.memoCustomCompareProps(make, (a, b) => {
+  false
+  // Todo: add getTodos and project hidden elements
+
+  // a.project.id == b.project.id &&
+  // a.isSelected == b.isSelected &&
+  // a.isDisplayElement == b.isDisplayElement &&
+  // a.isChecked == b.isChecked &&
+  // a.todo.text == b.todo.text &&
+  // a.todo.additionalText == b.todo.additionalText &&
+  // a.todo.project == b.todo.project &&
+  // a.todo.status == b.todo.status &&
+  // a.todo.parentTodo == b.todo.parentTodo &&
+  // a.todo.depth == b.todo.depth &&
+  // a.todo.childNumber == b.todo.childNumber &&
+  // a.todo.hasArchivedChildren == b.todo.hasArchivedChildren &&
+  // a.todo.hasChildren == b.todo.hasChildren &&
+  // a.todo.ancArchived == b.todo.ancArchived &&
+  // a.todo.targetDate == b.todo.targetDate
+})

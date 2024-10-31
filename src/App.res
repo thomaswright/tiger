@@ -914,7 +914,6 @@ let make = () => {
                 isSelected={selectedElement == Some(Todo(todo.id))}
                 isDisplayElement={displayElement == Some(Todo(todo.id))}
                 setSelectedElement
-                displayElement
                 setDisplayElement
                 setTodos
                 setFocusIdNext
