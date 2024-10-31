@@ -257,6 +257,7 @@ function App(props) {
                     hiddenTodos: p.hiddenTodos
                   };
           }));
+  var getProjects = match[2];
   var setProjectsPreCompute = match[1];
   var projects = match[0];
   var setProjects = function (f) {
@@ -1063,7 +1064,6 @@ function App(props) {
                                                                           _0: todo.id
                                                                         }),
                                                                     setSelectedElement: setSelectedElement,
-                                                                    displayElement: displayElement,
                                                                     isDisplayElement: Caml_obj.equal(displayElement, {
                                                                           TAG: "Todo",
                                                                           _0: todo.id
@@ -1073,12 +1073,18 @@ function App(props) {
                                                                     setFocusIdNext: setFocusIdNext,
                                                                     newTodoAfter: newTodoAfter$1,
                                                                     getTodos: (function () {
-                                                                        return project.todos;
+                                                                        return Core__Option.mapOr(getProjects().find(function (p) {
+                                                                                        return p.id === project.id;
+                                                                                      }), [], (function (p) {
+                                                                                      return p.todos;
+                                                                                    }));
                                                                       }),
                                                                     isChecked: Belt_SetString.has(checked, todo.id),
                                                                     setChecked: setChecked,
                                                                     deleteTodo: deleteTodo,
-                                                                    hideArchived: project.hideArchived,
+                                                                    hasHiddenTodos: project.hideArchived && Core__Option.mapOr(Belt_MapString.get(project.hiddenTodos, todo.id), false, (function (hiddenTodos) {
+                                                                            return hiddenTodos.length > 0;
+                                                                          })),
                                                                     itemToMoveHandleMouseDown: itemToMoveHandleMouseDown,
                                                                     itemToMoveHandleMouseEnter: itemToMoveHandleMouseEnter,
                                                                     clearProjectLastRelative: (function () {

@@ -8,20 +8,20 @@ let make = (
   ~todo: todo,
   ~updateTodo: (string, string, Types.todo => Types.todo) => unit,
   ~isSelected: bool,
-  ~setSelectedElement,
+  ~setSelectedElement: (option<Types.selectElement> => option<Types.selectElement>) => unit,
   ~isDisplayElement: bool,
-  ~setDisplayElement,
+  ~setDisplayElement: (option<Types.selectElement> => option<Types.selectElement>) => unit,
   ~setTodos: (string, array<Types.todo> => array<Types.todo>) => unit,
-  ~setFocusIdNext,
+  ~setFocusIdNext: (option<string> => option<string>) => unit,
   ~newTodoAfter: (option<string>, option<string>) => unit,
   ~getTodos: unit => array<todo>,
   ~isChecked: bool,
-  ~setChecked,
-  ~deleteTodo,
-  ~hideArchived,
-  ~itemToMoveHandleMouseDown,
-  ~itemToMoveHandleMouseEnter,
-  ~clearProjectLastRelative,
+  ~setChecked: (Types.SSet.t => Types.SSet.t) => unit,
+  ~deleteTodo: (string, Types.todo) => unit,
+  ~hasHiddenTodos: bool,
+  ~itemToMoveHandleMouseDown: (string, JsxEventU.Mouse.t) => unit,
+  ~itemToMoveHandleMouseEnter: (bool, string, JsxEventU.Mouse.t) => unit,
+  ~clearProjectLastRelative: unit => unit,
 ) => {
   let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
   let inputRef = React.useRef(Nullable.null)
@@ -338,12 +338,7 @@ let make = (
         className={[
           "relative flex-1 ml-1 flex flex-row h-full justify-start items-center ",
         ]->Array.join(" ")}>
-        {if (
-          hideArchived &&
-          project.hiddenTodos
-          ->SMap.get(todo.id)
-          ->Option.mapOr(false, hiddenTodos => hiddenTodos->Array.length > 0)
-        ) {
+        {if hasHiddenTodos {
           <div
             className="absolute  text-[var(--darkPurple)] bg-[var(--lightPurple)] 
               text-xs h-3 w-3 -left-3 -top-0 flex flex-row items-center justify-center rounded-full">
@@ -447,22 +442,20 @@ let make = (
 }
 
 let make = React.memoCustomCompareProps(make, (a, b) => {
-  false
-  // Todo: add getTodos and project hidden elements
-
-  // a.project.id == b.project.id &&
-  // a.isSelected == b.isSelected &&
-  // a.isDisplayElement == b.isDisplayElement &&
-  // a.isChecked == b.isChecked &&
-  // a.todo.text == b.todo.text &&
-  // a.todo.additionalText == b.todo.additionalText &&
-  // a.todo.project == b.todo.project &&
-  // a.todo.status == b.todo.status &&
-  // a.todo.parentTodo == b.todo.parentTodo &&
-  // a.todo.depth == b.todo.depth &&
-  // a.todo.childNumber == b.todo.childNumber &&
-  // a.todo.hasArchivedChildren == b.todo.hasArchivedChildren &&
-  // a.todo.hasChildren == b.todo.hasChildren &&
-  // a.todo.ancArchived == b.todo.ancArchived &&
-  // a.todo.targetDate == b.todo.targetDate
+  a.hasHiddenTodos == b.hasHiddenTodos &&
+  a.project.id == b.project.id &&
+  a.isSelected == b.isSelected &&
+  a.isDisplayElement == b.isDisplayElement &&
+  a.isChecked == b.isChecked &&
+  a.todo.text == b.todo.text &&
+  a.todo.additionalText == b.todo.additionalText &&
+  a.todo.project == b.todo.project &&
+  a.todo.status == b.todo.status &&
+  a.todo.parentTodo == b.todo.parentTodo &&
+  a.todo.depth == b.todo.depth &&
+  a.todo.childNumber == b.todo.childNumber &&
+  a.todo.hasArchivedChildren == b.todo.hasArchivedChildren &&
+  a.todo.hasChildren == b.todo.hasChildren &&
+  a.todo.ancArchived == b.todo.ancArchived &&
+  a.todo.targetDate == b.todo.targetDate
 })

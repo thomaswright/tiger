@@ -7,7 +7,6 @@ import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
-import * as Belt_MapString from "rescript/lib/es6/belt_MapString.js";
 import * as Belt_SetString from "rescript/lib/es6/belt_SetString.js";
 import * as Tb from "react-icons/tb";
 import * as JsxRuntime from "react/jsx-runtime";
@@ -349,9 +348,7 @@ function Todo(props) {
                             }),
                         JsxRuntime.jsxs("div", {
                               children: [
-                                props.hideArchived && Core__Option.mapOr(Belt_MapString.get(project.hiddenTodos, todo.id), false, (function (hiddenTodos) {
-                                        return hiddenTodos.length > 0;
-                                      })) ? JsxRuntime.jsx("div", {
+                                props.hasHiddenTodos ? JsxRuntime.jsx("div", {
                                         children: JsxRuntime.jsx(Tb.TbArchive, {}),
                                         className: "absolute  text-[var(--darkPurple)] bg-[var(--lightPurple)] \n              text-xs h-3 w-3 -left-3 -top-0 flex flex-row items-center justify-center rounded-full"
                                       }) : null,
@@ -522,9 +519,15 @@ function Todo(props) {
             });
 }
 
-var make = Todo;
+var make = React.memo(Todo, (function (a, b) {
+        if (a.hasHiddenTodos === b.hasHiddenTodos && a.project.id === b.project.id && a.isSelected === b.isSelected && a.isDisplayElement === b.isDisplayElement && a.isChecked === b.isChecked && a.todo.text === b.todo.text && a.todo.additionalText === b.todo.additionalText && a.todo.project === b.todo.project && a.todo.status === b.todo.status && Caml_obj.equal(a.todo.parentTodo, b.todo.parentTodo) && Caml_obj.equal(a.todo.depth, b.todo.depth) && Caml_obj.equal(a.todo.childNumber, b.todo.childNumber) && a.todo.hasArchivedChildren === b.todo.hasArchivedChildren && a.todo.hasChildren === b.todo.hasChildren && a.todo.ancArchived === b.todo.ancArchived) {
+          return Caml_obj.equal(a.todo.targetDate, b.todo.targetDate);
+        } else {
+          return false;
+        }
+      }));
 
 export {
   make ,
 }
-/* react Not a pure module */
+/* make Not a pure module */

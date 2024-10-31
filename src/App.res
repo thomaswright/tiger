@@ -252,7 +252,7 @@ let _adjustProject = (projects, f, id) =>
 
 @react.component
 let make = () => {
-  let (projects, setProjectsPreCompute, _) = Common.useLocalStorage(
+  let (projects, setProjectsPreCompute, getProjects) = Common.useLocalStorage(
     "projects",
     defaultProjects->Array.map(p => {
       ...p,
@@ -910,7 +910,10 @@ let make = () => {
                 project
                 todo
                 updateTodo
-                hideArchived={project.hideArchived}
+                hasHiddenTodos={project.hideArchived &&
+                project.hiddenTodos
+                ->SMap.get(todo.id)
+                ->Option.mapOr(false, hiddenTodos => hiddenTodos->Array.length > 0)}
                 isSelected={selectedElement == Some(Todo(todo.id))}
                 isDisplayElement={displayElement == Some(Todo(todo.id))}
                 setSelectedElement
@@ -918,7 +921,10 @@ let make = () => {
                 setTodos
                 setFocusIdNext
                 newTodoAfter
-                getTodos={() => project.todos}
+                getTodos={() =>
+                  getProjects()
+                  ->Array.find(p => p.id == project.id)
+                  ->Option.mapOr([], p => p.todos)}
                 setChecked
                 deleteTodo
                 isChecked={checked->SSet.has(todo.id)}
