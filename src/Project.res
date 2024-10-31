@@ -454,64 +454,20 @@ module Todo = {
 @react.component
 let make = (
   ~project: project,
-  ~todos: array<todo>,
-  // ~showArchive,
-  // ~setShowArchive,
   ~updateProject,
-  ~updateTodo,
   ~selectedElement,
   ~setSelectedElement,
-  ~displayElement,
   ~setDisplayElement,
-  ~setFocusIdNext,
-  ~setTodos: (string, array<Types.todo> => array<Types.todo>) => unit,
-  ~getTodos,
-  ~checked,
-  ~setChecked,
-  ~deleteTodo,
-  ~itemToMoveHandleMouseDown,
   ~itemToMoveHandleMouseEnter,
   ~projectToMoveHandleMouseDown,
   ~projectToMoveHandleMouseEnter,
-  ~clearProjectLastRelative,
   ~handleHide,
+  ~newTodoAfter,
 ) => {
   let projectRef = React.useRef(Nullable.null)
   let inputRef = React.useRef(Nullable.null)
 
   let isSelected = selectedElement == Some(Project(project.id))
-
-  let newTodoAfter = (after, parentTodo) => {
-    let newId = Common.uuid()
-
-    let newTodo = {
-      id: newId,
-      text: "",
-      additionalText: "",
-      project: project.id,
-      status: Unsorted,
-      // box: Working,
-      parentTodo,
-      depth: None,
-      childNumber: None,
-      hasArchivedChildren: false,
-      hasChildren: false,
-      ancArchived: false,
-      targetDate: None,
-    }
-
-    setTodos(project.id, todos => {
-      if after == None {
-        [newTodo]->Array.concat(todos)
-      } else {
-        todos->Array.reduce([], (a, c) => {
-          Some(c.id) == after ? a->Array.concat([c])->Array.concat([newTodo]) : a->Array.concat([c])
-        })
-      }
-    })
-
-    setFocusIdNext(_ => Some(getTodoInputId(newId)))
-  }
 
   let onKeyDownProject = e => {
     if isSelected {
@@ -608,114 +564,85 @@ let make = (
   let handleHideAll = _ => updateProject(project.id, p => handleHide(true, None, p))
   // let handleHideArchived = _ => updateProject(project.id, p => handleHide(false, None, p))
 
-  <React.Fragment>
-    <li
-      key={getProjectId(project.id)}
-      id={getProjectId(project.id)}
-      tabIndex={0}
-      ref={ReactDOM.Ref.domRef(projectRef)}
-      onKeyDown={onKeyDownProject}
+  <li
+    key={getProjectId(project.id)}
+    id={getProjectId(project.id)}
+    tabIndex={0}
+    ref={ReactDOM.Ref.domRef(projectRef)}
+    onKeyDown={onKeyDownProject}
+    onBlur={_ => setSelectedElement(_ => None)}
+    onFocus={_ => {
+      setSelectedElement(_ => Some(Project(project.id)))
+      setDisplayElement(_ => Some(Project(project.id)))
+    }}
+    onMouseEnter={e => {
+      projectToMoveHandleMouseEnter(project.id, e)
+      itemToMoveHandleMouseEnter(true, project.id, e)
+    }}
+    className={[
+      listItemClass,
+      "first:mt-1 mt-2",
+      "relative group  flex flex-row justify-between items-center bg-[var(--t0)] px-1 text-[var(--t10)]
+        gap-1 border-b-[var(--t3)] border-t-[var(--t9)]",
+      isSelected
+        ? "outline outline-2 -outline-offset-2 outline-purple-500 focus:outline-blue-500"
+        : "",
+    ]->Array.join(" ")}>
+    <Common.TextareaAutosize
+      id={getProjectInputId(project.id)}
+      style={{resize: "none"}}
+      ref={ReactDOM.Ref.domRef(inputRef)}
+      className={[
+        todoInputClass,
+        "ml-1 my-1 block text-lg font-black tracking-tight  w-full border-0 px-0 py-0 focus:ring-0 
+               leading-none bg-transparent",
+      ]->Array.join(" ")}
+      placeholder={""}
+      value={project.name}
       onBlur={_ => setSelectedElement(_ => None)}
       onFocus={_ => {
-        setSelectedElement(_ => Some(Project(project.id)))
-        setDisplayElement(_ => Some(Project(project.id)))
+        setSelectedElement(_ => Some(Todo(project.id)))
+        setDisplayElement(_ => Some(Todo(project.id)))
       }}
-      onMouseEnter={e => {
-        projectToMoveHandleMouseEnter(project.id, e)
-        itemToMoveHandleMouseEnter(true, project.id, e)
+      onKeyDown={onKeyDownInput}
+      onChange={e => {
+        updateProject(project.id, t => {
+          ...t,
+          name: ReactEvent.Form.target(e)["value"],
+        })
       }}
+    />
+    <div
+      onMouseDown={e => projectToMoveHandleMouseDown(project.id, e)}
       className={[
-        listItemClass,
-        "first:mt-1 mt-2",
-        "relative group  flex flex-row justify-between items-center bg-[var(--t0)] px-1 text-[var(--t10)]
-        gap-1 border-b-[var(--t3)] border-t-[var(--t9)]",
-        isSelected
-          ? "outline outline-2 -outline-offset-2 outline-purple-500 focus:outline-blue-500"
-          : "",
+        project.hideAll ? "right-8" : "right-[72px]",
+        "absolute w-4 h-4 text-[var(--t4)] hidden group-hover:block bg-[var(--t0)] rounded-sm ",
       ]->Array.join(" ")}>
-      <Common.TextareaAutosize
-        id={getProjectInputId(project.id)}
-        style={{resize: "none"}}
-        ref={ReactDOM.Ref.domRef(inputRef)}
-        className={[
-          todoInputClass,
-          "ml-1 my-1 block text-lg font-black tracking-tight  w-full border-0 px-0 py-0 focus:ring-0 
-               leading-none bg-transparent",
-        ]->Array.join(" ")}
-        placeholder={""}
-        value={project.name}
-        onBlur={_ => setSelectedElement(_ => None)}
-        onFocus={_ => {
-          setSelectedElement(_ => Some(Todo(project.id)))
-          setDisplayElement(_ => Some(Todo(project.id)))
-        }}
-        onKeyDown={onKeyDownInput}
-        onChange={e => {
-          updateProject(project.id, t => {
-            ...t,
-            name: ReactEvent.Form.target(e)["value"],
-          })
-        }}
-      />
-      <div
-        onMouseDown={e => projectToMoveHandleMouseDown(project.id, e)}
-        className={[
-          project.hideAll ? "right-8" : "right-[72px]",
-          "absolute w-4 h-4 text-[var(--t4)] hidden group-hover:block bg-[var(--t0)] rounded-sm ",
-        ]->Array.join(" ")}>
-        <Icons.DragDrop />
-      </div>
-      {project.hideAll
-        ? React.null
-        : <button
-            onClick={_ => {
-              newTodoAfter(None, None)
-            }}
-            className="absolute right-10 hidden group-hover:block h-4 w-4 text-sm rounded flex-none text-[var(--t4)] bg-[var(--t0)] ">
-            <Icons.Plus />
-          </button>}
-      // {project.hideAll
-      //   ? React.null
-      //   : <button
-      //       className="text-sm rounded h-4 w-4 flex-none font-mono flex flex-row justify-center items-center text-[var(--t6)] mr-1"
-      //       onClick={handleHideArchived}>
-      //       {project.hideArchived ? <Icons.ArchiveOff /> : <Icons.Archive />}
-      //       // {showArchive
-      //       //   ? <span className="line-through"> {"closed"->React.string} </span>
-      //       //   : <span> {"closed"->React.string} </span>}
-      //     </button>}
-      <button
-        className="text-sm rounded h-4 w-4 flex-none font-mono flex flex-row justify-center items-center text-[var(--t6)] mr-1"
-        onClick={handleHideAll}>
-        {project.hideAll ? <Icons.ChevronDown /> : <Icons.ChevronUp />}
-      </button>
-    </li>
-    {todos
-    // ->Array.toSorted((a, b) => a.status->statusToFloat -. b.status->statusToFloat)
-    ->Array.map(todo =>
-      <Todo
-        key={getTodoId(todo.id)}
-        project
-        todo
-        updateTodo
-        hideArchived={project.hideArchived}
-        isSelected={selectedElement == Some(Todo(todo.id))}
-        isDisplayElement={displayElement == Some(Todo(todo.id))}
-        setSelectedElement
-        displayElement
-        setDisplayElement
-        setTodos
-        setFocusIdNext
-        newTodoAfter
-        getTodos={getTodos}
-        setChecked
-        deleteTodo
-        isChecked={checked->SSet.has(todo.id)}
-        itemToMoveHandleMouseDown
-        itemToMoveHandleMouseEnter
-        clearProjectLastRelative
-      />
-    )
-    ->React.array}
-  </React.Fragment>
+      <Icons.DragDrop />
+    </div>
+    {project.hideAll
+      ? React.null
+      : <button
+          onClick={_ => {
+            newTodoAfter(None, None)
+          }}
+          className="absolute right-10 hidden group-hover:block h-4 w-4 text-sm rounded flex-none text-[var(--t4)] bg-[var(--t0)] ">
+          <Icons.Plus />
+        </button>}
+    // {project.hideAll
+    //   ? React.null
+    //   : <button
+    //       className="text-sm rounded h-4 w-4 flex-none font-mono flex flex-row justify-center items-center text-[var(--t6)] mr-1"
+    //       onClick={handleHideArchived}>
+    //       {project.hideArchived ? <Icons.ArchiveOff /> : <Icons.Archive />}
+    //       // {showArchive
+    //       //   ? <span className="line-through"> {"closed"->React.string} </span>
+    //       //   : <span> {"closed"->React.string} </span>}
+    //     </button>}
+    <button
+      className="text-sm rounded h-4 w-4 flex-none font-mono flex flex-row justify-center items-center text-[var(--t6)] mr-1"
+      onClick={handleHideAll}>
+      {project.hideAll ? <Icons.ChevronDown /> : <Icons.ChevronUp />}
+    </button>
+  </li>
 }

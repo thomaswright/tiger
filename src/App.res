@@ -776,6 +776,38 @@ let make = () => {
     }
   }
 
+  let newTodoAfter = projectId => (after, parentTodo) => {
+    let newId = Common.uuid()
+
+    let newTodo = {
+      id: newId,
+      text: "",
+      additionalText: "",
+      project: projectId,
+      status: Unsorted,
+      // box: Working,
+      parentTodo,
+      depth: None,
+      childNumber: None,
+      hasArchivedChildren: false,
+      hasChildren: false,
+      ancArchived: false,
+      targetDate: None,
+    }
+
+    setTodos(projectId, todos => {
+      if after == None {
+        [newTodo]->Array.concat(todos)
+      } else {
+        todos->Array.reduce([], (a, c) => {
+          Some(c.id) == after ? a->Array.concat([c])->Array.concat([newTodo]) : a->Array.concat([c])
+        })
+      }
+    })
+
+    setFocusIdNext(_ => Some(getTodoInputId(newId)))
+  }
+
   let allProjectsHidden = projects->Array.every(p => p.hideAll)
   <div className="flex flex-row h-dvh text-[var(--t10)] ">
     // <StatusSelector />
@@ -856,37 +888,50 @@ let make = () => {
         {projects
         ->Array.filter(project => projectsTab == Active ? project.isActive : true)
         ->Array.map(project => {
-          // let showArchive = showArchive->Array.includes(project.id)
-
-          // ->Array.filter(todo => showArchive ? true : todo.box != Archive)
-
-          <Project
-            key={getProjectId(project.id)}
-            // showArchive={showArchive}
-            // setShowArchive={setShowArchive}
-            project
-            todos={project.todos}
-            updateProject
-            updateTodo
-            selectedElement
-            setSelectedElement
-            displayElement
-            setDisplayElement
-            setFocusIdNext
-            setTodos
-            getTodos={() => project.todos}
-            setChecked
-            checked
-            deleteTodo
-            itemToMoveHandleMouseDown
-            itemToMoveHandleMouseEnter
-            projectToMoveHandleMouseDown
-            projectToMoveHandleMouseEnter
-            handleHide
-            clearProjectLastRelative={() => {
-              projectLastRelative.current = None
-            }}
-          />
+          let newTodoAfter = newTodoAfter(project.id)
+          <React.Fragment>
+            <Project
+              key={getProjectId(project.id)}
+              project
+              updateProject
+              selectedElement
+              setSelectedElement
+              setDisplayElement
+              newTodoAfter
+              itemToMoveHandleMouseEnter
+              projectToMoveHandleMouseDown
+              projectToMoveHandleMouseEnter
+              handleHide
+            />
+            {project.todos
+            ->Array.map(todo =>
+              <Project.Todo
+                key={getTodoId(todo.id)}
+                project
+                todo
+                updateTodo
+                hideArchived={project.hideArchived}
+                isSelected={selectedElement == Some(Todo(todo.id))}
+                isDisplayElement={displayElement == Some(Todo(todo.id))}
+                setSelectedElement
+                displayElement
+                setDisplayElement
+                setTodos
+                setFocusIdNext
+                newTodoAfter
+                getTodos={() => project.todos}
+                setChecked
+                deleteTodo
+                isChecked={checked->SSet.has(todo.id)}
+                itemToMoveHandleMouseDown
+                itemToMoveHandleMouseEnter
+                clearProjectLastRelative={() => {
+                  projectLastRelative.current = None
+                }}
+              />
+            )
+            ->React.array}
+          </React.Fragment>
         })
         ->React.array}
       </ul>

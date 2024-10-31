@@ -837,6 +837,41 @@ function App(props) {
             hiddenTodos: mutHiddenTodos.contents
           };
   };
+  var newTodoAfter = function (projectId) {
+    return function (after, parentTodo) {
+      var newId = Uuid.v4();
+      var newTodo = {
+        id: newId,
+        text: "",
+        additionalText: "",
+        project: projectId,
+        status: "Unsorted",
+        parentTodo: parentTodo,
+        depth: undefined,
+        childNumber: undefined,
+        hasArchivedChildren: false,
+        hasChildren: false,
+        ancArchived: false,
+        targetDate: undefined
+      };
+      setTodos(projectId, (function (todos) {
+              if (after === undefined) {
+                return [newTodo].concat(todos);
+              } else {
+                return Core__Array.reduce(todos, [], (function (a, c) {
+                              if (Caml_obj.equal(c.id, after)) {
+                                return a.concat([c]).concat([newTodo]);
+                              } else {
+                                return a.concat([c]);
+                              }
+                            }));
+              }
+            }));
+      setFocusIdNext(function (param) {
+            return Types.getTodoInputId(newId);
+          });
+    };
+  };
   var allProjectsHidden = projects.every(function (p) {
         return p.hideAll;
       });
@@ -1002,32 +1037,56 @@ function App(props) {
                                         return true;
                                       }
                                     }).map(function (project) {
-                                    return JsxRuntime.jsx(Project.make, {
-                                                project: project,
-                                                todos: project.todos,
-                                                updateProject: updateProject,
-                                                updateTodo: updateTodo,
-                                                selectedElement: selectedElement,
-                                                setSelectedElement: setSelectedElement,
-                                                displayElement: displayElement,
-                                                setDisplayElement: setDisplayElement,
-                                                setFocusIdNext: setFocusIdNext,
-                                                setTodos: setTodos,
-                                                getTodos: (function () {
-                                                    return project.todos;
-                                                  }),
-                                                checked: checked,
-                                                setChecked: setChecked,
-                                                deleteTodo: deleteTodo,
-                                                itemToMoveHandleMouseDown: itemToMoveHandleMouseDown,
-                                                itemToMoveHandleMouseEnter: itemToMoveHandleMouseEnter,
-                                                projectToMoveHandleMouseDown: projectToMoveHandleMouseDown,
-                                                projectToMoveHandleMouseEnter: projectToMoveHandleMouseEnter,
-                                                clearProjectLastRelative: (function () {
-                                                    projectLastRelative.current = undefined;
-                                                  }),
-                                                handleHide: handleHide
-                                              }, Types.getProjectId(project.id));
+                                    var newTodoAfter$1 = newTodoAfter(project.id);
+                                    return JsxRuntime.jsxs(React.Fragment, {
+                                                children: [
+                                                  JsxRuntime.jsx(Project.make, {
+                                                        project: project,
+                                                        updateProject: updateProject,
+                                                        selectedElement: selectedElement,
+                                                        setSelectedElement: setSelectedElement,
+                                                        setDisplayElement: setDisplayElement,
+                                                        itemToMoveHandleMouseEnter: itemToMoveHandleMouseEnter,
+                                                        projectToMoveHandleMouseDown: projectToMoveHandleMouseDown,
+                                                        projectToMoveHandleMouseEnter: projectToMoveHandleMouseEnter,
+                                                        handleHide: handleHide,
+                                                        newTodoAfter: newTodoAfter$1
+                                                      }, Types.getProjectId(project.id)),
+                                                  project.todos.map(function (todo) {
+                                                        return JsxRuntime.jsx(Project.Todo.make, {
+                                                                    project: project,
+                                                                    todo: todo,
+                                                                    updateTodo: updateTodo,
+                                                                    isSelected: Caml_obj.equal(selectedElement, {
+                                                                          TAG: "Todo",
+                                                                          _0: todo.id
+                                                                        }),
+                                                                    setSelectedElement: setSelectedElement,
+                                                                    displayElement: displayElement,
+                                                                    isDisplayElement: Caml_obj.equal(displayElement, {
+                                                                          TAG: "Todo",
+                                                                          _0: todo.id
+                                                                        }),
+                                                                    setDisplayElement: setDisplayElement,
+                                                                    setTodos: setTodos,
+                                                                    setFocusIdNext: setFocusIdNext,
+                                                                    newTodoAfter: newTodoAfter$1,
+                                                                    getTodos: (function () {
+                                                                        return project.todos;
+                                                                      }),
+                                                                    isChecked: Belt_SetString.has(checked, todo.id),
+                                                                    setChecked: setChecked,
+                                                                    deleteTodo: deleteTodo,
+                                                                    hideArchived: project.hideArchived,
+                                                                    itemToMoveHandleMouseDown: itemToMoveHandleMouseDown,
+                                                                    itemToMoveHandleMouseEnter: itemToMoveHandleMouseEnter,
+                                                                    clearProjectLastRelative: (function () {
+                                                                        projectLastRelative.current = undefined;
+                                                                      })
+                                                                  }, Types.getTodoId(todo.id));
+                                                      })
+                                                ]
+                                              });
                                   }),
                               ref: Caml_option.some(aaParentRef),
                               className: "pb-20 flex-1 overflow-y-scroll"
