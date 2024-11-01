@@ -1099,7 +1099,7 @@ function App(props) {
                               className: "pb-20 flex-1 overflow-y-scroll"
                             })
                       ],
-                      className: "flex-1 h-full flex flex-col"
+                      className: "flex-1 flex flex-col h-1/2 sm:h-full border-t sm:border-t-0"
                     }),
                 JsxRuntime.jsxs("div", {
                       children: [
@@ -1131,10 +1131,10 @@ function App(props) {
                             }),
                         tmp
                       ],
-                      className: " border-l border-[var(--t3)] flex-1 flex flex-col"
+                      className: " border-l border-[var(--t3)] flex-1 flex flex-col h-1/2 sm:h-full"
                     })
               ],
-              className: "flex flex-row h-dvh text-[var(--t10)] "
+              className: "flex flex-col-reverse sm:flex-row max-h-dvh h-dvh text-[var(--t10)] "
             });
 }
 

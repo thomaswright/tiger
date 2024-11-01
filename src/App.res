@@ -809,9 +809,9 @@ let make = () => {
   }
 
   let allProjectsHidden = projects->Array.every(p => p.hideAll)
-  <div className="flex flex-row h-dvh text-[var(--t10)] ">
+  <div className="flex flex-col-reverse sm:flex-row max-h-dvh h-dvh text-[var(--t10)] ">
     // <StatusSelector />
-    <div className="flex-1 h-full flex flex-col">
+    <div className="flex-1 flex flex-col h-1/2 sm:h-full border-t sm:border-t-0">
       <div
         className="flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b border-[var(--t3)] px-2">
         // <img src={logoUrl} width={"24"} className="py-0.5 " />
@@ -941,7 +941,7 @@ let make = () => {
         ->React.array}
       </ul>
     </div>
-    <div className=" border-l border-[var(--t3)] flex-1 flex flex-col">
+    <div className=" border-l border-[var(--t3)] flex-1 flex flex-col h-1/2 sm:h-full">
       <div
         className="flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b border-[var(--t3)] px-2">
         <div className="flex-1" />
