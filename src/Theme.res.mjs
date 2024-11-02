@@ -2,9 +2,10 @@
 
 import * as React from "react";
 import * as Common from "./Common.res.mjs";
+import * as StorageKeys from "./StorageKeys.res.mjs";
 
 function useTheme() {
-  var match = Common.useLocalStorage("theme", "light");
+  var match = Common.useLocalStorage(StorageKeys.theme, "light");
   var theme = match[0];
   React.useEffect((function () {
           var match = theme === "dark" ? [

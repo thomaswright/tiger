@@ -12,6 +12,7 @@ import * as Belt_Array from "rescript/lib/es6/belt_Array.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as DisplayTodo from "./DisplayTodo.res.mjs";
+import * as StorageKeys from "./StorageKeys.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as Belt_MapString from "rescript/lib/es6/belt_MapString.js";
 import * as Belt_SetString from "rescript/lib/es6/belt_SetString.js";
@@ -245,7 +246,7 @@ function App$CheckedSummary(props) {
 }
 
 function App(props) {
-  var match = Common.useLocalStorage("projects", defaultProjects.map(function (p) {
+  var match = Common.useLocalStorage(StorageKeys.projects, defaultProjects.map(function (p) {
             return {
                     id: p.id,
                     name: p.name,
@@ -281,7 +282,7 @@ function App(props) {
       });
   var setChecked = match$1[1];
   var checked = match$1[0];
-  var match$2 = Common.useLocalStorage("projectsTab", "All");
+  var match$2 = Common.useLocalStorage(StorageKeys.projectsTab, "All");
   var projectsTab = match$2[0];
   var match$3 = React.useState(function () {
         
@@ -322,7 +323,7 @@ function App(props) {
   var setProjectOfDragHandle = match$9[1];
   var projectOfDragHandle = match$9[0];
   var projectLastRelative = React.useRef(undefined);
-  var match$10 = Common.useLocalStorage("baseColor", "var(--blueBase)");
+  var match$10 = Common.useLocalStorage(StorageKeys.baseColor, "var(--blueBase)");
   var baseColor = match$10[0];
   React.useEffect((function () {
           document.documentElement.style.setProperty("--tBase", baseColor);

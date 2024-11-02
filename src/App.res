@@ -253,7 +253,7 @@ let _adjustProject = (projects, f, id) =>
 @react.component
 let make = () => {
   let (projects, setProjectsPreCompute, getProjects) = Common.useLocalStorage(
-    "projects",
+    StorageKeys.projects,
     defaultProjects->Array.map(p => {
       ...p,
       todos: p.todos->buildTodoTree,
@@ -270,7 +270,7 @@ let make = () => {
     })
 
   let (checked, setChecked) = React.useState(() => SSet.empty)
-  let (projectsTab, _setProjectTab, _) = Common.useLocalStorage("projectsTab", All)
+  let (projectsTab, _setProjectTab, _) = Common.useLocalStorage(StorageKeys.projectsTab, All)
   let (selectedElement, setSelectedElement) = React.useState(_ => None)
   let (displayElement, setDisplayElement) = React.useState(_ => None)
   let (viewSettings, setViewSettings) = React.useState(_ => true)
@@ -288,7 +288,10 @@ let make = () => {
   let (projectOfDragHandle, setProjectOfDragHandle) = React.useState(_ => None)
   let projectLastRelative = React.useRef(None)
 
-  let (baseColor, setBaseColor, _) = Common.useLocalStorage("baseColor", "var(--blueBase)")
+  let (baseColor, setBaseColor, _) = Common.useLocalStorage(
+    StorageKeys.baseColor,
+    "var(--blueBase)",
+  )
 
   React.useEffect1(() => {
     Common.setRootStyleProperty("--tBase", baseColor)
