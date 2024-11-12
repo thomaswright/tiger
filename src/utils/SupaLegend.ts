@@ -26,8 +26,9 @@ export const todos$ = observable(
     supabase,
     collection: "todos",
     select: (from) => {
-      return from.select(
-        `id,
+      return from
+        .select(
+          `id,
            counter,
            text,
            done,
@@ -41,7 +42,9 @@ export const todos$ = observable(
            additional_text,
            status,
            outfit`
-      );
+        )
+        .eq("user_id", uid$.get())
+        .eq("deleted", false);
     },
     actions: ["read", "create", "update", "delete"],
     realtime: true,
@@ -68,6 +71,7 @@ export function addTodo(
 ) {
   const id = generateId();
   // Add keyed by id to the todos$ observable to trigger a create in Supabase
+
   todos$[id].assign({
     id,
     text,

@@ -13,7 +13,9 @@ const DashboardWrapper = observer(({ session }) => {
   let [projectsToHide, setProjectsToHide] = useState([]);
 
   const todos = groupByAndSort(
-    Object.values(_todos$.get() || {}),
+    Object.entries(_todos$.get() || {}).map(([k, v]) => {
+      return { ...v, id: k };
+    }),
     "parent_todo",
     "position"
   );
@@ -45,6 +47,7 @@ const DashboardWrapper = observer(({ session }) => {
         [],
         0
       );
+  // console.log(Object.entries(_todos$.get() || {}));
 
   return (
     <Dashboard
