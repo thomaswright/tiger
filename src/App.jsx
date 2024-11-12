@@ -101,6 +101,14 @@ function App() {
             <div>We're currently under limited release.</div>
             <div>Stay apprised for coming details.</div>
           </div>
+          <div>
+            <button
+              className="text-sm px-2 bg-[var(--t2)] rounded"
+              onClick={(_) => logout()}
+            >
+              {"Logout"}
+            </button>
+          </div>
         </div>
       );
     } else {
