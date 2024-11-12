@@ -17,7 +17,6 @@ const DashboardWrapper = observer(({ session }) => {
     "parent_todo",
     "position"
   );
-  console.log(_todos$.get());
   let rec = (t, depth, parent, tios, parentIndex) =>
     Boolean(t)
       ? t.reduce((a, c, i) => {

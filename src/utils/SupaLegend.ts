@@ -26,9 +26,8 @@ export const todos$ = observable(
     supabase,
     collection: "todos",
     select: (from) => {
-      return from
-        .select(
-          `id,
+      return from.select(
+        `id,
            counter,
            text,
            done,
@@ -42,8 +41,7 @@ export const todos$ = observable(
            additional_text,
            status,
            outfit`
-        )
-        .eq("user_id", uid$.get());
+      );
     },
     actions: ["read", "create", "update", "delete"],
     realtime: true,
