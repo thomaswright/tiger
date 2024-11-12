@@ -46,6 +46,7 @@ let make = (~onExportJson, ~onImportJson, ~setBaseColor, ~logout) => {
         ]
         ->Array.map(v => {
           <button
+            key={v}
             onClick={_ => setBaseColor(_ => v)}
             style={{
               backgroundColor: theme == Dark

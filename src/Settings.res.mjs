@@ -73,7 +73,7 @@ function Settings(props) {
                                                           return v;
                                                         });
                                                   })
-                                              });
+                                              }, v);
                                   }),
                               className: "flex flex-row gap-2 py-1"
                             }),

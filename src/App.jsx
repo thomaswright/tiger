@@ -1,20 +1,23 @@
 import { useState, useEffect } from "react";
-import { observer } from "@legendapp/state/react";
+import { observer, useEffectOnce } from "@legendapp/state/react";
 import { supabase, todos$ as _todos$, uid$ } from "./utils/SupaLegend.ts";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import Dashboard from "./Dashboard.res.mjs";
 import { groupByAndSort } from "./other.js";
 import useSessionStorage from "./useSessionStorage.js";
+import { jwtDecode } from "jwt-decode";
+import logoUrl from "./assets/tiger.svg";
 
-const DashboardWrapper = observer(() => {
+const DashboardWrapper = observer(({ session }) => {
   let [projectsToHide, setProjectsToHide] = useState([]);
+
   const todos = groupByAndSort(
-    Object.values(_todos$.get()),
+    Object.values(_todos$.get() || {}),
     "parent_todo",
     "position"
   );
-
+  console.log(_todos$.get());
   let rec = (t, depth, parent, tios, parentIndex) =>
     Boolean(t)
       ? t.reduce((a, c, i) => {
@@ -34,21 +37,22 @@ const DashboardWrapper = observer(() => {
           return [...a, newItem, ...children];
         }, [])
       : [];
-
-  let todosToDisplay = rec(
-    todos["root"].filter((x) => !projectsToHide.includes(x.id)),
-    0,
-    null,
-    [],
-    0
-  );
+  let todosToDisplay = !Boolean(todos["root"])
+    ? []
+    : rec(
+        todos["root"].filter((x) => !projectsToHide.includes(x.id)),
+        0,
+        null,
+        [],
+        0
+      );
 
   return (
     <Dashboard
       todos={todosToDisplay || []}
       projectsToHide={projectsToHide}
       setProjectsToHide={setProjectsToHide}
-      allProjects={todos["root"]}
+      allProjects={todos["root"] || []}
       logout={() => supabase.auth.signOut()}
     />
   );
@@ -84,7 +88,25 @@ function App() {
       </div>
     );
   } else {
-    return <DashboardWrapper />;
+    let jwt = jwtDecode(session.access_token);
+    if (jwt.app_metadata.tiger_plan !== "FOREVER") {
+      return (
+        <div className="p-6 max-w-lg">
+          <div className="flex flex-row gap-3 ml-0.5">
+            <img src={logoUrl} width={"40"} className="py-0.5 " />
+            <div className="font-black text-5xl tracking-tighter">
+              {"Tiger Todo"}
+            </div>
+          </div>
+          <div className="pt-2">
+            <div>We're currently under limited release.</div>
+            <div>Stay apprised for coming details.</div>
+          </div>
+        </div>
+      );
+    } else {
+      return <DashboardWrapper session={session} />;
+    }
   }
 }
 
