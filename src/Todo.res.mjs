@@ -273,7 +273,7 @@ function Todo(props) {
                                       style: {
                                         resize: "none"
                                       },
-                                      placeholder: "",
+                                      placeholder: todoRelation.depth === 0 ? "Untitled Project" : "",
                                       value: Core__Option.getOr(match$1[0], ""),
                                       onKeyDown: onKeyDownInput,
                                       onFocus: (function (param) {

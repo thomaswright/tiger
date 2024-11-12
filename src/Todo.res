@@ -356,7 +356,7 @@ let make = (
             //   ? "bg-sky-200 dark:bg-sky-900"
             //   : "bg-[var(--t0)]",
           ]->Array.join(" ")}
-          placeholder={""}
+          placeholder={todoRelation.depth == 0 ? "Untitled Project" : ""}
           style={{resize: "none"}}
           value={text->Option.getOr("")}
           onBlur={_ => setSelectedElement(_ => None)}
