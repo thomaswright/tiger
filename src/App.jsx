@@ -104,7 +104,7 @@ function App() {
           <div>
             <button
               className="text-sm px-2 bg-[var(--t2)] rounded"
-              onClick={(_) => logout()}
+              onClick={(_) => supabase.auth.signOut()}
             >
               {"Logout"}
             </button>
