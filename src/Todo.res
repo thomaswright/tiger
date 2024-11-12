@@ -1,50 +1,47 @@
-open Types
 open Webapi.Dom
 open Common
+open Types
 
 @react.component
 let make = (
-  ~project: project,
-  ~todo: todo,
-  ~updateTodo: (string, string, Types.todo => Types.todo) => unit,
-  ~isSelected: bool,
-  ~setSelectedElement: (option<Types.selectElement> => option<Types.selectElement>) => unit,
-  ~isDisplayElement: bool,
-  ~setDisplayElement: (option<Types.selectElement> => option<Types.selectElement>) => unit,
-  ~setTodos: (string, array<Types.todo> => array<Types.todo>) => unit,
-  ~setFocusIdNext: (option<string> => option<string>) => unit,
-  ~newTodoAfter: (option<string>, option<string>) => unit,
-  ~getTodos: unit => array<todo>,
-  ~isChecked: bool,
-  ~setChecked: (Types.SSet.t => Types.SSet.t) => unit,
-  ~deleteTodo: (string, Types.todo) => unit,
-  ~hasHiddenTodos: bool,
-  ~itemToMoveHandleMouseDown: (string, JsxEventU.Mouse.t) => unit,
-  ~itemToMoveHandleMouseEnter: (bool, string, JsxEventU.Mouse.t) => unit,
-  ~clearProjectLastRelative: unit => unit,
+  ~todoRelation: todoRelation,
+  ~getTodos: unit => array<todoRelation>,
+  ~isSelected,
+  ~setSelectedElement,
+  ~isDisplayElement,
+  ~setDisplayElement,
+  ~showCheckboxes,
+  ~setFocusIdNext,
+  ~isChecked,
+  ~setChecked,
+  ~itemToMoveHandleMouseDown,
+  ~itemToMoveHandleMouseEnter,
 ) => {
+  let todo = todoRelation.self
   let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
+  let (text, setText) = useDebounce(
+    ~initialValue=todo.text->Nullable.toOption,
+    ~onTrigger=v => v->Option.mapOr((), v_ => setTodoText(todo.id, v_)),
+    ~delay=1000,
+  )
+
+  let (stagedForDelete, setStagedForDelete) = React.useState(_ => false)
   let inputRef = React.useRef(Nullable.null)
   let containerRef = React.useRef(Nullable.null)
 
-  let (stagedForDelete, setStagedForDelete) = React.useState(_ => false)
+  React.useEffect(() => {
+    if inputRef.current->Nullable.toOption != Webapi.Dom.document->Document.activeElement {
+      setText(_ => todo.text->Nullable.toOption)
+    }
+
+    None
+  }, [todo.text])
+
   let focusContainer = () => {
     containerRef.current->mapNullable(dom => {
       dom->Obj.magic->HtmlElement.focus
     })
   }
-  // let clickDelayTimeout = React.useRef(None)
-  // let onCheckboxMouseDown = e => {
-  //   let timeoutId = setTimeout(() => {
-  //     focusContainer()
-  //     itemToMoveHandleMouseDown(todo.id, e)
-  //   }, 500)
-  //   clickDelayTimeout.current = timeoutId->Some
-  // }
-
-  // let onCheckboxMouseUp = _ => {
-  //   clickDelayTimeout.current->Option.mapOr((), timeoutId => clearTimeout(timeoutId))
-  // }
 
   let indentation = e => {
     if e->ReactEvent.Keyboard.key == "Tab" {
@@ -53,92 +50,94 @@ let make = (
 
     // Indents
     if (
-      ((e->ReactEvent.Keyboard.key == "Tab" && !(e->ReactEvent.Keyboard.shiftKey)) ||
-        (e->ReactEvent.Keyboard.key == "]" && e->ReactEvent.Keyboard.metaKey)) &&
-        todo.childNumber->Option.mapOr(false, childNumber => childNumber != 0)
+      (e->ReactEvent.Keyboard.key == "Tab" && !(e->ReactEvent.Keyboard.shiftKey)) ||
+        (e->ReactEvent.Keyboard.key == "]" && e->ReactEvent.Keyboard.metaKey)
     ) {
       e->ReactEvent.Keyboard.preventDefault
-
-      let todos = getTodos()
-      let newParent =
-        todos->Array.find(t =>
-          t.parentTodo == todo.parentTodo &&
-            t.childNumber == todo.childNumber->Option.map(c => c - 1)
-        )
-      setTodos(project.id, todos =>
-        todos->Array.map(t => {
-          if t.id == todo.id {
-            {
-              ...t,
-              parentTodo: newParent->Option.map(t => t.id),
-            }
-          } else if t.parentTodo == Some(todo.id) {
-            {
-              ...t,
-              parentTodo: newParent->Option.map(t => t.id),
-            }
-          } else {
-            t
-          }
+      batch(() => {
+        todoRelation.sibs
+        ->Array.get(todoRelation.index - 1)
+        ->Option.mapOr((), x => {
+          getTodos()
+          ->Array.find(t => t.self.id == x.id)
+          ->Option.mapOr(
+            (),
+            prevSib => {
+              prevSib.children
+              ->Array.get(prevSib.children->Array.length - 1)
+              ->Option.mapOr(
+                {
+                  setTodoPosition(todo.id, Value(x.id), 1.)
+                },
+                prevSibLastChild => {
+                  setTodoPosition(todo.id, Value(x.id), prevSibLastChild.position +. 1.)
+                },
+              )
+            },
+          )
         })
-      )
+        // children don't follow
+        todoRelation.children->Array.forEach(v => {
+          setTodoPosition(v.id, todo.parent_todo, todo.position +. v.position)
+        })
+      })
     }
 
     // De Indents
     if (
       ((e->ReactEvent.Keyboard.key == "Tab" && e->ReactEvent.Keyboard.shiftKey) ||
         (e->ReactEvent.Keyboard.key == "[" && e->ReactEvent.Keyboard.metaKey)) &&
-        todo.parentTodo != None
+        !(todo.parent_todo->Nullable.isNullable)
     ) {
       e->ReactEvent.Keyboard.preventDefault
 
-      let todos = getTodos()
-      let todoIndex = todos->Array.findIndex(t => t.id == todo.id)
-      let todosGoingBack = todos->Array.slice(~start=0, ~end=todoIndex)->Array.toReversed
-      let todosGoingForward = todos->Array.sliceToEnd(~start=todoIndex + 1)
+      batch(() => {
+        let newTodoParent =
+          todoRelation.parent
+          ->Nullable.toOption
+          ->Option.flatMap(x => x.parent_todo->Nullable.toOption)
+          ->toNullableNull
 
-      todo.depth->Option.mapOr((), todoDepth => {
-        let newChildren = ref([])
-        let break = ref(false)
-        let i = ref(0)
-        while !break.contents && i.contents < todosGoingForward->Array.length {
-          let t = todosGoingForward->Array.getUnsafe(i.contents)
-          if t.depth->Option.mapOr(false, d => d < todoDepth) {
-            break := true
-          } else {
-            if t.depth->Option.mapOr(false, d => d == todoDepth) {
-              newChildren := newChildren.contents->Array.concat([t.id])
-            }
-            i := i.contents + 1
-          }
+        let newTodoPosition = switch (
+          todoRelation.parent->Nullable.toOption,
+          todoRelation.tios->Array.get(todoRelation.parentIndex + 1),
+        ) {
+        | (Some(parent), Some(parentsNextSib)) => (parent.position +. parentsNextSib.position) /. 2.
+        | (Some(parent), _) => parent.position +. 1.
+        | (_, Some(parentsNextSib)) => parentsNextSib.position /. 2.
+        | _ => 1.
         }
+        setTodoPosition(todo.id, newTodoParent, newTodoPosition)
 
-        let newParent =
-          todosGoingBack
-          ->Array.find(t => t.depth == Some(todoDepth - 2))
-          ->Option.map(t => t.id)
+        todoRelation.sibs
+        ->Array.sliceToEnd(~start=todoRelation.index + 1)
+        ->Array.forEach(v => {
+          let newPosition =
+            todoRelation.children
+            ->Array.get(todoRelation.children->Array.length - 1)
+            ->Option.mapOr(0., c => c.position) +. v.position
 
-        setTodos(project.id, todos => {
-          todos->Array.map(
-            t => {
-              if t.id == todo.id {
-                {
-                  ...t,
-                  parentTodo: newParent,
-                }
-              } else if newChildren.contents->Array.includes(t.id) {
-                {
-                  ...t,
-                  parentTodo: Some(todo.id),
-                }
-              } else {
-                t
-              }
-            },
-          )
+          setTodoPosition(v.id, todo.id->Value, newPosition)
         })
       })
     }
+  }
+
+  let makeNewTodo = () => {
+    let newPosition =
+      todoRelation.depth == 0 || todoRelation.children->Array.length > 0
+        ? todoRelation.children->Array.get(0)->Option.mapOr(0., x => x.position /. 2.)
+        : todoRelation.sibs
+          ->Array.get(todoRelation.index + 1)
+          ->Option.mapOr(todo.position +. 1., nextSib => (nextSib.position +. todo.position) /. 2.)
+
+    let newParent =
+      todoRelation.depth == 0 || todoRelation.children->Array.length > 0
+        ? todo.id->Nullable.Value
+        : todo.parent_todo
+
+    let newId = addTodo("", newParent, newPosition)
+    setFocusIdNext(_ => Some(getTodoInputId(newId)))
   }
 
   let onKeyDownContainer = e => {
@@ -165,7 +164,7 @@ let make = (
         }
 
         if e->key == "Backspace" && e->metaKey {
-          deleteTodo(project.id, todo)
+          deleteTodo(todo.id)
 
           containerRef.current->mapNullable(containerEl => {
             Common.focusPreviousClass(listItemClass, containerEl)
@@ -174,7 +173,7 @@ let make = (
 
         if e->key == "Backspace" && !(e->metaKey) {
           if stagedForDelete {
-            deleteTodo(project.id, todo)
+            deleteTodo(todo.id)
 
             containerRef.current->mapNullable(containerEl => {
               Common.focusPreviousClass(listItemClass, containerEl)
@@ -185,7 +184,7 @@ let make = (
         }
 
         if e->key == "Enter" && e->metaKey {
-          newTodoAfter(Some(todo.id), todo.hasChildren ? Some(todo.id) : todo.parentTodo)
+          makeNewTodo()
         }
 
         if e->key == "Enter" {
@@ -214,60 +213,50 @@ let make = (
 
   let onKeyDownInput = e => {
     open ReactEvent.Keyboard
-
     setStagedForDelete(_ => false)
 
-    if isSelected {
-      if e->key == "Escape" {
-        // e->preventDefault // ?
-        e->stopPropagation
+    inputRef.current->mapNullable(dom => {
+      indentation(e)
 
-        focusContainer()
+      let cursorPosition = dom->Obj.magic->HtmlInputElement.selectionStart->Option.getOr(0)
+      let inputValueLength = dom->Obj.magic->HtmlInputElement.value->String.length
+
+      if e->key == "ArrowUp" {
+        e->stopPropagation
+        if cursorPosition == 0 {
+          e->preventDefault
+          // Common.focusPreviousClass(todoInputClass, dom)
+          focusContainer()
+        }
       }
 
-      inputRef.current->mapNullable(dom => {
-        indentation(e)
-
-        let cursorPosition = dom->Obj.magic->HtmlInputElement.selectionStart->Option.getOr(0)
-        let inputValueLength = dom->Obj.magic->HtmlInputElement.value->String.length
-
-        if e->key == "ArrowUp" {
-          e->stopPropagation
-          if cursorPosition == 0 {
-            e->preventDefault
-            // Common.focusPreviousClass(todoInputClass, dom)
-            focusContainer()
-          }
-        }
-
-        if e->key == "ArrowDown" {
-          e->stopPropagation
-          if cursorPosition == inputValueLength {
-            e->preventDefault
-            // Common.focusNextClass(todoInputClass, dom)
-            focusContainer()
-          }
-        }
-
-        if e->key == "Backspace" && inputValueLength == 0 {
-          if stagedForDelete {
-            deleteTodo(project.id, todo)
-
-            containerRef.current->mapNullable(containerEl => {
-              Common.focusPreviousClass(listItemClass, containerEl)
-            })
-          } else {
-            setStagedForDelete(_ => true)
-          }
-        }
-
-        if e->key == "Enter" && cursorPosition == inputValueLength {
+      if e->key == "ArrowDown" {
+        e->stopPropagation
+        if cursorPosition == inputValueLength {
           e->preventDefault
-          e->stopPropagation
-          newTodoAfter(Some(todo.id), todo.hasChildren ? Some(todo.id) : todo.parentTodo)
+          // Common.focusNextClass(todoInputClass, dom)
+          focusContainer()
         }
-      })
-    }
+      }
+
+      if e->key == "Backspace" && inputValueLength == 0 {
+        if stagedForDelete {
+          deleteTodo(todo.id)
+
+          containerRef.current->mapNullable(containerEl => {
+            Common.focusPreviousClass(listItemClass, containerEl)
+          })
+        } else {
+          setStagedForDelete(_ => true)
+        }
+      }
+
+      if e->key == "Enter" && cursorPosition == inputValueLength {
+        e->preventDefault
+        e->stopPropagation
+        makeNewTodo()
+      }
+    })
   }
 
   <li
@@ -279,26 +268,26 @@ let make = (
       setStagedForDelete(_ => false)
     }}
     onFocus={_ => {
-      setSelectedElement(_ => Some(Todo(todo.id)))
-      setDisplayElement(_ => Some(Todo(todo.id)))
+      setSelectedElement(_ => Some(todo.id))
+      setDisplayElement(_ => Some(todo.id))
     }}
     onKeyDown={onKeyDownContainer}
     onMouseEnter={e => {
-      clearProjectLastRelative()
       itemToMoveHandleMouseEnter(false, todo.id, e)
     }}
     className={[
       listItemClass,
-      "group flex flex-row justify-start items-center outline-none  pl-1",
+      todoRelation.depth == 0 ? "" : "pl-1",
+      "group flex flex-row justify-start items-center outline-none",
     ]->Array.join(" ")}>
-    {Array.make(~length=todo.depth->Option.getOr(0), false)
+    {Array.make(~length=todoRelation.depth - 1, false)
     ->Array.mapWithIndex((_, i) => {
       <div key={i->Int.toString} className="self-stretch w-2 border-l ml-2 border-[var(--t3)] " />
     })
     ->React.array}
     <div
       className={[
-        "group flex flex-row justify-start items-center h-full flex-1 pl-1 rounded-sm",
+        "pl-1 group flex flex-row justify-start items-center h-full flex-1 rounded-sm",
         stagedForDelete
           ? "outline-red-700 dark:outline-red-500"
           : "focus-within:outline-purple-500 outline-blue-500 ",
@@ -311,42 +300,44 @@ let make = (
           : "",
         isSelected ? "outline outline-2 -outline-offset-2 " : "",
       ]->Array.join(" ")}>
-      <Common.StatusSelect
-        isOpen={statusSelectIsOpen}
-        onOpenChange={v => {
-          if !v {
-            setStatusSelectIsOpen(_ => v)
-          } else {
-            setStatusSelectIsOpen(_ => v)
-          }
-        }}
-        status={Some(todo.status)}
-        focusTodo={() => {
-          // this isn't set directly because the "Enter"
-          // will then fire on the container then focusing
-          // the input *shrugs*
-          setFocusIdNext(_ => Some(getTodoId(todo.id)))
-        }}
-        setStatus={newStatus =>
-          updateTodo(project.id, todo.id, t => {
-            ...t,
-            status: newStatus,
-            // box: t.box == Archive && !(newStatus->statusIsResolved) ? Working : t.box,
-          })}
-      />
+      // {switch todo.outfit {
+      // | Project => <div className="w-10 h-5 bg-teal-500 rounded-full" />
+      // | Group => <div className="" />
+      // | Todo => <div className="w-10 h-5 bg-blue-200 rounded" />
+      // }}
+      {todoRelation.depth > 0
+        ? <Common.StatusSelect
+            isOpen={statusSelectIsOpen}
+            onOpenChange={v => {
+              if !v {
+                setStatusSelectIsOpen(_ => v)
+              } else {
+                setStatusSelectIsOpen(_ => v)
+              }
+            }}
+            status={Some(todo.status)}
+            focusTodo={() => {
+              // this isn't set directly because the "Enter"
+              // will then fire on the container then focusing
+              // the input *shrugs*
+              setFocusIdNext(_ => Some(getTodoId(todo.id)))
+            }}
+            setStatus={newStatus => setTodoStatus(todo.id, newStatus)}
+          />
+        : React.null}
       <div
         className={[
           "relative flex-1 ml-1 flex flex-row h-full justify-start items-center ",
         ]->Array.join(" ")}>
-        {if hasHiddenTodos {
-          <div
-            className="absolute  text-[var(--darkPurple)] bg-[var(--lightPurple)] 
-              text-xs h-3 w-3 -left-3 -top-0 flex flex-row items-center justify-center rounded-full">
-            <Icons.Archive />
-          </div>
-        } else {
-          React.null
-        }}
+        // {if hasHiddenTodos {
+        //   <div
+        //     className="absolute  text-[var(--darkPurple)] bg-[var(--lightPurple)]
+        //     text-xs h-3 w-3 -left-3 -top-0 flex flex-row items-center justify-center rounded-full">
+        //     <Icons.Archive />
+        //   </div>
+        // } else {
+        //   React.null
+        // }}
         {isSelected || isDisplayElement
           ? React.null
           : <div className="h-px w-full absolute bg-[var(--t2)] -bottom-0" />}
@@ -355,107 +346,92 @@ let make = (
           ref={ReactDOM.Ref.domRef(inputRef)}
           className={[
             todoInputClass,
-            "mx-1 my-1 block text-sm font-medium  w-full h-5 border-0 pl-0 py-0 focus:ring-0 focus:z-10 text-[var(--t10)]",
-            stagedForDelete
-              ? "bg-red-200 dark:bg-red-950"
-              : isChecked
-              ? "bg-sky-50 dark:bg-sky-950"
-              : isDisplayElement && !isSelected
-              ? "bg-sky-200 dark:bg-sky-900"
-              : "bg-[var(--t0)]",
+            todoRelation.depth == 0 ? "font-black" : "text-sm",
+            "mx-1 my-1 block w-full h-5 border-0 pl-0 py-0 focus:ring-0 text-[var(--t10)] bg-transparent",
+            // stagedForDelete
+            //   ? "bg-red-200 dark:bg-red-950"
+            //   : isChecked
+            //   ? "bg-sky-50 dark:bg-sky-950"
+            //   : isDisplayElement && !isSelected
+            //   ? "bg-sky-200 dark:bg-sky-900"
+            //   : "bg-[var(--t0)]",
           ]->Array.join(" ")}
           placeholder={""}
           style={{resize: "none"}}
-          value={todo.text}
+          value={text->Option.getOr("")}
           onBlur={_ => setSelectedElement(_ => None)}
           onFocus={_ => {
-            setSelectedElement(_ => Some(Todo(todo.id)))
-            setDisplayElement(_ => Some(Todo(todo.id)))
+            setSelectedElement(_ => Some(todo.id))
+            setDisplayElement(_ => Some(todo.id))
           }}
           onKeyDown={onKeyDownInput}
-          // onMouseDown={onInputMouseDown}
-          // onMouseUp={onInputMouseUp}
-          onChange={e => {
-            updateTodo(project.id, todo.id, t => {
-              ...t,
-              text: ReactEvent.Form.target(e)["value"],
-            })
-          }}
+          onChange={e => setText(ReactEvent.Form.target(e)["value"])}
         />
-        <Common.DateSelect
-          className="mr-1 ml-1"
-          value={todo.targetDate->Option.map(Date.fromString)}
-          onClick={newDate =>
-            updateTodo(project.id, todo.id, t => {
-              ...t,
-              targetDate: newDate->Option.map(Date.toString),
-            })}
-        />
-        <div
-          className={[
-            "cursor-default absolute right-10 flex-row items-center gap-3 pr-2 h-full",
-            isChecked ? "flex" : " hidden group-hover:flex",
-          ]->Array.join(" ")}>
-          <div
-            onMouseDown={e => itemToMoveHandleMouseDown(todo.id, e)}
-            className={" w-4 h-4 text-[var(--t4)] hidden group-hover:block bg-[var(--t0)] rounded-sm 0 "}>
-            <Icons.DragDrop />
-          </div>
-          // <button
-          //   className={[
-          //     "w-4 h-4 flex-row items-center justify-center cursor-default
-          //     hidden group-hover:flex rounded-sm text-sm text-[var(--t6)]  bg-[var(--t0)] ",
-          //   ]->Array.join(" ")}
-          //   onClick={_ => {
-          //     newTodoAfter(Some(todo.id), Some(todo.id))
-          //   }}>
-          //   <Icons.Plus />
-          // </button>
-          <input
-            onChange={_ => {
-              setChecked(v => v->SSet.has(todo.id) ? v->SSet.remove(todo.id) : v->SSet.add(todo.id))
-            }}
-            checked={isChecked}
-            type_={"checkbox"}
-            className={[
-              "border-[var(--t4)] bg-[var(--t0)] rounded text-blue-400 dark:text-blue-800 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500",
-            ]->Array.join(" ")}
-          />
-        </div>
+        {todoRelation.depth == 0
+          ? <Common.StatusSelect
+              isOpen={statusSelectIsOpen}
+              onOpenChange={v => {
+                if !v {
+                  setStatusSelectIsOpen(_ => v)
+                } else {
+                  setStatusSelectIsOpen(_ => v)
+                }
+              }}
+              status={Some(todo.status)}
+              focusTodo={() => {
+                // this isn't set directly because the "Enter"
+                // will then fire on the container then focusing
+                // the input *shrugs*
+                setFocusIdNext(_ => Some(getTodoId(todo.id)))
+              }}
+              setStatus={newStatus => setTodoStatus(todo.id, newStatus)}
+            />
+          : React.null}
+        {todoRelation.depth == 0 ? <div className="w-2" /> : React.null}
+        {todo.target_date->Nullable.toOption->Option.isSome
+          ? <Common.DateSelect
+              className="mr-1 ml-1"
+              value={todo.target_date->Nullable.toOption->Option.map(Date.fromString)}
+              onClick={newDate =>
+                setTodoDate(
+                  todo.id,
+                  newDate
+                  ->Option.map(x =>
+                    x->DateFns.formatISOOpt({
+                      representation: "date"->Some,
+                      format: None,
+                    })
+                  )
+                  ->toNullableNull,
+                )}
+            />
+          : React.null}
+        {showCheckboxes
+          ? <div
+              className={[
+                " h-full pr-2 pl-1 flex flex-row items-center",
+                // isChecked ? "flex" : " hidden group-hover:flex",
+              ]->Array.join(" ")}>
+              // <div
+              //   onMouseDown={e => itemToMoveHandleMouseDown(todo.id, e)}
+              //   className={" w-4 h-4 text-[var(--t4)] hidden group-hover:block bg-[var(--t0)] rounded-sm 0 "}>
+              //   <Icons.DragDrop />
+              // </div>
+              <input
+                onChange={_ => {
+                  setChecked(v =>
+                    v->SSet.has(todo.id) ? v->SSet.remove(todo.id) : v->SSet.add(todo.id)
+                  )
+                }}
+                checked={isChecked}
+                type_={"checkbox"}
+                className={[
+                  "border-[var(--t4)] bg-[var(--t0)] rounded text-blue-400 dark:text-blue-800 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500",
+                ]->Array.join(" ")}
+              />
+            </div>
+          : React.null}
       </div>
-
-      // <button
-      //   onClick={_ => {
-      //     setDatePickerOpen(v => !v)
-      //     // datePickerRef.current->mapNullable(datePickerEl => {
-      //     //   Console.log("click")
-      //     //   datePickerEl->Obj.magic->HtmlFormElement.click
-      //     // })
-      //   }}
-      //   className="w-12 h-6 rounded bg-[var(--t2)]">
-      //   {todo.targetDate->Option.mapOr(""->React.string, targetDate => {
-      //     targetDate->Date.toDateString->React.string
-      //   })}
-      // </button>
     </div>
   </li>
 }
-
-let make = React.memoCustomCompareProps(make, (a, b) => {
-  a.hasHiddenTodos == b.hasHiddenTodos &&
-  a.project.id == b.project.id &&
-  a.isSelected == b.isSelected &&
-  a.isDisplayElement == b.isDisplayElement &&
-  a.isChecked == b.isChecked &&
-  a.todo.text == b.todo.text &&
-  a.todo.additionalText == b.todo.additionalText &&
-  a.todo.project == b.todo.project &&
-  a.todo.status == b.todo.status &&
-  a.todo.parentTodo == b.todo.parentTodo &&
-  a.todo.depth == b.todo.depth &&
-  a.todo.childNumber == b.todo.childNumber &&
-  a.todo.hasArchivedChildren == b.todo.hasArchivedChildren &&
-  a.todo.hasChildren == b.todo.hasChildren &&
-  a.todo.ancArchived == b.todo.ancArchived &&
-  a.todo.targetDate == b.todo.targetDate
-})

@@ -5,8 +5,8 @@ import * as Common from "./Common.res.mjs";
 import * as JsxRuntime from "react/jsx-runtime";
 
 function Settings(props) {
+  var logout = props.logout;
   var setBaseColor = props.setBaseColor;
-  var onExportJson = props.onExportJson;
   var match = Theme.useTheme();
   var setTheme = match[1];
   var theme = match[0];
@@ -26,97 +26,31 @@ function Settings(props) {
                       ],
                       className: "flex flex-row gap-3 ml-0.5"
                     }),
-                JsxRuntime.jsxs("div", {
-                      children: [
-                        JsxRuntime.jsx("div", {
-                              children: "Tiger is a todo app with one special feature: it is designed exclusively for my girlfriend.\n            You can use it too if you like it.\n            ",
-                              className: " mb-4 mt-2"
-                            }),
-                        JsxRuntime.jsx("div", {
-                              children: "Here are the features:",
-                              className: "mb-2"
-                            }),
-                        JsxRuntime.jsxs("ul", {
-                              children: [
-                                JsxRuntime.jsx("li", {
-                                      children: "By design it has only one page. There are no \"views\"."
-                                    }),
-                                JsxRuntime.jsx("li", {
-                                      children: "Todos are grouped by project."
-                                    }),
-                                JsxRuntime.jsx("li", {
-                                      children: "Meaningful statuses"
-                                    }),
-                                JsxRuntime.jsx("li", {
-                                      children: "Make sub-todos by indenting with tab or cmd + ] deindent with shift + tab or cmd + [."
-                                    }),
-                                JsxRuntime.jsx("li", {
-                                      children: "Drag by the drag handle to reorder. Click the clickbox to drag multiple."
-                                    }),
-                                JsxRuntime.jsx("li", {
-                                      children: "Click the clickbox to change the status of multiple."
-                                    }),
-                                JsxRuntime.jsx("li", {
-                                      children: "Navigate with arrow keys. Hit enter to change the text. Escape to go back to nav mode. \"s\" opens the status picker."
-                                    }),
-                                JsxRuntime.jsx("li", {
-                                      children: "Hit enter from in a todo to make a new todo or click the plus on the project."
-                                    }),
-                                JsxRuntime.jsx("li", {
-                                      children: "Delete a todo by either deleting all text and then hitting Backspace twice, hitting cmd + Backspace, or click the trash icon on the details panel."
-                                    }),
-                                JsxRuntime.jsx("li", {
-                                      children: "Add a date."
-                                    }),
-                                JsxRuntime.jsx("li", {
-                                      children: "Add additional details per todo."
-                                    }),
-                                JsxRuntime.jsx("li", {
-                                      children: "Order by date or status in the project details. Can also hide archived todos here."
-                                    }),
-                                JsxRuntime.jsx("li", {
-                                      children: "Collapse all projects."
-                                    }),
-                                JsxRuntime.jsx("li", {
-                                      children: "The todos are stored locally, not in the cloud. The import will override all data."
-                                    }),
-                                JsxRuntime.jsx("li", {
-                                      children: "It has light and dark mode and multiple color options for each. It is cute when you want to be cute and serious when you need to be serious."
-                                    })
-                              ],
-                              className: "list-disc ml-4"
-                            })
-                      ],
+                JsxRuntime.jsx("div", {
+                      children: JsxRuntime.jsx("div", {
+                            children: "Tiger is a todo app with one special feature: it is designed exclusively for my girlfriend.\n            You can use it too if you like it.\n            ",
+                            className: " mb-4 mt-2"
+                          }),
                       className: "font-normal text-sm"
                     }),
                 JsxRuntime.jsx("div", {
-                      children: "Settings",
-                      className: "font-black text-lg"
+                      children: JsxRuntime.jsx("button", {
+                            children: "Logout",
+                            className: "text-sm px-2 bg-[var(--t2)] rounded",
+                            onClick: (function (param) {
+                                logout();
+                              })
+                          })
                     }),
                 JsxRuntime.jsx("div", {
-                      children: "Backup",
-                      className: "font-bold text-sm"
-                    }),
-                JsxRuntime.jsxs("div", {
-                      children: [
-                        JsxRuntime.jsx("button", {
-                              children: "Export",
-                              className: ["bg-[var(--t2)] px-2 rounded text-sm flex flex-row items-center gap-1 h-5 "].join(" "),
-                              onClick: (function (param) {
-                                  onExportJson();
-                                })
-                            }),
-                        JsxRuntime.jsx(Common.ImportButton.make, {
-                              onImportJson: props.onImportJson
-                            })
-                      ],
-                      className: "flex flex-row gap-2"
+                      children: "Settings",
+                      className: "font-black text-xl"
                     }),
                 JsxRuntime.jsxs("div", {
                       children: [
                         JsxRuntime.jsx("div", {
-                              children: "Color",
-                              className: "font-bold text-sm"
+                              children: "Color Theme",
+                              className: "font-bold pb-1"
                             }),
                         JsxRuntime.jsx("div", {
                               children: [
@@ -167,7 +101,7 @@ function Settings(props) {
                               className: "flex flex-row gap-2 py-2"
                             })
                       ],
-                      className: "pt-2"
+                      className: ""
                     }),
                 JsxRuntime.jsxs("div", {
                       children: [
@@ -180,7 +114,7 @@ function Settings(props) {
                               href: "https://github.com/thomaswright/tiger"
                             })
                       ],
-                      className: "text-xs text-right w-full py-3 font-bold "
+                      className: "text-xs text-right w-full py-3 px-2 font-bold "
                     })
               ],
               className: "flex-1 overflow-y-scroll px-3 py-2 flex flex-col gap-2 items-start pb-2"

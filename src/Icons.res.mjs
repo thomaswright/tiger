@@ -35,6 +35,10 @@ var ChevronDown = {};
 
 var ChevronUp = {};
 
+var ChevronRight = {};
+
+var ChevronLeft = {};
+
 var ArrowLeft = {};
 
 var ArrowRight = {};
@@ -57,6 +61,8 @@ export {
   SquarePlus ,
   ChevronDown ,
   ChevronUp ,
+  ChevronRight ,
+  ChevronLeft ,
   ArrowLeft ,
   ArrowRight ,
 }

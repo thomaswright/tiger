@@ -16,7 +16,7 @@ import {
 } from "react-icons/tb";
 
 let buttonBase =
-  "relative flex flex-row items-center justify-center text-2xs font-bold  tracking-wide w-16 h-5  rounded ";
+  "flex-none relative flex flex-row items-center justify-center text-2xs font-bold  tracking-tighter w-16 h-5  rounded ";
 
 const Dropdown = ({
   status,
@@ -157,8 +157,8 @@ const Dropdown = ({
           className="DropdownMenuContent"
           sideOffset={5}
         >
-          <div className="p-1.5 pb-1">
-            <div className="grid grid-cols-2 gap-1 ">
+          <div className="p-2 pb-1">
+            <div className="grid grid-cols-2 gap-2 ">
               {item("Unsorted")}
               {item("Future")}
               {item("NowIfTime")}
@@ -170,7 +170,7 @@ const Dropdown = ({
               {item("ArchiveDone")}
               {item("ArchiveNo")}
             </div>
-            <div className="h-5 font-bold flex flex-row items-center justify-center">
+            <div className="h-6 pt-1 font-bold flex flex-row items-center justify-center">
               {/* <div className=" w-6 flex flex-row items-center justify-center">
                 {statusStringShort(hoverStatus)}
               </div> */}

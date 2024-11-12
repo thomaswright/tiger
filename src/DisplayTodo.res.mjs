@@ -3,33 +3,63 @@
 import * as Types from "./Types.res.mjs";
 import * as React from "react";
 import * as Common from "./Common.res.mjs";
+import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as Tb from "react-icons/tb";
 import * as JsxRuntime from "react/jsx-runtime";
+import FormatISO from "date-fns/formatISO";
 import ReactTextareaAutosize from "react-textarea-autosize";
 
 function DisplayTodo(props) {
-  var deleteTodo = props.deleteTodo;
-  var updateTodo = props.updateTodo;
   var setFocusIdNext = props.setFocusIdNext;
-  var todo = props.todo;
-  var project = props.project;
-  var match = React.useState(function () {
+  var todoRelation = props.todoRelation;
+  var todo = todoRelation.self;
+  var inputRef = React.useRef(null);
+  var match = Common.useDebounce(Caml_option.nullable_to_opt(todo.text), (function (v) {
+          Core__Option.mapOr(v, undefined, (function (v_) {
+                  Common.setTodoText(todo.id, v_);
+                }));
+        }), 1000);
+  var setText = match[1];
+  var match$1 = Common.useDebounce(Caml_option.nullable_to_opt(todo.additional_text), (function (v) {
+          Core__Option.mapOr(v, undefined, (function (v_) {
+                  Common.setTodoAdditionalText(todo.id, v_);
+                }));
+        }), 1000);
+  var setAdditionalText = match$1[1];
+  var match$2 = React.useState(function () {
         return false;
       });
-  var setStatusSelectIsOpen = match[1];
+  var setStatusSelectIsOpen = match$2[1];
+  React.useEffect((function () {
+          setText(function (param) {
+                return Caml_option.nullable_to_opt(todo.text);
+              });
+        }), [todo.id]);
+  React.useEffect((function () {
+          if (Caml_obj.notequal(Caml_option.nullable_to_opt(inputRef.current), Caml_option.nullable_to_opt(document.activeElement))) {
+            setText(function (param) {
+                  return Caml_option.nullable_to_opt(todo.text);
+                });
+          }
+          
+        }), [todo.text]);
   return JsxRuntime.jsxs("div", {
               children: [
                 JsxRuntime.jsx("div", {
                       children: JsxRuntime.jsx(ReactTextareaAutosize, {
-                            className: ["text-lg flex-1 bg-inherit text-[var(--t10)] w-full outline-none \n          focus:ring-0\n          font-medium \n           border-none p-0 "].join(" "),
+                            ref: Caml_option.some(inputRef),
+                            className: [
+                                todoRelation.depth === 0 ? "font-black" : "font-medium",
+                                "text-lg flex-1 bg-inherit text-[var(--t10)] w-full outline-none \n          focus:ring-0\n           border-none p-0 "
+                              ].join(" "),
                             id: "id-display-title",
                             style: {
                               resize: "none"
                             },
                             placeholder: "Todo",
-                            value: todo.text,
+                            value: Core__Option.getOr(match[0], ""),
                             onKeyDown: (function (e) {
                                 if (e.key === "Escape") {
                                   return setFocusIdNext(function (param) {
@@ -39,22 +69,7 @@ function DisplayTodo(props) {
                                 
                               }),
                             onChange: (function (e) {
-                                updateTodo(project.id, todo.id, (function (t) {
-                                        return {
-                                                id: t.id,
-                                                text: e.target.value,
-                                                additionalText: t.additionalText,
-                                                project: t.project,
-                                                status: t.status,
-                                                parentTodo: t.parentTodo,
-                                                depth: t.depth,
-                                                childNumber: t.childNumber,
-                                                hasArchivedChildren: t.hasArchivedChildren,
-                                                hasChildren: t.hasChildren,
-                                                ancArchived: t.ancArchived,
-                                                targetDate: t.targetDate
-                                              };
-                                      }));
+                                setText(e.target.value);
                               })
                           }),
                       className: " w-full px-2 py-1"
@@ -64,32 +79,31 @@ function DisplayTodo(props) {
                         JsxRuntime.jsx(Common.StatusSelect.make, {
                               status: todo.status,
                               setStatus: (function (newStatus) {
-                                  updateTodo(project.id, todo.id, (function (t) {
-                                          return {
-                                                  id: t.id,
-                                                  text: t.text,
-                                                  additionalText: t.additionalText,
-                                                  project: t.project,
-                                                  status: newStatus,
-                                                  parentTodo: t.parentTodo,
-                                                  depth: t.depth,
-                                                  childNumber: t.childNumber,
-                                                  hasArchivedChildren: t.hasArchivedChildren,
-                                                  hasChildren: t.hasChildren,
-                                                  ancArchived: t.ancArchived,
-                                                  targetDate: t.targetDate
-                                                };
-                                        }));
+                                  Common.setTodoStatus(todo.id, newStatus);
                                 }),
                               focusTodo: (function () {
                                   
                                 }),
-                              isOpen: match[0],
+                              isOpen: match$2[0],
                               onOpenChange: (function (v) {
                                   setStatusSelectIsOpen(function (param) {
                                         return v;
                                       });
                                 })
+                            }),
+                        JsxRuntime.jsx(Common.DateSelect.make, {
+                              value: Core__Option.map(Caml_option.nullable_to_opt(todo.target_date), (function (prim) {
+                                      return new Date(prim);
+                                    })),
+                              onClick: (function (newDate) {
+                                  Common.setTodoDate(todo.id, Common.toNullableNull(Core__Option.map(newDate, (function (x) {
+                                                  return FormatISO(x, {
+                                                              format: undefined,
+                                                              representation: "date"
+                                                            });
+                                                }))));
+                                }),
+                              className: "mr-1 ml-1"
                             }),
                         JsxRuntime.jsx("div", {
                               className: "flex-1"
@@ -101,11 +115,11 @@ function DisplayTodo(props) {
                                   Core__Option.mapOr(Caml_option.nullable_to_opt(document.getElementById(Types.getTodoId(todo.id))), undefined, (function (todoEl) {
                                           Common.focusPreviousClass(Types.listItemClass, todoEl);
                                         }));
-                                  deleteTodo(project.id, todo);
+                                  Common.deleteTodo(todo.id);
                                 })
                             })
                       ],
-                      className: "flex flex-row border-y border-[var(--t3)] items-center gap-3 p-1 px-2"
+                      className: "flex flex-row border-y border-[var(--t3)] items-center gap-1 p-1 px-2"
                     }),
                 JsxRuntime.jsx("div", {
                       children: JsxRuntime.jsx(ReactTextareaAutosize, {
@@ -114,25 +128,12 @@ function DisplayTodo(props) {
                             style: {
                               resize: "none"
                             },
-                            placeholder: "Additional Todo Details",
-                            value: todo.additionalText,
+                            placeholder: "Additional Details",
+                            value: Core__Option.getOr(match$1[0], ""),
                             onChange: (function (e) {
-                                updateTodo(project.id, todo.id, (function (t) {
-                                        return {
-                                                id: t.id,
-                                                text: t.text,
-                                                additionalText: e.target.value,
-                                                project: t.project,
-                                                status: t.status,
-                                                parentTodo: t.parentTodo,
-                                                depth: t.depth,
-                                                childNumber: t.childNumber,
-                                                hasArchivedChildren: t.hasArchivedChildren,
-                                                hasChildren: t.hasChildren,
-                                                ancArchived: t.ancArchived,
-                                                targetDate: t.targetDate
-                                              };
-                                      }));
+                                setAdditionalText(function (param) {
+                                      return e.target.value;
+                                    });
                               })
                           }),
                       className: "p-2"

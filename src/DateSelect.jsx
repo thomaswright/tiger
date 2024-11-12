@@ -13,14 +13,17 @@ const DateSelect = ({ value, onClick, className }) => {
       <DropdownMenu.Trigger asChild>
         <button
           className={[
-            Boolean(value)
-              ? "text-[var(--t6)] "
-              : "invisible group-hover:visible text-[var(--t4)] ",
-            "w-10 h-5 text-xs rounded-lg font-medium bg-[var(--t0)] px-0.5",
+            Boolean(value) ? "justify-start" : "justify-center bg-[var(--t2)]",
+            isOpen
+              ? "text-[var(--t9)] "
+              : Boolean(value)
+              ? "text-[var(--t9)] "
+              : "text-[var(--t9)] ",
+            "w-10 h-5 rounded text-2xs font-medium flex flex-row flex-none items-center ",
             className,
           ].join(" ")}
         >
-          {Boolean(value) ? format(value, "M/d") : "--/--"}
+          {Boolean(value) ? format(value, "MMM d") : "Date"}
         </button>
       </DropdownMenu.Trigger>
 
@@ -29,7 +32,7 @@ const DateSelect = ({ value, onClick, className }) => {
           onEscapeKeyDown={(_) => focusTodo()}
           className="DropdownMenuContent"
           sideOffset={5}
-          side="right"
+          side="bottom"
         >
           <Calendar
             value={value}

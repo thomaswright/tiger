@@ -8,39 +8,49 @@ import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as Belt_SetString from "rescript/lib/es6/belt_SetString.js";
-import * as Tb from "react-icons/tb";
+import * as State from "@legendapp/state";
 import * as JsxRuntime from "react/jsx-runtime";
+import FormatISO from "date-fns/formatISO";
 import ReactTextareaAutosize from "react-textarea-autosize";
 
 function Todo(props) {
-  var clearProjectLastRelative = props.clearProjectLastRelative;
   var itemToMoveHandleMouseEnter = props.itemToMoveHandleMouseEnter;
-  var itemToMoveHandleMouseDown = props.itemToMoveHandleMouseDown;
-  var deleteTodo = props.deleteTodo;
   var setChecked = props.setChecked;
   var isChecked = props.isChecked;
-  var getTodos = props.getTodos;
-  var newTodoAfter = props.newTodoAfter;
   var setFocusIdNext = props.setFocusIdNext;
-  var setTodos = props.setTodos;
   var setDisplayElement = props.setDisplayElement;
   var isDisplayElement = props.isDisplayElement;
   var setSelectedElement = props.setSelectedElement;
   var isSelected = props.isSelected;
-  var updateTodo = props.updateTodo;
-  var todo = props.todo;
-  var project = props.project;
+  var getTodos = props.getTodos;
+  var todoRelation = props.todoRelation;
+  var todo = todoRelation.self;
   var match = React.useState(function () {
         return false;
       });
   var setStatusSelectIsOpen = match[1];
-  var inputRef = React.useRef(null);
-  var containerRef = React.useRef(null);
-  var match$1 = React.useState(function () {
+  var statusSelectIsOpen = match[0];
+  var match$1 = Common.useDebounce(Caml_option.nullable_to_opt(todo.text), (function (v) {
+          Core__Option.mapOr(v, undefined, (function (v_) {
+                  Common.setTodoText(todo.id, v_);
+                }));
+        }), 1000);
+  var setText = match$1[1];
+  var match$2 = React.useState(function () {
         return false;
       });
-  var setStagedForDelete = match$1[1];
-  var stagedForDelete = match$1[0];
+  var setStagedForDelete = match$2[1];
+  var stagedForDelete = match$2[0];
+  var inputRef = React.useRef(null);
+  var containerRef = React.useRef(null);
+  React.useEffect((function () {
+          if (Caml_obj.notequal(Caml_option.nullable_to_opt(inputRef.current), Caml_option.nullable_to_opt(document.activeElement))) {
+            setText(function (param) {
+                  return Caml_option.nullable_to_opt(todo.text);
+                });
+          }
+          
+        }), [todo.text]);
   var focusContainer = function () {
     Common.mapNullable(containerRef.current, (function (dom) {
             dom.focus();
@@ -50,136 +60,59 @@ function Todo(props) {
     if (e.key === "Tab") {
       e.preventDefault();
     }
-    if ((e.key === "Tab" && !e.shiftKey || e.key === "]" && e.metaKey) && Core__Option.mapOr(todo.childNumber, false, (function (childNumber) {
-              return childNumber !== 0;
-            }))) {
+    if (e.key === "Tab" && !e.shiftKey || e.key === "]" && e.metaKey) {
       e.preventDefault();
-      var todos = getTodos();
-      var newParent = todos.find(function (t) {
-            if (Caml_obj.equal(t.parentTodo, todo.parentTodo)) {
-              return Caml_obj.equal(t.childNumber, Core__Option.map(todo.childNumber, (function (c) {
-                                return c - 1 | 0;
-                              })));
-            } else {
-              return false;
-            }
+      State.batch(function () {
+            Core__Option.mapOr(todoRelation.sibs[todoRelation.index - 1 | 0], undefined, (function (x) {
+                    Core__Option.mapOr(getTodos().find(function (t) {
+                              return t.self.id === x.id;
+                            }), undefined, (function (prevSib) {
+                            Core__Option.mapOr(prevSib.children[prevSib.children.length - 1 | 0], Common.setTodoPosition(todo.id, x.id, 1), (function (prevSibLastChild) {
+                                    Common.setTodoPosition(todo.id, x.id, prevSibLastChild.position + 1);
+                                  }));
+                          }));
+                  }));
+            todoRelation.children.forEach(function (v) {
+                  Common.setTodoPosition(v.id, todo.parent_todo, todo.position + v.position);
+                });
           });
-      setTodos(project.id, (function (todos) {
-              return todos.map(function (t) {
-                          if (t.id === todo.id) {
-                            return {
-                                    id: t.id,
-                                    text: t.text,
-                                    additionalText: t.additionalText,
-                                    project: t.project,
-                                    status: t.status,
-                                    parentTodo: Core__Option.map(newParent, (function (t) {
-                                            return t.id;
-                                          })),
-                                    depth: t.depth,
-                                    childNumber: t.childNumber,
-                                    hasArchivedChildren: t.hasArchivedChildren,
-                                    hasChildren: t.hasChildren,
-                                    ancArchived: t.ancArchived,
-                                    targetDate: t.targetDate
-                                  };
-                          } else if (Caml_obj.equal(t.parentTodo, todo.id)) {
-                            return {
-                                    id: t.id,
-                                    text: t.text,
-                                    additionalText: t.additionalText,
-                                    project: t.project,
-                                    status: t.status,
-                                    parentTodo: Core__Option.map(newParent, (function (t) {
-                                            return t.id;
-                                          })),
-                                    depth: t.depth,
-                                    childNumber: t.childNumber,
-                                    hasArchivedChildren: t.hasArchivedChildren,
-                                    hasChildren: t.hasChildren,
-                                    ancArchived: t.ancArchived,
-                                    targetDate: t.targetDate
-                                  };
-                          } else {
-                            return t;
-                          }
-                        });
-            }));
     }
-    if (!((e.key === "Tab" && e.shiftKey || e.key === "[" && e.metaKey) && todo.parentTodo !== undefined)) {
+    if ((e.key === "Tab" && e.shiftKey || e.key === "[" && e.metaKey) && !(todo.parent_todo == null)) {
+      e.preventDefault();
+      State.batch(function () {
+            var newTodoParent = Common.toNullableNull(Core__Option.flatMap(Caml_option.nullable_to_opt(todoRelation.parent), (function (x) {
+                        return Caml_option.nullable_to_opt(x.parent_todo);
+                      })));
+            var match = todoRelation.parent;
+            var match$1 = todoRelation.tios[todoRelation.parentIndex + 1 | 0];
+            var newTodoPosition = (match == null) ? (
+                match$1 !== undefined ? match$1.position / 2 : 1
+              ) : (
+                match$1 !== undefined ? (match.position + match$1.position) / 2 : match.position + 1
+              );
+            Common.setTodoPosition(todo.id, newTodoParent, newTodoPosition);
+            todoRelation.sibs.slice(todoRelation.index + 1 | 0).forEach(function (v) {
+                  var newPosition = Core__Option.mapOr(todoRelation.children[todoRelation.children.length - 1 | 0], 0, (function (c) {
+                          return c.position;
+                        })) + v.position;
+                  Common.setTodoPosition(v.id, todo.id, newPosition);
+                });
+          });
       return ;
     }
-    e.preventDefault();
-    var todos$1 = getTodos();
-    var todoIndex = todos$1.findIndex(function (t) {
-          return t.id === todo.id;
+    
+  };
+  var makeNewTodo = function () {
+    var newPosition = todoRelation.depth === 0 || todoRelation.children.length > 0 ? Core__Option.mapOr(todoRelation.children[0], 0, (function (x) {
+              return x.position / 2;
+            })) : Core__Option.mapOr(todoRelation.sibs[todoRelation.index + 1 | 0], todo.position + 1, (function (nextSib) {
+              return (nextSib.position + todo.position) / 2;
+            }));
+    var newParent = todoRelation.depth === 0 || todoRelation.children.length > 0 ? todo.id : todo.parent_todo;
+    var newId = Common.addTodo("", newParent, newPosition);
+    setFocusIdNext(function (param) {
+          return Types.getTodoInputId(newId);
         });
-    var todosGoingBack = todos$1.slice(0, todoIndex).toReversed();
-    var todosGoingForward = todos$1.slice(todoIndex + 1 | 0);
-    Core__Option.mapOr(todo.depth, undefined, (function (todoDepth) {
-            var newChildren = {
-              contents: []
-            };
-            var $$break = false;
-            var i = 0;
-            while(!$$break && i < todosGoingForward.length) {
-              var t = todosGoingForward[i];
-              if (Core__Option.mapOr(t.depth, false, (function (d) {
-                        return d < todoDepth;
-                      }))) {
-                $$break = true;
-              } else {
-                if (Core__Option.mapOr(t.depth, false, (function (d) {
-                          return d === todoDepth;
-                        }))) {
-                  newChildren.contents = newChildren.contents.concat([t.id]);
-                }
-                i = i + 1 | 0;
-              }
-            };
-            var newParent = Core__Option.map(todosGoingBack.find(function (t) {
-                      return Caml_obj.equal(t.depth, todoDepth - 2 | 0);
-                    }), (function (t) {
-                    return t.id;
-                  }));
-            setTodos(project.id, (function (todos) {
-                    return todos.map(function (t) {
-                                if (t.id === todo.id) {
-                                  return {
-                                          id: t.id,
-                                          text: t.text,
-                                          additionalText: t.additionalText,
-                                          project: t.project,
-                                          status: t.status,
-                                          parentTodo: newParent,
-                                          depth: t.depth,
-                                          childNumber: t.childNumber,
-                                          hasArchivedChildren: t.hasArchivedChildren,
-                                          hasChildren: t.hasChildren,
-                                          ancArchived: t.ancArchived,
-                                          targetDate: t.targetDate
-                                        };
-                                } else if (newChildren.contents.includes(t.id)) {
-                                  return {
-                                          id: t.id,
-                                          text: t.text,
-                                          additionalText: t.additionalText,
-                                          project: t.project,
-                                          status: t.status,
-                                          parentTodo: todo.id,
-                                          depth: t.depth,
-                                          childNumber: t.childNumber,
-                                          hasArchivedChildren: t.hasArchivedChildren,
-                                          hasChildren: t.hasChildren,
-                                          ancArchived: t.ancArchived,
-                                          targetDate: t.targetDate
-                                        };
-                                } else {
-                                  return t;
-                                }
-                              });
-                  }));
-          }));
   };
   var onKeyDownContainer = function (e) {
     if (isSelected && Caml_obj.equal(Caml_option.nullable_to_opt(containerRef.current), Caml_option.nullable_to_opt(document.activeElement))) {
@@ -200,14 +133,14 @@ function Todo(props) {
                       Common.focusNextClass(Types.listItemClass, dom);
                     }
                     if (e.key === "Backspace" && e.metaKey) {
-                      deleteTodo(project.id, todo);
+                      Common.deleteTodo(todo.id);
                       Common.mapNullable(containerRef.current, (function (containerEl) {
                               Common.focusPreviousClass(Types.listItemClass, containerEl);
                             }));
                     }
                     if (e.key === "Backspace" && !e.metaKey) {
                       if (stagedForDelete) {
-                        deleteTodo(project.id, todo);
+                        Common.deleteTodo(todo.id);
                         Common.mapNullable(containerRef.current, (function (containerEl) {
                                 Common.focusPreviousClass(Types.listItemClass, containerEl);
                               }));
@@ -218,7 +151,7 @@ function Todo(props) {
                       }
                     }
                     if (e.key === "Enter" && e.metaKey) {
-                      newTodoAfter(todo.id, todo.hasChildren ? todo.id : todo.parentTodo);
+                      makeNewTodo();
                     }
                     if (e.key === "Enter") {
                       e.preventDefault();
@@ -252,106 +185,80 @@ function Todo(props) {
     setStagedForDelete(function (param) {
           return false;
         });
-    if (isSelected) {
-      if (e.key === "Escape") {
-        e.stopPropagation();
-        focusContainer();
-      }
-      return Common.mapNullable(inputRef.current, (function (dom) {
-                    indentation(e);
-                    var cursorPosition = Core__Option.getOr(Caml_option.nullable_to_opt(dom.selectionStart), 0);
-                    var inputValueLength = dom.value.length;
-                    if (e.key === "ArrowUp") {
-                      e.stopPropagation();
-                      if (cursorPosition === 0) {
-                        e.preventDefault();
-                        focusContainer();
-                      }
-                      
-                    }
-                    if (e.key === "ArrowDown") {
-                      e.stopPropagation();
-                      if (cursorPosition === inputValueLength) {
-                        e.preventDefault();
-                        focusContainer();
-                      }
-                      
-                    }
-                    if (e.key === "Backspace" && inputValueLength === 0) {
-                      if (stagedForDelete) {
-                        deleteTodo(project.id, todo);
-                        Common.mapNullable(containerRef.current, (function (containerEl) {
-                                Common.focusPreviousClass(Types.listItemClass, containerEl);
-                              }));
-                      } else {
-                        setStagedForDelete(function (param) {
-                              return true;
-                            });
-                      }
-                    }
-                    if (e.key === "Enter" && cursorPosition === inputValueLength) {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      return newTodoAfter(todo.id, todo.hasChildren ? todo.id : todo.parentTodo);
-                    }
-                    
-                  }));
-    }
-    
+    Common.mapNullable(inputRef.current, (function (dom) {
+            indentation(e);
+            var cursorPosition = Core__Option.getOr(Caml_option.nullable_to_opt(dom.selectionStart), 0);
+            var inputValueLength = dom.value.length;
+            if (e.key === "ArrowUp") {
+              e.stopPropagation();
+              if (cursorPosition === 0) {
+                e.preventDefault();
+                focusContainer();
+              }
+              
+            }
+            if (e.key === "ArrowDown") {
+              e.stopPropagation();
+              if (cursorPosition === inputValueLength) {
+                e.preventDefault();
+                focusContainer();
+              }
+              
+            }
+            if (e.key === "Backspace" && inputValueLength === 0) {
+              if (stagedForDelete) {
+                Common.deleteTodo(todo.id);
+                Common.mapNullable(containerRef.current, (function (containerEl) {
+                        Common.focusPreviousClass(Types.listItemClass, containerEl);
+                      }));
+              } else {
+                setStagedForDelete(function (param) {
+                      return true;
+                    });
+              }
+            }
+            if (e.key === "Enter" && cursorPosition === inputValueLength) {
+              e.preventDefault();
+              e.stopPropagation();
+              return makeNewTodo();
+            }
+            
+          }));
   };
   return JsxRuntime.jsxs("li", {
               children: [
-                Core__Array.make(Core__Option.getOr(todo.depth, 0), false).map(function (param, i) {
+                Core__Array.make(todoRelation.depth - 1 | 0, false).map(function (param, i) {
                       return JsxRuntime.jsx("div", {
                                   className: "self-stretch w-2 border-l ml-2 border-[var(--t3)] "
                                 }, i.toString());
                     }),
                 JsxRuntime.jsxs("div", {
                       children: [
-                        JsxRuntime.jsx(Common.StatusSelect.make, {
-                              status: todo.status,
-                              setStatus: (function (newStatus) {
-                                  updateTodo(project.id, todo.id, (function (t) {
-                                          return {
-                                                  id: t.id,
-                                                  text: t.text,
-                                                  additionalText: t.additionalText,
-                                                  project: t.project,
-                                                  status: newStatus,
-                                                  parentTodo: t.parentTodo,
-                                                  depth: t.depth,
-                                                  childNumber: t.childNumber,
-                                                  hasArchivedChildren: t.hasArchivedChildren,
-                                                  hasChildren: t.hasChildren,
-                                                  ancArchived: t.ancArchived,
-                                                  targetDate: t.targetDate
-                                                };
-                                        }));
-                                }),
-                              focusTodo: (function () {
-                                  setFocusIdNext(function (param) {
-                                        return Types.getTodoId(todo.id);
-                                      });
-                                }),
-                              isOpen: match[0],
-                              onOpenChange: (function (v) {
-                                  if (v) {
-                                    return setStatusSelectIsOpen(function (param) {
-                                                return v;
-                                              });
-                                  } else {
-                                    return setStatusSelectIsOpen(function (param) {
-                                                return v;
-                                              });
-                                  }
-                                })
-                            }),
+                        todoRelation.depth > 0 ? JsxRuntime.jsx(Common.StatusSelect.make, {
+                                status: todo.status,
+                                setStatus: (function (newStatus) {
+                                    Common.setTodoStatus(todo.id, newStatus);
+                                  }),
+                                focusTodo: (function () {
+                                    setFocusIdNext(function (param) {
+                                          return Types.getTodoId(todo.id);
+                                        });
+                                  }),
+                                isOpen: statusSelectIsOpen,
+                                onOpenChange: (function (v) {
+                                    if (v) {
+                                      return setStatusSelectIsOpen(function (param) {
+                                                  return v;
+                                                });
+                                    } else {
+                                      return setStatusSelectIsOpen(function (param) {
+                                                  return v;
+                                                });
+                                    }
+                                  })
+                              }) : null,
                         JsxRuntime.jsxs("div", {
                               children: [
-                                props.hasHiddenTodos ? JsxRuntime.jsx("div", {
-                                        children: JsxRuntime.jsx(Tb.TbArchive, {}),
-                                        className: "absolute  text-[var(--darkPurple)] bg-[var(--lightPurple)] \n              text-xs h-3 w-3 -left-3 -top-0 flex flex-row items-center justify-center rounded-full"
-                                      }) : null,
                                 isSelected || isDisplayElement ? null : JsxRuntime.jsx("div", {
                                         className: "h-px w-full absolute bg-[var(--t2)] -bottom-0"
                                       }),
@@ -359,32 +266,22 @@ function Todo(props) {
                                       ref: Caml_option.some(inputRef),
                                       className: [
                                           Types.todoInputClass,
-                                          "mx-1 my-1 block text-sm font-medium  w-full h-5 border-0 pl-0 py-0 focus:ring-0 focus:z-10 text-[var(--t10)]",
-                                          stagedForDelete ? "bg-red-200 dark:bg-red-950" : (
-                                              isChecked ? "bg-sky-50 dark:bg-sky-950" : (
-                                                  isDisplayElement && !isSelected ? "bg-sky-200 dark:bg-sky-900" : "bg-[var(--t0)]"
-                                                )
-                                            )
+                                          todoRelation.depth === 0 ? "font-black" : "text-sm",
+                                          "mx-1 my-1 block w-full h-5 border-0 pl-0 py-0 focus:ring-0 text-[var(--t10)] bg-transparent"
                                         ].join(" "),
                                       id: Types.getTodoInputId(todo.id),
                                       style: {
                                         resize: "none"
                                       },
                                       placeholder: "",
-                                      value: todo.text,
+                                      value: Core__Option.getOr(match$1[0], ""),
                                       onKeyDown: onKeyDownInput,
                                       onFocus: (function (param) {
                                           setSelectedElement(function (param) {
-                                                return {
-                                                        TAG: "Todo",
-                                                        _0: todo.id
-                                                      };
+                                                return todo.id;
                                               });
                                           setDisplayElement(function (param) {
-                                                return {
-                                                        TAG: "Todo",
-                                                        _0: todo.id
-                                                      };
+                                                return todo.id;
                                               });
                                         }),
                                       onBlur: (function (param) {
@@ -393,60 +290,51 @@ function Todo(props) {
                                               });
                                         }),
                                       onChange: (function (e) {
-                                          updateTodo(project.id, todo.id, (function (t) {
-                                                  return {
-                                                          id: t.id,
-                                                          text: e.target.value,
-                                                          additionalText: t.additionalText,
-                                                          project: t.project,
-                                                          status: t.status,
-                                                          parentTodo: t.parentTodo,
-                                                          depth: t.depth,
-                                                          childNumber: t.childNumber,
-                                                          hasArchivedChildren: t.hasArchivedChildren,
-                                                          hasChildren: t.hasChildren,
-                                                          ancArchived: t.ancArchived,
-                                                          targetDate: t.targetDate
-                                                        };
-                                                }));
+                                          setText(e.target.value);
                                         })
                                     }),
-                                JsxRuntime.jsx(Common.DateSelect.make, {
-                                      value: Core__Option.map(todo.targetDate, (function (prim) {
-                                              return new Date(prim);
-                                            })),
-                                      onClick: (function (newDate) {
-                                          updateTodo(project.id, todo.id, (function (t) {
-                                                  return {
-                                                          id: t.id,
-                                                          text: t.text,
-                                                          additionalText: t.additionalText,
-                                                          project: t.project,
-                                                          status: t.status,
-                                                          parentTodo: t.parentTodo,
-                                                          depth: t.depth,
-                                                          childNumber: t.childNumber,
-                                                          hasArchivedChildren: t.hasArchivedChildren,
-                                                          hasChildren: t.hasChildren,
-                                                          ancArchived: t.ancArchived,
-                                                          targetDate: Core__Option.map(newDate, (function (prim) {
-                                                                  return prim.toString();
-                                                                }))
-                                                        };
-                                                }));
-                                        }),
-                                      className: "mr-1 ml-1"
-                                    }),
-                                JsxRuntime.jsxs("div", {
-                                      children: [
-                                        JsxRuntime.jsx("div", {
-                                              children: JsxRuntime.jsx(Tb.TbDragDrop, {}),
-                                              className: " w-4 h-4 text-[var(--t4)] hidden group-hover:block bg-[var(--t0)] rounded-sm 0 ",
-                                              onMouseDown: (function (e) {
-                                                  itemToMoveHandleMouseDown(todo.id, e);
-                                                })
-                                            }),
-                                        JsxRuntime.jsx("input", {
+                                todoRelation.depth === 0 ? JsxRuntime.jsx(Common.StatusSelect.make, {
+                                        status: todo.status,
+                                        setStatus: (function (newStatus) {
+                                            Common.setTodoStatus(todo.id, newStatus);
+                                          }),
+                                        focusTodo: (function () {
+                                            setFocusIdNext(function (param) {
+                                                  return Types.getTodoId(todo.id);
+                                                });
+                                          }),
+                                        isOpen: statusSelectIsOpen,
+                                        onOpenChange: (function (v) {
+                                            if (v) {
+                                              return setStatusSelectIsOpen(function (param) {
+                                                          return v;
+                                                        });
+                                            } else {
+                                              return setStatusSelectIsOpen(function (param) {
+                                                          return v;
+                                                        });
+                                            }
+                                          })
+                                      }) : null,
+                                todoRelation.depth === 0 ? JsxRuntime.jsx("div", {
+                                        className: "w-2"
+                                      }) : null,
+                                Core__Option.isSome(Caml_option.nullable_to_opt(todo.target_date)) ? JsxRuntime.jsx(Common.DateSelect.make, {
+                                        value: Core__Option.map(Caml_option.nullable_to_opt(todo.target_date), (function (prim) {
+                                                return new Date(prim);
+                                              })),
+                                        onClick: (function (newDate) {
+                                            Common.setTodoDate(todo.id, Common.toNullableNull(Core__Option.map(newDate, (function (x) {
+                                                            return FormatISO(x, {
+                                                                        format: undefined,
+                                                                        representation: "date"
+                                                                      });
+                                                          }))));
+                                          }),
+                                        className: "mr-1 ml-1"
+                                      }) : null,
+                                props.showCheckboxes ? JsxRuntime.jsx("div", {
+                                        children: JsxRuntime.jsx("input", {
                                               className: ["border-[var(--t4)] bg-[var(--t0)] rounded text-blue-400 dark:text-blue-800 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500"].join(" "),
                                               checked: isChecked,
                                               type: "checkbox",
@@ -459,19 +347,15 @@ function Todo(props) {
                                                         }
                                                       });
                                                 })
-                                            })
-                                      ],
-                                      className: [
-                                          "cursor-default absolute right-10 flex-row items-center gap-3 pr-2 h-full",
-                                          isChecked ? "flex" : " hidden group-hover:flex"
-                                        ].join(" ")
-                                    })
+                                            }),
+                                        className: [" h-full pr-2 pl-1 flex flex-row items-center"].join(" ")
+                                      }) : null
                               ],
                               className: ["relative flex-1 ml-1 flex flex-row h-full justify-start items-center "].join(" ")
                             })
                       ],
                       className: [
-                          "group flex flex-row justify-start items-center h-full flex-1 pl-1 rounded-sm",
+                          "pl-1 group flex flex-row justify-start items-center h-full flex-1 rounded-sm",
                           stagedForDelete ? "outline-red-700 dark:outline-red-500" : "focus-within:outline-purple-500 outline-blue-500 ",
                           stagedForDelete ? "bg-red-200 dark:bg-red-950" : (
                               isChecked ? "bg-sky-50 dark:bg-sky-950" : (
@@ -485,23 +369,18 @@ function Todo(props) {
               ref: Caml_option.some(containerRef),
               className: [
                   Types.listItemClass,
-                  "group flex flex-row justify-start items-center outline-none  pl-1"
+                  todoRelation.depth === 0 ? "" : "pl-1",
+                  "group flex flex-row justify-start items-center outline-none"
                 ].join(" "),
               id: Types.getTodoId(todo.id),
               tabIndex: 0,
               onKeyDown: onKeyDownContainer,
               onFocus: (function (param) {
                   setSelectedElement(function (param) {
-                        return {
-                                TAG: "Todo",
-                                _0: todo.id
-                              };
+                        return todo.id;
                       });
                   setDisplayElement(function (param) {
-                        return {
-                                TAG: "Todo",
-                                _0: todo.id
-                              };
+                        return todo.id;
                       });
                 }),
               onBlur: (function (param) {
@@ -513,21 +392,14 @@ function Todo(props) {
                       });
                 }),
               onMouseEnter: (function (e) {
-                  clearProjectLastRelative();
                   itemToMoveHandleMouseEnter(false, todo.id, e);
                 })
             });
 }
 
-var make = React.memo(Todo, (function (a, b) {
-        if (a.hasHiddenTodos === b.hasHiddenTodos && a.project.id === b.project.id && a.isSelected === b.isSelected && a.isDisplayElement === b.isDisplayElement && a.isChecked === b.isChecked && a.todo.text === b.todo.text && a.todo.additionalText === b.todo.additionalText && a.todo.project === b.todo.project && a.todo.status === b.todo.status && Caml_obj.equal(a.todo.parentTodo, b.todo.parentTodo) && Caml_obj.equal(a.todo.depth, b.todo.depth) && Caml_obj.equal(a.todo.childNumber, b.todo.childNumber) && a.todo.hasArchivedChildren === b.todo.hasArchivedChildren && a.todo.hasChildren === b.todo.hasChildren && a.todo.ancArchived === b.todo.ancArchived) {
-          return Caml_obj.equal(a.todo.targetDate, b.todo.targetDate);
-        } else {
-          return false;
-        }
-      }));
+var make = Todo;
 
 export {
   make ,
 }
-/* make Not a pure module */
+/* react Not a pure module */

@@ -197,7 +197,7 @@ function Calendar(props) {
                                                                   className: className,
                                                                   id: calDateId(day_),
                                                                   onClick: (function (param) {
-                                                                      onClick(day_);
+                                                                      onClick(Caml_option.some(day_));
                                                                     })
                                                                 }, FormatISO(day_) + "day"),
                                                             GetDate(day_) === 15 ? JsxRuntime.jsx("div", {
@@ -216,7 +216,17 @@ function Calendar(props) {
                           }),
                       className: "py-2"
                     }),
-                shifter
+                shifter,
+                JsxRuntime.jsx("div", {
+                      children: JsxRuntime.jsx("button", {
+                            children: "Clear Date",
+                            className: "",
+                            onClick: (function (param) {
+                                onClick(undefined);
+                              })
+                          }),
+                      className: "flex flex-row items-center justify-center pt-1"
+                    })
               ],
               className: "h-64 w-64 overflow-y-scroll p-3 border rounded border-[var(--t2)] "
             });

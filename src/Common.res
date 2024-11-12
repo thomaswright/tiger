@@ -1,10 +1,23 @@
 open Types
 
+let mapNullable = (n, f) =>
+  n
+  ->Nullable.toOption
+  ->Option.mapOr((), f)
+
+module TextareaAutosize = {
+  @react.component(: ReactDOM.domProps) @module("react-textarea-autosize")
+  external make: ReactDOM.domProps => React.element = "default"
+}
+
 @val @scope(("document", "documentElement", "style"))
 external setRootStyleProperty: (string, string) => unit = "setProperty"
 
 @module("./useLocalStorage.js")
 external useLocalStorage: (string, 'a) => ('a, ('a => 'a) => unit, unit => 'a) = "default"
+
+@module("./useSessionStorage.js")
+external useSessionStorage: (string, 'a) => ('a, ('a => 'a) => unit, unit => 'a) = "default"
 
 @module("./useLocalStorage.js")
 external useLocalStorageListener: (string, 'a) => 'a = "useLocalStorageListener"
@@ -15,12 +28,40 @@ external focusPreviousClass: (string, Dom.element) => unit = "focusPreviousClass
 @module("./other.js")
 external focusNextClass: (string, Dom.element) => unit = "focusNextClass"
 
-@module("uuid") external uuid: unit => string = "v4"
+@module("@legendapp/state/react")
+external observer: React.component<'a> => React.component<'a> = "observer"
 
-// (Dom.element, string, unit, unit) => unit
-@module("@formkit/auto-animate") external autoAnimate: Dom.element => unit = "default"
-@module("@formkit/auto-animate/react")
-external useAutoAnimate: unit => (Dom.element => unit, bool => unit) = "useAutoAnimate"
+@module("./utils/SupaLegend.ts")
+external addTodo: (string, Nullable.t<string>, float) => string = "addTodo"
+
+@module("./utils/SupaLegend.ts")
+external setTodoText: (string, string) => unit = "setTodoText"
+
+@module("./utils/SupaLegend.ts")
+external setTodoAdditionalText: (string, string) => unit = "setTodoAdditionalText"
+
+@module("./utils/SupaLegend.ts")
+external setTodoDate: (string, Nullable.t<string>) => unit = "setTodoDate"
+
+@module("./utils/SupaLegend.ts")
+external setTodoOutfit: (string, outfit) => unit = "setTodoOutfit"
+
+@module("./utils/SupaLegend.ts")
+external setTodoStatus: (string, status) => unit = "setTodoStatus"
+
+@module("./utils/SupaLegend.ts")
+external setTodoPosition: (string, Nullable.t<string>, float) => unit = "setTodoPosition"
+
+@module("./utils/SupaLegend.ts")
+external toggleDone: string => unit = "toggleDone"
+
+@module("./utils/SupaLegend.ts")
+external deleteTodo: string => unit = "deleteTodo"
+
+@module("@legendapp/state")
+external batch: (unit => unit) => unit = "batch"
+
+@module("./assets/tiger.svg") external logoUrl: string = "default"
 
 module StatusSelect = {
   @react.component @module("./StatusSelect.jsx")
@@ -42,26 +83,31 @@ module DateSelect = {
   ) => React.element = "default"
 }
 
-let mapNullable = (n, f) =>
-  n
-  ->Nullable.toOption
-  ->Option.mapOr((), f)
+let toNullableNull = o =>
+  switch o {
+  | Some(v) => Nullable.Value(v)
+  | None => Null
+  }
 
-let arrayToggle = (a, match) => {
-  a->Array.includes(match) ? a->Array.filter(el => el != match) : a->Array.concat([match])
-}
+let useDebounce = (~initialValue, ~onTrigger, ~delay) => {
+  let (val, setVal) = React.useState(() => initialValue)
 
-module TextareaAutosize = {
-  @react.component(: ReactDOM.domProps) @module("react-textarea-autosize")
-  external make: ReactDOM.domProps => React.element = "default"
-}
+  let delayedSetRef = React.useRef(None)
 
-@module("./assets/tiger.svg") external logoUrl: string = "default"
+  React.useEffect(() => {
+    delayedSetRef.current->Option.mapOr((), x => {
+      clearTimeout(x)
+    })
 
-@module("./exportFunctions.js")
-external exportToJsonFile: string => unit = "exportToJsonFile"
+    if val != initialValue {
+      let id = setTimeout(() => {
+        onTrigger(val)
+      }, delay)
+      delayedSetRef.current = Some(id)
+    }
 
-module ImportButton = {
-  @module("./Import.jsx") @react.component
-  external make: (~onImportJson: array<'a> => unit) => React.element = "default"
+    None
+  }, [val])
+
+  (val, setVal)
 }

@@ -13,47 +13,48 @@ type status =
   | @as("ArchiveDone") ArchiveDone
   | @as("ArchiveNo") ArchiveNo
 
-type box =
-  | @as("Working") Working
-  | @as("Pinned") Pinned
-  | @as("Archive") Archive
+type outfit =
+  | @as("Todo") Todo
+  | @as("Project") Project
+  | @as("Group") Group
 
 type todo = {
   id: string,
-  text: string,
-  additionalText: string,
-  project: string,
+  counter: int,
+  text: Nullable.t<string>,
+  additional_text: Nullable.t<string>,
+  done: bool,
+  created_at: string,
+  updated_at: string,
+  parent_todo: Nullable.t<string>,
+  deleted: bool,
+  user_id: string,
+  position: float,
   status: status,
-  // box: box,
-  parentTodo: option<string>,
-  depth: option<int>,
-  childNumber: option<int>,
-  hasArchivedChildren: bool,
-  hasChildren: bool,
-  ancArchived: bool,
-  targetDate: option<string>,
+  outfit: outfit,
+  target_date: Nullable.t<string>,
 }
 
-type project = {
-  id: string,
-  name: string,
-  additionalText: string,
-  isActive: bool,
-  todos: array<todo>,
-  hideArchived: bool,
-  hideAll: bool,
-  hiddenTodos: SMap.t<array<todo>>,
+type todoRelation = {
+  self: todo,
+  depth: int,
+  index: int,
+  parent: Nullable.t<todo>,
+  parentIndex: int,
+  tios: array<todo>,
+  sibs: array<todo>,
+  children: array<todo>,
 }
 
-type projectsTab = | @as("All") All | @as("Active") Active
+type view = | @as("Settings") Settings | @as("ProjectList") ProjectList
 
-type selectElement = Todo(string) | Project(string)
-
-// let isArchiveStatus = s =>
-//   switch s {
-//   | ArchiveDone | ArchiveReject | ArchiveNoNeed | Trash => true
-//   | _ => false
-//   }
+// nextSibPosition: option<float>,
+// prevSibPosition: option<float>,
+// nextSibId: option<string>,
+// prevSibId: option<string>,
+// nextSibIds: array<string>,
+// lastSibPosition: option<float>,
+// lastChildPosition: option<float>,
 
 let statusToFloat = s => {
   [
@@ -130,18 +131,11 @@ let statusColorText = s =>
   | ArchiveNo => "var(--darkGray)"
   }
 
-let statusIsResolved = s =>
-  switch s {
-  | ResolveDone
-  | ResolveNo => true
-  | _ => false
-  }
-
 let getTodoId = s => "todo-" ++ s
 let getTodoInputId = s => "todo-input-" ++ s
 
-let getProjectId = s => "project-" ++ s
-let getProjectInputId = s => "project-input-" ++ s
+// let getProjectId = s => "project-" ++ s
+// let getProjectInputId = s => "project-input-" ++ s
 
 let getIdFromId = s => {
   if s->String.includes("todo-") {

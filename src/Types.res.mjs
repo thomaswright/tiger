@@ -113,30 +113,12 @@ function statusColorText(s) {
   }
 }
 
-function statusIsResolved(s) {
-  switch (s) {
-    case "ResolveDone" :
-    case "ResolveNo" :
-        return true;
-    default:
-      return false;
-  }
-}
-
 function getTodoId(s) {
   return "todo-" + s;
 }
 
 function getTodoInputId(s) {
   return "todo-input-" + s;
-}
-
-function getProjectId(s) {
-  return "project-" + s;
-}
-
-function getProjectInputId(s) {
-  return "project-input-" + s;
 }
 
 function getIdFromId(s) {
@@ -169,11 +151,8 @@ export {
   statusString ,
   statusColor ,
   statusColorText ,
-  statusIsResolved ,
   getTodoId ,
   getTodoInputId ,
-  getProjectId ,
-  getProjectInputId ,
   getIdFromId ,
   listItemClass ,
   todoInputClass ,

@@ -82,6 +82,14 @@ module ChevronUp = {
   @react.component @module("react-icons/tb")
   external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "TbChevronUp"
 }
+module ChevronRight = {
+  @react.component @module("react-icons/tb")
+  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "TbChevronRight"
+}
+module ChevronLeft = {
+  @react.component @module("react-icons/tb")
+  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "TbChevronLeft"
+}
 
 module ArrowLeft = {
   @react.component @module("react-icons/tb")

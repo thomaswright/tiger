@@ -3,16 +3,22 @@
 
 var theme = "tiger-theme";
 
-var projects = "tiger-projects";
-
-var projectsTab = "tiger-projectsTab";
-
 var baseColor = "tiger-baseColor";
+
+var selectedElement = "tiger-selected-element";
+
+var displayElement = "tiger-display-element";
+
+var view = "tiger-view";
+
+var showCheckboxes = "tiger-show-checkboxes";
 
 export {
   theme ,
-  projects ,
-  projectsTab ,
   baseColor ,
+  selectedElement ,
+  displayElement ,
+  view ,
+  showCheckboxes ,
 }
 /* No side effect */

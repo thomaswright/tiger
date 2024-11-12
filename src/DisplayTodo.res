@@ -4,40 +4,61 @@ open Webapi.Dom
 open Common
 
 @react.component
-let make = (~project: project, ~todo: todo, ~setFocusIdNext, ~updateTodo, ~deleteTodo) => {
+let make = (~todoRelation: todoRelation, ~setFocusIdNext) => {
   // ~setTodos: (string, array<todo> => array<todo>) => unit,
+  let todo = todoRelation.self
+  let inputRef = React.useRef(Nullable.null)
+  let (text, setText) = useDebounce(
+    ~initialValue=todo.text->Nullable.toOption,
+    ~onTrigger=v => v->Option.mapOr((), v_ => setTodoText(todo.id, v_)),
+    ~delay=1000,
+  )
+  let (additionalText, setAdditionalText) = useDebounce(
+    ~initialValue=todo.additional_text->Nullable.toOption,
+    ~onTrigger=v => v->Option.mapOr((), v_ => setTodoAdditionalText(todo.id, v_)),
+    ~delay=1000,
+  )
 
   let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
+
+  React.useEffect(() => {
+    setText(_ => todo.text->Nullable.toOption)
+    None
+  }, [todo.id])
+
+  React.useEffect(() => {
+    if inputRef.current->Nullable.toOption != Webapi.Dom.document->Document.activeElement {
+      setText(_ => todo.text->Nullable.toOption)
+    }
+
+    None
+  }, [todo.text])
 
   <div className="w-full flex-1 overflow-y-scroll">
     <div className=" w-full px-2 py-1">
       <Common.TextareaAutosize
+        ref={ReactDOM.Ref.domRef(inputRef)}
         style={{
           resize: "none",
         }}
         id="id-display-title"
         className={[
+          todoRelation.depth == 0 ? "font-black" : "font-medium",
           "text-lg flex-1 bg-inherit text-[var(--t10)] w-full outline-none 
           focus:ring-0
-          font-medium 
            border-none p-0 ",
         ]->Array.join(" ")}
         placeholder={"Todo"}
-        value={todo.text}
+        value={text->Option.getOr("")}
         onKeyDown={e => {
           if e->ReactEvent.Keyboard.key == "Escape" {
             setFocusIdNext(_ => Some(getTodoId(todo.id)))
           }
         }}
-        onChange={e => {
-          updateTodo(project.id, todo.id, t => {
-            ...t,
-            text: ReactEvent.Form.target(e)["value"],
-          })
-        }}
+        onChange={e => setText(ReactEvent.Form.target(e)["value"])}
       />
     </div>
-    <div className="flex flex-row border-y border-[var(--t3)] items-center gap-3 p-1 px-2">
+    <div className="flex flex-row border-y border-[var(--t3)] items-center gap-1 p-1 px-2">
       <Common.StatusSelect
         isOpen={statusSelectIsOpen}
         // isPinned={todo.box == Pinned}
@@ -47,70 +68,47 @@ let make = (~project: project, ~todo: todo, ~setFocusIdNext, ~updateTodo, ~delet
         }}
         status={Some(todo.status)}
         focusTodo={() => ()}
-        setStatus={newStatus =>
-          updateTodo(project.id, todo.id, t => {
-            ...t,
-            status: newStatus,
-            // box: t.box == Archive && !(newStatus->statusIsResolved) ? Working : t.box,
-          })}
+        setStatus={newStatus => setTodoStatus(todo.id, newStatus)}
       />
+      <Common.DateSelect
+        className="mr-1 ml-1"
+        value={todo.target_date->Nullable.toOption->Option.map(Date.fromString)}
+        onClick={newDate =>
+          setTodoDate(
+            todo.id,
+            newDate
+            ->Option.map(x =>
+              x->DateFns.formatISOOpt({
+                representation: "date"->Some,
+                format: None,
+              })
+            )
+            ->toNullableNull,
+          )}
+      />
+      // {todoRelation.depth >= 0
+      //   ? <div className="flex flex-row gap-1">
+      //       <button
+      //         className="px-2 text-sm bg-gray-200" onClick={_ => setTodoOutfit(todo.id, Project)}>
+      //         {"Make Project"->React.string}
+      //       </button>
+      //       <button
+      //         className="px-2 text-sm bg-gray-200" onClick={_ => setTodoOutfit(todo.id, Group)}>
+      //         {"Make Group"->React.string}
+      //       </button>
+      //       <button
+      //         className="px-2 text-sm bg-gray-200" onClick={_ => setTodoOutfit(todo.id, Todo)}>
+      //         {"Make Todo"->React.string}
+      //       </button>
+      //     </div>
+      //   : React.null}
       <div className={"flex-1"} />
-      // {todo.status->statusIsResolved
-      //   ? <button
-      //       onClick={_ => {
-      //         setTodos(project.id, v =>
-      //           v->Array.map(t =>
-      //             t.id == todo.id
-      //               ? {
-      //                   ...t,
-      //                   box: t.box != Archive ? Archive : Working,
-      //                   status: t.status->statusIsResolved ? t.status : ResolveScrap,
-      //                 }
-      //               : t
-      //           )
-      //         )
-      //       }}
-      //       className={[
-      //         " px-1 h-6 flex flex-row items-center justify-center rounded border-[var(--t3)] gap-1
-      //     hover:text-blue-600
-      //     ",
-      //         todo.box == Archive ? "text-blue-600" : "text-[var(--t4)]",
-      //       ]->Array.join(" ")}>
-      //       // {!(todo.status->statusIsResolved) && todo.box != Archive
-      //       //   ? "Scrap &"->React.string
-      //       //   : React.null}
-      //       <Icons.Archive />
-      //     </button>
-      //   : React.null}
-      // {todo.status->statusIsResolved
-      //   ? <button
-      //       onClick={_ => {
-      //         setTodos(project.id, v =>
-      //           v->Array.map(t =>
-      //             t.id == todo.id
-      //               ? {
-      //                   ...t,
-      //                   box: t.box != Pinned ? Pinned : Working,
-      //                 }
-      //               : t
-      //           )
-      //         )
-      //       }}
-      //       className={[
-      //         " px-1 h-6 flex flex-row items-center justify-center rounded border-[var(--t3)]
-      //     hover:text-blue-600
-      //     ",
-      //         todo.box == Pinned ? "text-blue-600" : "text-[var(--t4)]",
-      //       ]->Array.join(" ")}>
-      //       <Icons.Pin />
-      //     </button>
-      //   : React.null}
       <button
         onClick={_ => {
           Webapi.Dom.document
           ->Document.getElementById(getTodoId(todo.id))
           ->Option.mapOr((), todoEl => Common.focusPreviousClass(listItemClass, todoEl))
-          deleteTodo(project.id, todo)
+          deleteTodo(todo.id)
         }}
         className={[
           "
@@ -131,13 +129,10 @@ let make = (~project: project, ~todo: todo, ~setFocusIdNext, ~updateTodo, ~delet
           "placeholder:text-[var(--t5)] text-sm flex-1 border-none rounded-lg text-[var(--t10)] w-full outline-none bg-[var(--t2)]
           focus:ring-0 font-medium",
         ]->Array.join(" ")}
-        placeholder={"Additional Todo Details"}
-        value={todo.additionalText}
+        placeholder={"Additional Details"}
+        value={additionalText->Option.getOr("")}
         onChange={e => {
-          updateTodo(project.id, todo.id, t => {
-            ...t,
-            additionalText: ReactEvent.Form.target(e)["value"],
-          })
+          setAdditionalText(_ => ReactEvent.Form.target(e)["value"]->Some)
         }}
       />
     </div>

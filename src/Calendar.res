@@ -161,7 +161,7 @@ let make = (~onClick, ~value: option<Js.Date.t>) => {
                 <div
                   id={calDateId(day_)}
                   key={day_->DateFns.formatISO ++ "day"}
-                  onClick={_ => onClick(day_)}
+                  onClick={_ => onClick(Some(day_))}
                   className>
                   {day_->DateFns.format("d")->React.string}
                 </div>
@@ -181,6 +181,9 @@ let make = (~onClick, ~value: option<Js.Date.t>) => {
       ->React.array}
     </div>
     {shifter}
+    <div className="flex flex-row items-center justify-center pt-1">
+      <button onClick={_ => onClick(None)} className={""}> {"Clear Date"->React.string} </button>
+    </div>
   </div>
 }
 
