@@ -108,23 +108,23 @@ function DisplayTodo(props) {
                               className: "mr-1 ml-1"
                             }),
                         todoRelation.depth > 0 ? JsxRuntime.jsx("button", {
-                                children: todo.hidden ? "Show Self" : "Hide Self",
+                                children: todo.hidden ? "Show" : "Hide",
                                 className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
                                 onClick: (function (param) {
                                     Common.setTodoHidden(todo.id, !todo.hidden);
                                   })
                               }) : null,
-                        JsxRuntime.jsx("button", {
-                              children: "Hide Subs",
-                              className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
-                              onClick: (function (param) {
-                                  State.batch(function () {
-                                        todoRelation.children.forEach(function (child) {
-                                              Common.setTodoHidden(child.id, true);
-                                            });
-                                      });
-                                })
-                            }),
+                        todoRelation.children.length > 0 ? JsxRuntime.jsx("button", {
+                                children: "Hide Subs",
+                                className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
+                                onClick: (function (param) {
+                                    State.batch(function () {
+                                          todoRelation.children.forEach(function (child) {
+                                                Common.setTodoHidden(child.id, true);
+                                              });
+                                        });
+                                  })
+                              }) : null,
                         todoRelation.hasHiddenChildren ? JsxRuntime.jsx("button", {
                                 children: "Show Subs",
                                 className: "px-2 bg-[var(--t2)] rounded text-sm h-5",

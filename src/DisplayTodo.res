@@ -92,20 +92,22 @@ let make = (~todoRelation: todoRelation, ~setFocusIdNext) => {
             onClick={_ => {
               setTodoHidden(todo.id, !todo.hidden)
             }}>
-            {(todo.hidden ? "Show Self" : "Hide Self")->React.string}
+            {(todo.hidden ? "Show" : "Hide")->React.string}
           </button>
         : React.null}
-      <button
-        className="px-2 bg-[var(--t2)] rounded text-sm h-5"
-        onClick={_ => {
-          batch(() => {
-            todoRelation.children->Array.forEach(child => {
-              setTodoHidden(child.id, true)
-            })
-          })
-        }}>
-        {"Hide Subs"->React.string}
-      </button>
+      {todoRelation.children->Array.length > 0
+        ? <button
+            className="px-2 bg-[var(--t2)] rounded text-sm h-5"
+            onClick={_ => {
+              batch(() => {
+                todoRelation.children->Array.forEach(child => {
+                  setTodoHidden(child.id, true)
+                })
+              })
+            }}>
+            {"Hide Subs"->React.string}
+          </button>
+        : React.null}
       {todoRelation.hasHiddenChildren
         ? <button
             className="px-2 bg-[var(--t2)] rounded text-sm h-5"

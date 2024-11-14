@@ -330,7 +330,7 @@ let make = (
         className={[
           "relative flex-1 ml-1 flex flex-row h-full justify-start items-center ",
         ]->Array.join(" ")}>
-        // {if hasHiddenTodos {
+        // {if todoRelation.hasHiddenChildren {
         //   <div
         //     className="absolute  text-[var(--darkPurple)] bg-[var(--lightPurple)]
         //     text-xs h-3 w-3 -left-3 -top-0 flex flex-row items-center justify-center rounded-full">

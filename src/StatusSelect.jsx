@@ -12,6 +12,7 @@ import {
 import {
   TbPin as Pin,
   TbArchive as Archive,
+  TbChevronDown as ChevronDown,
   // statusIcon,
 } from "react-icons/tb";
 
@@ -111,6 +112,17 @@ const Dropdown = ({
             className={buttonBase}
             aria-label="Customise options"
           >
+            {hasHidden ? (
+              <div
+                className="absolute  text-[var(--t9)] bg-[var(--t0)]
+            text-xs h-3 w-3 -right-1 -top-1 flex flex-row items-center justify-center rounded-full"
+              >
+                <ChevronDown />
+              </div>
+            ) : (
+              React.null
+            )}
+
             {statusStringShort(status)}
             {/* {isPinned && (
               <div
@@ -124,7 +136,7 @@ const Dropdown = ({
                 <Pin />
               </div>
             )} */}
-            {hasHidden && (
+            {/* {hasHidden && (
               <div
                 style={{
                   backgroundColor: statusColor(status),
@@ -135,7 +147,7 @@ const Dropdown = ({
               >
                 <Archive />
               </div>
-            )}
+            )} */}
           </button>
         ) : (
           <button
