@@ -80,7 +80,13 @@ const DashboardWrapper = observer(({ session }) => {
       : [];
   let todosToDisplay = !Boolean(todos["root"])
     ? []
-    : rec(todos["root"], 0, null, [], 0);
+    : rec(
+        todos["root"].filter((x) => x.mode === "Working"),
+        0,
+        null,
+        [],
+        0
+      );
   // console.log(Object.entries(_todos$.get() || {}));
 
   return (

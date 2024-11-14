@@ -43,6 +43,18 @@ var ArrowLeft = {};
 
 var ArrowRight = {};
 
+var Play = {};
+
+var Pause = {};
+
+var Stop = {};
+
+var Stash = {};
+
+var Inbox = {};
+
+var Bookmark = {};
+
 export {
   EyeClosed ,
   Eye ,
@@ -65,5 +77,11 @@ export {
   ChevronLeft ,
   ArrowLeft ,
   ArrowRight ,
+  Play ,
+  Pause ,
+  Stop ,
+  Stash ,
+  Inbox ,
+  Bookmark ,
 }
 /* No side effect */

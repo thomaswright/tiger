@@ -100,3 +100,36 @@ module ArrowRight = {
   @react.component @module("react-icons/tb")
   external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "TbArrowRight"
 }
+
+module Play = {
+  @react.component @module("react-icons/tb")
+  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element =
+    "TbPlayerPlayFilled"
+}
+
+module Pause = {
+  @react.component @module("react-icons/tb")
+  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element =
+    "TbPlayerPauseFilled"
+}
+
+module Stop = {
+  @react.component @module("react-icons/tb")
+  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element =
+    "TbPlayerStopFilled"
+}
+
+module Stash = {
+  @react.component @module("react-icons/vsc")
+  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "VscGitStash"
+}
+
+module Inbox = {
+  @react.component @module("react-icons/tb")
+  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "TbInbox"
+}
+
+module Bookmark = {
+  @react.component @module("react-icons/tb")
+  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "TbBookmark"
+}
