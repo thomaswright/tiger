@@ -4,7 +4,6 @@ import * as Common from "./Common.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as Tb from "react-icons/tb";
-import * as State from "@legendapp/state";
 import * as JsxRuntime from "react/jsx-runtime";
 
 function ModeMgr$Select(props) {
@@ -64,41 +63,9 @@ var Select = {
 };
 
 function ModeMgr(props) {
-  var todos = props.todos;
   var todo = props.todo;
   return JsxRuntime.jsxs("div", {
               children: [
-                JsxRuntime.jsxs("div", {
-                      children: [
-                        JsxRuntime.jsx("button", {
-                              children: "Unstash all",
-                              className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
-                              onClick: (function (param) {
-                                  State.batch(function () {
-                                        todos.filter(function (x) {
-                                                return x.mode === "Stashed";
-                                              }).forEach(function (x) {
-                                              Common.setTodoMode(x.id, "Working");
-                                            });
-                                      });
-                                })
-                            }),
-                        JsxRuntime.jsx("button", {
-                              children: " Stash all working",
-                              className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
-                              onClick: (function (param) {
-                                  State.batch(function () {
-                                        todos.filter(function (x) {
-                                                return x.mode === "Working";
-                                              }).forEach(function (x) {
-                                              Common.setTodoMode(x.id, "Stashed");
-                                            });
-                                      });
-                                })
-                            })
-                      ],
-                      className: "flex flex-row gap-1 p-2"
-                    }),
                 Core__Option.mapOr(todo, null, (function (todo) {
                         return JsxRuntime.jsxs("div", {
                                     children: [
@@ -137,7 +104,7 @@ function ModeMgr(props) {
                                   });
                       })),
                 JsxRuntime.jsx("div", {
-                      children: todos.map(function (t) {
+                      children: props.todos.map(function (t) {
                             return JsxRuntime.jsxs("div", {
                                         children: [
                                           JsxRuntime.jsx(ModeMgr$Select, {
@@ -146,7 +113,7 @@ function ModeMgr(props) {
                                               }),
                                           JsxRuntime.jsx("div", {
                                                 children: Core__Option.getOr(Caml_option.nullable_to_opt(t.text), ""),
-                                                className: "max-w-80  flex flex-row items-center rounded"
+                                                className: "max-w-80  flex flex-row items-center rounded "
                                               })
                                         ],
                                         className: ["text-sm min-h-6  flex flex-row items-center  gap-1 "].join(" ")
