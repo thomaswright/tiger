@@ -43,11 +43,17 @@ external setTodoAdditionalText: (string, string) => unit = "setTodoAdditionalTex
 @module("./utils/SupaLegend.ts")
 external setTodoDate: (string, Nullable.t<string>) => unit = "setTodoDate"
 
-@module("./utils/SupaLegend.ts")
-external setTodoOutfit: (string, outfit) => unit = "setTodoOutfit"
+// @module("./utils/SupaLegend.ts")
+// external setTodoOutfit: (string, outfit) => unit = "setTodoOutfit"
 
 @module("./utils/SupaLegend.ts")
-external setTodoHidden: (string, bool) => unit = "setTodoHidden"
+external setTodoMode: (string, mode) => unit = "setTodoMode"
+
+@module("./utils/SupaLegend.ts")
+external setTodoShowMode: (string, mode) => unit = "setTodoShowMode"
+
+// @module("./utils/SupaLegend.ts")
+// external setTodoHidden: (string, bool) => unit = "setTodoHidden"
 
 @module("./utils/SupaLegend.ts")
 external setTodoStatus: (string, status) => unit = "setTodoStatus"
@@ -55,8 +61,8 @@ external setTodoStatus: (string, status) => unit = "setTodoStatus"
 @module("./utils/SupaLegend.ts")
 external setTodoPosition: (string, Nullable.t<string>, float) => unit = "setTodoPosition"
 
-@module("./utils/SupaLegend.ts")
-external toggleDone: string => unit = "toggleDone"
+// @module("./utils/SupaLegend.ts")
+// external toggleDone: string => unit = "toggleDone"
 
 @module("./utils/SupaLegend.ts")
 external deleteTodo: string => unit = "deleteTodo"

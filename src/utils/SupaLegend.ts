@@ -31,7 +31,6 @@ export const todos$ = observable(
           `id,
            counter,
            text,
-           done,
            created_at,
            updated_at,
            deleted,
@@ -40,9 +39,8 @@ export const todos$ = observable(
            parent_todo,
            target_date,
            additional_text,
-           hidden,
            status,
-           outfit,
+           show_mode,
            mode`
         )
         .eq("user_id", uid$.get())
@@ -80,7 +78,8 @@ export function addTodo(
     user_id: uid$.get(),
     position,
     parent_todo: parent_todo,
-    outfit: "Todo",
+    mode: "Working",
+    show_mode: "Archive",
     status: "Unsorted",
   });
 
@@ -91,9 +90,9 @@ export function deleteTodo(id: string) {
   todos$[id].delete();
 }
 
-export function toggleDone(id: string) {
-  todos$[id].done.set((prev) => !prev);
-}
+// export function toggleDone(id: string) {
+//   todos$[id].done.set((prev) => !prev);
+// }
 
 export function setTodoText(id: string, text: string) {
   todos$[id].text.set(text);
@@ -107,23 +106,30 @@ export function setTodoAdditionalText(id: string, text: string) {
   todos$[id].additional_text.set(text);
 }
 
-export function setTodoOutfit(
-  id: string,
-  outfit: "Todo" | "Project" | "Group"
-) {
-  todos$[id].outfit.set(outfit);
-}
+// export function setTodoOutfit(
+//   id: string,
+//   outfit: "Todo" | "Project" | "Group"
+// ) {
+//   todos$[id].outfit.set(outfit);
+// }
 
 export function setTodoMode(
   id: string,
-  mode: "Working" | "Archived" | "Stashed"
+  mode: "Working" | "Archive" | "Stashed"
 ) {
   todos$[id].mode.set(mode);
 }
 
-export function setTodoHidden(id: string, isHidden: boolean) {
-  todos$[id].hidden.set(isHidden);
+export function setTodoShowMode(
+  id: string,
+  showMode: "Working" | "Archive" | "Stashed"
+) {
+  todos$[id].show_mode.set(showMode);
 }
+
+// export function setTodoHidden(id: string, isHidden: boolean) {
+//   todos$[id].hidden.set(isHidden);
+// }
 
 export function setTodoStatus(
   id: string,

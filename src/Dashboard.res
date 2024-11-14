@@ -151,7 +151,7 @@ let make = (
         switch view {
         | Some(Settings) =>
           <Settings onExportJson={_ => ()} onImportJson={_ => ()} setBaseColor logout />
-        | Some(ProjectList) => <StashMgr stashed setStashed todos={allProjects} />
+        | Some(ProjectList) => <ModeMgr todo={None} todos={allProjects} />
 
         | None => React.null
         }

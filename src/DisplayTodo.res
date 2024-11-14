@@ -86,15 +86,15 @@ let make = (~todoRelation: todoRelation, ~setFocusIdNext, ~stashed, ~setStashed)
             ->toNullableNull,
           )}
       />
-      {todoRelation.depth > 0
-        ? <button
-            className="px-2 bg-[var(--t2)] rounded text-sm h-5"
-            onClick={_ => {
-              setTodoHidden(todo.id, !todo.hidden)
-            }}>
-            {(todo.hidden ? "Show" : "Hide")->React.string}
-          </button>
-        : React.null}
+      // {todoRelation.depth > 0
+      //   ? <button
+      //       className="px-2 bg-[var(--t2)] rounded text-sm h-5"
+      //       onClick={_ => {
+      //         setTodoHidden(todo.id, !todo.hidden)
+      //       }}>
+      //       {(todo.hidden ? "Show" : "Hide")->React.string}
+      //     </button>
+      //   : React.null}
       // {todoRelation.children->Array.length > 0
       //   ? <button
       //       className="px-2 bg-[var(--t2)] rounded text-sm h-5"
@@ -170,7 +170,7 @@ let make = (~todoRelation: todoRelation, ~setFocusIdNext, ~stashed, ~setStashed)
           setAdditionalText(_ => ReactEvent.Form.target(e)["value"]->Some)
         }}
       />
-      <StashMgr stashed setStashed todos={todoRelation.children} />
+      <ModeMgr todo={todo->Some} todos={todoRelation.children} />
     </div>
   </div>
 }

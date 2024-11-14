@@ -4,9 +4,9 @@ import * as Todo from "./Todo.res.mjs";
 import * as Types from "./Types.res.mjs";
 import * as React from "react";
 import * as Common from "./Common.res.mjs";
+import * as ModeMgr from "./ModeMgr.res.mjs";
 import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
 import * as Settings from "./Settings.res.mjs";
-import * as StashMgr from "./StashMgr.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as DisplayTodo from "./DisplayTodo.res.mjs";
 import * as StorageKeys from "./StorageKeys.res.mjs";
@@ -93,9 +93,8 @@ function Dashboard(props) {
                     }),
                   setBaseColor: match$7[1],
                   logout: props.logout
-                }) : JsxRuntime.jsx(StashMgr.make, {
-                  stashed: stashed,
-                  setStashed: setStashed,
+                }) : JsxRuntime.jsx(ModeMgr.make, {
+                  todo: undefined,
                   todos: props.allProjects
                 })
         ) : null

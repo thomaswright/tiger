@@ -19,7 +19,7 @@ type outfit =
 type mode =
   | @as("Working") Working
   | @as("Stashed") Stashed
-  | @as("Archived") Archived
+  | @as("Archive") Archive
 
 type todo = {
   id: string,
@@ -38,6 +38,7 @@ type todo = {
   target_date: Nullable.t<string>,
   hidden: bool,
   mode: mode,
+  show_mode: mode,
 }
 
 type todoRelation = {

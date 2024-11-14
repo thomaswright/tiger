@@ -43,9 +43,11 @@ export type Database = {
           done: boolean | null
           hidden: boolean
           id: string
+          mode: Database["public"]["Enums"]["mode"]
           outfit: Database["public"]["Enums"]["outfit_type"]
           parent_todo: string | null
           position: number | null
+          show_mode: Database["public"]["Enums"]["mode"]
           status: Database["public"]["Enums"]["status_type"]
           target_date: string | null
           text: string | null
@@ -60,9 +62,11 @@ export type Database = {
           done?: boolean | null
           hidden?: boolean
           id?: string
+          mode?: Database["public"]["Enums"]["mode"]
           outfit?: Database["public"]["Enums"]["outfit_type"]
           parent_todo?: string | null
           position?: number | null
+          show_mode?: Database["public"]["Enums"]["mode"]
           status?: Database["public"]["Enums"]["status_type"]
           target_date?: string | null
           text?: string | null
@@ -77,9 +81,11 @@ export type Database = {
           done?: boolean | null
           hidden?: boolean
           id?: string
+          mode?: Database["public"]["Enums"]["mode"]
           outfit?: Database["public"]["Enums"]["outfit_type"]
           parent_todo?: string | null
           position?: number | null
+          show_mode?: Database["public"]["Enums"]["mode"]
           status?: Database["public"]["Enums"]["status_type"]
           target_date?: string | null
           text?: string | null
@@ -145,6 +151,7 @@ export type Database = {
       }
     }
     Enums: {
+      mode: "Archive" | "Stashed" | "Working"
       outfit_type: "Todo" | "Project" | "Group"
       status_type:
         | "Unsorted"

@@ -55,12 +55,12 @@ function setTodoDate(prim0, prim1) {
   SupaLegendTs.setTodoDate(prim0, prim1);
 }
 
-function setTodoOutfit(prim0, prim1) {
-  SupaLegendTs.setTodoOutfit(prim0, prim1);
+function setTodoMode(prim0, prim1) {
+  SupaLegendTs.setTodoMode(prim0, prim1);
 }
 
-function setTodoHidden(prim0, prim1) {
-  SupaLegendTs.setTodoHidden(prim0, prim1);
+function setTodoShowMode(prim0, prim1) {
+  SupaLegendTs.setTodoShowMode(prim0, prim1);
 }
 
 function setTodoStatus(prim0, prim1) {
@@ -69,10 +69,6 @@ function setTodoStatus(prim0, prim1) {
 
 function setTodoPosition(prim0, prim1, prim2) {
   SupaLegendTs.setTodoPosition(prim0, prim1, prim2);
-}
-
-function toggleDone(prim) {
-  SupaLegendTs.toggleDone(prim);
 }
 
 function deleteTodo(prim) {
@@ -137,11 +133,10 @@ export {
   setTodoText ,
   setTodoAdditionalText ,
   setTodoDate ,
-  setTodoOutfit ,
-  setTodoHidden ,
+  setTodoMode ,
+  setTodoShowMode ,
   setTodoStatus ,
   setTodoPosition ,
-  toggleDone ,
   deleteTodo ,
   logoUrl ,
   StatusSelect ,

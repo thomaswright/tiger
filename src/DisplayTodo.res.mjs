@@ -3,8 +3,8 @@
 import * as Types from "./Types.res.mjs";
 import * as React from "react";
 import * as Common from "./Common.res.mjs";
+import * as ModeMgr from "./ModeMgr.res.mjs";
 import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
-import * as StashMgr from "./StashMgr.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as Tb from "react-icons/tb";
@@ -107,13 +107,6 @@ function DisplayTodo(props) {
                                 }),
                               className: "mr-1 ml-1"
                             }),
-                        todoRelation.depth > 0 ? JsxRuntime.jsx("button", {
-                                children: todo.hidden ? "Show" : "Hide",
-                                className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
-                                onClick: (function (param) {
-                                    Common.setTodoHidden(todo.id, !todo.hidden);
-                                  })
-                              }) : null,
                         JsxRuntime.jsx("div", {
                               className: "flex-1"
                             }),
@@ -146,9 +139,8 @@ function DisplayTodo(props) {
                                       });
                                 })
                             }),
-                        JsxRuntime.jsx(StashMgr.make, {
-                              stashed: props.stashed,
-                              setStashed: props.setStashed,
+                        JsxRuntime.jsx(ModeMgr.make, {
+                              todo: todo,
                               todos: todoRelation.children
                             })
                       ],

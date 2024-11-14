@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 import { observer, useEffectOnce } from "@legendapp/state/react";
-import { supabase, todos$ as _todos$, uid$ } from "./utils/SupaLegend.ts";
+import { batch } from "@legendapp/state";
+import {
+  supabase,
+  todos$ as _todos$,
+  uid$,
+  setTodoMode,
+  setTodoShowMode,
+} from "./utils/SupaLegend.ts";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import Dashboard from "./Dashboard.res.mjs";
@@ -11,7 +18,14 @@ import logoUrl from "./assets/tiger.svg";
 
 const DashboardWrapper = observer(({ session }) => {
   let [stashed, setStashed] = useState([]);
-
+  // useEffectOnce(() => {
+  //   let todos = Object.entries(_todos$.get() || {}).map(([k, v]) => {
+  //     return { ...v, id: k };
+  //   });
+  //   batch(() => {
+  //     todos.forEach((todo) => setTodoShowMode(todo.id, "Archive"));
+  //   });
+  // });
   const todos = groupByAndSort(
     Object.entries(_todos$.get() || {}).map(([k, v]) => {
       return { ...v, id: k };
@@ -19,14 +33,21 @@ const DashboardWrapper = observer(({ session }) => {
     "parent_todo",
     "position"
   );
+  // console.log(_todos$.get());
   let rec = (t, depth, parent, tios, parentIndex) =>
     Boolean(t)
       ? t.reduce((a, c, i) => {
           let children = Boolean(todos[c.id])
             ? rec(
-                todos[c.id]
-                  .filter((x) => !x.hidden)
-                  .filter((x) => !stashed.includes(x.id)),
+                todos[c.id].filter((x) => {
+                  if (c.show_mode === "Working") {
+                    return x.mode === "Working";
+                  } else if (c.show_mode === "Stashed") {
+                    return x.mode === "Working" || x.mode === "Stashed";
+                  } else {
+                    return true;
+                  }
+                }),
                 depth + 1,
                 c,
                 t,
@@ -39,7 +60,15 @@ const DashboardWrapper = observer(({ session }) => {
             parent: parent,
             parentIndex: parentIndex,
             hasHiddenChildren: Boolean(todos[c.id])
-              ? todos[c.id].some((v) => v.hidden)
+              ? todos[c.id].some((x) => {
+                  if (c.show_mode === "Working") {
+                    return x.mode === "Stashed" || x.mode === "Archived";
+                  } else if (c.show_mode === "Stashed") {
+                    return x.mode === "Archive";
+                  } else {
+                    return false;
+                  }
+                })
               : false,
             tios: tios,
             index: i,
@@ -51,15 +80,7 @@ const DashboardWrapper = observer(({ session }) => {
       : [];
   let todosToDisplay = !Boolean(todos["root"])
     ? []
-    : rec(
-        todos["root"]
-          .filter((x) => !x.hidden)
-          .filter((x) => !stashed.includes(x.id)),
-        0,
-        null,
-        [],
-        0
-      );
+    : rec(todos["root"], 0, null, [], 0);
   // console.log(Object.entries(_todos$.get() || {}));
 
   return (
