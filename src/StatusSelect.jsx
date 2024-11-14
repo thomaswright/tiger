@@ -26,7 +26,7 @@ const Dropdown = ({
   isOpen,
   onOpenChange,
   // isPinned,
-  isArchived,
+  hasHidden,
 }) => {
   let [hoverStatus, setHoverStatus] = React.useState(status);
   const item = (s) => {
@@ -124,7 +124,7 @@ const Dropdown = ({
                 <Pin />
               </div>
             )} */}
-            {(status == "ArchiveDone" || status == "ArchiveNo") && (
+            {hasHidden && (
               <div
                 style={{
                   backgroundColor: statusColor(status),

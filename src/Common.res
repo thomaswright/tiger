@@ -74,6 +74,7 @@ module StatusSelect = {
     ~focusTodo: unit => unit,
     ~isOpen: bool,
     ~onOpenChange: bool => unit,
+    ~hasHidden: bool,
   ) => React.element = "default"
 }
 

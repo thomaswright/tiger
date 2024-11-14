@@ -41,6 +41,7 @@ export type Database = {
           created_at: string | null
           deleted: boolean | null
           done: boolean | null
+          hidden: boolean
           id: string
           outfit: Database["public"]["Enums"]["outfit_type"]
           parent_todo: string | null
@@ -57,6 +58,7 @@ export type Database = {
           created_at?: string | null
           deleted?: boolean | null
           done?: boolean | null
+          hidden?: boolean
           id?: string
           outfit?: Database["public"]["Enums"]["outfit_type"]
           parent_todo?: string | null
@@ -73,6 +75,7 @@ export type Database = {
           created_at?: string | null
           deleted?: boolean | null
           done?: boolean | null
+          hidden?: boolean
           id?: string
           outfit?: Database["public"]["Enums"]["outfit_type"]
           parent_todo?: string | null
@@ -98,7 +101,48 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      delete_claim: {
+        Args: {
+          uid: string
+          claim: string
+        }
+        Returns: string
+      }
+      get_claim: {
+        Args: {
+          uid: string
+          claim: string
+        }
+        Returns: Json
+      }
+      get_claims: {
+        Args: {
+          uid: string
+        }
+        Returns: Json
+      }
+      get_my_claim: {
+        Args: {
+          claim: string
+        }
+        Returns: Json
+      }
+      get_my_claims: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      is_claims_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      set_claim: {
+        Args: {
+          uid: string
+          claim: string
+          value: Json
+        }
+        Returns: string
+      }
     }
     Enums: {
       outfit_type: "Todo" | "Project" | "Group"

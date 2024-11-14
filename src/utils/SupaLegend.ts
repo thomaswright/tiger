@@ -128,8 +128,6 @@ export function setTodoStatus(
     | "Paused"
     | "ResolveDone"
     | "ResolveNo"
-    | "ArchiveDone"
-    | "ArchiveNo"
 ) {
   todos$[id].status.set(status);
 }

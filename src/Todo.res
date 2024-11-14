@@ -307,6 +307,7 @@ let make = (
       // }}
       {todoRelation.depth > 0
         ? <Common.StatusSelect
+            hasHidden={todoRelation.hasHiddenChildren}
             isOpen={statusSelectIsOpen}
             onOpenChange={v => {
               if !v {
@@ -369,6 +370,7 @@ let make = (
         />
         {todoRelation.depth == 0
           ? <Common.StatusSelect
+              hasHidden={todoRelation.hasHiddenChildren}
               isOpen={statusSelectIsOpen}
               onOpenChange={v => {
                 if !v {

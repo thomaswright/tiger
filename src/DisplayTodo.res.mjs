@@ -7,6 +7,7 @@ import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as Tb from "react-icons/tb";
+import * as State from "@legendapp/state";
 import * as JsxRuntime from "react/jsx-runtime";
 import FormatISO from "date-fns/formatISO";
 import ReactTextareaAutosize from "react-textarea-autosize";
@@ -89,7 +90,8 @@ function DisplayTodo(props) {
                                   setStatusSelectIsOpen(function (param) {
                                         return v;
                                       });
-                                })
+                                }),
+                              hasHidden: todoRelation.hasHiddenChildren
                             }),
                         JsxRuntime.jsx(Common.DateSelect.make, {
                               value: Core__Option.map(Caml_option.nullable_to_opt(todo.target_date), (function (prim) {
@@ -105,6 +107,35 @@ function DisplayTodo(props) {
                                 }),
                               className: "mr-1 ml-1"
                             }),
+                        todoRelation.depth > 0 ? JsxRuntime.jsx("button", {
+                                children: todo.hidden ? "Show Self" : "Hide Self",
+                                className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
+                                onClick: (function (param) {
+                                    Common.setTodoHidden(todo.id, !todo.hidden);
+                                  })
+                              }) : null,
+                        JsxRuntime.jsx("button", {
+                              children: "Hide Subs",
+                              className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
+                              onClick: (function (param) {
+                                  State.batch(function () {
+                                        todoRelation.children.forEach(function (child) {
+                                              Common.setTodoHidden(child.id, true);
+                                            });
+                                      });
+                                })
+                            }),
+                        todoRelation.hasHiddenChildren ? JsxRuntime.jsx("button", {
+                                children: "Show Subs",
+                                className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
+                                onClick: (function (param) {
+                                    State.batch(function () {
+                                          todoRelation.children.forEach(function (child) {
+                                                Common.setTodoHidden(child.id, false);
+                                              });
+                                        });
+                                  })
+                              }) : null,
                         JsxRuntime.jsx("div", {
                               className: "flex-1"
                             }),
@@ -119,7 +150,7 @@ function DisplayTodo(props) {
                                 })
                             })
                       ],
-                      className: "flex flex-row border-y border-[var(--t3)] items-center gap-1 p-1 px-2"
+                      className: "flex flex-row flex-wrap border-y border-[var(--t3)] items-center gap-1 p-1 px-2"
                     }),
                 JsxRuntime.jsx("div", {
                       children: JsxRuntime.jsx(ReactTextareaAutosize, {

@@ -58,11 +58,11 @@ let make = (~todoRelation: todoRelation, ~setFocusIdNext) => {
         onChange={e => setText(ReactEvent.Form.target(e)["value"])}
       />
     </div>
-    <div className="flex flex-row border-y border-[var(--t3)] items-center gap-1 p-1 px-2">
+    <div
+      className="flex flex-row flex-wrap border-y border-[var(--t3)] items-center gap-1 p-1 px-2">
       <Common.StatusSelect
         isOpen={statusSelectIsOpen}
-        // isPinned={todo.box == Pinned}
-        // isArchived={todo.box == Archive}
+        hasHidden={todoRelation.hasHiddenChildren}
         onOpenChange={v => {
           setStatusSelectIsOpen(_ => v)
         }}
@@ -86,13 +86,39 @@ let make = (~todoRelation: todoRelation, ~setFocusIdNext) => {
             ->toNullableNull,
           )}
       />
+      {todoRelation.depth > 0
+        ? <button
+            className="px-2 bg-[var(--t2)] rounded text-sm h-5"
+            onClick={_ => {
+              setTodoHidden(todo.id, !todo.hidden)
+            }}>
+            {(todo.hidden ? "Show Self" : "Hide Self")->React.string}
+          </button>
+        : React.null}
       <button
         className="px-2 bg-[var(--t2)] rounded text-sm h-5"
         onClick={_ => {
-          setTodoHidden(todo.id)
+          batch(() => {
+            todoRelation.children->Array.forEach(child => {
+              setTodoHidden(child.id, true)
+            })
+          })
         }}>
-        {"Hide"->React.string}
+        {"Hide Subs"->React.string}
       </button>
+      {todoRelation.hasHiddenChildren
+        ? <button
+            className="px-2 bg-[var(--t2)] rounded text-sm h-5"
+            onClick={_ => {
+              batch(() => {
+                todoRelation.children->Array.forEach(child => {
+                  setTodoHidden(child.id, false)
+                })
+              })
+            }}>
+            {"Show Subs"->React.string}
+          </button>
+        : React.null}
       // {todoRelation.depth >= 0
       //   ? <div className="flex flex-row gap-1">
       //       <button

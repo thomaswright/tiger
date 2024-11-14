@@ -23,13 +23,22 @@ const DashboardWrapper = observer(({ session }) => {
     Boolean(t)
       ? t.reduce((a, c, i) => {
           let children = Boolean(todos[c.id])
-            ? rec(todos[c.id], depth + 1, c, t, i)
+            ? rec(
+                todos[c.id].filter((x) => !x.hidden),
+                depth + 1,
+                c,
+                t,
+                i
+              )
             : [];
           let newItem = {
             self: c,
             depth: depth,
             parent: parent,
             parentIndex: parentIndex,
+            hasHiddenChildren: Boolean(todos[c.id])
+              ? todos[c.id].some((v) => v.hidden)
+              : false,
             tios: tios,
             index: i,
             sibs: t,

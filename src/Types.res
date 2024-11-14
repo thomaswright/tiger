@@ -31,6 +31,7 @@ type todo = {
   status: status,
   outfit: outfit,
   target_date: Nullable.t<string>,
+  hidden: bool,
 }
 
 type todoRelation = {
@@ -38,6 +39,7 @@ type todoRelation = {
   depth: int,
   index: int,
   parent: Nullable.t<todo>,
+  hasHiddenChildren: bool,
   parentIndex: int,
   tios: array<todo>,
   sibs: array<todo>,
