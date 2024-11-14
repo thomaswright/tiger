@@ -62,7 +62,7 @@ const DashboardWrapper = observer(({ session }) => {
             hasHiddenChildren: Boolean(todos[c.id])
               ? todos[c.id].some((x) => {
                   if (c.show_mode === "Working") {
-                    return x.mode === "Stashed" || x.mode === "Archived";
+                    return x.mode === "Stashed" || x.mode === "Archive";
                   } else if (c.show_mode === "Stashed") {
                     return x.mode === "Archive";
                   } else {

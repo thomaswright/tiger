@@ -118,8 +118,8 @@ const Dropdown = ({
           >
             {hasHidden ? (
               <div
-                className="absolute  text-[var(--t9)] bg-transparent
-            text-xs h-3 w-3 -right-1 -bottom-1 flex flex-row items-center justify-center rounded-full"
+                className="absolute  text-[var(--t9)] bg-[var(--t3)]
+            text-xs h-2 w-2 -right-1 -bottom-1 flex flex-row items-center justify-center rounded-full"
               >
                 <ChevronDown />
               </div>
