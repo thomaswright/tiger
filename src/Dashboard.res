@@ -59,8 +59,9 @@ let make = (
     None
   })
 
-  <div className="flex flex-col-reverse sm:flex-row max-h-dvh h-dvh text-[var(--t10)] ">
-    <div className="flex-1 flex flex-col h-1/2 sm:h-full border-t sm:border-t-0">
+  <div
+    className="flex flex-col-reverse justify-end sm:justify-start sm:flex-row  text-[var(--t10)] h-dvh">
+    <div className="flex-1 flex flex-col overflow-hidden sm:h-full border-t sm:border-t-0">
       <div
         className="flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b border-[var(--t3)] px-2">
         // <CheckedSummary checked={checked} projects={projects} setChecked={setChecked} setProjects />
@@ -168,7 +169,8 @@ let make = (
         ->React.array}
       </ul>
     </div>
-    <div className=" border-l border-[var(--t3)] flex-1 flex flex-col h-1/2 sm:h-full">
+    <div
+      className=" border-l border-[var(--t3)] flex-none h-60 sticky bg-white top-0 flex flex-col overflow-hidden sm:h-full">
       <div
         className="flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b border-[var(--t3)] px-2">
         <button

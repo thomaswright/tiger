@@ -212,7 +212,7 @@ function Dashboard(props) {
                               className: "pb-20 flex-1 overflow-y-scroll"
                             })
                       ],
-                      className: "flex-1 flex flex-col h-1/2 sm:h-full border-t sm:border-t-0"
+                      className: "flex-1 flex flex-col overflow-hidden sm:h-full border-t sm:border-t-0"
                     }),
                 JsxRuntime.jsxs("div", {
                       children: [
@@ -259,10 +259,10 @@ function Dashboard(props) {
                             }),
                         tmp
                       ],
-                      className: " border-l border-[var(--t3)] flex-1 flex flex-col h-1/2 sm:h-full"
+                      className: " border-l border-[var(--t3)] flex-none h-60 sticky bg-white top-0 flex flex-col overflow-hidden sm:h-full"
                     })
               ],
-              className: "flex flex-col-reverse sm:flex-row max-h-dvh h-dvh text-[var(--t10)] "
+              className: "flex flex-col-reverse justify-end sm:justify-start sm:flex-row  text-[var(--t10)] h-dvh"
             });
 }
 
