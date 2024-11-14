@@ -10,7 +10,7 @@ import { jwtDecode } from "jwt-decode";
 import logoUrl from "./assets/tiger.svg";
 
 const DashboardWrapper = observer(({ session }) => {
-  let [projectsToHide, setProjectsToHide] = useState([]);
+  let [stashed, setStashed] = useState([]);
 
   const todos = groupByAndSort(
     Object.entries(_todos$.get() || {}).map(([k, v]) => {
@@ -24,7 +24,9 @@ const DashboardWrapper = observer(({ session }) => {
       ? t.reduce((a, c, i) => {
           let children = Boolean(todos[c.id])
             ? rec(
-                todos[c.id].filter((x) => !x.hidden),
+                todos[c.id]
+                  .filter((x) => !x.hidden)
+                  .filter((x) => !stashed.includes(x.id)),
                 depth + 1,
                 c,
                 t,
@@ -50,7 +52,9 @@ const DashboardWrapper = observer(({ session }) => {
   let todosToDisplay = !Boolean(todos["root"])
     ? []
     : rec(
-        todos["root"].filter((x) => !projectsToHide.includes(x.id)),
+        todos["root"]
+          .filter((x) => !x.hidden)
+          .filter((x) => !stashed.includes(x.id)),
         0,
         null,
         [],
@@ -61,8 +65,8 @@ const DashboardWrapper = observer(({ session }) => {
   return (
     <Dashboard
       todos={todosToDisplay || []}
-      projectsToHide={projectsToHide}
-      setProjectsToHide={setProjectsToHide}
+      stashed={stashed}
+      setStashed={setStashed}
       allProjects={todos["root"] || []}
       logout={() => supabase.auth.signOut()}
     />

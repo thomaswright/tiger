@@ -6,6 +6,7 @@ import * as React from "react";
 import * as Common from "./Common.res.mjs";
 import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
 import * as Settings from "./Settings.res.mjs";
+import * as StashMgr from "./StashMgr.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as DisplayTodo from "./DisplayTodo.res.mjs";
 import * as StorageKeys from "./StorageKeys.res.mjs";
@@ -15,9 +16,8 @@ import * as JsxRuntime from "react/jsx-runtime";
 import * as React$1 from "@legendapp/state/react";
 
 function Dashboard(props) {
-  var allProjects = props.allProjects;
-  var setProjectsToHide = props.setProjectsToHide;
-  var projectsToHide = props.projectsToHide;
+  var setStashed = props.setStashed;
+  var stashed = props.stashed;
   var todos = props.todos;
   var match = Common.useSessionStorage(StorageKeys.selectedElement, undefined);
   var setSelectedElement = match[1];
@@ -77,7 +77,9 @@ function Dashboard(props) {
                     }), null, (function (todoRelation) {
                     return JsxRuntime.jsx(DisplayTodo.make, {
                                 todoRelation: todoRelation,
-                                setFocusIdNext: setFocusIdNext
+                                setFocusIdNext: setFocusIdNext,
+                                stashed: stashed,
+                                setStashed: setStashed
                               });
                   })) : null
         }) : (
@@ -91,58 +93,10 @@ function Dashboard(props) {
                     }),
                   setBaseColor: match$7[1],
                   logout: props.logout
-                }) : JsxRuntime.jsxs("div", {
-                  children: [
-                    JsxRuntime.jsxs("div", {
-                          children: [
-                            JsxRuntime.jsx("button", {
-                                  children: "Show All",
-                                  className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
-                                  onClick: (function (param) {
-                                      setProjectsToHide(function (param) {
-                                            return [];
-                                          });
-                                    })
-                                }),
-                            JsxRuntime.jsx("button", {
-                                  children: "Hide All",
-                                  className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
-                                  onClick: (function (param) {
-                                      setProjectsToHide(function (param) {
-                                            return allProjects.map(function (x) {
-                                                        return x.id;
-                                                      });
-                                          });
-                                    })
-                                })
-                          ],
-                          className: "flex flex-row gap-1 p-2"
-                        }),
-                    JsxRuntime.jsx("div", {
-                          children: allProjects.map(function (todo) {
-                                var isHidden = projectsToHide.includes(todo.id);
-                                return JsxRuntime.jsx("div", {
-                                            children: Core__Option.getOr(Caml_option.nullable_to_opt(todo.text), ""),
-                                            className: [
-                                                isHidden ? "" : "bg-[var(--t2)]",
-                                                "text-sm px-2 min-h-6 max-w-80 flex flex-row items-center rounded"
-                                              ].join(" "),
-                                            onClick: (function (param) {
-                                                setProjectsToHide(function (v) {
-                                                      if (v.includes(todo.id)) {
-                                                        return v.filter(function (x) {
-                                                                    return x !== todo.id;
-                                                                  });
-                                                      } else {
-                                                        return v.concat([todo.id]);
-                                                      }
-                                                    });
-                                              })
-                                          });
-                              }),
-                          className: "flex flex-col p-2 gap-1 cursor-pointer"
-                        })
-                  ]
+                }) : JsxRuntime.jsx(StashMgr.make, {
+                  stashed: stashed,
+                  setStashed: setStashed,
+                  todos: props.allProjects
                 })
         ) : null
     );

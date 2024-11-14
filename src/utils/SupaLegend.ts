@@ -42,7 +42,8 @@ export const todos$ = observable(
            additional_text,
            hidden,
            status,
-           outfit`
+           outfit,
+           mode`
         )
         .eq("user_id", uid$.get())
         .eq("deleted", false);
@@ -111,6 +112,13 @@ export function setTodoOutfit(
   outfit: "Todo" | "Project" | "Group"
 ) {
   todos$[id].outfit.set(outfit);
+}
+
+export function setTodoMode(
+  id: string,
+  mode: "Working" | "Archived" | "Stashed"
+) {
+  todos$[id].mode.set(mode);
 }
 
 export function setTodoHidden(id: string, isHidden: boolean) {

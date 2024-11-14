@@ -5,8 +5,8 @@ open Types
 @react.component
 let make = (
   ~todos: array<todoRelation>,
-  ~projectsToHide: array<string>,
-  ~setProjectsToHide: (array<string> => array<string>) => unit,
+  ~stashed: array<string>,
+  ~setStashed: (array<string> => array<string>) => unit,
   ~allProjects: array<todo>,
   ~logout: unit => unit,
 ) => {
@@ -142,7 +142,7 @@ let make = (
             todos
             ->Array.find(t => t.self.id == todoId)
             ->Option.mapOr(React.null, todoRelation => {
-              <DisplayTodo todoRelation setFocusIdNext />
+              <DisplayTodo todoRelation setFocusIdNext stashed setStashed />
             })
           | _ => React.null
           }}
@@ -151,41 +151,7 @@ let make = (
         switch view {
         | Some(Settings) =>
           <Settings onExportJson={_ => ()} onImportJson={_ => ()} setBaseColor logout />
-        | Some(ProjectList) =>
-          <div>
-            <div className="flex flex-row gap-1 p-2">
-              <button
-                className="px-2 bg-[var(--t2)] rounded text-sm h-5"
-                onClick={_ => setProjectsToHide(_ => [])}>
-                {"Show All"->React.string}
-              </button>
-              <button
-                className="px-2 bg-[var(--t2)] rounded text-sm h-5"
-                onClick={_ => setProjectsToHide(_ => allProjects->Array.map(x => x.id))}>
-                {"Hide All"->React.string}
-              </button>
-            </div>
-            <div className="flex flex-col p-2 gap-1 cursor-pointer">
-              {allProjects
-              ->Array.map(todo => {
-                let isHidden = projectsToHide->Array.includes(todo.id)
-                <div
-                  className={[
-                    isHidden ? "" : "bg-[var(--t2)]",
-                    "text-sm px-2 min-h-6 max-w-80 flex flex-row items-center rounded",
-                  ]->Array.join(" ")}
-                  onClick={_ =>
-                    setProjectsToHide(v =>
-                      v->Array.includes(todo.id)
-                        ? v->Array.filter(x => x != todo.id)
-                        : v->Array.concat([todo.id])
-                    )}>
-                  {todo.text->Nullable.toOption->Option.getOr("")->React.string}
-                </div>
-              })
-              ->React.array}
-            </div>
-          </div>
+        | Some(ProjectList) => <StashMgr stashed setStashed todos={allProjects} />
 
         | None => React.null
         }

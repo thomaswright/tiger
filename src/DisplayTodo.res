@@ -4,7 +4,7 @@ open Webapi.Dom
 open Common
 
 @react.component
-let make = (~todoRelation: todoRelation, ~setFocusIdNext) => {
+let make = (~todoRelation: todoRelation, ~setFocusIdNext, ~stashed, ~setStashed) => {
   // ~setTodos: (string, array<todo> => array<todo>) => unit,
   let todo = todoRelation.self
   let inputRef = React.useRef(Nullable.null)
@@ -95,32 +95,32 @@ let make = (~todoRelation: todoRelation, ~setFocusIdNext) => {
             {(todo.hidden ? "Show" : "Hide")->React.string}
           </button>
         : React.null}
-      {todoRelation.children->Array.length > 0
-        ? <button
-            className="px-2 bg-[var(--t2)] rounded text-sm h-5"
-            onClick={_ => {
-              batch(() => {
-                todoRelation.children->Array.forEach(child => {
-                  setTodoHidden(child.id, true)
-                })
-              })
-            }}>
-            {"Hide Subs"->React.string}
-          </button>
-        : React.null}
-      {todoRelation.hasHiddenChildren
-        ? <button
-            className="px-2 bg-[var(--t2)] rounded text-sm h-5"
-            onClick={_ => {
-              batch(() => {
-                todoRelation.children->Array.forEach(child => {
-                  setTodoHidden(child.id, false)
-                })
-              })
-            }}>
-            {"Show Subs"->React.string}
-          </button>
-        : React.null}
+      // {todoRelation.children->Array.length > 0
+      //   ? <button
+      //       className="px-2 bg-[var(--t2)] rounded text-sm h-5"
+      //       onClick={_ => {
+      //         batch(() => {
+      //           todoRelation.children->Array.forEach(child => {
+      //             setTodoHidden(child.id, true)
+      //           })
+      //         })
+      //       }}>
+      //       {"Hide Subs"->React.string}
+      //     </button>
+      //   : React.null}
+      // {todoRelation.hasHiddenChildren
+      //   ? <button
+      //       className="px-2 bg-[var(--t2)] rounded text-sm h-5"
+      //       onClick={_ => {
+      //         batch(() => {
+      //           todoRelation.children->Array.forEach(child => {
+      //             setTodoHidden(child.id, false)
+      //           })
+      //         })
+      //       }}>
+      //       {"Show Subs"->React.string}
+      //     </button>
+      //   : React.null}
       // {todoRelation.depth >= 0
       //   ? <div className="flex flex-row gap-1">
       //       <button
@@ -170,6 +170,7 @@ let make = (~todoRelation: todoRelation, ~setFocusIdNext) => {
           setAdditionalText(_ => ReactEvent.Form.target(e)["value"]->Some)
         }}
       />
+      <StashMgr stashed setStashed todos={todoRelation.children} />
     </div>
   </div>
 }

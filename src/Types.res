@@ -16,6 +16,11 @@ type outfit =
   | @as("Project") Project
   | @as("Group") Group
 
+type mode =
+  | @as("Working") Working
+  | @as("Stashed") Stashed
+  | @as("Archived") Archived
+
 type todo = {
   id: string,
   counter: int,
@@ -32,6 +37,7 @@ type todo = {
   outfit: outfit,
   target_date: Nullable.t<string>,
   hidden: bool,
+  mode: mode,
 }
 
 type todoRelation = {

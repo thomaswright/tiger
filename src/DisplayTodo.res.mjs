@@ -4,10 +4,10 @@ import * as Types from "./Types.res.mjs";
 import * as React from "react";
 import * as Common from "./Common.res.mjs";
 import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
+import * as StashMgr from "./StashMgr.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as Tb from "react-icons/tb";
-import * as State from "@legendapp/state";
 import * as JsxRuntime from "react/jsx-runtime";
 import FormatISO from "date-fns/formatISO";
 import ReactTextareaAutosize from "react-textarea-autosize";
@@ -114,28 +114,6 @@ function DisplayTodo(props) {
                                     Common.setTodoHidden(todo.id, !todo.hidden);
                                   })
                               }) : null,
-                        todoRelation.children.length > 0 ? JsxRuntime.jsx("button", {
-                                children: "Hide Subs",
-                                className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
-                                onClick: (function (param) {
-                                    State.batch(function () {
-                                          todoRelation.children.forEach(function (child) {
-                                                Common.setTodoHidden(child.id, true);
-                                              });
-                                        });
-                                  })
-                              }) : null,
-                        todoRelation.hasHiddenChildren ? JsxRuntime.jsx("button", {
-                                children: "Show Subs",
-                                className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
-                                onClick: (function (param) {
-                                    State.batch(function () {
-                                          todoRelation.children.forEach(function (child) {
-                                                Common.setTodoHidden(child.id, false);
-                                              });
-                                        });
-                                  })
-                              }) : null,
                         JsxRuntime.jsx("div", {
                               className: "flex-1"
                             }),
@@ -152,21 +130,28 @@ function DisplayTodo(props) {
                       ],
                       className: "flex flex-row flex-wrap border-y border-[var(--t3)] items-center gap-1 p-1 px-2"
                     }),
-                JsxRuntime.jsx("div", {
-                      children: JsxRuntime.jsx(ReactTextareaAutosize, {
-                            className: ["placeholder:text-[var(--t5)] text-sm flex-1 border-none rounded-lg text-[var(--t10)] w-full outline-none bg-[var(--t2)]\n          focus:ring-0 font-medium"].join(" "),
-                            id: "id-display-title",
-                            style: {
-                              resize: "none"
-                            },
-                            placeholder: "Additional Details",
-                            value: Core__Option.getOr(match$1[0], ""),
-                            onChange: (function (e) {
-                                setAdditionalText(function (param) {
-                                      return e.target.value;
-                                    });
-                              })
-                          }),
+                JsxRuntime.jsxs("div", {
+                      children: [
+                        JsxRuntime.jsx(ReactTextareaAutosize, {
+                              className: ["placeholder:text-[var(--t5)] text-sm flex-1 border-none rounded-lg text-[var(--t10)] w-full outline-none bg-[var(--t2)]\n          focus:ring-0 font-medium"].join(" "),
+                              id: "id-display-title",
+                              style: {
+                                resize: "none"
+                              },
+                              placeholder: "Additional Details",
+                              value: Core__Option.getOr(match$1[0], ""),
+                              onChange: (function (e) {
+                                  setAdditionalText(function (param) {
+                                        return e.target.value;
+                                      });
+                                })
+                            }),
+                        JsxRuntime.jsx(StashMgr.make, {
+                              stashed: props.stashed,
+                              setStashed: props.setStashed,
+                              todos: todoRelation.children
+                            })
+                      ],
                       className: "p-2"
                     })
               ],
