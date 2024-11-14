@@ -91,7 +91,8 @@ function DisplayTodo(props) {
                                         return v;
                                       });
                                 }),
-                              hasHidden: todoRelation.hasHiddenChildren
+                              hasHidden: todoRelation.hasHiddenChildren,
+                              mode: todo.mode
                             }),
                         JsxRuntime.jsx(Common.DateSelect.make, {
                               value: Core__Option.map(Caml_option.nullable_to_opt(todo.target_date), (function (prim) {
@@ -139,10 +140,10 @@ function DisplayTodo(props) {
                                       });
                                 })
                             }),
-                        JsxRuntime.jsx(ModeMgr.make, {
-                              todo: todo,
-                              todos: todoRelation.children
-                            })
+                        todoRelation.children.length > 0 ? JsxRuntime.jsx(ModeMgr.make, {
+                                todo: todo,
+                                todos: todoRelation.children
+                              }) : null
                       ],
                       className: "p-2"
                     })

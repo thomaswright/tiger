@@ -317,6 +317,7 @@ let make = (
               }
             }}
             status={Some(todo.status)}
+            mode={todo.mode}
             focusTodo={() => {
               // this isn't set directly because the "Enter"
               // will then fire on the container then focusing
@@ -379,6 +380,7 @@ let make = (
                   setStatusSelectIsOpen(_ => v)
                 }
               }}
+              mode={todo.mode}
               status={Some(todo.status)}
               focusTodo={() => {
                 // this isn't set directly because the "Enter"

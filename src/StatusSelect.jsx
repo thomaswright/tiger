@@ -28,6 +28,7 @@ const Dropdown = ({
   onOpenChange,
   // isPinned,
   hasHidden,
+  mode,
 }) => {
   let [hoverStatus, setHoverStatus] = React.useState(status);
   const item = (s) => {
@@ -118,6 +119,28 @@ const Dropdown = ({
             text-xs h-3 w-3 -right-1 -top-1 flex flex-row items-center justify-center rounded-full"
               >
                 <ChevronDown />
+              </div>
+            ) : (
+              React.null
+            )}
+
+            {mode == "Archive" ? (
+              <div
+                className="absolute  text-[var(--t9)] bg-[var(--t0)]
+            text-xs h-3 w-3 -right-1 -bottom-1 flex flex-row items-center justify-center rounded-full"
+              >
+                {"A"}
+              </div>
+            ) : (
+              React.null
+            )}
+
+            {mode == "Stashed" ? (
+              <div
+                className="absolute  text-[var(--t9)] bg-[var(--t0)]
+            text-xs h-3 w-3 -right-1 -bottom-1 flex flex-row items-center justify-center rounded-full"
+              >
+                {"S"}
               </div>
             ) : (
               React.null

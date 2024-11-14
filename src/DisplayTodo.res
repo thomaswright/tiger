@@ -67,6 +67,7 @@ let make = (~todoRelation: todoRelation, ~setFocusIdNext, ~stashed, ~setStashed)
           setStatusSelectIsOpen(_ => v)
         }}
         status={Some(todo.status)}
+        mode={todo.mode}
         focusTodo={() => ()}
         setStatus={newStatus => setTodoStatus(todo.id, newStatus)}
       />
@@ -170,7 +171,9 @@ let make = (~todoRelation: todoRelation, ~setFocusIdNext, ~stashed, ~setStashed)
           setAdditionalText(_ => ReactEvent.Form.target(e)["value"]->Some)
         }}
       />
-      <ModeMgr todo={todo->Some} todos={todoRelation.children} />
+      {todoRelation.children->Array.length > 0
+        ? <ModeMgr todo={todo->Some} todos={todoRelation.children} />
+        : React.null}
     </div>
   </div>
 }

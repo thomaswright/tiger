@@ -256,7 +256,8 @@ function Todo(props) {
                                                 });
                                     }
                                   }),
-                                hasHidden: todoRelation.hasHiddenChildren
+                                hasHidden: todoRelation.hasHiddenChildren,
+                                mode: todo.mode
                               }) : null,
                         JsxRuntime.jsxs("div", {
                               children: [
@@ -316,7 +317,8 @@ function Todo(props) {
                                                         });
                                             }
                                           }),
-                                        hasHidden: todoRelation.hasHiddenChildren
+                                        hasHidden: todoRelation.hasHiddenChildren,
+                                        mode: todo.mode
                                       }) : null,
                                 todoRelation.depth === 0 ? JsxRuntime.jsx("div", {
                                         className: "w-2"

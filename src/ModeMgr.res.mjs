@@ -3,17 +3,75 @@
 import * as Common from "./Common.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
+import * as Tb from "react-icons/tb";
 import * as State from "@legendapp/state";
 import * as JsxRuntime from "react/jsx-runtime";
 
+function ModeMgr$Select(props) {
+  var todo = props.todo;
+  var parentTodo = props.parentTodo;
+  return JsxRuntime.jsxs("div", {
+              children: [
+                JsxRuntime.jsx("button", {
+                      children: "W",
+                      className: [
+                          todo.mode === "Working" ? "bg-[var(--t9)] text-[var(--t2)]" : "",
+                          "w-5 flex flex-row items-center justify-center rounded"
+                        ].join(" "),
+                      onClick: (function (param) {
+                          Common.setTodoMode(todo.id, "Working");
+                        })
+                    }),
+                JsxRuntime.jsx("button", {
+                      children: "S",
+                      className: [
+                          todo.mode === "Stashed" ? (
+                              Core__Option.mapOr(parentTodo, false, (function (x) {
+                                      if (x.show_mode === "Archive") {
+                                        return true;
+                                      } else {
+                                        return x.show_mode === "Stashed";
+                                      }
+                                    })) ? "bg-[var(--t9)] text-[var(--t2)]" : "bg-[var(--t3)]"
+                            ) : "",
+                          "w-5 flex flex-row items-center justify-center rounded"
+                        ].join(" "),
+                      onClick: (function (param) {
+                          Common.setTodoMode(todo.id, "Stashed");
+                        })
+                    }),
+                JsxRuntime.jsx("button", {
+                      children: "A",
+                      className: [
+                          todo.mode === "Archive" ? (
+                              Core__Option.mapOr(parentTodo, false, (function (x) {
+                                      return x.show_mode === "Archive";
+                                    })) ? "bg-[var(--t9)] text-[var(--t2)]" : "bg-[var(--t3)]"
+                            ) : "",
+                          "w-5 flex flex-row items-center justify-center rounded"
+                        ].join(" "),
+                      onClick: (function (param) {
+                          Common.setTodoMode(todo.id, "Archive");
+                        })
+                    })
+              ],
+              className: "flex flex-row gap-1 rounded py-1"
+            });
+}
+
+var Select = {
+  make: ModeMgr$Select
+};
+
 function ModeMgr(props) {
   var todos = props.todos;
+  var todo = props.todo;
   return JsxRuntime.jsxs("div", {
               children: [
                 JsxRuntime.jsxs("div", {
                       children: [
                         JsxRuntime.jsx("button", {
-                              children: "Stash to Working",
+                              children: "Unstash all",
                               className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
                               onClick: (function (param) {
                                   State.batch(function () {
@@ -26,7 +84,7 @@ function ModeMgr(props) {
                                 })
                             }),
                         JsxRuntime.jsx("button", {
-                              children: "Working to Stash ",
+                              children: " Stash all working",
                               className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
                               onClick: (function (param) {
                                   State.batch(function () {
@@ -41,91 +99,60 @@ function ModeMgr(props) {
                       ],
                       className: "flex flex-row gap-1 p-2"
                     }),
-                Core__Option.mapOr(props.todo, null, (function (todo) {
+                Core__Option.mapOr(todo, null, (function (todo) {
                         return JsxRuntime.jsxs("div", {
                                     children: [
                                       JsxRuntime.jsx("button", {
-                                            children: "W",
+                                            children: JsxRuntime.jsx(Tb.TbChevronLeft, {}),
                                             className: [
-                                                todo.show_mode === "Working" ? "bg-[var(--t3)]" : "",
-                                                "px-2 py-0.5 text-xs flex flex-row items-center justify-center rounded"
+                                                todo.show_mode === "Working" ? "bg-[var(--t9)] text-[var(--t2)]" : "",
+                                                "w-5 h-5 text-xs flex flex-row items-center justify-center rounded"
                                               ].join(" "),
                                             onClick: (function (param) {
                                                 Common.setTodoShowMode(todo.id, "Working");
                                               })
                                           }),
                                       JsxRuntime.jsx("button", {
-                                            children: "W+S",
+                                            children: JsxRuntime.jsx(Tb.TbChevronLeft, {}),
                                             className: [
-                                                todo.show_mode === "Stashed" ? "bg-[var(--t3)]" : "",
-                                                "px-2 py-0.5 text-xs flex flex-row items-center justify-center rounded"
+                                                todo.show_mode === "Stashed" ? "bg-[var(--t9)] text-[var(--t2)]" : "",
+                                                "w-5 h-5 text-xs flex flex-row items-center justify-center rounded"
                                               ].join(" "),
                                             onClick: (function (param) {
                                                 Common.setTodoShowMode(todo.id, "Stashed");
                                               })
                                           }),
                                       JsxRuntime.jsx("button", {
-                                            children: "W+S+A",
+                                            children: JsxRuntime.jsx(Tb.TbChevronLeft, {}),
                                             className: [
-                                                todo.show_mode === "Archive" ? "bg-[var(--t3)]" : "",
-                                                "px-2 py-0.5 text-xs flex flex-row items-center justify-center rounded"
+                                                todo.show_mode === "Archive" ? "bg-[var(--t9)] text-[var(--t2)]" : "",
+                                                "w-5 h-5 text-xs flex flex-row items-center justify-center rounded"
                                               ].join(" "),
                                             onClick: (function (param) {
                                                 Common.setTodoShowMode(todo.id, "Archive");
                                               })
                                           })
                                     ],
-                                    className: "flex flex-row gap-1 rounded p-1"
+                                    className: "flex flex-row gap-1 rounded p-1 ml-1"
                                   });
                       })),
                 JsxRuntime.jsx("div", {
-                      children: todos.map(function (todo) {
+                      children: todos.map(function (t) {
                             return JsxRuntime.jsxs("div", {
                                         children: [
-                                          JsxRuntime.jsxs("div", {
-                                                children: [
-                                                  JsxRuntime.jsx("button", {
-                                                        children: "W",
-                                                        className: [
-                                                            todo.mode === "Working" ? "bg-[var(--t3)]" : "",
-                                                            "w-5 flex flex-row items-center justify-center rounded"
-                                                          ].join(" "),
-                                                        onClick: (function (param) {
-                                                            Common.setTodoMode(todo.id, "Working");
-                                                          })
-                                                      }),
-                                                  JsxRuntime.jsx("button", {
-                                                        children: "S",
-                                                        className: [
-                                                            todo.mode === "Stashed" ? "bg-[var(--t3)]" : "",
-                                                            "w-5 flex flex-row items-center justify-center rounded"
-                                                          ].join(" "),
-                                                        onClick: (function (param) {
-                                                            Common.setTodoMode(todo.id, "Stashed");
-                                                          })
-                                                      }),
-                                                  JsxRuntime.jsx("button", {
-                                                        children: "A",
-                                                        className: [
-                                                            todo.mode === "Archive" ? "bg-[var(--t3)]" : "",
-                                                            "w-5 flex flex-row items-center justify-center rounded"
-                                                          ].join(" "),
-                                                        onClick: (function (param) {
-                                                            Common.setTodoMode(todo.id, "Archive");
-                                                          })
-                                                      })
-                                                ],
-                                                className: "flex flex-row gap-1 rounded p-1"
+                                          JsxRuntime.jsx(ModeMgr$Select, {
+                                                parentTodo: todo,
+                                                todo: t
                                               }),
                                           JsxRuntime.jsx("div", {
-                                                children: Core__Option.getOr(Caml_option.nullable_to_opt(todo.text), ""),
+                                                children: Core__Option.getOr(Caml_option.nullable_to_opt(t.text), ""),
                                                 className: "max-w-80  flex flex-row items-center rounded"
                                               })
                                         ],
-                                        className: ["text-sm px-2 min-h-6  flex flex-row items-center rounded gap-1 "].join(" ")
+                                        className: ["text-sm min-h-6  flex flex-row items-center  gap-1 "].join(" ")
                                       });
                           }),
-                      className: "flex flex-col p-2 cursor-pointer divide-y"
+                      className: "flex flex-col px-2 cursor-pointer divide-y"
                     })
               ]
             });
@@ -134,6 +161,7 @@ function ModeMgr(props) {
 var make = ModeMgr;
 
 export {
+  Select ,
   make ,
 }
 /* Common Not a pure module */

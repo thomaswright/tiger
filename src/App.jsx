@@ -23,7 +23,7 @@ const DashboardWrapper = observer(({ session }) => {
   //     return { ...v, id: k };
   //   });
   //   batch(() => {
-  //     todos.forEach((todo) => setTodoShowMode(todo.id, "Archive"));
+  //     todos.forEach((todo) => setTodoShowMode(todo.id, "Working"));
   //   });
   // });
   const todos = groupByAndSort(
