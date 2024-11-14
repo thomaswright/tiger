@@ -10,8 +10,6 @@ type status =
   | @as("Paused") Paused
   | @as("ResolveDone") ResolveDone
   | @as("ResolveNo") ResolveNo
-  | @as("ArchiveDone") ArchiveDone
-  | @as("ArchiveNo") ArchiveNo
 
 type outfit =
   | @as("Todo") Todo
@@ -57,18 +55,7 @@ type view = | @as("Settings") Settings | @as("ProjectList") ProjectList
 // lastChildPosition: option<float>,
 
 let statusToFloat = s => {
-  [
-    Unsorted,
-    Future,
-    NowIfTime,
-    NowMustDo,
-    Underway,
-    Paused,
-    ResolveDone,
-    ResolveNo,
-    ArchiveDone,
-    ArchiveNo,
-  ]
+  [Unsorted, Future, NowIfTime, NowMustDo, Underway, Paused, ResolveDone, ResolveNo]
   ->Array.findIndex(a => a == s)
   ->Int.toFloat
 }
@@ -83,8 +70,6 @@ let statusStringShort = s => {
   | Paused => "Paused"
   | ResolveDone => "Done"
   | ResolveNo => "No"
-  | ArchiveDone => "Done"
-  | ArchiveNo => "No"
   }
 }
 
@@ -98,8 +83,6 @@ let statusString = s => {
   | Paused => "Paused"
   | ResolveDone => "Done"
   | ResolveNo => "No"
-  | ArchiveDone => "Done & Archived"
-  | ArchiveNo => "No & Archived"
   }
 }
 
@@ -113,8 +96,6 @@ let statusColor = s =>
   | Paused => "var(--lightGreen)"
   | ResolveDone => "var(--lightPurple)"
   | ResolveNo => "var(--lightPurple)"
-  | ArchiveDone => "var(--lightGray)"
-  | ArchiveNo => "var(--lightGray)"
   }
 
 let statusColorText = s =>
@@ -127,8 +108,6 @@ let statusColorText = s =>
   | Paused => "var(--darkGreen)"
   | ResolveDone => "var(--darkPurple)"
   | ResolveNo => "var(--darkPurple)"
-  | ArchiveDone => "var(--darkGray)"
-  | ArchiveNo => "var(--darkGray)"
   }
 
 let getTodoId = s => "todo-" ++ s

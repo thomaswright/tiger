@@ -157,7 +157,7 @@ const Dropdown = ({
           className="DropdownMenuContent"
           sideOffset={5}
         >
-          <div className="p-2 pb-1">
+          <div className="p-2">
             <div className="grid grid-cols-2 gap-2 ">
               {item("Unsorted")}
               {item("Future")}
@@ -167,16 +167,6 @@ const Dropdown = ({
               {item("Paused")}
               {item("ResolveDone")}
               {item("ResolveNo")}
-              {item("ArchiveDone")}
-              {item("ArchiveNo")}
-            </div>
-            <div className="h-6 pt-1 font-bold flex flex-row items-center justify-center">
-              {/* <div className=" w-6 flex flex-row items-center justify-center">
-                {statusStringShort(hoverStatus)}
-              </div> */}
-              <div>
-                {Boolean(hoverStatus) ? statusString(hoverStatus) : "Mixed"}
-              </div>
             </div>
           </div>
 
@@ -187,4 +177,12 @@ const Dropdown = ({
   );
 };
 
+// <div className="h-6 pt-1 font-bold flex flex-row items-center justify-center">
+// {/* <div className=" w-6 flex flex-row items-center justify-center">
+//   {statusStringShort(hoverStatus)}
+// </div> */}
+// <div>
+//   {Boolean(hoverStatus) ? statusString(hoverStatus) : "Mixed"}
+// </div>
+// </div>
 export default Dropdown;

@@ -11,9 +11,7 @@ function statusToFloat(s) {
             "Underway",
             "Paused",
             "ResolveDone",
-            "ResolveNo",
-            "ArchiveDone",
-            "ArchiveNo"
+            "ResolveNo"
           ].findIndex(function (a) {
               return a === s;
             });
@@ -34,10 +32,8 @@ function statusStringShort(s) {
     case "Paused" :
         return "Paused";
     case "ResolveDone" :
-    case "ArchiveDone" :
         return "Done";
     case "ResolveNo" :
-    case "ArchiveNo" :
         return "No";
     
   }
@@ -61,10 +57,6 @@ function statusString(s) {
         return "Done";
     case "ResolveNo" :
         return "No";
-    case "ArchiveDone" :
-        return "Done & Archived";
-    case "ArchiveNo" :
-        return "No & Archived";
     
   }
 }
@@ -84,9 +76,6 @@ function statusColor(s) {
     case "ResolveDone" :
     case "ResolveNo" :
         return "var(--lightPurple)";
-    case "ArchiveDone" :
-    case "ArchiveNo" :
-        return "var(--lightGray)";
     
   }
 }
@@ -106,9 +95,6 @@ function statusColorText(s) {
     case "ResolveDone" :
     case "ResolveNo" :
         return "var(--darkPurple)";
-    case "ArchiveDone" :
-    case "ArchiveNo" :
-        return "var(--darkGray)";
     
   }
 }
