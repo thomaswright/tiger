@@ -259,7 +259,7 @@ function Dashboard(props) {
                             }),
                         tmp
                       ],
-                      className: " border-l border-[var(--t3)] flex-none h-60 sticky bg-white top-0 flex flex-col overflow-hidden sm:h-full"
+                      className: " border-l border-[var(--t3)] flex-none h-60 sticky sm:static sm:flex-1 bg-white top-0 flex flex-col overflow-hidden sm:h-full"
                     })
               ],
               className: "flex flex-col-reverse justify-end sm:justify-start sm:flex-row  text-[var(--t10)] h-dvh"

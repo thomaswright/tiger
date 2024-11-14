@@ -88,63 +88,6 @@ let make = (
             }}>
             {"New Project"->React.string}
           </button>
-          // <button
-          //   onClick={_ => {
-          //     let newProjectId = Common.uuid()
-          //     let newProject = {
-          //       id: newProjectId,
-          //       name: "",
-          //       additionalText: "",
-          //       isActive: true,
-          //       todos: [],
-          //       hiddenTodos: SMap.empty,
-          //       hideArchived: false,
-          //       hideAll: false,
-          //     }
-          //     setProjects(v => {
-          //       let relativeProject = switch displayElement {
-          //       | Some(Project(projectId)) => Some(projectId)
-          //       | Some(Todo(todoId)) =>
-          //         v->Array.reduce(None, (a, c) => {
-          //           a->Option.isSome
-          //             ? a
-          //             : c.todos->Array.find(t => t.id == todoId)->Option.isSome
-          //             ? Some(c.id)
-          //             : None
-          //         })
-          //       | _ => None
-          //       }
-          //       relativeProject->Option.mapOr(Array.concat([newProject], v), relativeProject =>
-          //         v->Array.reduce(
-          //           [],
-          //           (a, c) => {
-          //             c.id == relativeProject
-          //               ? a->Array.concat([c])->Array.concat([newProject])
-          //               : a->Array.concat([c])
-          //           },
-          //         )
-          //       )
-          //     })
-          //     setSelectedElement(_ => Some(Project(newProjectId)))
-          //     setDisplayElement(_ => Some(Project(newProjectId)))
-          //     setFocusIdNext(_ => Some(getProjectInputId(newProjectId)))
-          //   }}
-          //   className={[
-          //     "bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1 h-5 ",
-          //   ]->Array.join(" ")}>
-          //   <Icons.Plus />
-          //   {"Project"->React.string}
-          // </button>
-          // <button
-          //   onClick={_ =>
-          //     setProjects(projects =>
-          //       projects->Array.map(p => handleHide(true, Some(allProjectsHidden), p))
-          //     )}
-          //   className={[
-          //     "rounded flex flex-row items-center justify-center gap-1 h-5 w-5 text-[var(--t6)] ",
-          //   ]->Array.join(" ")}>
-          //   {allProjectsHidden ? <Icons.ChevronDown /> : <Icons.ChevronUp />}
-          // </button>
         </div>
       </div>
       <ul className="pb-20 flex-1 overflow-y-scroll" ref={ReactDOM.Ref.domRef(aaParentRef)}>
@@ -170,7 +113,7 @@ let make = (
       </ul>
     </div>
     <div
-      className=" border-l border-[var(--t3)] flex-none h-60 sticky bg-white top-0 flex flex-col overflow-hidden sm:h-full">
+      className=" border-l border-[var(--t3)] flex-none h-60 sticky sm:static sm:flex-1 bg-white top-0 flex flex-col overflow-hidden sm:h-full">
       <div
         className="flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b border-[var(--t3)] px-2">
         <button
@@ -254,3 +197,61 @@ let make = (
 let make = observer(make)
 
 let default = make
+
+// <button
+//   onClick={_ => {
+//     let newProjectId = Common.uuid()
+//     let newProject = {
+//       id: newProjectId,
+//       name: "",
+//       additionalText: "",
+//       isActive: true,
+//       todos: [],
+//       hiddenTodos: SMap.empty,
+//       hideArchived: false,
+//       hideAll: false,
+//     }
+//     setProjects(v => {
+//       let relativeProject = switch displayElement {
+//       | Some(Project(projectId)) => Some(projectId)
+//       | Some(Todo(todoId)) =>
+//         v->Array.reduce(None, (a, c) => {
+//           a->Option.isSome
+//             ? a
+//             : c.todos->Array.find(t => t.id == todoId)->Option.isSome
+//             ? Some(c.id)
+//             : None
+//         })
+//       | _ => None
+//       }
+//       relativeProject->Option.mapOr(Array.concat([newProject], v), relativeProject =>
+//         v->Array.reduce(
+//           [],
+//           (a, c) => {
+//             c.id == relativeProject
+//               ? a->Array.concat([c])->Array.concat([newProject])
+//               : a->Array.concat([c])
+//           },
+//         )
+//       )
+//     })
+//     setSelectedElement(_ => Some(Project(newProjectId)))
+//     setDisplayElement(_ => Some(Project(newProjectId)))
+//     setFocusIdNext(_ => Some(getProjectInputId(newProjectId)))
+//   }}
+//   className={[
+//     "bg-[var(--t2)] px-2 rounded text-xs flex flex-row items-center gap-1 h-5 ",
+//   ]->Array.join(" ")}>
+//   <Icons.Plus />
+//   {"Project"->React.string}
+// </button>
+// <button
+//   onClick={_ =>
+//     setProjects(projects =>
+//       projects->Array.map(p => handleHide(true, Some(allProjectsHidden), p))
+//     )}
+//   className={[
+//     "rounded flex flex-row items-center justify-center gap-1 h-5 w-5 text-[var(--t6)] ",
+//   ]->Array.join(" ")}>
+//   {allProjectsHidden ? <Icons.ChevronDown /> : <Icons.ChevronUp />}
+// </button>
