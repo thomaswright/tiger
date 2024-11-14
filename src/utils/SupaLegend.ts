@@ -40,6 +40,7 @@ export const todos$ = observable(
            parent_todo,
            target_date,
            additional_text,
+           hidden,
            status,
            outfit`
         )
@@ -110,6 +111,10 @@ export function setTodoOutfit(
   outfit: "Todo" | "Project" | "Group"
 ) {
   todos$[id].outfit.set(outfit);
+}
+
+export function setTodoHidden(id: string, isHidden: boolean) {
+  todos$[id].hidden.set(isHidden);
 }
 
 export function setTodoStatus(

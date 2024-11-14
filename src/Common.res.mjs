@@ -59,6 +59,10 @@ function setTodoOutfit(prim0, prim1) {
   SupaLegendTs.setTodoOutfit(prim0, prim1);
 }
 
+function setTodoHidden(prim0, prim1) {
+  SupaLegendTs.setTodoHidden(prim0, prim1);
+}
+
 function setTodoStatus(prim0, prim1) {
   SupaLegendTs.setTodoStatus(prim0, prim1);
 }
@@ -134,6 +138,7 @@ export {
   setTodoAdditionalText ,
   setTodoDate ,
   setTodoOutfit ,
+  setTodoHidden ,
   setTodoStatus ,
   setTodoPosition ,
   toggleDone ,

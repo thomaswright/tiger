@@ -47,6 +47,9 @@ external setTodoDate: (string, Nullable.t<string>) => unit = "setTodoDate"
 external setTodoOutfit: (string, outfit) => unit = "setTodoOutfit"
 
 @module("./utils/SupaLegend.ts")
+external setTodoHidden: (string, bool) => unit = "setTodoHidden"
+
+@module("./utils/SupaLegend.ts")
 external setTodoStatus: (string, status) => unit = "setTodoStatus"
 
 @module("./utils/SupaLegend.ts")

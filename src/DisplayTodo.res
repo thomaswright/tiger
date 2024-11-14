@@ -86,6 +86,13 @@ let make = (~todoRelation: todoRelation, ~setFocusIdNext) => {
             ->toNullableNull,
           )}
       />
+      <button
+        className="px-2 bg-[var(--t2)] rounded text-sm h-5"
+        onClick={_ => {
+          setTodoHidden(todo.id)
+        }}>
+        {"Hide"->React.string}
+      </button>
       // {todoRelation.depth >= 0
       //   ? <div className="flex flex-row gap-1">
       //       <button
