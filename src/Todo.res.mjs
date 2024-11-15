@@ -70,10 +70,10 @@ function Todo(props) {
                                     Common.setTodoPosition(todo.id, x.id, prevSibLastChild.position + 1);
                                   }));
                           }));
+                    todoRelation.children.forEach(function (v) {
+                          Common.setTodoPosition(v.id, x.id, todo.position + v.position);
+                        });
                   }));
-            todoRelation.children.forEach(function (v) {
-                  Common.setTodoPosition(v.id, todo.parent_todo, todo.position + v.position);
-                });
           });
     }
     if ((e.key === "Tab" && e.shiftKey || e.key === "[" && e.metaKey) && !(todo.parent_todo == null)) {

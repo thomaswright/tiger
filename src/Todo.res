@@ -75,10 +75,11 @@ let make = (
               )
             },
           )
-        })
-        // children don't follow
-        todoRelation.children->Array.forEach(v => {
-          setTodoPosition(v.id, todo.parent_todo, todo.position +. v.position)
+          todoRelation.children->Array.forEach(
+            v => {
+              setTodoPosition(v.id, Value(x.id), todo.position +. v.position)
+            },
+          )
         })
       })
     }
