@@ -85,7 +85,7 @@ function Todo(props) {
             var match = todoRelation.parent;
             var match$1 = todoRelation.tios[todoRelation.parentIndex + 1 | 0];
             var newTodoPosition = (match == null) ? (
-                match$1 !== undefined ? match$1.position / 2 : 1
+                match$1 !== undefined ? match$1.position - 1 : 1
               ) : (
                 match$1 !== undefined ? (match.position + match$1.position) / 2 : match.position + 1
               );
@@ -103,7 +103,7 @@ function Todo(props) {
   };
   var makeNewTodo = function () {
     var newPosition = todoRelation.depth === 0 || todoRelation.children.length > 0 ? Core__Option.mapOr(todoRelation.children[0], 0, (function (x) {
-              return x.position / 2;
+              return x.position - 1;
             })) : Core__Option.mapOr(todoRelation.sibs[todoRelation.index + 1 | 0], todo.position + 1, (function (nextSib) {
               return (nextSib.position + todo.position) / 2;
             }));

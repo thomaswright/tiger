@@ -104,7 +104,7 @@ let make = (
         ) {
         | (Some(parent), Some(parentsNextSib)) => (parent.position +. parentsNextSib.position) /. 2.
         | (Some(parent), _) => parent.position +. 1.
-        | (_, Some(parentsNextSib)) => parentsNextSib.position /. 2.
+        | (_, Some(parentsNextSib)) => parentsNextSib.position -. 1.
         | _ => 1.
         }
         setTodoPosition(todo.id, newTodoParent, newTodoPosition)
@@ -126,7 +126,7 @@ let make = (
   let makeNewTodo = () => {
     let newPosition =
       todoRelation.depth == 0 || todoRelation.children->Array.length > 0
-        ? todoRelation.children->Array.get(0)->Option.mapOr(0., x => x.position /. 2.)
+        ? todoRelation.children->Array.get(0)->Option.mapOr(0., x => x.position -. 1.)
         : todoRelation.sibs
           ->Array.get(todoRelation.index + 1)
           ->Option.mapOr(todo.position +. 1., nextSib => (nextSib.position +. todo.position) /. 2.)
