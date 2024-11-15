@@ -1,5 +1,3 @@
-open Webapi.Dom
-open Common
 open Types
 
 @react.component

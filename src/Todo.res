@@ -14,8 +14,8 @@ let make = (
   ~setFocusIdNext,
   ~isChecked,
   ~setChecked,
-  ~itemToMoveHandleMouseDown,
-  ~itemToMoveHandleMouseEnter,
+  ~itemToMoveHandleMouseDown as _,
+  ~itemToMoveHandleMouseEnter as _,
 ) => {
   let todo = todoRelation.self
   let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
@@ -296,9 +296,9 @@ let make = (
       setDisplayElement(_ => Some(todo.id))
     }}
     onKeyDown={onKeyDownContainer}
-    onMouseEnter={e => {
-      itemToMoveHandleMouseEnter(false, todo.id, e)
-    }}
+    // onMouseEnter={e => {
+    //   itemToMoveHandleMouseEnter(false, todo.id, e)
+    // }}
     className={[
       listItemClass,
       todoRelation.depth == 0 ? "" : "pl-1",

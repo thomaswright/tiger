@@ -1,5 +1,5 @@
 @react.component
-let make = (~onExportJson, ~onImportJson, ~setBaseColor, ~logout) => {
+let make = (~onExportJson as _, ~onImportJson as _, ~setBaseColor, ~logout) => {
   let (theme, setTheme) = Theme.useTheme()
 
   <div className="flex-1 overflow-y-scroll px-3 py-2 flex flex-col gap-2 items-start pb-2">

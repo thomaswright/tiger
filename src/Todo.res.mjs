@@ -14,7 +14,6 @@ import FormatISO from "date-fns/formatISO";
 import ReactTextareaAutosize from "react-textarea-autosize";
 
 function Todo(props) {
-  var itemToMoveHandleMouseEnter = props.itemToMoveHandleMouseEnter;
   var setChecked = props.setChecked;
   var isChecked = props.isChecked;
   var setFocusIdNext = props.setFocusIdNext;
@@ -373,9 +372,6 @@ function Todo(props) {
                   setStagedForDelete(function (param) {
                         return false;
                       });
-                }),
-              onMouseEnter: (function (e) {
-                  itemToMoveHandleMouseEnter(false, todo.id, e);
                 })
             });
 }
