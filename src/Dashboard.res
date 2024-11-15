@@ -90,7 +90,7 @@ let make = (
           </button>
         </div>
       </div>
-      <ul className="pb-20 flex-1 overflow-y-scroll" ref={ReactDOM.Ref.domRef(aaParentRef)}>
+      <ul className="pb-5 flex-1 overflow-y-scroll" ref={ReactDOM.Ref.domRef(aaParentRef)}>
         {todos
         ->Array.map(todoRelation => {
           <Todo

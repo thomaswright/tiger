@@ -162,7 +162,7 @@ function Dashboard(props) {
                                               }, todoRelation.self.id);
                                   }),
                               ref: Caml_option.some(aaParentRef),
-                              className: "pb-20 flex-1 overflow-y-scroll"
+                              className: "pb-5 flex-1 overflow-y-scroll"
                             })
                       ],
                       className: "flex-1 flex flex-col overflow-hidden sm:h-full border-t sm:border-t-0"
