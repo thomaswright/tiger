@@ -127,11 +127,11 @@ const Dropdown = ({
             ) : (
               React.null
             )}
-            {/* 
+
             {mode == "Archive" ? (
               <div
                 className="absolute  text-[var(--t9)] bg-transparent
-            text-xs h-3 w-3 -right-1 -bottom-1 flex flex-row items-center justify-center rounded-full"
+            text-xs h-3 w-3 -right-1 top-1 flex flex-row items-center justify-center rounded-full"
               >
                 <Archive />
               </div>
@@ -142,13 +142,13 @@ const Dropdown = ({
             {mode == "Stashed" ? (
               <div
                 className="absolute  text-[var(--t9)] bg-transparent
-            text-xs h-3 w-3 -right-1 -bottom-1 flex flex-row items-center justify-center rounded-full"
+            text-xs h-3 w-3 -right-1 top-1 flex flex-row items-center justify-center rounded-full"
               >
                 <Bookmark />
               </div>
             ) : (
               React.null
-            )} */}
+            )}
 
             {statusStringShort(status)}
             {/* {isPinned && (
