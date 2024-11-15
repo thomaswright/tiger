@@ -72,7 +72,7 @@ function Dashboard(props) {
       });
   var tmp;
   tmp = Core__Option.isSome(displayElement) || Core__Option.isSome(selectedElement) ? JsxRuntime.jsx(React.Fragment, {
-          children: displayElement !== undefined ? Core__Option.mapOr(todos.find(function (t) {
+          children: displayElement !== undefined ? Core__Option.mapOr(props.allTodos.find(function (t) {
                       return t.self.id === displayElement;
                     }), null, (function (todoRelation) {
                     return JsxRuntime.jsx(DisplayTodo.make, {

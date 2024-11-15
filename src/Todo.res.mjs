@@ -257,7 +257,10 @@ function Todo(props) {
                                     }
                                   }),
                                 hasHidden: todoRelation.hasHiddenChildren,
-                                mode: todo.mode
+                                mode: todo.mode,
+                                setMode: (function (m) {
+                                    Common.setTodoMode(todo.id, m);
+                                  })
                               }) : null,
                         JsxRuntime.jsxs("div", {
                               children: [
@@ -318,7 +321,10 @@ function Todo(props) {
                                             }
                                           }),
                                         hasHidden: todoRelation.hasHiddenChildren,
-                                        mode: todo.mode
+                                        mode: todo.mode,
+                                        setMode: (function (m) {
+                                            Common.setTodoMode(todo.id, m);
+                                          })
                                       }) : null,
                                 todoRelation.depth === 0 ? JsxRuntime.jsx("div", {
                                         className: "w-2"

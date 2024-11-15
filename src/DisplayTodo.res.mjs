@@ -92,7 +92,10 @@ function DisplayTodo(props) {
                                       });
                                 }),
                               hasHidden: todoRelation.hasHiddenChildren,
-                              mode: todo.mode
+                              mode: todo.mode,
+                              setMode: (function (m) {
+                                  Common.setTodoMode(todo.id, m);
+                                })
                             }),
                         JsxRuntime.jsx(Common.DateSelect.make, {
                               value: Core__Option.map(Caml_option.nullable_to_opt(todo.target_date), (function (prim) {

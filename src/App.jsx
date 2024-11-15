@@ -39,24 +39,43 @@ const DashboardWrapper = observer(({ session }) => {
     "position"
   );
   // console.log(todos);
-  let rec = (t, depth, parent, tios, parentIndex) =>
+
+  let filterer = (arr, c) => {
+    return arr.filter((x) => {
+      if (c.show_mode === "Working") {
+        return x.mode === "Working";
+      } else if (c.show_mode === "Stashed") {
+        return x.mode === "Working" || x.mode === "Stashed";
+      } else {
+        return true;
+      }
+    });
+  };
+
+  let checkIfHiddenChildren = (arr, c) => {
+    return Boolean(arr)
+      ? arr.some((x) => {
+          if (c.show_mode === "Working") {
+            return x.mode === "Stashed" || x.mode === "Archive";
+          } else if (c.show_mode === "Stashed") {
+            return x.mode === "Archive";
+          } else {
+            return false;
+          }
+        })
+      : false;
+  };
+  let rec = (t, depth, parent, tios, parentIndex, showAll) =>
     Boolean(t)
       ? t.reduce((a, c, i) => {
           let children = Boolean(todos[c.id])
             ? rec(
-                todos[c.id].filter((x) => {
-                  if (c.show_mode === "Working") {
-                    return x.mode === "Working";
-                  } else if (c.show_mode === "Stashed") {
-                    return x.mode === "Working" || x.mode === "Stashed";
-                  } else {
-                    return true;
-                  }
-                }),
+                showAll ? todos[c.id] : filterer(todos[c.id], c),
                 depth + 1,
                 c,
                 t,
-                i
+                i,
+                showAll
               )
             : [];
           let newItem = {
@@ -64,17 +83,9 @@ const DashboardWrapper = observer(({ session }) => {
             depth: depth,
             parent: parent,
             parentIndex: parentIndex,
-            hasHiddenChildren: Boolean(todos[c.id])
-              ? todos[c.id].some((x) => {
-                  if (c.show_mode === "Working") {
-                    return x.mode === "Stashed" || x.mode === "Archive";
-                  } else if (c.show_mode === "Stashed") {
-                    return x.mode === "Archive";
-                  } else {
-                    return false;
-                  }
-                })
-              : false,
+            hasHiddenChildren: showAll
+              ? false
+              : checkIfHiddenChildren(todos[c.id], c),
             tios: tios,
             index: i,
             sibs: t,
@@ -83,6 +94,7 @@ const DashboardWrapper = observer(({ session }) => {
           return [...a, newItem, ...children];
         }, [])
       : [];
+
   let todosToDisplay = !Boolean(todos["root"])
     ? []
     : rec(
@@ -90,12 +102,18 @@ const DashboardWrapper = observer(({ session }) => {
         0,
         null,
         [],
-        0
+        0,
+        false
       );
+
+  let allTodos = !Boolean(todos["root"])
+    ? []
+    : rec(todos["root"], 0, null, [], 0, true);
   // console.log(Object.entries(_todos$.get() || {}));
 
   return (
     <Dashboard
+      allTodos={allTodos || []}
       todos={todosToDisplay || []}
       stashed={stashed}
       setStashed={setStashed}

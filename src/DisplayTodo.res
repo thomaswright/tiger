@@ -68,6 +68,7 @@ let make = (~todoRelation: todoRelation, ~setFocusIdNext, ~stashed, ~setStashed)
         }}
         status={Some(todo.status)}
         mode={todo.mode}
+        setMode={m => setTodoMode(todo.id, m)}
         focusTodo={() => ()}
         setStatus={newStatus => setTodoStatus(todo.id, newStatus)}
       />

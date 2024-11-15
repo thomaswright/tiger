@@ -5,6 +5,7 @@ open Types
 @react.component
 let make = (
   ~todos: array<todoRelation>,
+  ~allTodos: array<todoRelation>,
   ~stashed: array<string>,
   ~setStashed: (array<string> => array<string>) => unit,
   ~allProjects: array<todo>,
@@ -139,7 +140,7 @@ let make = (
         <React.Fragment>
           {switch displayElement {
           | Some(todoId) =>
-            todos
+            allTodos
             ->Array.find(t => t.self.id == todoId)
             ->Option.mapOr(React.null, todoRelation => {
               <DisplayTodo todoRelation setFocusIdNext stashed setStashed />

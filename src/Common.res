@@ -106,6 +106,7 @@ module StatusSelect = {
     ~onOpenChange: bool => unit,
     ~hasHidden: bool,
     ~mode: mode,
+    ~setMode: mode => unit,
   ) => React.element = "default"
 }
 

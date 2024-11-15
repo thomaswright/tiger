@@ -32,6 +32,7 @@ const Dropdown = ({
   // isPinned,
   hasHidden,
   mode,
+  setMode,
 }) => {
   let [hoverStatus, setHoverStatus] = React.useState(status);
   const item = (s) => {
@@ -205,6 +206,42 @@ const Dropdown = ({
               {item("Paused")}
               {item("ResolveDone")}
               {item("ResolveNo")}
+            </div>
+
+            <div className="flex flex-row rounded justify-center pt-2">
+              <button
+                onClick={(_) => {
+                  setMode("Working");
+                }}
+                className={[
+                  mode == "Working" ? " text-[var(--t9)]" : "text-[var(--t3)]",
+                  "w-6 h-6 flex flex-row items-center justify-center rounded",
+                ].join(" ")}
+              >
+                <Inbox />
+              </button>
+              <button
+                onClick={(_) => {
+                  setMode("Stashed");
+                }}
+                className={[
+                  mode == "Stashed" ? "text-[var(--t9)]" : "text-[var(--t3)]",
+                  "w-6 h-6 flex flex-row items-center justify-center rounded ",
+                ].join(" ")}
+              >
+                <Bookmark />
+              </button>
+              <button
+                onClick={(_) => {
+                  setMode("Archive");
+                }}
+                className={[
+                  mode == "Archive" ? " text-[var(--t9)]" : "text-[var(--t3)]",
+                  "w-6 h-6 flex flex-row items-center justify-center rounded",
+                ].join(" ")}
+              >
+                <Archive />
+              </button>
             </div>
           </div>
 
