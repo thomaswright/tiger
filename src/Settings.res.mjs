@@ -46,6 +46,16 @@ function Settings(props) {
                       children: "Settings",
                       className: "font-black text-xl"
                     }),
+                JsxRuntime.jsx("div", {
+                      children: "Backup",
+                      className: "font-bold text-sm"
+                    }),
+                JsxRuntime.jsx("div", {
+                      children: JsxRuntime.jsx(Common.ImportButton.make, {
+                            onImportJson: props.onImportJson
+                          }),
+                      className: "flex flex-row gap-2"
+                    }),
                 JsxRuntime.jsxs("div", {
                       children: [
                         JsxRuntime.jsx("div", {

@@ -5,6 +5,7 @@ import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
 import * as OtherJs from "./other.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
+import ImportJsx from "./Import.jsx";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as Belt_MapString from "rescript/lib/es6/belt_MapString.js";
 import DateSelectJsx from "./DateSelect.jsx";
@@ -56,8 +57,8 @@ function addTodo(prim0, prim1, prim2) {
   return SupaLegendTs.addTodo(prim0, prim1, prim2);
 }
 
-function addTodoWithStatus(prim0, prim1, prim2, prim3) {
-  return SupaLegendTs.addTodoWithStatus(prim0, prim1, prim2, prim3);
+function addTodoByImport(prim0, prim1, prim2, prim3, prim4) {
+  SupaLegendTs.addTodoByImport(prim0, prim1, prim2, prim3, prim4);
 }
 
 function setTodoText(prim0, prim1) {
@@ -168,6 +169,12 @@ function groupByAndSort(arr, groupByKey, sortByKey) {
               }));
 }
 
+var make$2 = ImportJsx;
+
+var ImportButton = {
+  make: make$2
+};
+
 export {
   mapNullable ,
   TextareaAutosize ,
@@ -178,7 +185,7 @@ export {
   focusPreviousClass ,
   focusNextClass ,
   addTodo ,
-  addTodoWithStatus ,
+  addTodoByImport ,
   setTodoText ,
   setTodoAdditionalText ,
   setTodoDate ,
@@ -194,5 +201,6 @@ export {
   toNullableNull ,
   useDebounce ,
   groupByAndSort ,
+  ImportButton ,
 }
 /* logoUrl Not a pure module */

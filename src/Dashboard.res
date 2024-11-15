@@ -59,17 +59,26 @@ let make = (
   })
 
   let onImportJson = json => {
-    let maxPosition = allTodos->Array.reduce(0., (a, c) => Math.max(a, c.position))
+    let maxPosition = allTodos->Array.reduce(0., (a, c) => Math.max(a, c.self.position))
     batch(() => {
+      let idMap = json->Array.map(v => (v["id"], uuid()))
+
       json->Array.forEachWithIndex((v, i) => {
-        addTodoWithStatus(
+        addTodoByImport(
+          idMap
+          ->Array.find(((oldId, _)) => oldId == v["id"])
+          ->Option.mapOr(uuid(), ((_, newId)) => newId),
           v["text"],
-          switch v["parent_todo"] {
+          switch (v["parent_todo"]: Nullable.t<string>) {
           | Undefined => Null
-          | x => x
+          | Null => Null
+          | Value(x) =>
+            idMap
+            ->Array.find(((oldId, _)) => oldId == x)
+            ->Option.mapOr(Nullable.Null, ((_, newId)) => Value(newId))
           },
           maxPosition +. i->Int.toFloat,
-          status,
+          v["status"],
         )
       })
     })

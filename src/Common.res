@@ -13,6 +13,9 @@ module TextareaAutosize = {
 let arrayToggle = (v, el) =>
   v->Array.includes(el) ? v->Array.filter(x => x != el) : v->Array.concat([el])
 
+@module("uuid")
+external uuid: unit => string = "v4"
+
 @val @scope(("document", "documentElement", "style"))
 external setRootStyleProperty: (string, string) => unit = "setProperty"
 
@@ -38,8 +41,8 @@ external observer: React.component<'a> => React.component<'a> = "observer"
 external addTodo: (string, Nullable.t<string>, float) => string = "addTodo"
 
 @module("./utils/SupaLegend.ts")
-external addTodoWithStatus: (string, Nullable.t<string>, float, status) => string =
-  "addTodoWithStatus"
+external addTodoByImport: (string, string, Nullable.t<string>, float, status) => unit =
+  "addTodoByImport"
 
 @module("./utils/SupaLegend.ts")
 external setTodoText: (string, string) => unit = "setTodoText"
@@ -172,4 +175,9 @@ let groupByAndSort = (arr, groupByKey, sortByKey) => {
       a->sortByKey -. b->sortByKey
     })
   )
+}
+
+module ImportButton = {
+  @module("./Import.jsx") @react.component
+  external make: (~onImportJson: array<'a> => unit) => React.element = "default"
 }
