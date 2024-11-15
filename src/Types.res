@@ -38,7 +38,7 @@ type todo = {
   target_date: Nullable.t<string>,
   hidden: bool,
   mode: mode,
-  show_mode: mode,
+  modes_shown: array<mode>,
 }
 
 type todoRelation = {

@@ -5,9 +5,7 @@ import {
   supabase,
   todos$ as _todos$,
   uid$,
-  deleteTodo,
-  setTodoMode,
-  setTodoShowMode,
+  setTodoModesShown,
 } from "./utils/SupaLegend.ts";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
@@ -23,14 +21,14 @@ const DashboardWrapper = observer(({ session }) => {
   //   let todos = Object.entries(_todos$.get() || {}).map(([k, v]) => {
   //     return { ...v, id: k };
   //   });
+
   //   batch(() => {
   //     todos.forEach((todo) => {
-  //       if (!Boolean(todo.created_at)) {
-  //         deleteTodo(todo.id);
-  //       }
+  //       setTodoModesShown(todo.id, (v) => ["Working"]);
   //     });
   //   });
   // });
+  // return null;
   const todos = groupByAndSort(
     Object.entries(_todos$.get() || {}).map(([k, v]) => {
       return { ...v, id: k };
@@ -41,28 +39,12 @@ const DashboardWrapper = observer(({ session }) => {
   // console.log(todos);
 
   let filterer = (arr, c) => {
-    return arr.filter((x) => {
-      if (c.show_mode === "Working") {
-        return x.mode === "Working";
-      } else if (c.show_mode === "Stashed") {
-        return x.mode === "Working" || x.mode === "Stashed";
-      } else {
-        return true;
-      }
-    });
+    return arr.filter((x) => c.modes_shown.includes(x.mode));
   };
 
   let checkIfHiddenChildren = (arr, c) => {
     return Boolean(arr)
-      ? arr.some((x) => {
-          if (c.show_mode === "Working") {
-            return x.mode === "Stashed" || x.mode === "Archive";
-          } else if (c.show_mode === "Stashed") {
-            return x.mode === "Archive";
-          } else {
-            return false;
-          }
-        })
+      ? !arr.every((x) => c.modes_shown.includes(x.mode))
       : false;
   };
   let rec = (t, depth, parent, tios, parentIndex, showAll) =>

@@ -44,6 +44,7 @@ export type Database = {
           hidden: boolean
           id: string
           mode: Database["public"]["Enums"]["mode"]
+          modes_shown: Database["public"]["Enums"]["mode"][]
           outfit: Database["public"]["Enums"]["outfit_type"]
           parent_todo: string | null
           position: number | null
@@ -63,6 +64,7 @@ export type Database = {
           hidden?: boolean
           id?: string
           mode?: Database["public"]["Enums"]["mode"]
+          modes_shown?: Database["public"]["Enums"]["mode"][]
           outfit?: Database["public"]["Enums"]["outfit_type"]
           parent_todo?: string | null
           position?: number | null
@@ -82,6 +84,7 @@ export type Database = {
           hidden?: boolean
           id?: string
           mode?: Database["public"]["Enums"]["mode"]
+          modes_shown?: Database["public"]["Enums"]["mode"][]
           outfit?: Database["public"]["Enums"]["outfit_type"]
           parent_todo?: string | null
           position?: number | null

@@ -29,7 +29,6 @@ function Todo(props) {
         return false;
       });
   var setStatusSelectIsOpen = match[1];
-  var statusSelectIsOpen = match[0];
   var match$1 = Common.useDebounce(Caml_option.nullable_to_opt(todo.text), (function (v) {
           Core__Option.mapOr(v, undefined, (function (v_) {
                   Common.setTodoText(todo.id, v_);
@@ -225,6 +224,34 @@ function Todo(props) {
             
           }));
   };
+  var statusSelect = JsxRuntime.jsx(Common.StatusSelect.make, {
+        status: todo.status,
+        setStatus: (function (newStatus) {
+            Common.setTodoStatus(todo.id, newStatus);
+          }),
+        focusTodo: (function () {
+            setFocusIdNext(function (param) {
+                  return Types.getTodoId(todo.id);
+                });
+          }),
+        isOpen: match[0],
+        onOpenChange: (function (v) {
+            if (v) {
+              return setStatusSelectIsOpen(function (param) {
+                          return v;
+                        });
+            } else {
+              return setStatusSelectIsOpen(function (param) {
+                          return v;
+                        });
+            }
+          }),
+        hasHidden: todoRelation.hasHiddenChildren,
+        mode: todo.mode,
+        setMode: (function (m) {
+            Common.setTodoMode(todo.id, m);
+          })
+      });
   return JsxRuntime.jsxs("li", {
               children: [
                 Core__Array.make(todoRelation.depth - 1 | 0, false).map(function (param, i) {
@@ -234,34 +261,7 @@ function Todo(props) {
                     }),
                 JsxRuntime.jsxs("div", {
                       children: [
-                        todoRelation.depth > 0 ? JsxRuntime.jsx(Common.StatusSelect.make, {
-                                status: todo.status,
-                                setStatus: (function (newStatus) {
-                                    Common.setTodoStatus(todo.id, newStatus);
-                                  }),
-                                focusTodo: (function () {
-                                    setFocusIdNext(function (param) {
-                                          return Types.getTodoId(todo.id);
-                                        });
-                                  }),
-                                isOpen: statusSelectIsOpen,
-                                onOpenChange: (function (v) {
-                                    if (v) {
-                                      return setStatusSelectIsOpen(function (param) {
-                                                  return v;
-                                                });
-                                    } else {
-                                      return setStatusSelectIsOpen(function (param) {
-                                                  return v;
-                                                });
-                                    }
-                                  }),
-                                hasHidden: todoRelation.hasHiddenChildren,
-                                mode: todo.mode,
-                                setMode: (function (m) {
-                                    Common.setTodoMode(todo.id, m);
-                                  })
-                              }) : null,
+                        todoRelation.depth > 0 ? statusSelect : null,
                         JsxRuntime.jsxs("div", {
                               children: [
                                 isSelected || isDisplayElement ? null : JsxRuntime.jsx("div", {
@@ -298,34 +298,7 @@ function Todo(props) {
                                           setText(e.target.value);
                                         })
                                     }),
-                                todoRelation.depth === 0 ? JsxRuntime.jsx(Common.StatusSelect.make, {
-                                        status: todo.status,
-                                        setStatus: (function (newStatus) {
-                                            Common.setTodoStatus(todo.id, newStatus);
-                                          }),
-                                        focusTodo: (function () {
-                                            setFocusIdNext(function (param) {
-                                                  return Types.getTodoId(todo.id);
-                                                });
-                                          }),
-                                        isOpen: statusSelectIsOpen,
-                                        onOpenChange: (function (v) {
-                                            if (v) {
-                                              return setStatusSelectIsOpen(function (param) {
-                                                          return v;
-                                                        });
-                                            } else {
-                                              return setStatusSelectIsOpen(function (param) {
-                                                          return v;
-                                                        });
-                                            }
-                                          }),
-                                        hasHidden: todoRelation.hasHiddenChildren,
-                                        mode: todo.mode,
-                                        setMode: (function (m) {
-                                            Common.setTodoMode(todo.id, m);
-                                          })
-                                      }) : null,
+                                todoRelation.depth === 0 ? statusSelect : null,
                                 todoRelation.depth === 0 ? JsxRuntime.jsx("div", {
                                         className: "w-2"
                                       }) : null,

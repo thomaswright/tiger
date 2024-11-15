@@ -20,6 +20,16 @@ function mapNullable(n, f) {
 
 var TextareaAutosize = {};
 
+function arrayToggle(v, el) {
+  if (v.includes(el)) {
+    return v.filter(function (x) {
+                return Caml_obj.notequal(x, el);
+              });
+  } else {
+    return v.concat([el]);
+  }
+}
+
 function useLocalStorage(prim0, prim1) {
   return UseLocalStorageJs$1(prim0, prim1);
 }
@@ -60,8 +70,8 @@ function setTodoMode(prim0, prim1) {
   SupaLegendTs.setTodoMode(prim0, prim1);
 }
 
-function setTodoShowMode(prim0, prim1) {
-  SupaLegendTs.setTodoShowMode(prim0, prim1);
+function setTodoModesShown(prim0, prim1) {
+  SupaLegendTs.setTodoModesShown(prim0, prim1);
 }
 
 function setTodoStatus(prim0, prim1) {
@@ -138,6 +148,7 @@ function useDebounce(initialValue, onTrigger, delay) {
 export {
   mapNullable ,
   TextareaAutosize ,
+  arrayToggle ,
   useLocalStorage ,
   useSessionStorage ,
   useLocalStorageListener ,
@@ -148,7 +159,7 @@ export {
   setTodoAdditionalText ,
   setTodoDate ,
   setTodoMode ,
-  setTodoShowMode ,
+  setTodoModesShown ,
   setTodoStatus ,
   setTodoPosition ,
   deleteTodo ,

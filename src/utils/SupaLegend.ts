@@ -40,7 +40,7 @@ export const todos$ = observable(
            target_date,
            additional_text,
            status,
-           show_mode,
+           modes_shown,
            mode`
         )
         .eq("user_id", uid$.get())
@@ -79,7 +79,7 @@ export function addTodo(
     position,
     parent_todo: parent_todo,
     mode: "Working",
-    show_mode: "Archive",
+    modes_shown: ["Working"],
     status: "Unsorted",
   });
 
@@ -120,11 +120,13 @@ export function setTodoMode(
   todos$[id].mode.set(mode);
 }
 
-export function setTodoShowMode(
+export function setTodoModesShown(
   id: string,
-  showMode: "Working" | "Archive" | "Stashed"
+  setter: (
+    modes: ReadonlyArray<"Working" | "Archive" | "Stashed">
+  ) => Array<"Working" | "Archive" | "Stashed">
 ) {
-  todos$[id].show_mode.set(showMode);
+  todos$[id].modes_shown.set(setter);
 }
 
 // export function setTodoHidden(id: string, isHidden: boolean) {

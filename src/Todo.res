@@ -259,6 +259,29 @@ let make = (
     })
   }
 
+  let statusSelect =
+    <Common.StatusSelect
+      hasHidden={todoRelation.hasHiddenChildren}
+      isOpen={statusSelectIsOpen}
+      onOpenChange={v => {
+        if !v {
+          setStatusSelectIsOpen(_ => v)
+        } else {
+          setStatusSelectIsOpen(_ => v)
+        }
+      }}
+      status={Some(todo.status)}
+      mode={todo.mode}
+      setMode={m => setTodoMode(todo.id, m)}
+      focusTodo={() => {
+        // this isn't set directly because the "Enter"
+        // will then fire on the container then focusing
+        // the input *shrugs*
+        setFocusIdNext(_ => Some(getTodoId(todo.id)))
+      }}
+      setStatus={newStatus => setTodoStatus(todo.id, newStatus)}
+    />
+
   <li
     id={getTodoId(todo.id)}
     tabIndex={0}
@@ -305,29 +328,7 @@ let make = (
       // | Group => <div className="" />
       // | Todo => <div className="w-10 h-5 bg-blue-200 rounded" />
       // }}
-      {todoRelation.depth > 0
-        ? <Common.StatusSelect
-            hasHidden={todoRelation.hasHiddenChildren}
-            isOpen={statusSelectIsOpen}
-            onOpenChange={v => {
-              if !v {
-                setStatusSelectIsOpen(_ => v)
-              } else {
-                setStatusSelectIsOpen(_ => v)
-              }
-            }}
-            status={Some(todo.status)}
-            mode={todo.mode}
-            setMode={m => setTodoMode(todo.id, m)}
-            focusTodo={() => {
-              // this isn't set directly because the "Enter"
-              // will then fire on the container then focusing
-              // the input *shrugs*
-              setFocusIdNext(_ => Some(getTodoId(todo.id)))
-            }}
-            setStatus={newStatus => setTodoStatus(todo.id, newStatus)}
-          />
-        : React.null}
+      {todoRelation.depth > 0 ? statusSelect : React.null}
       <div
         className={[
           "relative flex-1 ml-1 flex flex-row h-full justify-start items-center ",
@@ -370,29 +371,7 @@ let make = (
           onKeyDown={onKeyDownInput}
           onChange={e => setText(ReactEvent.Form.target(e)["value"])}
         />
-        {todoRelation.depth == 0
-          ? <Common.StatusSelect
-              hasHidden={todoRelation.hasHiddenChildren}
-              isOpen={statusSelectIsOpen}
-              onOpenChange={v => {
-                if !v {
-                  setStatusSelectIsOpen(_ => v)
-                } else {
-                  setStatusSelectIsOpen(_ => v)
-                }
-              }}
-              mode={todo.mode}
-              setMode={m => setTodoMode(todo.id, m)}
-              status={Some(todo.status)}
-              focusTodo={() => {
-                // this isn't set directly because the "Enter"
-                // will then fire on the container then focusing
-                // the input *shrugs*
-                setFocusIdNext(_ => Some(getTodoId(todo.id)))
-              }}
-              setStatus={newStatus => setTodoStatus(todo.id, newStatus)}
-            />
-          : React.null}
+        {todoRelation.depth == 0 ? statusSelect : React.null}
         {todoRelation.depth == 0 ? <div className="w-2" /> : React.null}
         {todo.target_date->Nullable.toOption->Option.isSome
           ? <Common.DateSelect

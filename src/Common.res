@@ -10,6 +10,9 @@ module TextareaAutosize = {
   external make: ReactDOM.domProps => React.element = "default"
 }
 
+let arrayToggle = (v, el) =>
+  v->Array.includes(el) ? v->Array.filter(x => x != el) : v->Array.concat([el])
+
 @val @scope(("document", "documentElement", "style"))
 external setRootStyleProperty: (string, string) => unit = "setProperty"
 
@@ -50,7 +53,7 @@ external setTodoDate: (string, Nullable.t<string>) => unit = "setTodoDate"
 external setTodoMode: (string, mode) => unit = "setTodoMode"
 
 @module("./utils/SupaLegend.ts")
-external setTodoShowMode: (string, mode) => unit = "setTodoShowMode"
+external setTodoModesShown: (string, array<mode> => array<mode>) => unit = "setTodoModesShown"
 
 // @module("./utils/SupaLegend.ts")
 // external setTodoHidden: (string, bool) => unit = "setTodoHidden"
