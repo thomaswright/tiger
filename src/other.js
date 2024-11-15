@@ -1,6 +1,6 @@
 export function groupByAndSort(arr, groupByKey, sortByKey) {
   const grouped = arr.reduce((acc, obj) => {
-    const fieldValue = !Boolean(obj[groupByKey]) ? "root" : obj[groupByKey];
+    const fieldValue = obj[groupByKey] == null ? "root" : obj[groupByKey];
 
     if (!acc[fieldValue]) {
       acc[fieldValue] = [];

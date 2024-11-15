@@ -127,7 +127,7 @@ function Dashboard(props) {
                                             onClick: (function (param) {
                                                 var newId = Common.addTodo("", null, Core__Option.mapOr(todos[0], 0, (function (t) {
                                                             return t.self.position;
-                                                          })) + 1);
+                                                          })) - 1);
                                                 setFocusIdNext(function (param) {
                                                       return Types.getTodoInputId(newId);
                                                     });
@@ -172,7 +172,7 @@ function Dashboard(props) {
                         JsxRuntime.jsxs("div", {
                               children: [
                                 JsxRuntime.jsx("button", {
-                                      children: "Toggle Projects",
+                                      children: "Top Level",
                                       className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
                                       onClick: (function (param) {
                                           setView(function (param) {

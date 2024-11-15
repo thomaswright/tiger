@@ -5,6 +5,7 @@ import {
   supabase,
   todos$ as _todos$,
   uid$,
+  deleteTodo,
   setTodoMode,
   setTodoShowMode,
 } from "./utils/SupaLegend.ts";
@@ -23,7 +24,11 @@ const DashboardWrapper = observer(({ session }) => {
   //     return { ...v, id: k };
   //   });
   //   batch(() => {
-  //     todos.forEach((todo) => setTodoShowMode(todo.id, "Working"));
+  //     todos.forEach((todo) => {
+  //       if (!Boolean(todo.created_at)) {
+  //         deleteTodo(todo.id);
+  //       }
+  //     });
   //   });
   // });
   const todos = groupByAndSort(
@@ -33,7 +38,7 @@ const DashboardWrapper = observer(({ session }) => {
     "parent_todo",
     "position"
   );
-  // console.log(_todos$.get());
+  // console.log(todos);
   let rec = (t, depth, parent, tios, parentIndex) =>
     Boolean(t)
       ? t.reduce((a, c, i) => {

@@ -82,7 +82,7 @@ let make = (
               let newId = addTodo(
                 "",
                 Null,
-                todos->Array.get(0)->Option.mapOr(0., t => t.self.position) +. 1.,
+                todos->Array.get(0)->Option.mapOr(0., t => t.self.position) -. 1.,
               )
               setFocusIdNext(_ => Some(getTodoInputId(newId)))
             }}>
@@ -123,7 +123,7 @@ let make = (
             setDisplayElement(_ => None)
             setSelectedElement(_ => None)
           }}>
-          {"Toggle Projects"->React.string}
+          {"Top Level"->React.string}
         </button>
         <div className="flex-1" />
         <button
