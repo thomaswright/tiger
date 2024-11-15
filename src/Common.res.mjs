@@ -4,7 +4,9 @@ import * as React from "react";
 import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
 import * as OtherJs from "./other.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
+import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
+import * as Belt_MapString from "rescript/lib/es6/belt_MapString.js";
 import DateSelectJsx from "./DateSelect.jsx";
 import * as State from "@legendapp/state";
 import StatusSelectJsx from "./StatusSelect.jsx";
@@ -145,6 +147,23 @@ function useDebounce(initialValue, onTrigger, delay) {
         ];
 }
 
+function groupByAndSort(arr, groupByKey, sortByKey) {
+  return Belt_MapString.map(Core__Array.reduce(arr, undefined, (function (a, c) {
+                    var key = Core__Option.getOr(groupByKey(c), "root");
+                    return Belt_MapString.update(a, key, (function (o) {
+                                  if (o !== undefined) {
+                                    return o.concat([c]);
+                                  } else {
+                                    return [c];
+                                  }
+                                }));
+                  })), (function (v) {
+                return v.toSorted(function (a, b) {
+                            return sortByKey(a) - sortByKey(b);
+                          });
+              }));
+}
+
 export {
   mapNullable ,
   TextareaAutosize ,
@@ -169,5 +188,6 @@ export {
   DateSelect ,
   toNullableNull ,
   useDebounce ,
+  groupByAndSort ,
 }
 /* logoUrl Not a pure module */

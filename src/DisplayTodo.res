@@ -4,7 +4,7 @@ open Webapi.Dom
 open Common
 
 @react.component
-let make = (~todoRelation: todoRelation, ~setFocusIdNext, ~stashed, ~setStashed) => {
+let make = (~todoRelation: todoRelation, ~setFocusIdNext) => {
   // ~setTodos: (string, array<todo> => array<todo>) => unit,
   let todo = todoRelation.self
   let inputRef = React.useRef(Nullable.null)

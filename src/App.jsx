@@ -9,14 +9,12 @@ import {
 } from "./utils/SupaLegend.ts";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-import Dashboard from "./Dashboard.res.mjs";
-import { groupByAndSort } from "./other.js";
+import Entry from "./Entry.res.mjs";
 import useSessionStorage from "./useSessionStorage.js";
 import { jwtDecode } from "jwt-decode";
 import logoUrl from "./assets/tiger.svg";
 
 const DashboardWrapper = observer(({ session }) => {
-  let [stashed, setStashed] = useState([]);
   // useEffectOnce(() => {
   //   let todos = Object.entries(_todos$.get() || {}).map(([k, v]) => {
   //     return { ...v, id: k };
@@ -29,80 +27,13 @@ const DashboardWrapper = observer(({ session }) => {
   //   });
   // });
   // return null;
-  const todos = groupByAndSort(
-    Object.entries(_todos$.get() || {}).map(([k, v]) => {
-      return { ...v, id: k };
-    }),
-    "parent_todo",
-    "position"
-  );
-  // console.log(todos);
 
-  let filterer = (arr, c) => {
-    return arr.filter((x) => c.modes_shown.includes(x.mode));
-  };
+  const todos = Object.entries(_todos$.get() || {}).map(([k, v]) => {
+    return { ...v, id: k };
+  });
+  console.log({ todos });
 
-  let checkIfHiddenChildren = (arr, c) => {
-    return Boolean(arr)
-      ? !arr.every((x) => c.modes_shown.includes(x.mode))
-      : false;
-  };
-  let rec = (t, depth, parent, tios, parentIndex, showAll) =>
-    Boolean(t)
-      ? t.reduce((a, c, i) => {
-          let children = Boolean(todos[c.id])
-            ? rec(
-                showAll ? todos[c.id] : filterer(todos[c.id], c),
-                depth + 1,
-                c,
-                t,
-                i,
-                showAll
-              )
-            : [];
-          let newItem = {
-            self: c,
-            depth: depth,
-            parent: parent,
-            parentIndex: parentIndex,
-            hasHiddenChildren: showAll
-              ? false
-              : checkIfHiddenChildren(todos[c.id], c),
-            tios: tios,
-            index: i,
-            sibs: t,
-            children: Boolean(todos[c.id]) ? todos[c.id] : [],
-          };
-          return [...a, newItem, ...children];
-        }, [])
-      : [];
-
-  let todosToDisplay = !Boolean(todos["root"])
-    ? []
-    : rec(
-        todos["root"].filter((x) => x.mode === "Working"),
-        0,
-        null,
-        [],
-        0,
-        false
-      );
-
-  let allTodos = !Boolean(todos["root"])
-    ? []
-    : rec(todos["root"], 0, null, [], 0, true);
-  // console.log(Object.entries(_todos$.get() || {}));
-
-  return (
-    <Dashboard
-      allTodos={allTodos || []}
-      todos={todosToDisplay || []}
-      stashed={stashed}
-      setStashed={setStashed}
-      allProjects={todos["root"] || []}
-      logout={() => supabase.auth.signOut()}
-    />
-  );
+  return <Entry input={todos} logout={() => supabase.auth.signOut()} />;
 });
 
 function App() {

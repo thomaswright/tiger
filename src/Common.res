@@ -150,3 +150,22 @@ let useDebounce = (~initialValue, ~onTrigger, ~delay) => {
 
   (val, setVal)
 }
+
+let groupByAndSort = (arr, groupByKey, sortByKey) => {
+  arr
+  ->Array.reduce(SMap.empty, (a, c) => {
+    let key = c->groupByKey->Option.getOr("root")
+
+    a->SMap.update(key, o =>
+      switch o {
+      | None => Some([c])
+      | Some(v) => Some(v->Array.concat([c]))
+      }
+    )
+  })
+  ->SMap.map(v =>
+    v->Array.toSorted((a, b) => {
+      a->sortByKey -. b->sortByKey
+    })
+  )
+}

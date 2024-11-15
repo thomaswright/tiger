@@ -6,10 +6,8 @@ open Types
 let make = (
   ~todos: array<todoRelation>,
   ~allTodos: array<todoRelation>,
-  ~stashed: array<string>,
-  ~setStashed: (array<string> => array<string>) => unit,
-  ~allProjects: array<todo>,
   ~logout: unit => unit,
+  ~rootTodos,
 ) => {
   let (selectedElement, setSelectedElement, _) = useSessionStorage(
     StorageKeys.selectedElement,
@@ -143,7 +141,7 @@ let make = (
             allTodos
             ->Array.find(t => t.self.id == todoId)
             ->Option.mapOr(React.null, todoRelation => {
-              <DisplayTodo todoRelation setFocusIdNext stashed setStashed />
+              <DisplayTodo todoRelation setFocusIdNext />
             })
           | _ => React.null
           }}
@@ -152,7 +150,10 @@ let make = (
         switch view {
         | Some(Settings) =>
           <Settings onExportJson={_ => ()} onImportJson={_ => ()} setBaseColor logout />
-        | Some(ProjectList) => <ModeMgr todo={None} todos={allProjects} />
+        | Some(ProjectList) =>
+          <div className="overflow-y-scroll">
+            <ModeMgr todo={None} todos={rootTodos} />
+          </div>
 
         | None => React.null
         }

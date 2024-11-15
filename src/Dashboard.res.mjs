@@ -16,8 +16,6 @@ import * as JsxRuntime from "react/jsx-runtime";
 import * as React$1 from "@legendapp/state/react";
 
 function Dashboard(props) {
-  var setStashed = props.setStashed;
-  var stashed = props.stashed;
   var todos = props.todos;
   var match = Common.useSessionStorage(StorageKeys.selectedElement, undefined);
   var setSelectedElement = match[1];
@@ -77,9 +75,7 @@ function Dashboard(props) {
                     }), null, (function (todoRelation) {
                     return JsxRuntime.jsx(DisplayTodo.make, {
                                 todoRelation: todoRelation,
-                                setFocusIdNext: setFocusIdNext,
-                                stashed: stashed,
-                                setStashed: setStashed
+                                setFocusIdNext: setFocusIdNext
                               });
                   })) : null
         }) : (
@@ -93,9 +89,12 @@ function Dashboard(props) {
                     }),
                   setBaseColor: match$7[1],
                   logout: props.logout
-                }) : JsxRuntime.jsx(ModeMgr.make, {
-                  todo: undefined,
-                  todos: props.allProjects
+                }) : JsxRuntime.jsx("div", {
+                  children: JsxRuntime.jsx(ModeMgr.make, {
+                        todo: undefined,
+                        todos: props.rootTodos
+                      }),
+                  className: "overflow-y-scroll"
                 })
         ) : null
     );
