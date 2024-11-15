@@ -6,6 +6,7 @@ import * as OtherJs from "./other.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import DateSelectJsx from "./DateSelect.jsx";
+import * as State from "@legendapp/state";
 import StatusSelectJsx from "./StatusSelect.jsx";
 import TigerSvg from "./assets/tiger.svg";
 import * as UseLocalStorageJs from "./useLocalStorage.js";
@@ -77,6 +78,19 @@ function deleteTodo(prim) {
 
 var logoUrl = TigerSvg;
 
+function deleteTodoAndMoveChildren(todoRelation) {
+  var todo = todoRelation.self;
+  State.batch(function () {
+        SupaLegendTs.deleteTodo(todo.id);
+        todoRelation.children.forEach(function (child, i) {
+              setTodoPosition(child.id, todo.parent_todo, Core__Option.mapOr(todoRelation.sibs[todoRelation.index + 1 | 0], todo.position + i, (function (sib) {
+                          var step = (sib.position - todo.position) / (todoRelation.children.length + 1);
+                          return step + i;
+                        })));
+            });
+      });
+}
+
 var make = StatusSelectJsx;
 
 var StatusSelect = {
@@ -139,6 +153,7 @@ export {
   setTodoPosition ,
   deleteTodo ,
   logoUrl ,
+  deleteTodoAndMoveChildren ,
   StatusSelect ,
   DateSelect ,
   toNullableNull ,

@@ -133,14 +133,14 @@ function Todo(props) {
                       Common.focusNextClass(Types.listItemClass, dom);
                     }
                     if (e.key === "Backspace" && e.metaKey) {
-                      Common.deleteTodo(todo.id);
+                      Common.deleteTodoAndMoveChildren(todoRelation);
                       Common.mapNullable(containerRef.current, (function (containerEl) {
                               Common.focusPreviousClass(Types.listItemClass, containerEl);
                             }));
                     }
                     if (e.key === "Backspace" && !e.metaKey) {
                       if (stagedForDelete) {
-                        Common.deleteTodo(todo.id);
+                        Common.deleteTodoAndMoveChildren(todoRelation);
                         Common.mapNullable(containerRef.current, (function (containerEl) {
                                 Common.focusPreviousClass(Types.listItemClass, containerEl);
                               }));
@@ -207,7 +207,7 @@ function Todo(props) {
             }
             if (e.key === "Backspace" && inputValueLength === 0) {
               if (stagedForDelete) {
-                Common.deleteTodo(todo.id);
+                Common.deleteTodoAndMoveChildren(todoRelation);
                 Common.mapNullable(containerRef.current, (function (containerEl) {
                         Common.focusPreviousClass(Types.listItemClass, containerEl);
                       }));

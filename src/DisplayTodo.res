@@ -144,7 +144,7 @@ let make = (~todoRelation: todoRelation, ~setFocusIdNext, ~stashed, ~setStashed)
           Webapi.Dom.document
           ->Document.getElementById(getTodoId(todo.id))
           ->Option.mapOr((), todoEl => Common.focusPreviousClass(listItemClass, todoEl))
-          deleteTodo(todo.id)
+          deleteTodoAndMoveChildren(todoRelation)
         }}
         className={[
           "

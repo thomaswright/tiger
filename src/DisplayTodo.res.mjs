@@ -118,7 +118,7 @@ function DisplayTodo(props) {
                                   Core__Option.mapOr(Caml_option.nullable_to_opt(document.getElementById(Types.getTodoId(todo.id))), undefined, (function (todoEl) {
                                           Common.focusPreviousClass(Types.listItemClass, todoEl);
                                         }));
-                                  Common.deleteTodo(todo.id);
+                                  Common.deleteTodoAndMoveChildren(todoRelation);
                                 })
                             })
                       ],

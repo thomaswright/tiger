@@ -72,6 +72,30 @@ external batch: (unit => unit) => unit = "batch"
 
 @module("./assets/tiger.svg") external logoUrl: string = "default"
 
+let deleteTodoAndMoveChildren = todoRelation => {
+  let todo = todoRelation.self
+  batch(() => {
+    deleteTodo(todo.id)
+    todoRelation.children->Array.forEachWithIndex((child, i) => {
+      setTodoPosition(
+        child.id,
+        todo.parent_todo,
+        todoRelation.sibs
+        ->Array.get(todoRelation.index + 1)
+        ->Option.mapOr(
+          todo.position +. i->Int.toFloat,
+          sib => {
+            let step =
+              (sib.position -. todo.position) /.
+                (todoRelation.children->Array.length->Int.toFloat +. 1.)
+            step +. i->Int.toFloat
+          },
+        ),
+      )
+    })
+  })
+}
+
 module StatusSelect = {
   @react.component @module("./StatusSelect.jsx")
   external make: (

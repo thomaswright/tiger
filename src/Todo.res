@@ -164,7 +164,7 @@ let make = (
         }
 
         if e->key == "Backspace" && e->metaKey {
-          deleteTodo(todo.id)
+          deleteTodoAndMoveChildren(todoRelation)
 
           containerRef.current->mapNullable(containerEl => {
             Common.focusPreviousClass(listItemClass, containerEl)
@@ -173,7 +173,7 @@ let make = (
 
         if e->key == "Backspace" && !(e->metaKey) {
           if stagedForDelete {
-            deleteTodo(todo.id)
+            deleteTodoAndMoveChildren(todoRelation)
 
             containerRef.current->mapNullable(containerEl => {
               Common.focusPreviousClass(listItemClass, containerEl)
@@ -241,7 +241,7 @@ let make = (
 
       if e->key == "Backspace" && inputValueLength == 0 {
         if stagedForDelete {
-          deleteTodo(todo.id)
+          deleteTodoAndMoveChildren(todoRelation)
 
           containerRef.current->mapNullable(containerEl => {
             Common.focusPreviousClass(listItemClass, containerEl)
