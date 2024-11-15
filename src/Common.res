@@ -38,6 +38,10 @@ external observer: React.component<'a> => React.component<'a> = "observer"
 external addTodo: (string, Nullable.t<string>, float) => string = "addTodo"
 
 @module("./utils/SupaLegend.ts")
+external addTodoWithStatus: (string, Nullable.t<string>, float, status) => string =
+  "addTodoWithStatus"
+
+@module("./utils/SupaLegend.ts")
 external setTodoText: (string, string) => unit = "setTodoText"
 
 @module("./utils/SupaLegend.ts")

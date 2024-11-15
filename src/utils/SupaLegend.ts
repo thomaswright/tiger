@@ -86,6 +86,42 @@ export function addTodo(
   return id;
 }
 
+type status =
+  | "Unsorted"
+  | "Future"
+  | "NowIfTime"
+  | "NowMustDo"
+  | "Underway"
+  | "Paused"
+  | "ResolveDone"
+  | "ResolveNo"
+  | "ArchiveDone"
+  | "ArchiveNo"
+  | undefined;
+
+export function addTodoWithStatus(
+  text: string,
+  parent_todo: string | null,
+  position: number,
+  status: status
+) {
+  const id = generateId();
+  // Add keyed by id to the todos$ observable to trigger a create in Supabase
+
+  todos$[id].assign({
+    id,
+    text,
+    user_id: uid$.get(),
+    position,
+    parent_todo: parent_todo,
+    mode: "Working",
+    modes_shown: ["Working"],
+    status,
+  });
+
+  return id;
+}
+
 export function deleteTodo(id: string) {
   todos$[id].delete();
 }

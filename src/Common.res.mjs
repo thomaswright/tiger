@@ -56,6 +56,10 @@ function addTodo(prim0, prim1, prim2) {
   return SupaLegendTs.addTodo(prim0, prim1, prim2);
 }
 
+function addTodoWithStatus(prim0, prim1, prim2, prim3) {
+  return SupaLegendTs.addTodoWithStatus(prim0, prim1, prim2, prim3);
+}
+
 function setTodoText(prim0, prim1) {
   SupaLegendTs.setTodoText(prim0, prim1);
 }
@@ -174,6 +178,7 @@ export {
   focusPreviousClass ,
   focusNextClass ,
   addTodo ,
+  addTodoWithStatus ,
   setTodoText ,
   setTodoAdditionalText ,
   setTodoDate ,

@@ -31,7 +31,6 @@ const DashboardWrapper = observer(({ session }) => {
   const todos = Object.entries(_todos$.get() || {}).map(([k, v]) => {
     return { ...v, id: k };
   });
-  console.log({ todos });
 
   return <Entry input={todos} logout={() => supabase.auth.signOut()} />;
 });

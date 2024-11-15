@@ -58,6 +58,23 @@ let make = (
     None
   })
 
+  let onImportJson = json => {
+    let maxPosition = allTodos->Array.reduce(0., (a, c) => Math.max(a, c.position))
+    batch(() => {
+      json->Array.forEachWithIndex((v, i) => {
+        addTodoWithStatus(
+          v["text"],
+          switch v["parent_todo"] {
+          | Undefined => Null
+          | x => x
+          },
+          maxPosition +. i->Int.toFloat,
+          status,
+        )
+      })
+    })
+  }
+
   <div
     className="flex flex-col-reverse justify-end sm:justify-start sm:flex-row  text-[var(--t10)] h-dvh">
     <div className="flex-1 flex flex-col overflow-hidden sm:h-full border-t sm:border-t-0">
@@ -149,7 +166,7 @@ let make = (
       } else {
         switch view {
         | Some(Settings) =>
-          <Settings onExportJson={_ => ()} onImportJson={_ => ()} setBaseColor logout />
+          <Settings onExportJson={_ => ()} onImportJson={onImportJson} setBaseColor logout />
         | Some(ProjectList) =>
           <div className="overflow-y-scroll">
             <ModeMgr todo={None} todos={rootTodos} />
