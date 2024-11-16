@@ -98,7 +98,7 @@ let deleteTodoAndMoveChildren = todoRelation => {
             let step =
               (sib.position -. todo.position) /.
                 (todoRelation.children->Array.length->Int.toFloat +. 1.)
-            step +. i->Int.toFloat
+            todo.position +. step *. i->Int.toFloat
           },
         ),
       )

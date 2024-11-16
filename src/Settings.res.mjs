@@ -40,21 +40,12 @@ function Settings(props) {
                             onClick: (function (param) {
                                 logout();
                               })
-                          })
+                          }),
+                      className: "flex flex-row justify-end w-full"
                     }),
                 JsxRuntime.jsx("div", {
                       children: "Settings",
                       className: "font-black text-xl"
-                    }),
-                JsxRuntime.jsx("div", {
-                      children: "Backup",
-                      className: "font-bold text-sm"
-                    }),
-                JsxRuntime.jsx("div", {
-                      children: JsxRuntime.jsx(Common.ImportButton.make, {
-                            onImportJson: props.onImportJson
-                          }),
-                      className: "flex flex-row gap-2"
                     }),
                 JsxRuntime.jsxs("div", {
                       children: [
@@ -112,6 +103,16 @@ function Settings(props) {
                             })
                       ],
                       className: ""
+                    }),
+                JsxRuntime.jsx("div", {
+                      children: "Backup",
+                      className: "font-bold"
+                    }),
+                JsxRuntime.jsx("div", {
+                      children: JsxRuntime.jsx(Common.ImportButton.make, {
+                            onImportJson: props.onImportJson
+                          }),
+                      className: "flex flex-row gap-2 mb-2"
                     }),
                 JsxRuntime.jsxs("div", {
                       children: [

@@ -14,23 +14,12 @@ let make = (~onExportJson as _, ~onImportJson, ~setBaseColor, ~logout) => {
             "->React.string}
       </div>
     </div>
-    <div>
+    <div className="flex flex-row justify-end w-full">
       <button className="text-sm px-2 bg-[var(--t2)] rounded" onClick={_ => logout()}>
         {"Logout"->React.string}
       </button>
     </div>
     <div className="font-black text-xl"> {"Settings"->React.string} </div>
-    <div className="font-bold text-sm"> {"Backup"->React.string} </div>
-    // <div className="flex flex-row gap-2">
-    // <button
-    //   onClick={_ => onExportJson()}
-    //   className={[
-    //     "bg-[var(--t2)] px-2 rounded text-sm flex flex-row items-center gap-1 h-5 ",
-    //   ]->Array.join(" ")}>
-    //   {"Export"->React.string}
-    // </button>
-    // <Common.ImportButton onImportJson />
-    // </div>
     <div className="">
       <div className="font-bold pb-1"> {"Color Theme"->React.string} </div>
       <div className="flex flex-row gap-2 py-1">
@@ -66,6 +55,17 @@ let make = (~onExportJson as _, ~onImportJson, ~setBaseColor, ~logout) => {
           {"Light Mode"->React.string}
         </button>
       </div>
+    </div>
+    <div className="font-bold"> {"Backup"->React.string} </div>
+    <div className="flex flex-row gap-2 mb-2">
+      // <button
+      //   onClick={_ => onExportJson()}
+      //   className={[
+      //     "bg-[var(--t2)] px-2 rounded text-sm flex flex-row items-center gap-1 h-5 ",
+      //   ]->Array.join(" ")}>
+      //   {"Export"->React.string}
+      // </button>
+      <Common.ImportButton onImportJson />
     </div>
     <div className="text-xs text-right w-full py-3 px-2 font-bold ">
       {"Made by "->React.string}
