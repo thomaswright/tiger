@@ -16,7 +16,8 @@ function DisplayTodo(props) {
   var setFocusIdNext = props.setFocusIdNext;
   var todoRelation = props.todoRelation;
   var todo = todoRelation.self;
-  var inputRef = React.useRef(null);
+  var textRef = React.useRef(null);
+  var additionalTextRef = React.useRef(null);
   var match = Common.useDebounce(Caml_option.nullable_to_opt(todo.text), (function (v) {
           Core__Option.mapOr(v, undefined, (function (v_) {
                   Common.setTodoText(todo.id, v_);
@@ -34,12 +35,15 @@ function DisplayTodo(props) {
       });
   var setStatusSelectIsOpen = match$2[1];
   React.useEffect((function () {
-          setText(function (param) {
-                return Caml_option.nullable_to_opt(todo.text);
-              });
-        }), [todo.id]);
+          if (Caml_obj.notequal(Caml_option.nullable_to_opt(additionalTextRef.current), Caml_option.nullable_to_opt(document.activeElement))) {
+            setAdditionalText(function (param) {
+                  return Caml_option.nullable_to_opt(todo.additional_text);
+                });
+          }
+          
+        }), [todo.additional_text]);
   React.useEffect((function () {
-          if (Caml_obj.notequal(Caml_option.nullable_to_opt(inputRef.current), Caml_option.nullable_to_opt(document.activeElement))) {
+          if (Caml_obj.notequal(Caml_option.nullable_to_opt(textRef.current), Caml_option.nullable_to_opt(document.activeElement))) {
             setText(function (param) {
                   return Caml_option.nullable_to_opt(todo.text);
                 });
@@ -50,7 +54,7 @@ function DisplayTodo(props) {
               children: [
                 JsxRuntime.jsx("div", {
                       children: JsxRuntime.jsx(ReactTextareaAutosize, {
-                            ref: Caml_option.some(inputRef),
+                            ref: Caml_option.some(textRef),
                             className: [
                                 todoRelation.depth === 0 ? "font-black" : "font-medium",
                                 "text-lg flex-1 bg-inherit text-[var(--t10)] w-full outline-none \n          focus:ring-0\n           border-none p-0 "
@@ -130,6 +134,7 @@ function DisplayTodo(props) {
                 JsxRuntime.jsxs("div", {
                       children: [
                         JsxRuntime.jsx(ReactTextareaAutosize, {
+                              ref: Caml_option.some(additionalTextRef),
                               className: ["placeholder:text-[var(--t5)] text-sm flex-1 border-none rounded-lg text-[var(--t10)] w-full outline-none bg-[var(--t2)]\n          focus:ring-0 font-medium"].join(" "),
                               id: "id-display-title",
                               style: {

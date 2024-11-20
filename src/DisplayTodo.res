@@ -7,7 +7,9 @@ open Common
 let make = (~todoRelation: todoRelation, ~setFocusIdNext) => {
   // ~setTodos: (string, array<todo> => array<todo>) => unit,
   let todo = todoRelation.self
-  let inputRef = React.useRef(Nullable.null)
+  let textRef = React.useRef(Nullable.null)
+  let additionalTextRef = React.useRef(Nullable.null)
+
   let (text, setText) = useDebounce(
     ~initialValue=todo.text->Nullable.toOption,
     ~onTrigger=v => v->Option.mapOr((), v_ => setTodoText(todo.id, v_)),
@@ -21,13 +23,21 @@ let make = (~todoRelation: todoRelation, ~setFocusIdNext) => {
 
   let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
 
-  React.useEffect(() => {
-    setText(_ => todo.text->Nullable.toOption)
-    None
-  }, [todo.id])
+  // React.useEffect(() => {
+  //   setText(_ => todo.text->Nullable.toOption)
+  //   None
+  // }, [todo.id])
 
   React.useEffect(() => {
-    if inputRef.current->Nullable.toOption != Webapi.Dom.document->Document.activeElement {
+    if additionalTextRef.current->Nullable.toOption != Webapi.Dom.document->Document.activeElement {
+      setAdditionalText(_ => todo.additional_text->Nullable.toOption)
+    }
+
+    None
+  }, [todo.additional_text])
+
+  React.useEffect(() => {
+    if textRef.current->Nullable.toOption != Webapi.Dom.document->Document.activeElement {
       setText(_ => todo.text->Nullable.toOption)
     }
 
@@ -37,7 +47,7 @@ let make = (~todoRelation: todoRelation, ~setFocusIdNext) => {
   <div className="w-full flex-1 overflow-y-scroll">
     <div className=" w-full px-2 py-1">
       <Common.TextareaAutosize
-        ref={ReactDOM.Ref.domRef(inputRef)}
+        ref={ReactDOM.Ref.domRef(textRef)}
         style={{
           resize: "none",
         }}
@@ -158,6 +168,7 @@ let make = (~todoRelation: todoRelation, ~setFocusIdNext) => {
     </div>
     <div className="p-2">
       <Common.TextareaAutosize
+        ref={ReactDOM.Ref.domRef(additionalTextRef)}
         style={{
           resize: "none",
         }}
