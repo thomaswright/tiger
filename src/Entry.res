@@ -24,6 +24,12 @@ let make = (~input: array<todo>, ~logout) => {
         todos
         ->SMap.get(self.id)
         ->Option.mapOr(([], []), children => {
+          let children = children->Array.toSorted(
+            (a, b) => {
+              a.mode->modeCompare -. b.mode->modeCompare
+            },
+          )
+
           (
             children,
             recurse(

@@ -251,6 +251,34 @@ function Todo(props) {
             Common.setTodoMode(todo.id, m);
           })
       });
+  var match$3 = todo.mode;
+  var tmp;
+  switch (match$3) {
+    case "Working" :
+        tmp = "bg-[var(--t2)]";
+        break;
+    case "Stashed" :
+        tmp = "bg-[#cbe1a8]";
+        break;
+    case "Archive" :
+        tmp = "bg-[#f4deb2]";
+        break;
+    
+  }
+  var match$4 = todo.mode;
+  var tmp$1;
+  switch (match$4) {
+    case "Working" :
+        tmp$1 = "text-[var(--t10)]";
+        break;
+    case "Stashed" :
+        tmp$1 = "text-[#80aa3c]";
+        break;
+    case "Archive" :
+        tmp$1 = "text-[#cfa85b]";
+        break;
+    
+  }
   return JsxRuntime.jsxs("li", {
               children: [
                 Core__Array.make(todoRelation.depth - 1 | 0, false).map(function (param, i) {
@@ -260,7 +288,6 @@ function Todo(props) {
                     }),
                 JsxRuntime.jsxs("div", {
                       children: [
-                        todoRelation.depth > 0 ? statusSelect : null,
                         JsxRuntime.jsxs("div", {
                               children: [
                                 isSelected || isDisplayElement ? null : JsxRuntime.jsx("div", {
@@ -271,7 +298,7 @@ function Todo(props) {
                                       className: [
                                           Types.todoInputClass,
                                           todoRelation.depth === 0 ? "font-black" : "text-sm",
-                                          "mx-1 my-1 block w-full h-5 border-0 pl-0 py-0 focus:ring-0 text-[var(--t10)] bg-transparent"
+                                          "mx-1 my-1 block w-full h-5 border-0 pl-0 py-0 focus:ring-0  bg-transparent"
                                         ].join(" "),
                                       id: Types.getTodoInputId(todo.id),
                                       style: {
@@ -297,7 +324,6 @@ function Todo(props) {
                                           setText(e.target.value);
                                         })
                                     }),
-                                todoRelation.depth === 0 ? statusSelect : null,
                                 todoRelation.depth === 0 ? JsxRuntime.jsx("div", {
                                         className: "w-2"
                                       }) : null,
@@ -315,6 +341,15 @@ function Todo(props) {
                                           }),
                                         className: "mr-1 ml-1"
                                       }) : null,
+                                JsxRuntime.jsx("div", {
+                                      children: JsxRuntime.jsx("button", {
+                                            className: [
+                                                " w-4 h-4 rounded-full",
+                                                tmp
+                                              ].join(" ")
+                                          }),
+                                      className: "w-5 flex flex-row justify-center items-center "
+                                    }),
                                 props.showCheckboxes ? JsxRuntime.jsx("div", {
                                         children: JsxRuntime.jsx("input", {
                                               className: ["border-[var(--t4)] bg-[var(--t0)] rounded text-blue-400 dark:text-blue-800 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500"].join(" "),
@@ -334,16 +369,18 @@ function Todo(props) {
                                       }) : null
                               ],
                               className: ["relative flex-1 ml-1 flex flex-row h-full justify-start items-center "].join(" ")
-                            })
+                            }),
+                        statusSelect
                       ],
                       className: [
-                          "pl-1 group flex flex-row justify-start items-center h-full flex-1 rounded-sm",
+                          "pl-1 pr-2 flex group flex-row justify-start items-center h-full flex-1 rounded-sm",
                           stagedForDelete ? "outline-red-700 dark:outline-red-500" : "focus-within:outline-purple-500 outline-blue-500 ",
                           stagedForDelete ? "bg-red-200 dark:bg-red-950" : (
                               isChecked ? "bg-sky-50 dark:bg-sky-950" : (
                                   isDisplayElement && !isSelected ? "bg-sky-200 dark:bg-sky-900" : ""
                                 )
                             ),
+                          tmp$1,
                           isSelected ? "outline outline-2 -outline-offset-2 " : ""
                         ].join(" ")
                     })
@@ -352,7 +389,7 @@ function Todo(props) {
               className: [
                   Types.listItemClass,
                   todoRelation.depth === 0 ? "" : "pl-1",
-                  "group flex flex-row justify-start items-center outline-none"
+                  " flex flex-row justify-start items-center outline-none"
                 ].join(" "),
               id: Types.getTodoId(todo.id),
               tabIndex: 0,

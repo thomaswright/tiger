@@ -21,6 +21,13 @@ type mode =
   | @as("Stashed") Stashed
   | @as("Archive") Archive
 
+let modeCompare = mode =>
+  switch mode {
+  | Working => 0.
+  | Stashed => 1.
+  | Archive => 2.
+  }
+
 type todo = {
   id: string,
   counter: int,

@@ -2,6 +2,18 @@
 
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 
+function modeCompare(mode) {
+  switch (mode) {
+    case "Working" :
+        return 0;
+    case "Stashed" :
+        return 1;
+    case "Archive" :
+        return 2;
+    
+  }
+}
+
 function statusToFloat(s) {
   return [
             "Unsorted",
@@ -132,6 +144,7 @@ var todoInputClass = "class-list-todo-input";
 export {
   SMap ,
   SSet ,
+  modeCompare ,
   statusToFloat ,
   statusStringShort ,
   statusString ,

@@ -117,7 +117,7 @@ const Dropdown = ({
             className={buttonBase}
             aria-label="Customise options"
           >
-            {hasHidden ? (
+            {/* {hasHidden ? (
               <div
                 className="absolute  text-[var(--t9)] bg-[var(--t3)]
             text-xs h-2 w-2 -right-1 -bottom-1 flex flex-row items-center justify-center rounded-full"
@@ -148,7 +148,7 @@ const Dropdown = ({
               </div>
             ) : (
               React.null
-            )}
+            )} */}
 
             {statusStringShort(status)}
             {/* {isPinned && (

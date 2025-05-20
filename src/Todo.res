@@ -302,7 +302,7 @@ let make = (
     className={[
       listItemClass,
       todoRelation.depth == 0 ? "" : "pl-1",
-      "group flex flex-row justify-start items-center outline-none",
+      " flex flex-row justify-start items-center outline-none",
     ]->Array.join(" ")}>
     {Array.make(~length=todoRelation.depth - 1, false)
     ->Array.mapWithIndex((_, i) => {
@@ -311,7 +311,7 @@ let make = (
     ->React.array}
     <div
       className={[
-        "pl-1 group flex flex-row justify-start items-center h-full flex-1 rounded-sm",
+        "pl-1 pr-2 flex group flex-row justify-start items-center h-full flex-1 rounded-sm",
         stagedForDelete
           ? "outline-red-700 dark:outline-red-500"
           : "focus-within:outline-purple-500 outline-blue-500 ",
@@ -322,6 +322,11 @@ let make = (
           : isDisplayElement && !isSelected
           ? "bg-sky-200 dark:bg-sky-900"
           : "",
+        switch todo.mode {
+        | Archive => "text-[#cfa85b]"
+        | Stashed => "text-[#80aa3c]"
+        | Working => "text-[var(--t10)]"
+        },
         isSelected ? "outline outline-2 -outline-offset-2 " : "",
       ]->Array.join(" ")}>
       // {switch todo.outfit {
@@ -329,7 +334,6 @@ let make = (
       // | Group => <div className="" />
       // | Todo => <div className="w-10 h-5 bg-blue-200 rounded" />
       // }}
-      {todoRelation.depth > 0 ? statusSelect : React.null}
       <div
         className={[
           "relative flex-1 ml-1 flex flex-row h-full justify-start items-center ",
@@ -343,6 +347,15 @@ let make = (
         // } else {
         //   React.null
         // }}
+
+        // <div
+        //   className=" text-[var(--t6)] w-4 bg-transparent flex flex-row items-center justify-center rounded-full">
+        //   {switch todo.mode {
+        //   | Archive => <Icons.Archive className={"w-3"} />
+        //   | Stashed => <Icons.Bookmark className={"w-3"} />
+        //   | Working => React.null
+        //   }}
+        // </div>
         {isSelected || isDisplayElement
           ? React.null
           : <div className="h-px w-full absolute bg-[var(--t2)] -bottom-0" />}
@@ -352,7 +365,7 @@ let make = (
           className={[
             todoInputClass,
             todoRelation.depth == 0 ? "font-black" : "text-sm",
-            "mx-1 my-1 block w-full h-5 border-0 pl-0 py-0 focus:ring-0 text-[var(--t10)] bg-transparent",
+            "mx-1 my-1 block w-full h-5 border-0 pl-0 py-0 focus:ring-0  bg-transparent",
             // stagedForDelete
             //   ? "bg-red-200 dark:bg-red-950"
             //   : isChecked
@@ -372,7 +385,7 @@ let make = (
           onKeyDown={onKeyDownInput}
           onChange={e => setText(ReactEvent.Form.target(e)["value"])}
         />
-        {todoRelation.depth == 0 ? statusSelect : React.null}
+        // {todoRelation.depth == 0 ? statusSelect : React.null}
         {todoRelation.depth == 0 ? <div className="w-2" /> : React.null}
         {todo.target_date->Nullable.toOption->Option.isSome
           ? <Common.DateSelect
@@ -392,6 +405,18 @@ let make = (
                 )}
             />
           : React.null}
+        <div className="w-5 flex flex-row justify-center items-center ">
+          <button
+            className={[
+              " w-4 h-4 rounded-full",
+              switch todo.mode {
+              | Archive => "bg-[#f4deb2]"
+              | Stashed => "bg-[#cbe1a8]"
+              | Working => "bg-[var(--t2)]"
+              },
+            ]->Array.join(" ")}
+          />
+        </div>
         {showCheckboxes
           ? <div
               className={[
@@ -418,6 +443,9 @@ let make = (
             </div>
           : React.null}
       </div>
+      statusSelect
+
+      // {todoRelation.depth > 0 ? statusSelect : React.null}
     </div>
   </li>
 }
