@@ -3,7 +3,7 @@ open Types
 
 @react.component
 let make = (~todo: option<todo>) => {
-  <div className="flex flex-row rounded py-1 px-2 ml-1 mt-1 gap-2">
+  <div className="flex flex-row rounded gap-1">
     <button
       onClick={_ => {
         todo->Option.mapOr((), todo => setTodoModesShown(todo.id, a => a->arrayToggle(Working)))

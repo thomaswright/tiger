@@ -58,7 +58,7 @@ function ModeMgr(props) {
                         })
                     })
               ],
-              className: "flex flex-row rounded py-1 px-2 ml-1 mt-1 gap-2"
+              className: "flex flex-row rounded gap-1"
             });
 }
 

@@ -50,6 +50,35 @@ function DisplayTodo(props) {
           }
           
         }), [todo.text]);
+  var match$3 = todo.mode;
+  var tmp;
+  switch (match$3) {
+    case "Working" :
+        tmp = JsxRuntime.jsx("div", {
+              children: JsxRuntime.jsx(Tb.TbInbox, {
+                    className: "w-4"
+                  }),
+              className: " text-[var(--t6)] bg-transparent flex flex-row items-center justify-center"
+            });
+        break;
+    case "Stashed" :
+        tmp = JsxRuntime.jsx("div", {
+              children: JsxRuntime.jsx(Tb.TbBookmark, {
+                    className: "w-4"
+                  }),
+              className: " text-[var(--t6)] bg-transparent flex flex-row items-center justify-center "
+            });
+        break;
+    case "Archive" :
+        tmp = JsxRuntime.jsx("div", {
+              children: JsxRuntime.jsx(Tb.TbArchive, {
+                    className: "w-4"
+                  }),
+              className: " text-[var(--t6)] bg-transparent flex flex-row items-center justify-center"
+            });
+        break;
+    
+  }
   return JsxRuntime.jsxs("div", {
               children: [
                 JsxRuntime.jsx("div", {
@@ -101,6 +130,7 @@ function DisplayTodo(props) {
                                   Common.setTodoMode(todo.id, m);
                                 })
                             }),
+                        tmp,
                         JsxRuntime.jsx(Common.DateSelect.make, {
                               value: Core__Option.map(Caml_option.nullable_to_opt(todo.target_date), (function (prim) {
                                       return new Date(prim);
@@ -113,7 +143,13 @@ function DisplayTodo(props) {
                                                             });
                                                 }))));
                                 }),
-                              className: "mr-1 ml-1"
+                              className: ""
+                            }),
+                        JsxRuntime.jsx("div", {
+                              children: todoRelation.children.length > 0 ? JsxRuntime.jsx(ModeMgr.make, {
+                                      todo: todo
+                                    }) : null,
+                              className: "flex flex-row items-center border-l border-[var(--t3)] pl-1"
                             }),
                         JsxRuntime.jsx("div", {
                               className: "flex-1"
@@ -129,11 +165,8 @@ function DisplayTodo(props) {
                                 })
                             })
                       ],
-                      className: "flex flex-row flex-wrap border-y border-[var(--t3)] items-center gap-1 p-1 px-2"
+                      className: "flex flex-row flex-wrap border-y border-[var(--t3)] items-center gap-2 p-1 px-2"
                     }),
-                todoRelation.children.length > 0 ? JsxRuntime.jsx(ModeMgr.make, {
-                        todo: todo
-                      }) : null,
                 JsxRuntime.jsx("div", {
                       children: JsxRuntime.jsx(ReactTextareaAutosize, {
                             ref: Caml_option.some(additionalTextRef),

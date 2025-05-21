@@ -69,7 +69,7 @@ let make = (~todoRelation: todoRelation, ~setFocusIdNext) => {
       />
     </div>
     <div
-      className="flex flex-row flex-wrap border-y border-[var(--t3)] items-center gap-1 p-1 px-2">
+      className="flex flex-row flex-wrap border-y border-[var(--t3)] items-center gap-2 p-1 px-2">
       <Common.StatusSelect
         isOpen={statusSelectIsOpen}
         hasHidden={todoRelation.hasHiddenChildren}
@@ -82,8 +82,25 @@ let make = (~todoRelation: todoRelation, ~setFocusIdNext) => {
         focusTodo={() => ()}
         setStatus={newStatus => setTodoStatus(todo.id, newStatus)}
       />
+      {switch todo.mode {
+      | Archive =>
+        <div className=" text-[var(--t6)] bg-transparent flex flex-row items-center justify-center">
+          <Icons.Archive className={"w-4"} />
+        </div>
+
+      | Stashed =>
+        <div
+          className=" text-[var(--t6)] bg-transparent flex flex-row items-center justify-center ">
+          <Icons.Bookmark className={"w-4"} />
+        </div>
+
+      | Working =>
+        <div className=" text-[var(--t6)] bg-transparent flex flex-row items-center justify-center">
+          <Icons.Inbox className={"w-4"} />
+        </div>
+      }}
       <Common.DateSelect
-        className="mr-1 ml-1"
+        className=""
         value={todo.target_date->Nullable.toOption->Option.map(Date.fromString)}
         onClick={newDate =>
           setTodoDate(
@@ -149,6 +166,10 @@ let make = (~todoRelation: todoRelation, ~setFocusIdNext) => {
       //       </button>
       //     </div>
       //   : React.null}
+      <div className="flex flex-row items-center border-l border-[var(--t3)] pl-1">
+        // <div className="text-sm px-2"> {"Show "->React.string} </div>
+        {todoRelation.children->Array.length > 0 ? <ModeMgr todo={todo->Some} /> : React.null}
+      </div>
       <div className={"flex-1"} />
       <button
         onClick={_ => {
@@ -166,7 +187,6 @@ let make = (~todoRelation: todoRelation, ~setFocusIdNext) => {
         <Icons.Trash />
       </button>
     </div>
-    {todoRelation.children->Array.length > 0 ? <ModeMgr todo={todo->Some} /> : React.null}
     <div className="p-2">
       <Common.TextareaAutosize
         ref={ReactDOM.Ref.domRef(additionalTextRef)}

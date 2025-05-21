@@ -2,18 +2,14 @@ import React, { useRef } from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import "./dropdown.css";
 import {
-  statusStringShort,
   statusString,
   statusColor,
   statusColorText,
   statusIcon,
-  // statusIcon,
 } from "./Types.res.mjs";
 
 import {
-  TbPin as Pin,
   TbArchive as Archive,
-  TbChevronDown as ChevronDown,
   TbBookmark as Bookmark,
   TbInbox as Inbox,
 
@@ -33,28 +29,14 @@ const Dropdown = ({
   focusTodo,
   isOpen,
   onOpenChange,
-  // isPinned,
-  hasHidden,
   mode,
   setMode,
 }) => {
-  let [hoverStatus, setHoverStatus] = React.useState(status);
   const item = (s) => {
     return (
       <DropdownMenu.Item
         key={s}
         style={{
-          // borderColor: statusColor(s),
-          // backgroundColor:
-          //   status === s
-          //     ? statusColor(s)
-          //     : `oklch(from ${statusColor(s)} 0.95 calc(c / 3) h)`,
-          // color: status === s ? "var(--t0)" : statusColor(s),
-          // color: "var(--t0)",
-          // backgroundColor:
-          //   status === s
-          //     ? statusColor(s)
-          //     : `oklch(from ${statusColor(s)} 0.85 calc(c / 1.5) h)`,
           color: statusColorText(s),
           backgroundColor: statusColor(s),
         }}
@@ -64,7 +46,6 @@ const Dropdown = ({
             : "focus:outline-2 focus:outline-inherit",
           buttonBaseLarge,
           "select-none",
-          // isArchiveStatus(s) ? "bg-[var(--t2)]" : "",
         ].join(" ")}
         onSelect={(_) => {
           if (s !== "") {
@@ -76,11 +57,6 @@ const Dropdown = ({
             }
           }
         }}
-        onFocus={(_) => setHoverStatus(s)}
-        onMouseEnter={(_) => setHoverStatus(s)}
-        onMouseLeave={(_) =>
-          setHoverStatus((current) => (current === s ? status : s))
-        }
       >
         {statusIcon(s)}
 
@@ -107,11 +83,6 @@ const Dropdown = ({
         {Boolean(status) ? (
           <button
             style={{
-              // backgroundColor: statusColor(status),
-              // color: "var(--t10)",
-              borderColor: `oklch(from ${statusColor(
-                status
-              )} calc(l - 0.05) c h)`,
               backgroundColor: statusColor(status),
               color: statusColorText(status),
             }}
@@ -123,64 +94,7 @@ const Dropdown = ({
             className={buttonBaseSmall}
             aria-label="Customise options"
           >
-            {/* {hasHidden ? (
-              <div
-                className="absolute  text-[var(--t9)] bg-[var(--t3)]
-            text-xs h-2 w-2 -right-1 -bottom-1 flex flex-row items-center justify-center rounded-full"
-              >
-                <ChevronDown />
-              </div>
-            ) : (
-              React.null
-            )}
-
-            {mode == "Archive" ? (
-              <div
-                className="absolute  text-[var(--t9)] bg-transparent
-            text-xs h-3 w-3 -right-1 top-1 flex flex-row items-center justify-center rounded-full"
-              >
-                <Archive />
-              </div>
-            ) : (
-              React.null
-            )}
-
-            {mode == "Stashed" ? (
-              <div
-                className="absolute  text-[var(--t9)] bg-transparent
-            text-xs h-3 w-3 -right-1 top-1 flex flex-row items-center justify-center rounded-full"
-              >
-                <Bookmark />
-              </div>
-            ) : (
-              React.null
-            )} */}
-
             {statusIcon(status)}
-            {/* {isPinned && (
-              <div
-                style={{
-                  backgroundColor: statusColor(status),
-                  color: statusColorText(status),
-                  borderColor: statusColorText(status),
-                }}
-                className=" text-xs absolute right-0.5  w-3.5 h-3.5 items-center justify-center flex flex-row "
-              >
-                <Pin />
-              </div>
-            )} */}
-            {/* {hasHidden && (
-              <div
-                style={{
-                  backgroundColor: statusColor(status),
-                  color: statusColorText(status),
-                  borderColor: statusColorText(status),
-                }}
-                className="text-xs absolute right-0.5  w-3.5 h-3.5 items-center justify-center flex flex-row "
-              >
-                <Archive />
-              </div>
-            )} */}
           </button>
         ) : (
           <button
@@ -214,7 +128,7 @@ const Dropdown = ({
               {item("ResolveNo")}
             </div>
 
-            <div className="flex flex-row rounded justify-center pt-2">
+            <div className="flex flex-row rounded justify-center pt-2 gap-2">
               <button
                 onClick={(_) => {
                   setMode("Working");
@@ -224,7 +138,7 @@ const Dropdown = ({
                   "w-6 h-6 flex flex-row items-center justify-center rounded",
                 ].join(" ")}
               >
-                <Inbox />
+                <Inbox className="w-5 h-5" />
               </button>
               <button
                 onClick={(_) => {
@@ -235,7 +149,7 @@ const Dropdown = ({
                   "w-6 h-6 flex flex-row items-center justify-center rounded ",
                 ].join(" ")}
               >
-                <Bookmark />
+                <Bookmark className="w-5 h-5" />
               </button>
               <button
                 onClick={(_) => {
@@ -246,24 +160,14 @@ const Dropdown = ({
                   "w-6 h-6 flex flex-row items-center justify-center rounded",
                 ].join(" ")}
               >
-                <Archive />
+                <Archive className="w-5 h-5" />
               </button>
             </div>
           </div>
-
-          {/* <DropdownMenu.Arrow className="DropdownMenuArrow" /> */}
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
   );
 };
 
-// <div className="h-6 pt-1 font-bold flex flex-row items-center justify-center">
-// {/* <div className=" w-6 flex flex-row items-center justify-center">
-//   {statusStringShort(hoverStatus)}
-// </div> */}
-// <div>
-//   {Boolean(hoverStatus) ? statusString(hoverStatus) : "Mixed"}
-// </div>
-// </div>
 export default Dropdown;

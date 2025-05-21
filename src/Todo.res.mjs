@@ -8,6 +8,7 @@ import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as Belt_SetString from "rescript/lib/es6/belt_SetString.js";
+import * as Tb from "react-icons/tb";
 import * as JsxRuntime from "react/jsx-runtime";
 import FormatISO from "date-fns/formatISO";
 import ReactTextareaAutosize from "react-textarea-autosize";
@@ -204,13 +205,23 @@ function Todo(props) {
   var tmp;
   switch (match$3) {
     case "Working" :
-        tmp = "text-[var(--t10)]";
+        tmp = null;
         break;
     case "Stashed" :
-        tmp = "text-[#b0832f]";
+        tmp = JsxRuntime.jsx("div", {
+              children: JsxRuntime.jsx(Tb.TbBookmark, {
+                    className: "w-3"
+                  }),
+              className: " text-[var(--t6)] bg-transparent flex flex-row items-center justify-center rounded-full mr-1"
+            });
         break;
     case "Archive" :
-        tmp = "text-[#6d8eb2]";
+        tmp = JsxRuntime.jsx("div", {
+              children: JsxRuntime.jsx(Tb.TbArchive, {
+                    className: "w-3"
+                  }),
+              className: " text-[var(--t6)] bg-transparent flex flex-row items-center justify-center rounded-full mr-1"
+            });
         break;
     
   }
@@ -271,6 +282,7 @@ function Todo(props) {
                                                 }),
                                               className: "mr-1 ml-1"
                                             }) : null,
+                                      tmp,
                                       props.showCheckboxes ? JsxRuntime.jsx("div", {
                                               children: JsxRuntime.jsx("input", {
                                                     className: ["border-[var(--t4)] bg-[var(--t0)] rounded text-blue-400 dark:text-blue-800 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500"].join(" "),
@@ -300,8 +312,7 @@ function Todo(props) {
                                         props.isDisplayElement && !isSelected ? "bg-sky-200 dark:bg-sky-900" : ""
                                       )
                                   ),
-                                isSelected ? "outline outline-2 -outline-offset-2 " : "",
-                                tmp
+                                isSelected ? "outline outline-2 -outline-offset-2 " : ""
                               ].join(" ")
                           })
                     ],

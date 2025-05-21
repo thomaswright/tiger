@@ -332,11 +332,16 @@ let make = (
             ? "bg-sky-200 dark:bg-sky-900"
             : "",
           isSelected ? "outline outline-2 -outline-offset-2 " : "",
-          switch todo.mode {
-          | Archive => "text-[#6d8eb2]"
-          | Stashed => "text-[#b0832f]"
-          | Working => "text-[var(--t10)]"
-          },
+          // switch todo.mode {
+          // | Archive => "text-[#6d8eb2]"
+          // | Stashed => "text-[#b0832f]"
+          // | Working => "text-[var(--t10)]"
+          // },
+          // switch todo.mode {
+          // | Archive => "text-[var(--t5)]"
+          // | Stashed => "text-[var(--t5)]"
+          // | Working => "text-[var(--t10)]"
+          // },
         ]->Array.join(" ")}>
         // {switch todo.outfit {
         // | Project => <div className="w-10 h-5 bg-teal-500 rounded-full" />
@@ -358,14 +363,6 @@ let make = (
           //   React.null
           // }}
 
-          // <div
-          //   className=" text-[var(--t6)] w-4 bg-transparent flex flex-row items-center justify-center rounded-full">
-          //   {switch todo.mode {
-          //   | Archive => <Icons.Archive className={"w-3"} />
-          //   | Stashed => <Icons.Bookmark className={"w-3"} />
-          //   | Working => React.null
-          //   }}
-          // </div>
           // {isSelected || isDisplayElement
           //   ? React.null
           //   : <div className="h-px w-full absolute bg-[var(--t3)] -bottom-0.5" />}
@@ -439,6 +436,21 @@ let make = (
           //     ]->Array.join(" ")}
           //   />
           // </div>
+          {switch todo.mode {
+          | Archive =>
+            <div
+              className=" text-[var(--t6)] bg-transparent flex flex-row items-center justify-center rounded-full mr-1">
+              <Icons.Archive className={"w-3"} />
+            </div>
+
+          | Stashed =>
+            <div
+              className=" text-[var(--t6)] bg-transparent flex flex-row items-center justify-center rounded-full mr-1">
+              <Icons.Bookmark className={"w-3"} />
+            </div>
+
+          | Working => React.null
+          }}
           {showCheckboxes
             ? <div
                 className={[
