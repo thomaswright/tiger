@@ -53,13 +53,8 @@ function Todo(props) {
           }));
   };
   var makeNewTodo = function () {
-    var newPosition = todoRelation.depth === 0 || todoRelation.children.length > 0 ? Core__Option.mapOr(todoRelation.children[0], 0, (function (x) {
-              return x.position - 1;
-            })) : Core__Option.mapOr(todoRelation.sibs[todoRelation.index + 1 | 0], todo.position + 1, (function (nextSib) {
-              return (nextSib.position + todo.position) / 2;
-            }));
     var newParent = todoRelation.depth === 0 || todoRelation.children.length > 0 ? todo.id : todo.parent_todo;
-    var newId = Common.addTodo("", newParent, newPosition);
+    var newId = Common.addTodo("", newParent);
     setFocusIdNext(function (param) {
           return Types.getTodoInputId(newId);
         });

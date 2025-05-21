@@ -1,5 +1,5 @@
 @react.component
-let make = (~onExportJson as _, ~onImportJson, ~setBaseColor, ~logout) => {
+let make = (~setBaseColor, ~logout) => {
   let (theme, setTheme) = Theme.useTheme()
 
   <div className="flex-1 overflow-y-scroll px-3 py-2 flex flex-col gap-2 items-start pb-2">
@@ -65,7 +65,7 @@ let make = (~onExportJson as _, ~onImportJson, ~setBaseColor, ~logout) => {
       //   ]->Array.join(" ")}>
       //   {"Export"->React.string}
       // </button>
-      <Common.ImportButton onImportJson />
+      // <Common.ImportButton onImportJson />
     </div>
     <div className="text-xs text-right w-full py-3 px-2 font-bold ">
       {"Made by "->React.string}

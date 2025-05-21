@@ -109,9 +109,6 @@ function Settings(props) {
                       className: "font-bold"
                     }),
                 JsxRuntime.jsx("div", {
-                      children: JsxRuntime.jsx(Common.ImportButton.make, {
-                            onImportJson: props.onImportJson
-                          }),
                       className: "flex flex-row gap-2 mb-2"
                     }),
                 JsxRuntime.jsxs("div", {

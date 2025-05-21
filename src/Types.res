@@ -39,7 +39,7 @@ type todo = {
   parent_todo: Nullable.t<string>,
   deleted: bool,
   user_id: string,
-  position: float,
+  // position: float,
   status: status,
   outfit: outfit,
   target_date: Nullable.t<string>,

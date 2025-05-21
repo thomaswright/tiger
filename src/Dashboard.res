@@ -53,31 +53,31 @@ let make = (~todos: array<todoRelation>, ~allTodos: array<todoRelation>, ~logout
     None
   })
 
-  let onImportJson = json => {
-    let maxPosition = allTodos->Array.reduce(0., (a, c) => Math.max(a, c.self.position))
-    batch(() => {
-      let idMap = json->Array.map(v => (v["id"], uuid()))
+  // let onImportJson = json => {
+  //   let maxPosition = allTodos->Array.reduce(0., (a, c) => Math.max(a, c.self.position))
+  //   batch(() => {
+  //     let idMap = json->Array.map(v => (v["id"], uuid()))
 
-      json->Array.forEachWithIndex((v, i) => {
-        addTodoByImport(
-          idMap
-          ->Array.find(((oldId, _)) => oldId == v["id"])
-          ->Option.mapOr(uuid(), ((_, newId)) => newId),
-          v["text"],
-          switch (v["parent_todo"]: Nullable.t<string>) {
-          | Undefined => Null
-          | Null => Null
-          | Value(x) =>
-            idMap
-            ->Array.find(((oldId, _)) => oldId == x)
-            ->Option.mapOr(Nullable.Null, ((_, newId)) => Value(newId))
-          },
-          maxPosition +. i->Int.toFloat,
-          v["status"],
-        )
-      })
-    })
-  }
+  //     json->Array.forEachWithIndex((v, i) => {
+  //       addTodoByImport(
+  //         idMap
+  //         ->Array.find(((oldId, _)) => oldId == v["id"])
+  //         ->Option.mapOr(uuid(), ((_, newId)) => newId),
+  //         v["text"],
+  //         switch (v["parent_todo"]: Nullable.t<string>) {
+  //         | Undefined => Null
+  //         | Null => Null
+  //         | Value(x) =>
+  //           idMap
+  //           ->Array.find(((oldId, _)) => oldId == x)
+  //           ->Option.mapOr(Nullable.Null, ((_, newId)) => Value(newId))
+  //         },
+  //         maxPosition +. i->Int.toFloat,
+  //         v["status"],
+  //       )
+  //     })
+  //   })
+  // }
 
   <div
     className="flex flex-col-reverse justify-end sm:justify-start sm:flex-row  text-[var(--t10)] h-dvh">
@@ -102,7 +102,7 @@ let make = (~todos: array<todoRelation>, ~allTodos: array<todoRelation>, ~logout
               let newId = addTodo(
                 "",
                 Null,
-                todos->Array.get(0)->Option.mapOr(0., t => t.self.position) -. 1.,
+                // todos->Array.get(0)->Option.mapOr(0., t => t.self.position) -. 1.,
               )
               setFocusIdNext(_ => Some(getTodoInputId(newId)))
             }}>
@@ -169,8 +169,7 @@ let make = (~todos: array<todoRelation>, ~allTodos: array<todoRelation>, ~logout
         </React.Fragment>
       } else {
         switch view {
-        | Some(Settings) =>
-          <Settings onExportJson={_ => ()} onImportJson={onImportJson} setBaseColor logout />
+        | Some(Settings) => <Settings setBaseColor logout />
         | Some(ProjectList) =>
           <div className="overflow-y-scroll">
             <ModeMgr todo={None} />

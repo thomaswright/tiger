@@ -38,11 +38,11 @@ external focusNextClass: (string, Dom.element) => unit = "focusNextClass"
 external observer: React.component<'a> => React.component<'a> = "observer"
 
 @module("./utils/SupaLegend.ts")
-external addTodo: (string, Nullable.t<string>, float) => string = "addTodo"
+external addTodo: (string, Nullable.t<string>) => string = "addTodo"
 
-@module("./utils/SupaLegend.ts")
-external addTodoByImport: (string, string, Nullable.t<string>, float, status) => unit =
-  "addTodoByImport"
+// @module("./utils/SupaLegend.ts")
+// external addTodoByImport: (string, string, Nullable.t<string>, float, status) => unit =
+//   "addTodoByImport"
 
 @module("./utils/SupaLegend.ts")
 external setTodoText: (string, string) => unit = "setTodoText"
@@ -69,7 +69,7 @@ external setTodoModesShown: (string, array<mode> => array<mode>) => unit = "setT
 external setTodoStatus: (string, status) => unit = "setTodoStatus"
 
 @module("./utils/SupaLegend.ts")
-external setTodoPosition: (string, Nullable.t<string>, float) => unit = "setTodoPosition"
+external setTodoPosition: (string, Nullable.t<string>) => unit = "setTodoPosition"
 
 // @module("./utils/SupaLegend.ts")
 // external toggleDone: string => unit = "toggleDone"
@@ -90,7 +90,6 @@ let deleteTodoAndMoveChildren = todoRelation => {
       setTodoPosition(
         child.id,
         todo.parent_todo,
-        0.,
 
         // todoRelation.sibs
         // ->Array.get(todoRelation.index + 1)

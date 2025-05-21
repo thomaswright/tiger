@@ -125,19 +125,19 @@ let make = (
   // }
 
   let makeNewTodo = () => {
-    let newPosition =
-      todoRelation.depth == 0 || todoRelation.children->Array.length > 0
-        ? todoRelation.children->Array.get(0)->Option.mapOr(0., x => x.position -. 1.)
-        : todoRelation.sibs
-          ->Array.get(todoRelation.index + 1)
-          ->Option.mapOr(todo.position +. 1., nextSib => (nextSib.position +. todo.position) /. 2.)
+    // let newPosition =
+    //   todoRelation.depth == 0 || todoRelation.children->Array.length > 0
+    //     ? todoRelation.children->Array.get(0)->Option.mapOr(0., x => x.position -. 1.)
+    //     : todoRelation.sibs
+    //       ->Array.get(todoRelation.index + 1)
+    //       ->Option.mapOr(todo.position +. 1., nextSib => (nextSib.position +. todo.position) /. 2.)
 
     let newParent =
       todoRelation.depth == 0 || todoRelation.children->Array.length > 0
         ? todo.id->Nullable.Value
         : todo.parent_todo
 
-    let newId = addTodo("", newParent, newPosition)
+    let newId = addTodo("", newParent)
     setFocusIdNext(_ => Some(getTodoInputId(newId)))
   }
 

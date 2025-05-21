@@ -53,12 +53,8 @@ function focusNextClass(prim0, prim1) {
   OtherJs.focusNextClass(prim0, prim1);
 }
 
-function addTodo(prim0, prim1, prim2) {
-  return SupaLegendTs.addTodo(prim0, prim1, prim2);
-}
-
-function addTodoByImport(prim0, prim1, prim2, prim3, prim4) {
-  SupaLegendTs.addTodoByImport(prim0, prim1, prim2, prim3, prim4);
+function addTodo(prim0, prim1) {
+  return SupaLegendTs.addTodo(prim0, prim1);
 }
 
 function setTodoText(prim0, prim1) {
@@ -85,8 +81,8 @@ function setTodoStatus(prim0, prim1) {
   SupaLegendTs.setTodoStatus(prim0, prim1);
 }
 
-function setTodoPosition(prim0, prim1, prim2) {
-  SupaLegendTs.setTodoPosition(prim0, prim1, prim2);
+function setTodoPosition(prim0, prim1) {
+  SupaLegendTs.setTodoPosition(prim0, prim1);
 }
 
 function deleteTodo(prim) {
@@ -100,7 +96,7 @@ function deleteTodoAndMoveChildren(todoRelation) {
   State.batch(function () {
         SupaLegendTs.deleteTodo(todo.id);
         todoRelation.children.forEach(function (child, _i) {
-              setTodoPosition(child.id, todo.parent_todo, 0);
+              SupaLegendTs.setTodoPosition(child.id, todo.parent_todo);
             });
       });
 }
@@ -182,7 +178,6 @@ export {
   focusPreviousClass ,
   focusNextClass ,
   addTodo ,
-  addTodoByImport ,
   setTodoText ,
   setTodoAdditionalText ,
   setTodoDate ,

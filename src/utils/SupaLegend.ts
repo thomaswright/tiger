@@ -35,7 +35,6 @@ export const todos$ = observable(
            updated_at,
            deleted,
            user_id,
-           position,
            parent_todo,
            target_date,
            additional_text,
@@ -66,8 +65,8 @@ export const todos$ = observable(
 
 export function addTodo(
   text: string,
-  parent_todo: string | null,
-  position: number
+  parent_todo: string | null
+  // position: number
 ) {
   const id = generateId();
   // Add keyed by id to the todos$ observable to trigger a create in Supabase
@@ -76,7 +75,7 @@ export function addTodo(
     id,
     text,
     user_id: uid$.get(),
-    position,
+    // position,
     parent_todo: parent_todo,
     mode: "Working",
     modes_shown: ["Working"],
@@ -103,7 +102,7 @@ export function addTodoByImport(
   id: string,
   text: string,
   parent_todo: string | null,
-  position: number,
+  // position: number,
   status: status
 ) {
   // const id = generateId();
@@ -112,7 +111,7 @@ export function addTodoByImport(
     id,
     text,
     user_id: uid$.get(),
-    position,
+    // position,
     parent_todo: parent_todo,
     mode: "Working",
     modes_shown: ["Working"],
@@ -184,11 +183,11 @@ export function setTodoStatus(
 
 export function setTodoPosition(
   id: string,
-  newParent: string,
-  newPosition: number
+  newParent: string
+  // newPosition: number
 ) {
   todos$[id].assign({
     parent_todo: Boolean(newParent) ? newParent : null,
-    position: newPosition,
+    // position: newPosition,
   });
 }
