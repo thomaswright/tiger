@@ -148,3 +148,8 @@ module Future = {
   @react.component @module("react-icons/fa")
   external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "FaChevronRight"
 }
+
+module Clock = {
+  @react.component @module("react-icons/fa")
+  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "FaClock"
+}

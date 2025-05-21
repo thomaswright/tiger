@@ -24,7 +24,7 @@ let buttonBaseSmall =
   "flex-none relative flex flex-row items-center justify-center text-2xs font-medium  tracking-tighter w-4 h-4  rounded-sm ";
 
 let buttonBaseLarge =
-  "flex-none relative flex flex-row items-center justify-center text-2xs font-medium  tracking-tighter w-16 h-4  rounded-sm ";
+  "flex-none relative flex flex-row items-center justify-center text-2xs font-bold  tracking-tighter w-20 h-6 gap-1 rounded ";
 
 const Dropdown = ({
   status,
@@ -82,6 +82,8 @@ const Dropdown = ({
           setHoverStatus((current) => (current === s ? status : s))
         }
       >
+        {statusIcon(s)}
+
         {statusString(s)}
         {(s == "ArchiveDone" || s == "ArchiveNo") && (
           <div

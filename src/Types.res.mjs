@@ -39,7 +39,7 @@ function statusIcon(s) {
     case "Future" :
         return JsxRuntime.jsx(Fa.FaChevronRight, {});
     case "NowIfTime" :
-        return JsxRuntime.jsx(Fa.FaQuestion, {});
+        return JsxRuntime.jsx(Fa.FaClock, {});
     case "NowMustDo" :
         return JsxRuntime.jsx(Fa.FaExclamation, {});
     case "Underway" :
@@ -101,39 +101,27 @@ function statusString(s) {
 function statusColor(s) {
   switch (s) {
     case "Unsorted" :
-        return "var(--t2)";
+        return "var(--t3)";
     case "Future" :
-        return "var(--lightBlue)";
+        return "#6EB4FF";
     case "NowIfTime" :
+        return "#ED4E90";
     case "NowMustDo" :
-        return "var(--lightOrange)";
+        return "#FFA600";
     case "Underway" :
+        return "#00A1AC";
     case "Paused" :
-        return "var(--lightGreen)";
+        return "#125683";
     case "ResolveDone" :
+        return "#029000";
     case "ResolveNo" :
-        return "var(--lightPurple)";
+        return "#888";
     
   }
 }
 
 function statusColorText(s) {
-  switch (s) {
-    case "Unsorted" :
-        return "var(--t8)";
-    case "Future" :
-        return "var(--darkBlue)";
-    case "NowIfTime" :
-    case "NowMustDo" :
-        return "var(--darkOrange)";
-    case "Underway" :
-    case "Paused" :
-        return "var(--darkGreen)";
-    case "ResolveDone" :
-    case "ResolveNo" :
-        return "var(--darkPurple)";
-    
-  }
+  return "white";
 }
 
 function getTodoId(s) {

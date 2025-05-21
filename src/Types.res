@@ -80,7 +80,7 @@ let statusIcon = s => {
   switch s {
   | Unsorted => <div />
   | Future => <Icons.Future />
-  | NowIfTime => <Icons.Question />
+  | NowIfTime => <Icons.Clock />
   | NowMustDo => <Icons.Exclamation />
   | Underway => <Icons.Play />
   | Paused => <Icons.Pause />
@@ -117,27 +117,37 @@ let statusString = s => {
 
 let statusColor = s =>
   switch s {
-  | Unsorted => "var(--t2)"
-  | Future => "var(--lightBlue)"
-  | NowIfTime => "var(--lightOrange)"
-  | NowMustDo => "var(--lightOrange)"
-  | Underway => "var(--lightGreen)"
-  | Paused => "var(--lightGreen)"
-  | ResolveDone => "var(--lightPurple)"
-  | ResolveNo => "var(--lightPurple)"
+  | Unsorted => "var(--t3)"
+  | Future => "#6EB4FF"
+  | NowIfTime => "#ED4E90"
+  | NowMustDo => "#FFA600"
+  | Underway => "#00A1AC"
+  | Paused => "#125683"
+  | ResolveDone => "#029000"
+  | ResolveNo => "#888"
   }
+// switch s {
+// | Unsorted => "var(--t2)"
+// | Future => "var(--lightBlue)"
+// | NowIfTime => "var(--lightOrange)"
+// | NowMustDo => "var(--lightOrange)"
+// | Underway => "var(--lightGreen)"
+// | Paused => "var(--lightGreen)"
+// | ResolveDone => "var(--lightPurple)"
+// | ResolveNo => "var(--lightPurple)"
+// }
 
-let statusColorText = s =>
-  switch s {
-  | Unsorted => "var(--t8)"
-  | Future => "var(--darkBlue)"
-  | NowIfTime => "var(--darkOrange)"
-  | NowMustDo => "var(--darkOrange)"
-  | Underway => "var(--darkGreen)"
-  | Paused => "var(--darkGreen)"
-  | ResolveDone => "var(--darkPurple)"
-  | ResolveNo => "var(--darkPurple)"
-  }
+let statusColorText = s => "white"
+// switch s {
+// | Unsorted => "var(--t8)"
+// | Future => "var(--darkBlue)"
+// | NowIfTime => "var(--darkOrange)"
+// | NowMustDo => "var(--darkOrange)"
+// | Underway => "var(--darkGreen)"
+// | Paused => "var(--darkGreen)"
+// | ResolveDone => "var(--darkPurple)"
+// | ResolveNo => "var(--darkPurple)"
+// }
 
 let getTodoId = s => "todo-" ++ s
 let getTodoInputId = s => "todo-input-" ++ s

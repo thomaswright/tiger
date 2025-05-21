@@ -320,7 +320,7 @@ let make = (
       ->React.array}
       <div
         className={[
-          " flex group flex-row justify-start items-center h-full flex-1 rounded-sm  py-0.5 pr-0.5",
+          " flex group flex-row justify-start items-center h-full flex-1 rounded-sm  py-1 pl-1",
           stagedForDelete
             ? "outline-red-700 dark:outline-red-500"
             : "focus-within:outline-purple-500 outline-blue-500 ",
