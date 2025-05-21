@@ -24,12 +24,36 @@ let make = (~input: array<todo>, ~logout) => {
         todos
         ->SMap.get(self.id)
         ->Option.mapOr(([], []), children => {
+          // let hasStashed = ref(false)
+          // let hasArchived = ref(false)
+
           let children = children->Array.toSorted(
             (a, b) => {
               a.mode->modeCompare -. b.mode->modeCompare
             },
           )
+          // ->Array.map(
+          //   child => {
+          //     if !hasStashed.contents && child.mode == Stashed {
+          //       hasStashed := true
 
+          //       {
+          //         ...child,
+          //         is_first_of_mode: Some(Stashed),
+          //       }
+          //     } else if !hasArchived.contents && child.mode == Archive {
+          //       hasArchived := true
+
+          //       {
+          //         ...child,
+          //         is_first_of_mode: Some(Archive),
+          //       }
+          //     } else {
+          //       child
+          //     }
+          //   },
+          // )
+          // + (self.mode == Stashed || self.mode == Archive ? 1 : 0)
           (
             children,
             recurse(

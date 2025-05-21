@@ -131,29 +131,26 @@ function DisplayTodo(props) {
                       ],
                       className: "flex flex-row flex-wrap border-y border-[var(--t3)] items-center gap-1 p-1 px-2"
                     }),
-                JsxRuntime.jsxs("div", {
-                      children: [
-                        JsxRuntime.jsx(ReactTextareaAutosize, {
-                              ref: Caml_option.some(additionalTextRef),
-                              className: ["placeholder:text-[var(--t5)] text-sm flex-1 border-none rounded-lg text-[var(--t10)] w-full outline-none bg-[var(--t2)]\n          focus:ring-0 font-medium"].join(" "),
-                              id: "id-display-title",
-                              style: {
-                                resize: "none"
-                              },
-                              placeholder: "Additional Details",
-                              value: Core__Option.getOr(match$1[0], ""),
-                              onChange: (function (e) {
-                                  setAdditionalText(function (param) {
-                                        return e.target.value;
-                                      });
-                                })
-                            }),
-                        todoRelation.children.length > 0 ? JsxRuntime.jsx(ModeMgr.make, {
-                                todo: todo,
-                                todos: todoRelation.children
-                              }) : null
-                      ],
-                      className: "p-2"
+                todoRelation.children.length > 0 ? JsxRuntime.jsx(ModeMgr.make, {
+                        todo: todo
+                      }) : null,
+                JsxRuntime.jsx("div", {
+                      children: JsxRuntime.jsx(ReactTextareaAutosize, {
+                            ref: Caml_option.some(additionalTextRef),
+                            className: ["placeholder:text-[var(--t5)] text-sm flex-1 border-none rounded-lg text-[var(--t10)] w-full outline-none bg-[var(--t2)]\n          focus:ring-0 font-medium"].join(" "),
+                            id: "id-display-title",
+                            style: {
+                              resize: "none"
+                            },
+                            placeholder: "Additional Details",
+                            value: Core__Option.getOr(match$1[0], ""),
+                            onChange: (function (e) {
+                                setAdditionalText(function (param) {
+                                      return e.target.value;
+                                    });
+                              })
+                          }),
+                      className: "p-2 pt-0"
                     })
               ],
               className: "w-full flex-1 overflow-y-scroll"

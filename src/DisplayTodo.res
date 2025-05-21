@@ -166,7 +166,8 @@ let make = (~todoRelation: todoRelation, ~setFocusIdNext) => {
         <Icons.Trash />
       </button>
     </div>
-    <div className="p-2">
+    {todoRelation.children->Array.length > 0 ? <ModeMgr todo={todo->Some} /> : React.null}
+    <div className="p-2 pt-0">
       <Common.TextareaAutosize
         ref={ReactDOM.Ref.domRef(additionalTextRef)}
         style={{
@@ -183,9 +184,6 @@ let make = (~todoRelation: todoRelation, ~setFocusIdNext) => {
           setAdditionalText(_ => ReactEvent.Form.target(e)["value"]->Some)
         }}
       />
-      {todoRelation.children->Array.length > 0
-        ? <ModeMgr todo={todo->Some} todos={todoRelation.children} />
-        : React.null}
     </div>
   </div>
 }

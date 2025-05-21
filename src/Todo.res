@@ -283,169 +283,191 @@ let make = (
       setStatus={newStatus => setTodoStatus(todo.id, newStatus)}
     />
 
-  <li
-    id={getTodoId(todo.id)}
-    tabIndex={0}
-    ref={ReactDOM.Ref.domRef(containerRef)}
-    onBlur={_ => {
-      setSelectedElement(_ => None)
-      setStagedForDelete(_ => false)
-    }}
-    onFocus={_ => {
-      setSelectedElement(_ => Some(todo.id))
-      setDisplayElement(_ => Some(todo.id))
-    }}
-    onKeyDown={onKeyDownContainer}
-    // onMouseEnter={e => {
-    //   itemToMoveHandleMouseEnter(false, todo.id, e)
+  <React.Fragment>
+    // {switch todo.is_first_of_mode {
+    // | Some(Stashed) =>
+    //   <li className=" text-xs px-4 font-bold  border-b w-full"> {"Stash"->React.string} </li>
+    // | Some(Archive) =>
+    //   <li className=" text-xs px-4 font-bold border-b w-full"> {"Archive"->React.string} </li>
+    // | _ => React.null
     // }}
-    className={[
-      listItemClass,
-      todoRelation.depth == 0 ? "" : "pl-1",
-      " flex flex-row justify-start items-center outline-none",
-    ]->Array.join(" ")}>
-    {Array.make(~length=todoRelation.depth - 1, false)
-    ->Array.mapWithIndex((_, i) => {
-      <div key={i->Int.toString} className="self-stretch w-2 border-l ml-2 border-[var(--t3)] " />
-    })
-    ->React.array}
-    <div
-      className={[
-        "pl-1 pr-2 flex group flex-row justify-start items-center h-full flex-1 rounded-sm",
-        stagedForDelete
-          ? "outline-red-700 dark:outline-red-500"
-          : "focus-within:outline-purple-500 outline-blue-500 ",
-        stagedForDelete
-          ? "bg-red-200 dark:bg-red-950"
-          : isChecked
-          ? "bg-sky-50 dark:bg-sky-950"
-          : isDisplayElement && !isSelected
-          ? "bg-sky-200 dark:bg-sky-900"
-          : "",
-        switch todo.mode {
-        | Archive => "text-[#cfa85b]"
-        | Stashed => "text-[#80aa3c]"
-        | Working => "text-[var(--t10)]"
-        },
-        isSelected ? "outline outline-2 -outline-offset-2 " : "",
-      ]->Array.join(" ")}>
-      // {switch todo.outfit {
-      // | Project => <div className="w-10 h-5 bg-teal-500 rounded-full" />
-      // | Group => <div className="" />
-      // | Todo => <div className="w-10 h-5 bg-blue-200 rounded" />
+    <li
+      id={getTodoId(todo.id)}
+      tabIndex={0}
+      ref={ReactDOM.Ref.domRef(containerRef)}
+      onBlur={_ => {
+        setSelectedElement(_ => None)
+        setStagedForDelete(_ => false)
+      }}
+      onFocus={_ => {
+        setSelectedElement(_ => Some(todo.id))
+        setDisplayElement(_ => Some(todo.id))
+      }}
+      onKeyDown={onKeyDownContainer}
+      // onMouseEnter={e => {
+      //   itemToMoveHandleMouseEnter(false, todo.id, e)
       // }}
+      className={[
+        listItemClass,
+        // todoRelation.depth == 0 ? "" : "pl-1",
+
+        " flex flex-row justify-start items-center outline-none",
+      ]->Array.join(" ")}>
+      {Array.make(~length=todoRelation.depth, false)
+      ->Array.mapWithIndex((_, i) => {
+        <div key={i->Int.toString} className="self-stretch w-2 ml-2 border-l border-[var(--t3)] " />
+      })
+      ->React.array}
       <div
         className={[
-          "relative flex-1 ml-1 flex flex-row h-full justify-start items-center ",
+          " flex group flex-row justify-start items-center h-full flex-1 rounded-sm  py-0.5 pr-0.5",
+          stagedForDelete
+            ? "outline-red-700 dark:outline-red-500"
+            : "focus-within:outline-purple-500 outline-blue-500 ",
+          stagedForDelete
+            ? "bg-red-200 dark:bg-red-950"
+            : isChecked
+            ? "bg-sky-50 dark:bg-sky-950"
+            : isDisplayElement && !isSelected
+            ? "bg-sky-200 dark:bg-sky-900"
+            : "",
+          isSelected ? "outline outline-2 -outline-offset-2 " : "",
+          switch todo.mode {
+          | Archive => "text-[#6d8eb2]"
+          | Stashed => "text-[#b0832f]"
+          | Working => "text-[var(--t10)]"
+          },
         ]->Array.join(" ")}>
-        // {if todoRelation.hasHiddenChildren {
-        //   <div
-        //     className="absolute  text-[var(--darkPurple)] bg-[var(--lightPurple)]
-        //     text-xs h-3 w-3 -left-3 -top-0 flex flex-row items-center justify-center rounded-full">
-        //     <Icons.Archive />
-        //   </div>
-        // } else {
-        //   React.null
+        // {switch todo.outfit {
+        // | Project => <div className="w-10 h-5 bg-teal-500 rounded-full" />
+        // | Group => <div className="" />
+        // | Todo => <div className="w-10 h-5 bg-blue-200 rounded" />
         // }}
-
-        // <div
-        //   className=" text-[var(--t6)] w-4 bg-transparent flex flex-row items-center justify-center rounded-full">
-        //   {switch todo.mode {
-        //   | Archive => <Icons.Archive className={"w-3"} />
-        //   | Stashed => <Icons.Bookmark className={"w-3"} />
-        //   | Working => React.null
-        //   }}
-        // </div>
-        {isSelected || isDisplayElement
-          ? React.null
-          : <div className="h-px w-full absolute bg-[var(--t2)] -bottom-0" />}
-        <Common.TextareaAutosize
-          id={getTodoInputId(todo.id)}
-          ref={ReactDOM.Ref.domRef(inputRef)}
+        <div
           className={[
-            todoInputClass,
-            todoRelation.depth == 0 ? "font-black" : "text-sm",
-            "mx-1 my-1 block w-full h-5 border-0 pl-0 py-0 focus:ring-0  bg-transparent",
-            // stagedForDelete
-            //   ? "bg-red-200 dark:bg-red-950"
-            //   : isChecked
-            //   ? "bg-sky-50 dark:bg-sky-950"
-            //   : isDisplayElement && !isSelected
-            //   ? "bg-sky-200 dark:bg-sky-900"
-            //   : "bg-[var(--t0)]",
-          ]->Array.join(" ")}
-          placeholder={todoRelation.depth == 0 ? "Untitled Project" : ""}
-          style={{resize: "none"}}
-          value={text->Option.getOr("")}
-          onBlur={_ => setSelectedElement(_ => None)}
-          onFocus={_ => {
-            setSelectedElement(_ => Some(todo.id))
-            setDisplayElement(_ => Some(todo.id))
-          }}
-          onKeyDown={onKeyDownInput}
-          onChange={e => setText(ReactEvent.Form.target(e)["value"])}
-        />
-        // {todoRelation.depth == 0 ? statusSelect : React.null}
-        {todoRelation.depth == 0 ? <div className="w-2" /> : React.null}
-        {todo.target_date->Nullable.toOption->Option.isSome
-          ? <Common.DateSelect
-              className="mr-1 ml-1"
-              value={todo.target_date->Nullable.toOption->Option.map(Date.fromString)}
-              onClick={newDate =>
-                setTodoDate(
-                  todo.id,
-                  newDate
-                  ->Option.map(x =>
-                    x->DateFns.formatISOOpt({
-                      representation: "date"->Some,
-                      format: None,
-                    })
-                  )
-                  ->toNullableNull,
-                )}
-            />
-          : React.null}
-        <div className="w-5 flex flex-row justify-center items-center ">
-          <button
-            className={[
-              " w-4 h-4 rounded-full",
-              switch todo.mode {
-              | Archive => "bg-[#f4deb2]"
-              | Stashed => "bg-[#cbe1a8]"
-              | Working => "bg-[var(--t2)]"
-              },
-            ]->Array.join(" ")}
-          />
-        </div>
-        {showCheckboxes
-          ? <div
-              className={[
-                " h-full pr-2 pl-1 flex flex-row items-center",
-                // isChecked ? "flex" : " hidden group-hover:flex",
-              ]->Array.join(" ")}>
-              // <div
-              //   onMouseDown={e => itemToMoveHandleMouseDown(todo.id, e)}
-              //   className={" w-4 h-4 text-[var(--t4)] hidden group-hover:block bg-[var(--t0)] rounded-sm 0 "}>
-              //   <Icons.DragDrop />
-              // </div>
-              <input
-                onChange={_ => {
-                  setChecked(v =>
-                    v->SSet.has(todo.id) ? v->SSet.remove(todo.id) : v->SSet.add(todo.id)
-                  )
-                }}
-                checked={isChecked}
-                type_={"checkbox"}
-                className={[
-                  "border-[var(--t4)] bg-[var(--t0)] rounded text-blue-400 dark:text-blue-800 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500",
-                ]->Array.join(" ")}
-              />
-            </div>
-          : React.null}
-      </div>
-      statusSelect
+            "relative flex-1 flex flex-row h-full justify-start items-center ",
+          ]->Array.join(" ")}>
+          // {if todoRelation.hasHiddenChildren {
+          //   <div
+          //     className="absolute  text-[var(--darkPurple)] bg-[var(--lightPurple)]
+          //     text-xs h-3 w-3 -left-3 -top-0 flex flex-row items-center justify-center rounded-full">
+          //     <Icons.Archive />
+          //   </div>
+          // } else {
+          //   React.null
+          // }}
 
-      // {todoRelation.depth > 0 ? statusSelect : React.null}
-    </div>
-  </li>
+          // <div
+          //   className=" text-[var(--t6)] w-4 bg-transparent flex flex-row items-center justify-center rounded-full">
+          //   {switch todo.mode {
+          //   | Archive => <Icons.Archive className={"w-3"} />
+          //   | Stashed => <Icons.Bookmark className={"w-3"} />
+          //   | Working => React.null
+          //   }}
+          // </div>
+          // {isSelected || isDisplayElement
+          //   ? React.null
+          //   : <div className="h-px w-full absolute bg-[var(--t3)] -bottom-0.5" />}
+          // <div className="w-3 flex flex-row justify-center items-center ">
+          //   <button
+          //     className={[
+          //       " w-2 h-2 rounded-full",
+          //       switch todo.mode {
+          //       | Archive => "bg-[#f4deb2]"
+          //       | Stashed => "bg-[#cbe1a8]"
+          //       | Working => "bg-[var(--t4)]"
+          //       },
+          //     ]->Array.join(" ")}
+          //   />
+          // </div>
+          <Common.TextareaAutosize
+            id={getTodoInputId(todo.id)}
+            ref={ReactDOM.Ref.domRef(inputRef)}
+            className={[
+              todoInputClass,
+              // todoRelation.depth == 0 ? "font-black" : "text-sm",
+              "mx-1 block w-full h-5 border-0 pl-0 py-0 focus:ring-0  bg-transparent text-xs font-medium",
+              // stagedForDelete
+              //   ? "bg-red-200 dark:bg-red-950"
+              //   : isChecked
+              //   ? "bg-sky-50 dark:bg-sky-950"
+              //   : isDisplayElement && !isSelected
+              //   ? "bg-sky-200 dark:bg-sky-900"
+              //   : "bg-[var(--t0)]",
+            ]->Array.join(" ")}
+            placeholder={todoRelation.depth == 0 ? "Untitled Project" : ""}
+            style={{resize: "none"}}
+            value={text->Option.getOr("")}
+            onBlur={_ => setSelectedElement(_ => None)}
+            onFocus={_ => {
+              setSelectedElement(_ => Some(todo.id))
+              setDisplayElement(_ => Some(todo.id))
+            }}
+            onKeyDown={onKeyDownInput}
+            onChange={e => setText(ReactEvent.Form.target(e)["value"])}
+          />
+          // {todoRelation.depth == 0 ? statusSelect : React.null}
+          // {todoRelation.depth == 0 ? <div className="w-2" /> : React.null}
+          {todo.target_date->Nullable.toOption->Option.isSome
+            ? <Common.DateSelect
+                className="mr-1 ml-1"
+                value={todo.target_date->Nullable.toOption->Option.map(Date.fromString)}
+                onClick={newDate =>
+                  setTodoDate(
+                    todo.id,
+                    newDate
+                    ->Option.map(x =>
+                      x->DateFns.formatISOOpt({
+                        representation: "date"->Some,
+                        format: None,
+                      })
+                    )
+                    ->toNullableNull,
+                  )}
+              />
+            : React.null}
+          // <div className="w-5 flex flex-row justify-center items-center ">
+          //   <button
+          //     className={[
+          //       " w-4 h-4 rounded-full",
+          //       switch todo.mode {
+          //       | Archive => "bg-[#f4deb2]"
+          //       | Stashed => "bg-[#cbe1a8]"
+          //       | Working => "bg-[var(--t2)]"
+          //       },
+          //     ]->Array.join(" ")}
+          //   />
+          // </div>
+          {showCheckboxes
+            ? <div
+                className={[
+                  " h-full pr-2 pl-1 flex flex-row items-center",
+                  // isChecked ? "flex" : " hidden group-hover:flex",
+                ]->Array.join(" ")}>
+                // <div
+                //   onMouseDown={e => itemToMoveHandleMouseDown(todo.id, e)}
+                //   className={" w-4 h-4 text-[var(--t4)] hidden group-hover:block bg-[var(--t0)] rounded-sm 0 "}>
+                //   <Icons.DragDrop />
+                // </div>
+                <input
+                  onChange={_ => {
+                    setChecked(v =>
+                      v->SSet.has(todo.id) ? v->SSet.remove(todo.id) : v->SSet.add(todo.id)
+                    )
+                  }}
+                  checked={isChecked}
+                  type_={"checkbox"}
+                  className={[
+                    "border-[var(--t4)] bg-[var(--t0)] rounded text-blue-400 dark:text-blue-800 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500",
+                  ]->Array.join(" ")}
+                />
+              </div>
+            : React.null}
+        </div>
+        statusSelect
+
+        // {todoRelation.depth > 0 ? statusSelect : React.null}
+      </div>
+    </li>
+  </React.Fragment>
 }

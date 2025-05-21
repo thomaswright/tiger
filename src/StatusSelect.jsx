@@ -20,7 +20,7 @@ import {
 } from "react-icons/tb";
 
 let buttonBase =
-  "flex-none relative flex flex-row items-center justify-center text-2xs font-bold  tracking-tighter w-16 h-5  rounded ";
+  "flex-none relative flex flex-row items-center justify-center text-2xs font-bold  tracking-tighter w-12 h-4  rounded-sm ";
 
 const Dropdown = ({
   status,

@@ -40,7 +40,7 @@ function statusStringShort(s) {
     case "NowMustDo" :
         return "Must Do";
     case "Underway" :
-        return "Underway";
+        return "Doing";
     case "Paused" :
         return "Paused";
     case "ResolveDone" :
@@ -62,7 +62,7 @@ function statusString(s) {
     case "NowMustDo" :
         return "Must Do";
     case "Underway" :
-        return "Underway";
+        return "Doing";
     case "Paused" :
         return "Paused";
     case "ResolveDone" :

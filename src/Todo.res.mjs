@@ -18,7 +18,6 @@ function Todo(props) {
   var isChecked = props.isChecked;
   var setFocusIdNext = props.setFocusIdNext;
   var setDisplayElement = props.setDisplayElement;
-  var isDisplayElement = props.isDisplayElement;
   var setSelectedElement = props.setSelectedElement;
   var isSelected = props.isSelected;
   var getTodos = props.getTodos;
@@ -255,161 +254,132 @@ function Todo(props) {
   var tmp;
   switch (match$3) {
     case "Working" :
-        tmp = "bg-[var(--t2)]";
+        tmp = "text-[var(--t10)]";
         break;
     case "Stashed" :
-        tmp = "bg-[#cbe1a8]";
+        tmp = "text-[#b0832f]";
         break;
     case "Archive" :
-        tmp = "bg-[#f4deb2]";
+        tmp = "text-[#6d8eb2]";
         break;
     
   }
-  var match$4 = todo.mode;
-  var tmp$1;
-  switch (match$4) {
-    case "Working" :
-        tmp$1 = "text-[var(--t10)]";
-        break;
-    case "Stashed" :
-        tmp$1 = "text-[#80aa3c]";
-        break;
-    case "Archive" :
-        tmp$1 = "text-[#cfa85b]";
-        break;
-    
-  }
-  return JsxRuntime.jsxs("li", {
-              children: [
-                Core__Array.make(todoRelation.depth - 1 | 0, false).map(function (param, i) {
-                      return JsxRuntime.jsx("div", {
-                                  className: "self-stretch w-2 border-l ml-2 border-[var(--t3)] "
-                                }, i.toString());
-                    }),
-                JsxRuntime.jsxs("div", {
-                      children: [
-                        JsxRuntime.jsxs("div", {
-                              children: [
-                                isSelected || isDisplayElement ? null : JsxRuntime.jsx("div", {
-                                        className: "h-px w-full absolute bg-[var(--t2)] -bottom-0"
-                                      }),
-                                JsxRuntime.jsx(ReactTextareaAutosize, {
-                                      ref: Caml_option.some(inputRef),
-                                      className: [
-                                          Types.todoInputClass,
-                                          todoRelation.depth === 0 ? "font-black" : "text-sm",
-                                          "mx-1 my-1 block w-full h-5 border-0 pl-0 py-0 focus:ring-0  bg-transparent"
-                                        ].join(" "),
-                                      id: Types.getTodoInputId(todo.id),
-                                      style: {
-                                        resize: "none"
-                                      },
-                                      placeholder: todoRelation.depth === 0 ? "Untitled Project" : "",
-                                      value: Core__Option.getOr(match$1[0], ""),
-                                      onKeyDown: onKeyDownInput,
-                                      onFocus: (function (param) {
-                                          setSelectedElement(function (param) {
-                                                return todo.id;
-                                              });
-                                          setDisplayElement(function (param) {
-                                                return todo.id;
-                                              });
-                                        }),
-                                      onBlur: (function (param) {
-                                          setSelectedElement(function (param) {
-                                                
-                                              });
-                                        }),
-                                      onChange: (function (e) {
-                                          setText(e.target.value);
-                                        })
-                                    }),
-                                todoRelation.depth === 0 ? JsxRuntime.jsx("div", {
-                                        className: "w-2"
-                                      }) : null,
-                                Core__Option.isSome(Caml_option.nullable_to_opt(todo.target_date)) ? JsxRuntime.jsx(Common.DateSelect.make, {
-                                        value: Core__Option.map(Caml_option.nullable_to_opt(todo.target_date), (function (prim) {
-                                                return new Date(prim);
-                                              })),
-                                        onClick: (function (newDate) {
-                                            Common.setTodoDate(todo.id, Common.toNullableNull(Core__Option.map(newDate, (function (x) {
-                                                            return FormatISO(x, {
-                                                                        format: undefined,
-                                                                        representation: "date"
-                                                                      });
-                                                          }))));
-                                          }),
-                                        className: "mr-1 ml-1"
-                                      }) : null,
-                                JsxRuntime.jsx("div", {
-                                      children: JsxRuntime.jsx("button", {
+  return JsxRuntime.jsx(React.Fragment, {
+              children: JsxRuntime.jsxs("li", {
+                    children: [
+                      Core__Array.make(todoRelation.depth, false).map(function (param, i) {
+                            return JsxRuntime.jsx("div", {
+                                        className: "self-stretch w-2 ml-2 border-l border-[var(--t3)] "
+                                      }, i.toString());
+                          }),
+                      JsxRuntime.jsxs("div", {
+                            children: [
+                              JsxRuntime.jsxs("div", {
+                                    children: [
+                                      JsxRuntime.jsx(ReactTextareaAutosize, {
+                                            ref: Caml_option.some(inputRef),
                                             className: [
-                                                " w-4 h-4 rounded-full",
-                                                tmp
-                                              ].join(" ")
+                                                Types.todoInputClass,
+                                                "mx-1 block w-full h-5 border-0 pl-0 py-0 focus:ring-0  bg-transparent text-xs font-medium"
+                                              ].join(" "),
+                                            id: Types.getTodoInputId(todo.id),
+                                            style: {
+                                              resize: "none"
+                                            },
+                                            placeholder: todoRelation.depth === 0 ? "Untitled Project" : "",
+                                            value: Core__Option.getOr(match$1[0], ""),
+                                            onKeyDown: onKeyDownInput,
+                                            onFocus: (function (param) {
+                                                setSelectedElement(function (param) {
+                                                      return todo.id;
+                                                    });
+                                                setDisplayElement(function (param) {
+                                                      return todo.id;
+                                                    });
+                                              }),
+                                            onBlur: (function (param) {
+                                                setSelectedElement(function (param) {
+                                                      
+                                                    });
+                                              }),
+                                            onChange: (function (e) {
+                                                setText(e.target.value);
+                                              })
                                           }),
-                                      className: "w-5 flex flex-row justify-center items-center "
-                                    }),
-                                props.showCheckboxes ? JsxRuntime.jsx("div", {
-                                        children: JsxRuntime.jsx("input", {
-                                              className: ["border-[var(--t4)] bg-[var(--t0)] rounded text-blue-400 dark:text-blue-800 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500"].join(" "),
-                                              checked: isChecked,
-                                              type: "checkbox",
-                                              onChange: (function (param) {
-                                                  setChecked(function (v) {
-                                                        if (Belt_SetString.has(v, todo.id)) {
-                                                          return Belt_SetString.remove(v, todo.id);
-                                                        } else {
-                                                          return Belt_SetString.add(v, todo.id);
-                                                        }
-                                                      });
-                                                })
-                                            }),
-                                        className: [" h-full pr-2 pl-1 flex flex-row items-center"].join(" ")
-                                      }) : null
-                              ],
-                              className: ["relative flex-1 ml-1 flex flex-row h-full justify-start items-center "].join(" ")
-                            }),
-                        statusSelect
-                      ],
-                      className: [
-                          "pl-1 pr-2 flex group flex-row justify-start items-center h-full flex-1 rounded-sm",
-                          stagedForDelete ? "outline-red-700 dark:outline-red-500" : "focus-within:outline-purple-500 outline-blue-500 ",
-                          stagedForDelete ? "bg-red-200 dark:bg-red-950" : (
-                              isChecked ? "bg-sky-50 dark:bg-sky-950" : (
-                                  isDisplayElement && !isSelected ? "bg-sky-200 dark:bg-sky-900" : ""
-                                )
-                            ),
-                          tmp$1,
-                          isSelected ? "outline outline-2 -outline-offset-2 " : ""
-                        ].join(" ")
-                    })
-              ],
-              ref: Caml_option.some(containerRef),
-              className: [
-                  Types.listItemClass,
-                  todoRelation.depth === 0 ? "" : "pl-1",
-                  " flex flex-row justify-start items-center outline-none"
-                ].join(" "),
-              id: Types.getTodoId(todo.id),
-              tabIndex: 0,
-              onKeyDown: onKeyDownContainer,
-              onFocus: (function (param) {
-                  setSelectedElement(function (param) {
-                        return todo.id;
-                      });
-                  setDisplayElement(function (param) {
-                        return todo.id;
-                      });
-                }),
-              onBlur: (function (param) {
-                  setSelectedElement(function (param) {
-                        
-                      });
-                  setStagedForDelete(function (param) {
-                        return false;
-                      });
-                })
+                                      Core__Option.isSome(Caml_option.nullable_to_opt(todo.target_date)) ? JsxRuntime.jsx(Common.DateSelect.make, {
+                                              value: Core__Option.map(Caml_option.nullable_to_opt(todo.target_date), (function (prim) {
+                                                      return new Date(prim);
+                                                    })),
+                                              onClick: (function (newDate) {
+                                                  Common.setTodoDate(todo.id, Common.toNullableNull(Core__Option.map(newDate, (function (x) {
+                                                                  return FormatISO(x, {
+                                                                              format: undefined,
+                                                                              representation: "date"
+                                                                            });
+                                                                }))));
+                                                }),
+                                              className: "mr-1 ml-1"
+                                            }) : null,
+                                      props.showCheckboxes ? JsxRuntime.jsx("div", {
+                                              children: JsxRuntime.jsx("input", {
+                                                    className: ["border-[var(--t4)] bg-[var(--t0)] rounded text-blue-400 dark:text-blue-800 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500"].join(" "),
+                                                    checked: isChecked,
+                                                    type: "checkbox",
+                                                    onChange: (function (param) {
+                                                        setChecked(function (v) {
+                                                              if (Belt_SetString.has(v, todo.id)) {
+                                                                return Belt_SetString.remove(v, todo.id);
+                                                              } else {
+                                                                return Belt_SetString.add(v, todo.id);
+                                                              }
+                                                            });
+                                                      })
+                                                  }),
+                                              className: [" h-full pr-2 pl-1 flex flex-row items-center"].join(" ")
+                                            }) : null
+                                    ],
+                                    className: ["relative flex-1 flex flex-row h-full justify-start items-center "].join(" ")
+                                  }),
+                              statusSelect
+                            ],
+                            className: [
+                                " flex group flex-row justify-start items-center h-full flex-1 rounded-sm  py-0.5 pr-0.5",
+                                stagedForDelete ? "outline-red-700 dark:outline-red-500" : "focus-within:outline-purple-500 outline-blue-500 ",
+                                stagedForDelete ? "bg-red-200 dark:bg-red-950" : (
+                                    isChecked ? "bg-sky-50 dark:bg-sky-950" : (
+                                        props.isDisplayElement && !isSelected ? "bg-sky-200 dark:bg-sky-900" : ""
+                                      )
+                                  ),
+                                isSelected ? "outline outline-2 -outline-offset-2 " : "",
+                                tmp
+                              ].join(" ")
+                          })
+                    ],
+                    ref: Caml_option.some(containerRef),
+                    className: [
+                        Types.listItemClass,
+                        " flex flex-row justify-start items-center outline-none"
+                      ].join(" "),
+                    id: Types.getTodoId(todo.id),
+                    tabIndex: 0,
+                    onKeyDown: onKeyDownContainer,
+                    onFocus: (function (param) {
+                        setSelectedElement(function (param) {
+                              return todo.id;
+                            });
+                        setDisplayElement(function (param) {
+                              return todo.id;
+                            });
+                      }),
+                    onBlur: (function (param) {
+                        setSelectedElement(function (param) {
+                              
+                            });
+                        setStagedForDelete(function (param) {
+                              return false;
+                            });
+                      })
+                  })
             });
 }
 
