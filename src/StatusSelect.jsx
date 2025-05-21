@@ -6,6 +6,7 @@ import {
   statusString,
   statusColor,
   statusColorText,
+  statusIcon,
   // statusIcon,
 } from "./Types.res.mjs";
 
@@ -19,8 +20,11 @@ import {
   // statusIcon,
 } from "react-icons/tb";
 
-let buttonBase =
-  "flex-none relative flex flex-row items-center justify-center text-2xs font-bold  tracking-tighter w-12 h-4  rounded-sm ";
+let buttonBaseSmall =
+  "flex-none relative flex flex-row items-center justify-center text-2xs font-medium  tracking-tighter w-4 h-4  rounded-sm ";
+
+let buttonBaseLarge =
+  "flex-none relative flex flex-row items-center justify-center text-2xs font-medium  tracking-tighter w-16 h-4  rounded-sm ";
 
 const Dropdown = ({
   status,
@@ -58,7 +62,7 @@ const Dropdown = ({
           status === s
             ? "outline outline-1 outline-inherit focus:outline-2 "
             : "focus:outline-2 focus:outline-inherit",
-          buttonBase,
+          buttonBaseLarge,
           "select-none",
           // isArchiveStatus(s) ? "bg-[var(--t2)]" : "",
         ].join(" ")}
@@ -78,7 +82,7 @@ const Dropdown = ({
           setHoverStatus((current) => (current === s ? status : s))
         }
       >
-        {statusStringShort(s)}
+        {statusString(s)}
         {(s == "ArchiveDone" || s == "ArchiveNo") && (
           <div
             style={{
@@ -114,7 +118,7 @@ const Dropdown = ({
                 focusTodo();
               }
             }}
-            className={buttonBase}
+            className={buttonBaseSmall}
             aria-label="Customise options"
           >
             {/* {hasHidden ? (
@@ -150,7 +154,7 @@ const Dropdown = ({
               React.null
             )} */}
 
-            {statusStringShort(status)}
+            {statusIcon(status)}
             {/* {isPinned && (
               <div
                 style={{
@@ -182,7 +186,7 @@ const Dropdown = ({
               backgroundColor: "var(--t2)",
               color: "var(--t8)",
             }}
-            className={buttonBase}
+            className={buttonBaseLarge}
             aria-label="Customise options"
           >
             {"Mixed"}

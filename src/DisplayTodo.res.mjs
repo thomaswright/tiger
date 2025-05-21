@@ -162,4 +162,4 @@ var make = DisplayTodo;
 export {
   make ,
 }
-/* react Not a pure module */
+/* Types Not a pure module */

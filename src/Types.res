@@ -76,22 +76,35 @@ let statusToFloat = s => {
   ->Int.toFloat
 }
 
+let statusIcon = s => {
+  switch s {
+  | Unsorted => <div />
+  | Future => <Icons.Future />
+  | NowIfTime => <Icons.Question />
+  | NowMustDo => <Icons.Exclamation />
+  | Underway => <Icons.Play />
+  | Paused => <Icons.Pause />
+  | ResolveDone => <Icons.Check />
+  | ResolveNo => <Icons.X />
+  }
+}
+
 let statusStringShort = s => {
   switch s {
   | Unsorted => ""
-  | Future => "Future"
-  | NowIfTime => "If Time"
-  | NowMustDo => "Must Do"
-  | Underway => "Doing"
-  | Paused => "Paused"
-  | ResolveDone => "Done"
-  | ResolveNo => "No"
+  | Future => "*"
+  | NowIfTime => "?"
+  | NowMustDo => "!"
+  | Underway => ">"
+  | Paused => "="
+  | ResolveDone => "v"
+  | ResolveNo => "x"
   }
 }
 
 let statusString = s => {
   switch s {
-  | Unsorted => "Unsorted"
+  | Unsorted => ""
   | Future => "Future"
   | NowIfTime => "If Time"
   | NowMustDo => "Must Do"

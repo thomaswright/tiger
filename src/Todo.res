@@ -343,6 +343,7 @@ let make = (
         // | Group => <div className="" />
         // | Todo => <div className="w-10 h-5 bg-blue-200 rounded" />
         // }}
+        statusSelect
         <div
           className={[
             "relative flex-1 flex flex-row h-full justify-start items-center ",
@@ -464,7 +465,6 @@ let make = (
               </div>
             : React.null}
         </div>
-        statusSelect
 
         // {todoRelation.depth > 0 ? statusSelect : React.null}
       </div>

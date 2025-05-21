@@ -18,13 +18,13 @@ module CircleSlash = {
 }
 
 module X = {
-  @react.component @module("react-icons/tb")
-  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "TbX"
+  @react.component @module("react-icons/fa")
+  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "FaTimes"
 }
 
 module Check = {
-  @react.component @module("react-icons/tb")
-  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "TbCheck"
+  @react.component @module("react-icons/fa")
+  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "FaCheck"
 }
 
 module Plus = {
@@ -132,4 +132,19 @@ module Inbox = {
 module Bookmark = {
   @react.component @module("react-icons/tb")
   external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "TbBookmark"
+}
+
+module Exclamation = {
+  @react.component @module("react-icons/fa")
+  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "FaExclamation"
+}
+
+module Question = {
+  @react.component @module("react-icons/fa")
+  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "FaQuestion"
+}
+
+module Future = {
+  @react.component @module("react-icons/fa")
+  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "FaChevronRight"
 }

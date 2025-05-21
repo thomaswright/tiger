@@ -104,4 +104,4 @@ export {
   make ,
   $$default as default,
 }
-/* Dashboard Not a pure module */
+/* Types Not a pure module */

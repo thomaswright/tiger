@@ -55,6 +55,12 @@ var Inbox = {};
 
 var Bookmark = {};
 
+var Exclamation = {};
+
+var Question = {};
+
+var Future = {};
+
 export {
   EyeClosed ,
   Eye ,
@@ -83,5 +89,8 @@ export {
   Stash ,
   Inbox ,
   Bookmark ,
+  Exclamation ,
+  Question ,
+  Future ,
 }
 /* No side effect */

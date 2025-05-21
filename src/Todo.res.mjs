@@ -224,6 +224,7 @@ function Todo(props) {
                           }),
                       JsxRuntime.jsxs("div", {
                             children: [
+                              statusSelect,
                               JsxRuntime.jsxs("div", {
                                     children: [
                                       JsxRuntime.jsx(ReactTextareaAutosize, {
@@ -289,8 +290,7 @@ function Todo(props) {
                                             }) : null
                                     ],
                                     className: ["relative flex-1 flex flex-row h-full justify-start items-center "].join(" ")
-                                  }),
-                              statusSelect
+                                  })
                             ],
                             className: [
                                 " flex group flex-row justify-start items-center h-full flex-1 rounded-sm  py-0.5 pr-0.5",
@@ -338,4 +338,4 @@ var make = Todo;
 export {
   make ,
 }
-/* react Not a pure module */
+/* Types Not a pure module */
