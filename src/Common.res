@@ -86,7 +86,7 @@ let deleteTodoAndMoveChildren = todoRelation => {
   let todo = todoRelation.self
   batch(() => {
     deleteTodo(todo.id)
-    todoRelation.children->Array.forEachWithIndex((child, i) => {
+    todoRelation.children->Array.forEachWithIndex((child, _i) => {
       setTodoPosition(
         child.id,
         todo.parent_todo,

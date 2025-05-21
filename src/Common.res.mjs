@@ -99,7 +99,7 @@ function deleteTodoAndMoveChildren(todoRelation) {
   var todo = todoRelation.self;
   State.batch(function () {
         SupaLegendTs.deleteTodo(todo.id);
-        todoRelation.children.forEach(function (child, i) {
+        todoRelation.children.forEach(function (child, _i) {
               setTodoPosition(child.id, todo.parent_todo, 0);
             });
       });

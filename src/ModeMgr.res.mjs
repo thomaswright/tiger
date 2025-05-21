@@ -6,49 +6,60 @@ import * as Tb from "react-icons/tb";
 import * as JsxRuntime from "react/jsx-runtime";
 
 function ModeMgr(props) {
-  return Core__Option.mapOr(props.todo, null, (function (todo) {
-                return JsxRuntime.jsxs("div", {
-                            children: [
-                              JsxRuntime.jsx("button", {
-                                    children: JsxRuntime.jsx(Tb.TbInbox, {}),
-                                    className: [
-                                        todo.modes_shown.includes("Working") ? " text-blue-600" : "text-[var(--t3)]",
-                                        "w-6 h-6 flex flex-row items-center justify-center rounded"
-                                      ].join(" "),
-                                    onClick: (function (param) {
-                                        Common.setTodoModesShown(todo.id, (function (a) {
-                                                return Common.arrayToggle(a, "Working");
-                                              }));
-                                      })
-                                  }),
-                              JsxRuntime.jsx("button", {
-                                    children: JsxRuntime.jsx(Tb.TbBookmark, {}),
-                                    className: [
-                                        todo.modes_shown.includes("Stashed") ? "text-blue-600" : "text-[var(--t3)]",
-                                        "w-6 h-6 flex flex-row items-center justify-center rounded "
-                                      ].join(" "),
-                                    onClick: (function (param) {
-                                        Common.setTodoModesShown(todo.id, (function (a) {
-                                                return Common.arrayToggle(a, "Stashed");
-                                              }));
-                                      })
-                                  }),
-                              JsxRuntime.jsx("button", {
-                                    children: JsxRuntime.jsx(Tb.TbArchive, {}),
-                                    className: [
-                                        todo.modes_shown.includes("Archive") ? " text-blue-600" : "text-[var(--t3)]",
-                                        "w-6 h-6 flex flex-row items-center justify-center rounded"
-                                      ].join(" "),
-                                    onClick: (function (param) {
-                                        Common.setTodoModesShown(todo.id, (function (a) {
-                                                return Common.arrayToggle(a, "Archive");
-                                              }));
-                                      })
-                                  })
-                            ],
-                            className: "flex flex-row rounded py-1 px-2 ml-1 mt-1 gap-2"
-                          });
-              }));
+  var todo = props.todo;
+  return JsxRuntime.jsxs("div", {
+              children: [
+                JsxRuntime.jsx("button", {
+                      children: JsxRuntime.jsx(Tb.TbInbox, {}),
+                      className: [
+                          Core__Option.mapOr(todo, false, (function (todo) {
+                                  return todo.modes_shown.includes("Working");
+                                })) ? " text-blue-600" : "text-[var(--t3)]",
+                          "w-6 h-6 flex flex-row items-center justify-center rounded"
+                        ].join(" "),
+                      onClick: (function (param) {
+                          Core__Option.mapOr(todo, undefined, (function (todo) {
+                                  Common.setTodoModesShown(todo.id, (function (a) {
+                                          return Common.arrayToggle(a, "Working");
+                                        }));
+                                }));
+                        })
+                    }),
+                JsxRuntime.jsx("button", {
+                      children: JsxRuntime.jsx(Tb.TbBookmark, {}),
+                      className: [
+                          Core__Option.mapOr(todo, false, (function (todo) {
+                                  return todo.modes_shown.includes("Stashed");
+                                })) ? "text-blue-600" : "text-[var(--t3)]",
+                          "w-6 h-6 flex flex-row items-center justify-center rounded "
+                        ].join(" "),
+                      onClick: (function (param) {
+                          Core__Option.mapOr(todo, undefined, (function (todo) {
+                                  Common.setTodoModesShown(todo.id, (function (a) {
+                                          return Common.arrayToggle(a, "Stashed");
+                                        }));
+                                }));
+                        })
+                    }),
+                JsxRuntime.jsx("button", {
+                      children: JsxRuntime.jsx(Tb.TbArchive, {}),
+                      className: [
+                          Core__Option.mapOr(todo, false, (function (todo) {
+                                  return todo.modes_shown.includes("Archive");
+                                })) ? " text-blue-600" : "text-[var(--t3)]",
+                          "w-6 h-6 flex flex-row items-center justify-center rounded"
+                        ].join(" "),
+                      onClick: (function (param) {
+                          Core__Option.mapOr(todo, undefined, (function (todo) {
+                                  Common.setTodoModesShown(todo.id, (function (a) {
+                                          return Common.arrayToggle(a, "Archive");
+                                        }));
+                                }));
+                        })
+                    })
+              ],
+              className: "flex flex-row rounded py-1 px-2 ml-1 mt-1 gap-2"
+            });
 }
 
 var make = ModeMgr;

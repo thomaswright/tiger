@@ -5,7 +5,7 @@ open Types
 @react.component
 let make = (
   ~todoRelation: todoRelation,
-  ~getTodos: unit => array<todoRelation>,
+  ~getTodos as _: unit => array<todoRelation>,
   ~isSelected,
   ~setSelectedElement,
   ~isDisplayElement,
