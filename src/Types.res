@@ -46,6 +46,7 @@ type todo = {
   hidden: bool,
   mode: mode,
   modes_shown: array<mode>,
+  is_first_of_mode: option<mode>,
 }
 
 type todoRelation = {
@@ -137,7 +138,7 @@ let statusColor = s =>
 // | ResolveNo => "var(--lightPurple)"
 // }
 
-let statusColorText = s => "white"
+let statusColorText = _ => "white"
 // switch s {
 // | Unsorted => "var(--t8)"
 // | Future => "var(--darkBlue)"

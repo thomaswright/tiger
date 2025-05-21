@@ -311,11 +311,37 @@ let make = (
         listItemClass,
         // todoRelation.depth == 0 ? "" : "pl-1",
 
-        " flex flex-row justify-start items-center outline-none",
+        " flex flex-row justify-start items-center outline-none ",
       ]->Array.join(" ")}>
       {Array.make(~length=todoRelation.depth, false)
       ->Array.mapWithIndex((_, i) => {
-        <div key={i->Int.toString} className="self-stretch w-2 ml-2 border-l border-[var(--t3)] " />
+        if i == todoRelation.depth - 1 {
+          // <div
+          //   key={i->Int.toString} className="self-stretch w-2 ml-2 border-l border-[var(--t3)] "
+          // />
+          switch todo.is_first_of_mode {
+          | Some(Archive) =>
+            <div
+              className=" text-[var(--t5)] bg-transparent flex flex-row items-center justify-center mx-0.5">
+              <Icons.Archive className={"w-3"} />
+            </div>
+
+          | Some(Stashed) =>
+            <div
+              className=" text-[var(--t5)] bg-transparent flex flex-row items-center justify-center mx-0.5">
+              <Icons.Bookmark className={"w-3"} />
+            </div>
+
+          | _ =>
+            <div
+              key={i->Int.toString} className="self-stretch w-2 ml-2 border-l border-[var(--t3)] "
+            />
+          }
+        } else {
+          <div
+            key={i->Int.toString} className="self-stretch w-2 ml-2 border-l border-[var(--t3)] "
+          />
+        }
       })
       ->React.array}
       <div
@@ -436,21 +462,21 @@ let make = (
           //     ]->Array.join(" ")}
           //   />
           // </div>
-          {switch todo.mode {
-          | Archive =>
-            <div
-              className=" text-[var(--t6)] bg-transparent flex flex-row items-center justify-center rounded-full mr-1">
-              <Icons.Archive className={"w-3"} />
-            </div>
+          // {switch todo.mode {
+          // | Archive =>
+          //   <div
+          //     className=" text-[var(--t6)] bg-transparent flex flex-row items-center justify-center rounded-full mr-1">
+          //     <Icons.Archive className={"w-3"} />
+          //   </div>
 
-          | Stashed =>
-            <div
-              className=" text-[var(--t6)] bg-transparent flex flex-row items-center justify-center rounded-full mr-1">
-              <Icons.Bookmark className={"w-3"} />
-            </div>
+          // | Stashed =>
+          //   <div
+          //     className=" text-[var(--t6)] bg-transparent flex flex-row items-center justify-center rounded-full mr-1">
+          //     <Icons.Bookmark className={"w-3"} />
+          //   </div>
 
-          | Working => React.null
-          }}
+          // | Working => React.null
+          // }}
           {showCheckboxes
             ? <div
                 className={[

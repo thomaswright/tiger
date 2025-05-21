@@ -120,7 +120,7 @@ function statusColor(s) {
   }
 }
 
-function statusColorText(s) {
+function statusColorText(param) {
   return "white";
 }
 

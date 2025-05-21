@@ -201,34 +201,37 @@ function Todo(props) {
             Common.setTodoMode(todo.id, m);
           })
       });
-  var match$3 = todo.mode;
-  var tmp;
-  switch (match$3) {
-    case "Working" :
-        tmp = null;
-        break;
-    case "Stashed" :
-        tmp = JsxRuntime.jsx("div", {
-              children: JsxRuntime.jsx(Tb.TbBookmark, {
-                    className: "w-3"
-                  }),
-              className: " text-[var(--t6)] bg-transparent flex flex-row items-center justify-center rounded-full mr-1"
-            });
-        break;
-    case "Archive" :
-        tmp = JsxRuntime.jsx("div", {
-              children: JsxRuntime.jsx(Tb.TbArchive, {
-                    className: "w-3"
-                  }),
-              className: " text-[var(--t6)] bg-transparent flex flex-row items-center justify-center rounded-full mr-1"
-            });
-        break;
-    
-  }
   return JsxRuntime.jsx(React.Fragment, {
               children: JsxRuntime.jsxs("li", {
                     children: [
                       Core__Array.make(todoRelation.depth, false).map(function (param, i) {
+                            if (i !== (todoRelation.depth - 1 | 0)) {
+                              return JsxRuntime.jsx("div", {
+                                          className: "self-stretch w-2 ml-2 border-l border-[var(--t3)] "
+                                        }, i.toString());
+                            }
+                            var match = todo.is_first_of_mode;
+                            if (match !== undefined) {
+                              switch (match) {
+                                case "Working" :
+                                    break;
+                                case "Stashed" :
+                                    return JsxRuntime.jsx("div", {
+                                                children: JsxRuntime.jsx(Tb.TbBookmark, {
+                                                      className: "w-3"
+                                                    }),
+                                                className: " text-[var(--t5)] bg-transparent flex flex-row items-center justify-center mx-0.5"
+                                              });
+                                case "Archive" :
+                                    return JsxRuntime.jsx("div", {
+                                                children: JsxRuntime.jsx(Tb.TbArchive, {
+                                                      className: "w-3"
+                                                    }),
+                                                className: " text-[var(--t5)] bg-transparent flex flex-row items-center justify-center mx-0.5"
+                                              });
+                                
+                              }
+                            }
                             return JsxRuntime.jsx("div", {
                                         className: "self-stretch w-2 ml-2 border-l border-[var(--t3)] "
                                       }, i.toString());
@@ -282,7 +285,6 @@ function Todo(props) {
                                                 }),
                                               className: "mr-1 ml-1"
                                             }) : null,
-                                      tmp,
                                       props.showCheckboxes ? JsxRuntime.jsx("div", {
                                               children: JsxRuntime.jsx("input", {
                                                     className: ["border-[var(--t4)] bg-[var(--t0)] rounded text-blue-400 dark:text-blue-800 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500"].join(" "),
@@ -319,7 +321,7 @@ function Todo(props) {
                     ref: Caml_option.some(containerRef),
                     className: [
                         Types.listItemClass,
-                        " flex flex-row justify-start items-center outline-none"
+                        " flex flex-row justify-start items-center outline-none "
                       ].join(" "),
                     id: Types.getTodoId(todo.id),
                     tabIndex: 0,

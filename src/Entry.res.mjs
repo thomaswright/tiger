@@ -60,9 +60,66 @@ function Entry(props) {
                         [],
                         []
                       ], (function (children) {
+                          var hasStashed = {
+                            contents: false
+                          };
+                          var hasArchived = {
+                            contents: false
+                          };
+                          var children$1 = children.toSorted(function (a, b) {
+                                  return Types.modeCompare(a.mode) - Types.modeCompare(b.mode);
+                                }).map(function (child) {
+                                if (!hasStashed.contents && child.mode === "Stashed") {
+                                  hasStashed.contents = true;
+                                  return {
+                                          id: child.id,
+                                          counter: child.counter,
+                                          text: child.text,
+                                          additional_text: child.additional_text,
+                                          done: child.done,
+                                          created_at: child.created_at,
+                                          updated_at: child.updated_at,
+                                          parent_todo: child.parent_todo,
+                                          deleted: child.deleted,
+                                          user_id: child.user_id,
+                                          position: child.position,
+                                          status: child.status,
+                                          outfit: child.outfit,
+                                          target_date: child.target_date,
+                                          hidden: child.hidden,
+                                          mode: child.mode,
+                                          modes_shown: child.modes_shown,
+                                          is_first_of_mode: "Stashed"
+                                        };
+                                } else if (!hasArchived.contents && child.mode === "Archive") {
+                                  hasArchived.contents = true;
+                                  return {
+                                          id: child.id,
+                                          counter: child.counter,
+                                          text: child.text,
+                                          additional_text: child.additional_text,
+                                          done: child.done,
+                                          created_at: child.created_at,
+                                          updated_at: child.updated_at,
+                                          parent_todo: child.parent_todo,
+                                          deleted: child.deleted,
+                                          user_id: child.user_id,
+                                          position: child.position,
+                                          status: child.status,
+                                          outfit: child.outfit,
+                                          target_date: child.target_date,
+                                          hidden: child.hidden,
+                                          mode: child.mode,
+                                          modes_shown: child.modes_shown,
+                                          is_first_of_mode: "Archive"
+                                        };
+                                } else {
+                                  return child;
+                                }
+                              });
                           return [
-                                  children,
-                                  recurse(showAll ? children : filterer(children, self), depth + 1 | 0, self, sibs, index, showAll)
+                                  children$1,
+                                  recurse(showAll ? children$1 : filterer(children$1, self), depth + 1 | 0, self, sibs, index, showAll)
                                 ];
                         }));
                   var children = match[0];
