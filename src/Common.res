@@ -90,17 +90,19 @@ let deleteTodoAndMoveChildren = todoRelation => {
       setTodoPosition(
         child.id,
         todo.parent_todo,
-        todoRelation.sibs
-        ->Array.get(todoRelation.index + 1)
-        ->Option.mapOr(
-          todo.position +. i->Int.toFloat,
-          sib => {
-            let step =
-              (sib.position -. todo.position) /.
-                (todoRelation.children->Array.length->Int.toFloat +. 1.)
-            todo.position +. step *. i->Int.toFloat
-          },
-        ),
+        0.,
+
+        // todoRelation.sibs
+        // ->Array.get(todoRelation.index + 1)
+        // ->Option.mapOr(
+        //   todo.position +. i->Int.toFloat,
+        //   sib => {
+        //     let step =
+        //       (sib.position -. todo.position) /.
+        //         (todoRelation.children->Array.length->Int.toFloat +. 1.)
+        //     todo.position +. step *. i->Int.toFloat
+        //   },
+        // ),
       )
     })
   })

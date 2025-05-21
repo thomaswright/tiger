@@ -100,10 +100,7 @@ function deleteTodoAndMoveChildren(todoRelation) {
   State.batch(function () {
         SupaLegendTs.deleteTodo(todo.id);
         todoRelation.children.forEach(function (child, i) {
-              setTodoPosition(child.id, todo.parent_todo, Core__Option.mapOr(todoRelation.sibs[todoRelation.index + 1 | 0], todo.position + i, (function (sib) {
-                          var step = (sib.position - todo.position) / (todoRelation.children.length + 1);
-                          return todo.position + step * i;
-                        })));
+              setTodoPosition(child.id, todo.parent_todo, 0);
             });
       });
 }

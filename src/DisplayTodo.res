@@ -167,7 +167,7 @@ let make = (~todoRelation: todoRelation, ~setFocusIdNext) => {
       </button>
     </div>
     {todoRelation.children->Array.length > 0 ? <ModeMgr todo={todo->Some} /> : React.null}
-    <div className="p-2 pt-0">
+    <div className="p-2">
       <Common.TextareaAutosize
         ref={ReactDOM.Ref.domRef(additionalTextRef)}
         style={{

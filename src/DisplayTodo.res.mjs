@@ -150,7 +150,7 @@ function DisplayTodo(props) {
                                     });
                               })
                           }),
-                      className: "p-2 pt-0"
+                      className: "p-2"
                     })
               ],
               className: "w-full flex-1 overflow-y-scroll"

@@ -8,7 +8,6 @@ import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as Belt_SetString from "rescript/lib/es6/belt_SetString.js";
-import * as State from "@legendapp/state";
 import * as JsxRuntime from "react/jsx-runtime";
 import FormatISO from "date-fns/formatISO";
 import ReactTextareaAutosize from "react-textarea-autosize";
@@ -20,7 +19,6 @@ function Todo(props) {
   var setDisplayElement = props.setDisplayElement;
   var setSelectedElement = props.setSelectedElement;
   var isSelected = props.isSelected;
-  var getTodos = props.getTodos;
   var todoRelation = props.todoRelation;
   var todo = todoRelation.self;
   var match = React.useState(function () {
@@ -53,52 +51,6 @@ function Todo(props) {
             dom.focus();
           }));
   };
-  var indentation = function (e) {
-    if (e.key === "Tab") {
-      e.preventDefault();
-    }
-    if (e.key === "Tab" && !e.shiftKey || e.key === "]" && e.metaKey) {
-      e.preventDefault();
-      State.batch(function () {
-            Core__Option.mapOr(todoRelation.sibs[todoRelation.index - 1 | 0], undefined, (function (x) {
-                    Core__Option.mapOr(getTodos().find(function (t) {
-                              return t.self.id === x.id;
-                            }), undefined, (function (prevSib) {
-                            Core__Option.mapOr(prevSib.children[prevSib.children.length - 1 | 0], Common.setTodoPosition(todo.id, x.id, 1), (function (prevSibLastChild) {
-                                    Common.setTodoPosition(todo.id, x.id, prevSibLastChild.position + 1);
-                                  }));
-                          }));
-                    todoRelation.children.forEach(function (v) {
-                          Common.setTodoPosition(v.id, x.id, todo.position + v.position);
-                        });
-                  }));
-          });
-    }
-    if ((e.key === "Tab" && e.shiftKey || e.key === "[" && e.metaKey) && !(todo.parent_todo == null)) {
-      e.preventDefault();
-      State.batch(function () {
-            var newTodoParent = Common.toNullableNull(Core__Option.flatMap(Caml_option.nullable_to_opt(todoRelation.parent), (function (x) {
-                        return Caml_option.nullable_to_opt(x.parent_todo);
-                      })));
-            var match = todoRelation.parent;
-            var match$1 = todoRelation.tios[todoRelation.parentIndex + 1 | 0];
-            var newTodoPosition = (match == null) ? (
-                match$1 !== undefined ? match$1.position - 1 : 1
-              ) : (
-                match$1 !== undefined ? (match.position + match$1.position) / 2 : match.position + 1
-              );
-            Common.setTodoPosition(todo.id, newTodoParent, newTodoPosition);
-            todoRelation.sibs.slice(todoRelation.index + 1 | 0).forEach(function (v) {
-                  var newPosition = Core__Option.mapOr(todoRelation.children[todoRelation.children.length - 1 | 0], 0, (function (c) {
-                          return c.position;
-                        })) + v.position;
-                  Common.setTodoPosition(v.id, todo.id, newPosition);
-                });
-          });
-      return ;
-    }
-    
-  };
   var makeNewTodo = function () {
     var newPosition = todoRelation.depth === 0 || todoRelation.children.length > 0 ? Core__Option.mapOr(todoRelation.children[0], 0, (function (x) {
               return x.position - 1;
@@ -114,7 +66,6 @@ function Todo(props) {
   var onKeyDownContainer = function (e) {
     if (isSelected && Caml_obj.equal(Caml_option.nullable_to_opt(containerRef.current), Caml_option.nullable_to_opt(document.activeElement))) {
       return Common.mapNullable(containerRef.current, (function (dom) {
-                    indentation(e);
                     if (e.key === "s") {
                       e.preventDefault();
                       setStatusSelectIsOpen(function (param) {
@@ -183,7 +134,6 @@ function Todo(props) {
           return false;
         });
     Common.mapNullable(inputRef.current, (function (dom) {
-            indentation(e);
             var cursorPosition = Core__Option.getOr(Caml_option.nullable_to_opt(dom.selectionStart), 0);
             var inputValueLength = dom.value.length;
             if (e.key === "ArrowUp") {

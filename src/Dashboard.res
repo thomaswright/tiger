@@ -3,12 +3,7 @@ open Common
 open Types
 
 @react.component
-let make = (
-  ~todos: array<todoRelation>,
-  ~allTodos: array<todoRelation>,
-  ~logout: unit => unit,
-  ~rootTodos,
-) => {
+let make = (~todos: array<todoRelation>, ~allTodos: array<todoRelation>, ~logout: unit => unit) => {
   let (selectedElement, setSelectedElement, _) = useSessionStorage(
     StorageKeys.selectedElement,
     None,
@@ -178,7 +173,7 @@ let make = (
           <Settings onExportJson={_ => ()} onImportJson={onImportJson} setBaseColor logout />
         | Some(ProjectList) =>
           <div className="overflow-y-scroll">
-            <ModeMgr todo={None} todos={rootTodos} />
+            <ModeMgr todo={None} />
           </div>
 
         | None => React.null

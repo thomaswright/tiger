@@ -43,86 +43,86 @@ let make = (
     })
   }
 
-  let indentation = e => {
-    if e->ReactEvent.Keyboard.key == "Tab" {
-      e->ReactEvent.Keyboard.preventDefault
-    }
+  // let indentation = e => {
+  //   if e->ReactEvent.Keyboard.key == "Tab" {
+  //     e->ReactEvent.Keyboard.preventDefault
+  //   }
 
-    // Indents
-    if (
-      (e->ReactEvent.Keyboard.key == "Tab" && !(e->ReactEvent.Keyboard.shiftKey)) ||
-        (e->ReactEvent.Keyboard.key == "]" && e->ReactEvent.Keyboard.metaKey)
-    ) {
-      e->ReactEvent.Keyboard.preventDefault
-      batch(() => {
-        todoRelation.sibs
-        ->Array.get(todoRelation.index - 1)
-        ->Option.mapOr((), x => {
-          getTodos()
-          ->Array.find(t => t.self.id == x.id)
-          ->Option.mapOr(
-            (),
-            prevSib => {
-              prevSib.children
-              ->Array.get(prevSib.children->Array.length - 1)
-              ->Option.mapOr(
-                {
-                  setTodoPosition(todo.id, Value(x.id), 1.)
-                },
-                prevSibLastChild => {
-                  setTodoPosition(todo.id, Value(x.id), prevSibLastChild.position +. 1.)
-                },
-              )
-            },
-          )
-          todoRelation.children->Array.forEach(
-            v => {
-              setTodoPosition(v.id, Value(x.id), todo.position +. v.position)
-            },
-          )
-        })
-      })
-    }
+  //   // Indents
+  //   if (
+  //     (e->ReactEvent.Keyboard.key == "Tab" && !(e->ReactEvent.Keyboard.shiftKey)) ||
+  //       (e->ReactEvent.Keyboard.key == "]" && e->ReactEvent.Keyboard.metaKey)
+  //   ) {
+  //     e->ReactEvent.Keyboard.preventDefault
+  //     batch(() => {
+  //       todoRelation.sibs
+  //       ->Array.get(todoRelation.index - 1)
+  //       ->Option.mapOr((), x => {
+  //         getTodos()
+  //         ->Array.find(t => t.self.id == x.id)
+  //         ->Option.mapOr(
+  //           (),
+  //           prevSib => {
+  //             prevSib.children
+  //             ->Array.get(prevSib.children->Array.length - 1)
+  //             ->Option.mapOr(
+  //               {
+  //                 setTodoPosition(todo.id, Value(x.id), 1.)
+  //               },
+  //               prevSibLastChild => {
+  //                 setTodoPosition(todo.id, Value(x.id), prevSibLastChild.position +. 1.)
+  //               },
+  //             )
+  //           },
+  //         )
+  //         todoRelation.children->Array.forEach(
+  //           v => {
+  //             setTodoPosition(v.id, Value(x.id), todo.position +. v.position)
+  //           },
+  //         )
+  //       })
+  //     })
+  //   }
 
-    // De Indents
-    if (
-      ((e->ReactEvent.Keyboard.key == "Tab" && e->ReactEvent.Keyboard.shiftKey) ||
-        (e->ReactEvent.Keyboard.key == "[" && e->ReactEvent.Keyboard.metaKey)) &&
-        !(todo.parent_todo->Nullable.isNullable)
-    ) {
-      e->ReactEvent.Keyboard.preventDefault
+  //   // De Indents
+  //   if (
+  //     ((e->ReactEvent.Keyboard.key == "Tab" && e->ReactEvent.Keyboard.shiftKey) ||
+  //       (e->ReactEvent.Keyboard.key == "[" && e->ReactEvent.Keyboard.metaKey)) &&
+  //       !(todo.parent_todo->Nullable.isNullable)
+  //   ) {
+  //     e->ReactEvent.Keyboard.preventDefault
 
-      batch(() => {
-        let newTodoParent =
-          todoRelation.parent
-          ->Nullable.toOption
-          ->Option.flatMap(x => x.parent_todo->Nullable.toOption)
-          ->toNullableNull
+  //     batch(() => {
+  //       let newTodoParent =
+  //         todoRelation.parent
+  //         ->Nullable.toOption
+  //         ->Option.flatMap(x => x.parent_todo->Nullable.toOption)
+  //         ->toNullableNull
 
-        let newTodoPosition = switch (
-          todoRelation.parent->Nullable.toOption,
-          todoRelation.tios->Array.get(todoRelation.parentIndex + 1),
-        ) {
-        | (Some(parent), Some(parentsNextSib)) => (parent.position +. parentsNextSib.position) /. 2.
-        | (Some(parent), _) => parent.position +. 1.
-        | (_, Some(parentsNextSib)) => parentsNextSib.position -. 1.
-        | _ => 1.
-        }
-        setTodoPosition(todo.id, newTodoParent, newTodoPosition)
+  //       let newTodoPosition = switch (
+  //         todoRelation.parent->Nullable.toOption,
+  //         todoRelation.tios->Array.get(todoRelation.parentIndex + 1),
+  //       ) {
+  //       | (Some(parent), Some(parentsNextSib)) => (parent.position +. parentsNextSib.position) /. 2.
+  //       | (Some(parent), _) => parent.position +. 1.
+  //       | (_, Some(parentsNextSib)) => parentsNextSib.position -. 1.
+  //       | _ => 1.
+  //       }
+  //       setTodoPosition(todo.id, newTodoParent, newTodoPosition)
 
-        todoRelation.sibs
-        ->Array.sliceToEnd(~start=todoRelation.index + 1)
-        ->Array.forEach(v => {
-          let newPosition =
-            todoRelation.children
-            ->Array.get(todoRelation.children->Array.length - 1)
-            ->Option.mapOr(0., c => c.position) +. v.position
+  //       todoRelation.sibs
+  //       ->Array.sliceToEnd(~start=todoRelation.index + 1)
+  //       ->Array.forEach(v => {
+  //         let newPosition =
+  //           todoRelation.children
+  //           ->Array.get(todoRelation.children->Array.length - 1)
+  //           ->Option.mapOr(0., c => c.position) +. v.position
 
-          setTodoPosition(v.id, todo.id->Value, newPosition)
-        })
-      })
-    }
-  }
+  //         setTodoPosition(v.id, todo.id->Value, newPosition)
+  //       })
+  //     })
+  //   }
+  // }
 
   let makeNewTodo = () => {
     let newPosition =
@@ -148,7 +148,7 @@ let make = (
       containerRef.current->Nullable.toOption == Webapi.Dom.document->Document.activeElement
     ) {
       containerRef.current->mapNullable(dom => {
-        indentation(e)
+        // indentation(e)
         if e->key == "s" {
           e->preventDefault
           setStatusSelectIsOpen(_ => true)
@@ -217,7 +217,7 @@ let make = (
     setStagedForDelete(_ => false)
 
     inputRef.current->mapNullable(dom => {
-      indentation(e)
+      // indentation(e)
 
       let cursorPosition = dom->Obj.magic->HtmlInputElement.selectionStart->Option.getOr(0)
       let inputValueLength = dom->Obj.magic->HtmlInputElement.value->String.length

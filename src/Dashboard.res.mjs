@@ -120,8 +120,7 @@ function Dashboard(props) {
                   logout: props.logout
                 }) : JsxRuntime.jsx("div", {
                   children: JsxRuntime.jsx(ModeMgr.make, {
-                        todo: undefined,
-                        todos: props.rootTodos
+                        todo: undefined
                       }),
                   className: "overflow-y-scroll"
                 })
