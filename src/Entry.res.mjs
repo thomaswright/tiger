@@ -137,10 +137,12 @@ function Entry(props) {
                 }));
   };
   var todosToDisplay = Core__Option.mapOr(Belt_MapString.get(todos, "root"), [], (function (root) {
-          return recurse(root.filter(function (x) {
-                          return x.mode === "Working";
-                        }), 0, null, [], 0, false);
-        }));
+            return recurse(root.filter(function (x) {
+                            return x.mode === "Working";
+                          }), 0, null, [], 0, false);
+          })).filter(function (x) {
+        return x.depth !== 0;
+      });
   var allTodos = Core__Option.mapOr(Belt_MapString.get(todos, "root"), [], (function (root) {
           return recurse(root, 0, null, [], 0, true);
         }));

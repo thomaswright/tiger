@@ -137,6 +137,7 @@ let make = (~input: array<todo>, ~logout) => {
     ->Option.mapOr([], root =>
       recurse(root->Array.filter(x => x.mode == Working), 0, Null, [], 0, false)
     )
+    ->Array.filter(x => x.depth != 0)
 
   let allTodos =
     todos

@@ -313,7 +313,7 @@ let make = (
 
         " flex flex-row justify-start items-center outline-none ",
       ]->Array.join(" ")}>
-      {Array.make(~length=todoRelation.depth, false)
+      {Array.make(~length=todoRelation.depth - 1, false)
       ->Array.mapWithIndex((_, i) => {
         if i == todoRelation.depth - 1 {
           // <div

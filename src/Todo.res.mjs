@@ -199,7 +199,7 @@ function Todo(props) {
   return JsxRuntime.jsx(React.Fragment, {
               children: JsxRuntime.jsxs("li", {
                     children: [
-                      Core__Array.make(todoRelation.depth, false).map(function (param, i) {
+                      Core__Array.make(todoRelation.depth - 1 | 0, false).map(function (param, i) {
                             if (i !== (todoRelation.depth - 1 | 0)) {
                               return JsxRuntime.jsx("div", {
                                           className: "self-stretch w-2 ml-2 border-l border-[var(--t3)] "
