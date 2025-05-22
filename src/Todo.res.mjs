@@ -236,6 +236,9 @@ function Todo(props) {
                               statusSelect,
                               JsxRuntime.jsxs("div", {
                                     children: [
+                                      isSelected ? null : JsxRuntime.jsx("div", {
+                                              className: "h-px w-full absolute bg-[var(--t2)] -bottom-1"
+                                            }),
                                       JsxRuntime.jsx(ReactTextareaAutosize, {
                                             ref: Caml_option.some(inputRef),
                                             className: [
@@ -318,7 +321,7 @@ function Todo(props) {
                                                                   })
                                                               }) : null,
                                                         JsxRuntime.jsx("button", {
-                                                              children: JsxRuntime.jsx(Tb.TbChevronUp, {}),
+                                                              children: JsxRuntime.jsx(Tb.TbMinus, {}),
                                                               className: "mr-4  text-[var(--t5)]",
                                                               onClick: (function (param) {
                                                                   Common.setTodoModesShown(todo.id, (function (param) {
@@ -355,9 +358,7 @@ function Todo(props) {
                                 " flex group flex-row justify-start items-center h-full flex-1 rounded-sm  py-1 pl-1",
                                 stagedForDelete ? "outline-red-700 dark:outline-red-500" : "focus-within:outline-purple-500 outline-blue-500 ",
                                 stagedForDelete ? "bg-red-200 dark:bg-red-950" : (
-                                    isChecked ? "bg-sky-50 dark:bg-sky-950" : (
-                                        props.isDisplayElement && !isSelected ? "bg-sky-200 dark:bg-sky-900" : ""
-                                      )
+                                    isChecked ? "bg-sky-50 dark:bg-sky-950" : ""
                                   ),
                                 isSelected ? "outline outline-2 -outline-offset-2 " : ""
                               ].join(" ")

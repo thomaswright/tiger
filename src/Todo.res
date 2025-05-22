@@ -354,8 +354,8 @@ let make = (
             ? "bg-red-200 dark:bg-red-950"
             : isChecked
             ? "bg-sky-50 dark:bg-sky-950"
-            : isDisplayElement && !isSelected
-            ? "bg-sky-200 dark:bg-sky-900"
+            // : isDisplayElement && !isSelected
+            // ? "bg-sky-200 dark:bg-sky-900"
             : "",
           isSelected ? "outline outline-2 -outline-offset-2 " : "",
           // switch todo.mode {
@@ -389,9 +389,6 @@ let make = (
           //   React.null
           // }}
 
-          // {isSelected || isDisplayElement
-          //   ? React.null
-          //   : <div className="h-px w-full absolute bg-[var(--t3)] -bottom-0.5" />}
           // <div className="w-3 flex flex-row justify-center items-center ">
           //   <button
           //     className={[
@@ -404,6 +401,9 @@ let make = (
           //     ]->Array.join(" ")}
           //   />
           // </div>
+          {isSelected
+            ? React.null
+            : <div className="h-px w-full absolute bg-[var(--t2)] -bottom-1" />}
           <Common.TextareaAutosize
             id={getTodoInputId(todo.id)}
             ref={ReactDOM.Ref.domRef(inputRef)}
@@ -526,7 +526,7 @@ let make = (
                   <button
                     className="mr-4  text-[var(--t5)]"
                     onClick={_ => setTodoModesShown(todo.id, _ => [])}>
-                    <Icons.ChevronUp />
+                    <Icons.Minus />
                   </button>
                 </React.Fragment>
               }}
