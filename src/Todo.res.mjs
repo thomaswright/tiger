@@ -280,6 +280,25 @@ function Todo(props) {
                                                 }),
                                               className: "mr-1 ml-1"
                                             }) : null,
+                                      todoRelation.children.length > 0 ? (
+                                          todo.modes_shown.length === 0 ? JsxRuntime.jsx("button", {
+                                                  children: JsxRuntime.jsx(Tb.TbChevronRight, {}),
+                                                  className: "mr-4 text-[var(--t5)]",
+                                                  onClick: (function (param) {
+                                                      Common.setTodoModesShown(todo.id, (function (a) {
+                                                              return Common.arrayToggle(a, "Working");
+                                                            }));
+                                                    })
+                                                }) : JsxRuntime.jsx("button", {
+                                                  children: JsxRuntime.jsx(Tb.TbChevronDown, {}),
+                                                  className: "mr-4  text-[var(--t5)]",
+                                                  onClick: (function (param) {
+                                                      Common.setTodoModesShown(todo.id, (function (param) {
+                                                              return [];
+                                                            }));
+                                                    })
+                                                })
+                                        ) : null,
                                       props.showCheckboxes ? JsxRuntime.jsx("div", {
                                               children: JsxRuntime.jsx("input", {
                                                     className: ["border-[var(--t4)] bg-[var(--t0)] rounded text-blue-400 dark:text-blue-800 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500"].join(" "),

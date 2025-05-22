@@ -477,6 +477,23 @@ let make = (
 
           // | Working => React.null
           // }}
+          {if todoRelation.children->Array.length > 0 {
+            if todo.modes_shown->Array.length == 0 {
+              <button
+                className="mr-4 text-[var(--t5)]"
+                onClick={_ => setTodoModesShown(todo.id, a => a->arrayToggle(Working))}>
+                <Icons.ChevronRight />
+              </button>
+            } else {
+              <button
+                className="mr-4  text-[var(--t5)]"
+                onClick={_ => setTodoModesShown(todo.id, _ => [])}>
+                <Icons.ChevronDown />
+              </button>
+            }
+          } else {
+            React.null
+          }}
           {showCheckboxes
             ? <div
                 className={[
