@@ -69,13 +69,13 @@ external setTodoModesShown: (string, array<mode> => array<mode>) => unit = "setT
 external setTodoStatus: (string, status) => unit = "setTodoStatus"
 
 @module("./utils/SupaLegend.ts")
-external setTodoPosition: (string, Nullable.t<string>) => unit = "setTodoPosition"
+external setTodoPosition: (string, string) => unit = "setTodoPosition"
 
 // @module("./utils/SupaLegend.ts")
 // external toggleDone: string => unit = "toggleDone"
 
 @module("./utils/SupaLegend.ts")
-external deleteTodo: string => unit = "deleteTodo"
+external deleteTodo: (string, string) => unit = "deleteTodo"
 
 @module("@legendapp/state")
 external batch: (unit => unit) => unit = "batch"
@@ -85,23 +85,30 @@ external batch: (unit => unit) => unit = "batch"
 let deleteTodoAndMoveChildren = todoRelation => {
   let todo = todoRelation.self
   batch(() => {
-    deleteTodo(todo.id)
-    todoRelation.children->Array.forEachWithIndex((child, _i) => {
-      setTodoPosition(
-        child.id,
-        todo.parent_todo,
+    todo.parent_todo
+    ->Nullable.toOption
+    ->Option.mapOr((), parent_todo => {
+      deleteTodo(todo.id, parent_todo)
 
-        // todoRelation.sibs
-        // ->Array.get(todoRelation.index + 1)
-        // ->Option.mapOr(
-        //   todo.position +. i->Int.toFloat,
-        //   sib => {
-        //     let step =
-        //       (sib.position -. todo.position) /.
-        //         (todoRelation.children->Array.length->Int.toFloat +. 1.)
-        //     todo.position +. step *. i->Int.toFloat
-        //   },
-        // ),
+      todoRelation.children->Array.forEachWithIndex(
+        (child, _i) => {
+          setTodoPosition(
+            child.id,
+            parent_todo,
+
+            // todoRelation.sibs
+            // ->Array.get(todoRelation.index + 1)
+            // ->Option.mapOr(
+            //   todo.position +. i->Int.toFloat,
+            //   sib => {
+            //     let step =
+            //       (sib.position -. todo.position) /.
+            //         (todoRelation.children->Array.length->Int.toFloat +. 1.)
+            //     todo.position +. step *. i->Int.toFloat
+            //   },
+            // ),
+          )
+        },
       )
     })
   })

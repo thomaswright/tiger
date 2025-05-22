@@ -85,8 +85,8 @@ function setTodoPosition(prim0, prim1) {
   SupaLegendTs.setTodoPosition(prim0, prim1);
 }
 
-function deleteTodo(prim) {
-  SupaLegendTs.deleteTodo(prim);
+function deleteTodo(prim0, prim1) {
+  SupaLegendTs.deleteTodo(prim0, prim1);
 }
 
 var logoUrl = TigerSvg;
@@ -94,10 +94,12 @@ var logoUrl = TigerSvg;
 function deleteTodoAndMoveChildren(todoRelation) {
   var todo = todoRelation.self;
   State.batch(function () {
-        SupaLegendTs.deleteTodo(todo.id);
-        todoRelation.children.forEach(function (child, _i) {
-              SupaLegendTs.setTodoPosition(child.id, todo.parent_todo);
-            });
+        Core__Option.mapOr(Caml_option.nullable_to_opt(todo.parent_todo), undefined, (function (parent_todo) {
+                SupaLegendTs.deleteTodo(todo.id, parent_todo);
+                todoRelation.children.forEach(function (child, _i) {
+                      SupaLegendTs.setTodoPosition(child.id, parent_todo);
+                    });
+              }));
       });
 }
 

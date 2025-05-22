@@ -19,7 +19,10 @@ configureSyncedSupabase({
   generateId,
 });
 
-export const uid$: ObservablePrimitive<string> = observable("");
+// this is mock placeholder because the server will complain if
+// not properly formatted and i don't know the type of the
+// return from from.select to put in an empty placeholder below
+export const uid$: ObservablePrimitive<string> = observable(uuidv4());
 
 export const todos$ = observable(
   syncedSupabase({
@@ -89,6 +92,84 @@ export function addTodo(
   return id;
 }
 
+export function deleteTodo(id: string, parent_todo: string) {
+  todos$[id].delete();
+  todos$[parent_todo].order.set((prev) => prev.filter((v) => v !== id));
+}
+
+export function setTodoText(id: string, text: string) {
+  todos$[id].text.set(text);
+}
+
+export function setTodoDate(id: string, date: string | null) {
+  todos$[id].target_date.set(date);
+}
+
+export function setTodoAdditionalText(id: string, text: string) {
+  todos$[id].additional_text.set(text);
+}
+
+export function setTodoMode(
+  id: string,
+  mode: "Working" | "Archive" | "Stashed"
+) {
+  todos$[id].mode.set(mode);
+}
+
+export function setTodoModesShown(
+  id: string,
+  setter: (
+    modes: ReadonlyArray<"Working" | "Archive" | "Stashed">
+  ) => Array<"Working" | "Archive" | "Stashed">
+) {
+  todos$[id].modes_shown.set(setter);
+}
+
+export function setTodoStatus(
+  id: string,
+  status:
+    | "Unsorted"
+    | "Future"
+    | "NowIfTime"
+    | "NowMustDo"
+    | "Underway"
+    | "Paused"
+    | "ResolveDone"
+    | "ResolveNo"
+) {
+  todos$[id].status.set(status);
+}
+
+export function setTodoPosition(
+  id: string,
+  newParent: string
+  // newPosition: number
+) {
+  let oldParent = todos$[id].parent_todo.peek();
+  if (oldParent !== null) {
+    todos$[oldParent].order.set((prev) => prev.filter((v) => v !== id));
+  }
+  todos$[newParent].order.set((prev) => [id, ...(prev ?? [])]);
+  todos$[id].assign({
+    parent_todo: newParent,
+  });
+}
+
+// export function toggleDone(id: string) {
+//   todos$[id].done.set((prev) => !prev);
+// }
+
+// export function setTodoOutfit(
+//   id: string,
+//   outfit: "Todo" | "Project" | "Group"
+// ) {
+//   todos$[id].outfit.set(outfit);
+// }
+
+// export function setTodoHidden(id: string, isHidden: boolean) {
+//   todos$[id].hidden.set(isHidden);
+// }
+
 // type status =
 //   | "Unsorted"
 //   | "Future"
@@ -122,87 +203,3 @@ export function addTodo(
 //     status,
 //   });
 // }
-
-export function deleteTodo(id: string) {
-  let todo = todos$[id].peek();
-  if (todo.parent_todo !== null) {
-    todos$[todo.parent_todo].order.set((prev) => prev.filter((v) => v !== id));
-  }
-
-  todos$[id].delete();
-}
-
-// export function toggleDone(id: string) {
-//   todos$[id].done.set((prev) => !prev);
-// }
-
-export function setTodoText(id: string, text: string) {
-  todos$[id].text.set(text);
-}
-
-export function setTodoDate(id: string, date: string | null) {
-  todos$[id].target_date.set(date);
-}
-
-export function setTodoAdditionalText(id: string, text: string) {
-  todos$[id].additional_text.set(text);
-}
-
-// export function setTodoOutfit(
-//   id: string,
-//   outfit: "Todo" | "Project" | "Group"
-// ) {
-//   todos$[id].outfit.set(outfit);
-// }
-
-export function setTodoMode(
-  id: string,
-  mode: "Working" | "Archive" | "Stashed"
-) {
-  todos$[id].mode.set(mode);
-}
-
-export function setTodoModesShown(
-  id: string,
-  setter: (
-    modes: ReadonlyArray<"Working" | "Archive" | "Stashed">
-  ) => Array<"Working" | "Archive" | "Stashed">
-) {
-  todos$[id].modes_shown.set(setter);
-}
-
-// export function setTodoHidden(id: string, isHidden: boolean) {
-//   todos$[id].hidden.set(isHidden);
-// }
-
-export function setTodoStatus(
-  id: string,
-  status:
-    | "Unsorted"
-    | "Future"
-    | "NowIfTime"
-    | "NowMustDo"
-    | "Underway"
-    | "Paused"
-    | "ResolveDone"
-    | "ResolveNo"
-) {
-  todos$[id].status.set(status);
-}
-
-export function setTodoPosition(
-  id: string,
-  newParent: string | null
-  // newPosition: number
-) {
-  let oldParent = todos$[id].parent_todo.peek();
-  if (oldParent !== null) {
-    todos$[oldParent].order.set((prev) => prev.filter((v) => v !== id));
-  }
-  if (newParent !== null) {
-    todos$[newParent].order.set((prev) => [id, ...(prev ?? [])]);
-  }
-  todos$[id].assign({
-    parent_todo: newParent,
-  });
-}
