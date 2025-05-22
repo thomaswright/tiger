@@ -2,7 +2,6 @@
 
 import * as Types from "./Types.res.mjs";
 import * as Dashboard from "./Dashboard.res.mjs";
-import * as Core__Date from "@rescript/core/src/Core__Date.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
@@ -10,39 +9,15 @@ import * as Belt_MapString from "rescript/lib/es6/belt_MapString.js";
 import * as JsxRuntime from "react/jsx-runtime";
 
 function Entry(props) {
-  var todos = Belt_MapString.map(Core__Array.reduce(props.input, undefined, (function (a, c) {
-              var key = Core__Option.getOr(Caml_option.nullable_to_opt(c.parent_todo), "root");
-              return Belt_MapString.update(a, key, (function (o) {
-                            if (o !== undefined) {
-                              return o.concat([c]);
-                            } else {
-                              return [c];
-                            }
-                          }));
-            })), (function (v) {
-          return v.toSorted(function (a, b) {
-                      var result = 0;
-                      if (result === 0) {
-                        var match = Core__Option.map(Caml_option.nullable_to_opt(a.target_date), (function (prim) {
-                                return new Date(prim);
-                              }));
-                        var match$1 = Core__Option.map(Caml_option.nullable_to_opt(b.target_date), (function (prim) {
-                                return new Date(prim);
-                              }));
-                        result = match !== undefined ? (
-                            match$1 !== undefined ? Core__Date.compare(Caml_option.valFromOption(match), Caml_option.valFromOption(match$1)) : -1
-                          ) : (
-                            match$1 !== undefined ? 1 : 0
-                          );
-                      }
-                      if (result === 0) {
-                        result = Types.modeCompare(a.mode) - Types.modeCompare(b.mode);
-                      }
-                      if (result === 0) {
-                        result = Core__Option.getOr(Caml_option.nullable_to_opt(a.text), "").localeCompare(Core__Option.getOr(Caml_option.nullable_to_opt(b.text), ""));
-                      }
-                      return result;
-                    });
+  var todos = Core__Array.reduce(props.input, undefined, (function (a, c) {
+          var key = Core__Option.getOr(Caml_option.nullable_to_opt(c.parent_todo), "root");
+          return Belt_MapString.update(a, key, (function (o) {
+                        if (o !== undefined) {
+                          return o.concat([c]);
+                        } else {
+                          return [c];
+                        }
+                      }));
         }));
   var filterer = function (arr, c) {
     return arr.filter(function (x) {
@@ -67,7 +42,22 @@ function Entry(props) {
                             contents: false
                           };
                           var children$1 = children.toSorted(function (a, b) {
-                                  return Types.modeCompare(a.mode) - Types.modeCompare(b.mode);
+                                  var result = 0;
+                                  if (result === 0) {
+                                    result = Types.modeCompare(a.mode) - Types.modeCompare(b.mode);
+                                  }
+                                  if (result === 0) {
+                                    var len = self.order.length;
+                                    var aIndex = self.order.indexOf(a.id);
+                                    var bIndex = self.order.indexOf(b.id);
+                                    var aIndex$1 = aIndex === -1 ? len : aIndex;
+                                    var bIndex$1 = bIndex === -1 ? len : bIndex;
+                                    result = aIndex$1 - bIndex$1 | 0;
+                                  }
+                                  if (result === 0) {
+                                    result = Core__Option.getOr(Caml_option.nullable_to_opt(a.text), "").localeCompare(Core__Option.getOr(Caml_option.nullable_to_opt(b.text), ""));
+                                  }
+                                  return result;
                                 }).map(function (child) {
                                 if (!hasStashed.contents && child.mode === "Stashed") {
                                   hasStashed.contents = true;
@@ -76,16 +66,14 @@ function Entry(props) {
                                           counter: child.counter,
                                           text: child.text,
                                           additional_text: child.additional_text,
-                                          done: child.done,
                                           created_at: child.created_at,
                                           updated_at: child.updated_at,
                                           parent_todo: child.parent_todo,
                                           deleted: child.deleted,
                                           user_id: child.user_id,
+                                          order: child.order,
                                           status: child.status,
-                                          outfit: child.outfit,
                                           target_date: child.target_date,
-                                          hidden: child.hidden,
                                           mode: child.mode,
                                           modes_shown: child.modes_shown,
                                           is_first_of_mode: "Stashed"
@@ -97,16 +85,14 @@ function Entry(props) {
                                           counter: child.counter,
                                           text: child.text,
                                           additional_text: child.additional_text,
-                                          done: child.done,
                                           created_at: child.created_at,
                                           updated_at: child.updated_at,
                                           parent_todo: child.parent_todo,
                                           deleted: child.deleted,
                                           user_id: child.user_id,
+                                          order: child.order,
                                           status: child.status,
-                                          outfit: child.outfit,
                                           target_date: child.target_date,
-                                          hidden: child.hidden,
                                           mode: child.mode,
                                           modes_shown: child.modes_shown,
                                           is_first_of_mode: "Archive"

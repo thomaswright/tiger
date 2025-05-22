@@ -101,7 +101,7 @@ let make = (~todos: array<todoRelation>, ~allTodos: array<todoRelation>, ~logout
             onClick={_ => {
               let newId = addTodo(
                 "",
-                Null,
+                allTodos->Array.get(0)->Option.mapOr(Nullable.Null, x => x.self.id->Value),
                 // todos->Array.get(0)->Option.mapOr(0., t => t.self.position) -. 1.,
               )
               setFocusIdNext(_ => Some(getTodoInputId(newId)))

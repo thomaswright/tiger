@@ -38,6 +38,7 @@ export const todos$ = observable(
            parent_todo,
            target_date,
            additional_text,
+           order,
            status,
            modes_shown,
            mode`
@@ -70,6 +71,9 @@ export function addTodo(
 ) {
   const id = generateId();
   // Add keyed by id to the todos$ observable to trigger a create in Supabase
+  if (parent_todo !== null) {
+    todos$[parent_todo].order.set((prev) => [id, ...(prev ?? [])]);
+  }
 
   todos$[id].assign({
     id,
@@ -85,41 +89,46 @@ export function addTodo(
   return id;
 }
 
-type status =
-  | "Unsorted"
-  | "Future"
-  | "NowIfTime"
-  | "NowMustDo"
-  | "Underway"
-  | "Paused"
-  | "ResolveDone"
-  | "ResolveNo"
-  | "ArchiveDone"
-  | "ArchiveNo"
-  | undefined;
+// type status =
+//   | "Unsorted"
+//   | "Future"
+//   | "NowIfTime"
+//   | "NowMustDo"
+//   | "Underway"
+//   | "Paused"
+//   | "ResolveDone"
+//   | "ResolveNo"
+//   | "ArchiveDone"
+//   | "ArchiveNo"
+//   | undefined;
 
-export function addTodoByImport(
-  id: string,
-  text: string,
-  parent_todo: string | null,
-  // position: number,
-  status: status
-) {
-  // const id = generateId();
-  // Add keyed by id to the todos$ observable to trigger a create in Supabase
-  todos$[id].assign({
-    id,
-    text,
-    user_id: uid$.get(),
-    // position,
-    parent_todo: parent_todo,
-    mode: "Working",
-    modes_shown: ["Working"],
-    status,
-  });
-}
+// export function addTodoByImport(
+//   id: string,
+//   text: string,
+//   parent_todo: string | null,
+//   // position: number,
+//   status: status
+// ) {
+//   // const id = generateId();
+//   // Add keyed by id to the todos$ observable to trigger a create in Supabase
+//   todos$[id].assign({
+//     id,
+//     text,
+//     user_id: uid$.get(),
+//     // position,
+//     parent_todo: parent_todo,
+//     mode: "Working",
+//     modes_shown: ["Working"],
+//     status,
+//   });
+// }
 
 export function deleteTodo(id: string) {
+  let todo = todos$[id].peek();
+  if (todo.parent_todo !== null) {
+    todos$[todo.parent_todo].order.set((prev) => prev.filter((v) => v !== id));
+  }
+
   todos$[id].delete();
 }
 
@@ -183,11 +192,17 @@ export function setTodoStatus(
 
 export function setTodoPosition(
   id: string,
-  newParent: string
+  newParent: string | null
   // newPosition: number
 ) {
+  let oldParent = todos$[id].parent_todo.peek();
+  if (oldParent !== null) {
+    todos$[oldParent].order.set((prev) => prev.filter((v) => v !== id));
+  }
+  if (newParent !== null) {
+    todos$[newParent].order.set((prev) => [id, ...(prev ?? [])]);
+  }
   todos$[id].assign({
-    parent_todo: Boolean(newParent) ? newParent : null,
-    // position: newPosition,
+    parent_todo: newParent,
   });
 }

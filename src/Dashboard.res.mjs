@@ -16,6 +16,7 @@ import * as JsxRuntime from "react/jsx-runtime";
 import * as React$1 from "@legendapp/state/react";
 
 function Dashboard(props) {
+  var allTodos = props.allTodos;
   var todos = props.todos;
   var match = Common.useSessionStorage(StorageKeys.selectedElement, undefined);
   var setSelectedElement = match[1];
@@ -70,7 +71,7 @@ function Dashboard(props) {
       });
   var tmp;
   tmp = Core__Option.isSome(displayElement) || Core__Option.isSome(selectedElement) ? JsxRuntime.jsx(React.Fragment, {
-          children: displayElement !== undefined ? Core__Option.mapOr(props.allTodos.find(function (t) {
+          children: displayElement !== undefined ? Core__Option.mapOr(allTodos.find(function (t) {
                       return t.self.id === displayElement;
                     }), null, (function (todoRelation) {
                     return JsxRuntime.jsx(DisplayTodo.make, {
@@ -117,7 +118,9 @@ function Dashboard(props) {
                                             children: "New Project",
                                             className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
                                             onClick: (function (param) {
-                                                var newId = Common.addTodo("", null);
+                                                var newId = Common.addTodo("", Core__Option.mapOr(allTodos[0], null, (function (x) {
+                                                            return x.self.id;
+                                                          })));
                                                 setFocusIdNext(function (param) {
                                                       return Types.getTodoInputId(newId);
                                                     });

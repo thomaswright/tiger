@@ -2,53 +2,51 @@ open Types
 
 @react.component
 let make = (~input: array<todo>, ~logout) => {
-  let todos =
-    input
-    ->Array.reduce(SMap.empty, (a, c) => {
-      let key = c.parent_todo->Nullable.toOption->Option.getOr("root")
+  let todos = input->Array.reduce(SMap.empty, (a, c) => {
+    let key = c.parent_todo->Nullable.toOption->Option.getOr("root")
 
-      a->SMap.update(key, o =>
-        switch o {
-        | None => Some([c])
-        | Some(v) => Some(v->Array.concat([c]))
-        }
-      )
-    })
-    ->SMap.map(v =>
-      v->Array.toSorted((a, b) => {
-        let result = ref(0.)
-
-        // Date
-        if result.contents == 0. {
-          result :=
-            switch (
-              a.target_date->Nullable.toOption->Option.map(Date.fromString),
-              b.target_date->Nullable.toOption->Option.map(Date.fromString),
-            ) {
-            | (Some(_), None) => -1.
-            | (None, Some(_)) => 1.
-            | (None, None) => 0.
-            | (Some(a), Some(b)) => Date.compare(a, b)
-            }
-        }
-
-        // Mode
-        if result.contents == 0. {
-          result := a.mode->modeCompare -. b.mode->modeCompare
-        }
-
-        // Text
-        if result.contents == 0. {
-          result :=
-            String.localeCompare(
-              a.text->Nullable.toOption->Option.getOr(""),
-              b.text->Nullable.toOption->Option.getOr(""),
-            )
-        }
-
-        result.contents
-      })
+    a->SMap.update(key, o =>
+      switch o {
+      | None => Some([c])
+      | Some(v) => Some(v->Array.concat([c]))
+      }
     )
+  })
+  // ->SMap.mapWithKey((parent_todo, v) =>
+  //   v->Array.toSorted((a, b) => {
+  //     let result = ref(0.)
+
+  //     // Date
+  //     if result.contents == 0. {
+  //       result :=
+  //         switch (
+  //           a.target_date->Nullable.toOption->Option.map(Date.fromString),
+  //           b.target_date->Nullable.toOption->Option.map(Date.fromString),
+  //         ) {
+  //         | (Some(_), None) => -1.
+  //         | (None, Some(_)) => 1.
+  //         | (None, None) => 0.
+  //         | (Some(a), Some(b)) => Date.compare(a, b)
+  //         }
+  //     }
+
+  //     // Mode
+  //     if result.contents == 0. {
+  //       result := a.mode->modeCompare -. b.mode->modeCompare
+  //     }
+
+  //     Text
+  //     if result.contents == 0. {
+  //       result :=
+  //         String.localeCompare(
+  //           a.text->Nullable.toOption->Option.getOr(""),
+  //           b.text->Nullable.toOption->Option.getOr(""),
+  //         )
+  //     }
+
+  //     result.contents
+  //   })
+  // )
 
   let filterer = (arr, c) => {
     arr->Array.filter(x => c.modes_shown->Array.includes(x.mode))
@@ -78,7 +76,48 @@ let make = (~input: array<todo>, ~logout) => {
             children
             ->Array.toSorted(
               (a, b) => {
-                a.mode->modeCompare -. b.mode->modeCompare
+                let result = ref(0.)
+
+                // // Date
+                // if result.contents == 0. {
+                //   result :=
+                //     switch (
+                //       a.target_date->Nullable.toOption->Option.map(Date.fromString),
+                //       b.target_date->Nullable.toOption->Option.map(Date.fromString),
+                //     ) {
+                //     | (Some(_), None) => -1.
+                //     | (None, Some(_)) => 1.
+                //     | (None, None) => 0.
+                //     | (Some(a), Some(b)) => Date.compare(a, b)
+                //     }
+                // }
+
+                // Mode
+                if result.contents == 0. {
+                  result := a.mode->modeCompare -. b.mode->modeCompare
+                }
+
+                // Order
+                if result.contents == 0. {
+                  let len = self.order->Array.length
+                  let aIndex = self.order->Array.indexOf(a.id)
+                  let bIndex = self.order->Array.indexOf(b.id)
+                  let aIndex = aIndex == -1 ? len : aIndex
+                  let bIndex = bIndex == -1 ? len : bIndex
+
+                  result := (aIndex - bIndex)->Int.toFloat
+                }
+
+                // Text
+                if result.contents == 0. {
+                  result :=
+                    String.localeCompare(
+                      a.text->Nullable.toOption->Option.getOr(""),
+                      b.text->Nullable.toOption->Option.getOr(""),
+                    )
+                }
+
+                result.contents
               },
             )
             ->Array.map(

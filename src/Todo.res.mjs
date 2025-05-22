@@ -53,7 +53,7 @@ function Todo(props) {
           }));
   };
   var makeNewTodo = function () {
-    var newParent = todoRelation.depth === 0 || todoRelation.children.length > 0 ? todo.id : todo.parent_todo;
+    var newParent = todoRelation.depth === 1 || todoRelation.children.length > 0 ? todo.id : todo.parent_todo;
     var newId = Common.addTodo("", newParent);
     setFocusIdNext(function (param) {
           return Types.getTodoInputId(newId);
@@ -200,7 +200,7 @@ function Todo(props) {
               children: JsxRuntime.jsxs("li", {
                     children: [
                       Core__Array.make(todoRelation.depth - 1 | 0, false).map(function (param, i) {
-                            if (i !== (todoRelation.depth - 1 | 0)) {
+                            if (i !== (todoRelation.depth - 2 | 0)) {
                               return JsxRuntime.jsx("div", {
                                           className: "self-stretch w-2 ml-2 border-l border-[var(--t3)] "
                                         }, i.toString());

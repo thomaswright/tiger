@@ -133,7 +133,7 @@ let make = (
     //       ->Option.mapOr(todo.position +. 1., nextSib => (nextSib.position +. todo.position) /. 2.)
 
     let newParent =
-      todoRelation.depth == 0 || todoRelation.children->Array.length > 0
+      todoRelation.depth == 1 || todoRelation.children->Array.length > 0
         ? todo.id->Nullable.Value
         : todo.parent_todo
 
@@ -315,7 +315,7 @@ let make = (
       ]->Array.join(" ")}>
       {Array.make(~length=todoRelation.depth - 1, false)
       ->Array.mapWithIndex((_, i) => {
-        if i == todoRelation.depth - 1 {
+        if i == todoRelation.depth - 2 {
           // <div
           //   key={i->Int.toString} className="self-stretch w-2 ml-2 border-l border-[var(--t3)] "
           // />
