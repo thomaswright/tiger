@@ -132,59 +132,62 @@ let make = (~todos: array<todoRelation>, ~allTodos: array<todoRelation>, ~logout
         ->React.array}
       </ul>
     </div>
-    <div
-      className=" border-l border-[var(--t3)] flex-none h-60 sticky sm:static sm:flex-1 bg-white top-0 flex flex-col overflow-hidden sm:h-full">
-      <div
-        className="flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b border-[var(--t3)] px-2">
-        <button
-          className="px-2 bg-[var(--t2)] rounded text-sm h-5"
-          onClick={_ => {
-            setView(_ => Some(ProjectList))
-            setDisplayElement(_ => None)
-            setSelectedElement(_ => None)
-          }}>
-          {"Top Level"->React.string}
-        </button>
-        <div className="flex-1" />
-        <button
-          onClick={_ => {
-            setView(_ => Some(Settings))
-            setDisplayElement(_ => None)
-            setSelectedElement(_ => None)
-          }}>
-          <img src={Common.logoUrl} width={"24"} className="py-0.5 " />
-        </button>
-      </div>
-      {if displayElement->Option.isSome || selectedElement->Option.isSome {
-        <React.Fragment>
-          {switch displayElement {
-          | Some(todoId) =>
-            allTodos
-            ->Array.find(t => t.self.id == todoId)
-            ->Option.mapOr(React.null, todoRelation => {
-              <DisplayTodo todoRelation setFocusIdNext />
-            })
-          | _ => React.null
-          }}
-        </React.Fragment>
-      } else {
-        switch view {
-        | Some(Settings) => <Settings setBaseColor logout />
-        | Some(ProjectList) =>
-          <div className="overflow-y-scroll">
-            <ModeMgr todo={None} />
-          </div>
-
-        | None => React.null
-        }
-      }}
-    </div>
   </div>
 }
 
 let make = observer(make)
 
 let default = make
+
+// <div
+//       className=" border-l border-[var(--t3)] flex-none h-60 sticky sm:static sm:flex-1 bg-white top-0 flex flex-col overflow-hidden sm:h-full">
+//       <div
+//         className="flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b border-[var(--t3)] px-2">
+//         <button
+//           className="px-2 bg-[var(--t2)] rounded text-sm h-5"
+//           onClick={_ => {
+//             setView(_ => Some(ProjectList))
+//             setDisplayElement(_ => None)
+//             setSelectedElement(_ => None)
+//           }}>
+//           {"Top Level"->React.string}
+//         </button>
+//         <div className="flex-1" />
+//         <button
+//           onClick={_ => {
+//             setView(_ => Some(Settings))
+//             setDisplayElement(_ => None)
+//             setSelectedElement(_ => None)
+//           }}>
+//           <img src={Common.logoUrl} width={"24"} className="py-0.5 " />
+//         </button>
+//       </div>
+//       {if displayElement->Option.isSome || selectedElement->Option.isSome {
+//         <React.Fragment>
+//           {switch displayElement {
+//           | Some(todoId) =>
+//             allTodos
+//             ->Array.find(t => t.self.id == todoId)
+//             ->Option.mapOr(React.null, todoRelation => {
+//               <DisplayTodo todoRelation setFocusIdNext />
+//             })
+//           | _ => React.null
+//           }}
+//         </React.Fragment>
+//       } else {
+//         switch view {
+//         | Some(Settings) => <Settings setBaseColor logout />
+//         | Some(ProjectList) =>
+//           <div className="overflow-y-scroll">
+//             <ModeMgr todo={None} />
+//           </div>
+
+//         | None => React.null
+//         }
+//       }}
+//     </div>
+
+// ------------
 
 // <button
 //   onClick={_ => {

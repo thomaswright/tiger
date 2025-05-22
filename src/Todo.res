@@ -478,19 +478,59 @@ let make = (
           // | Working => React.null
           // }}
           {if todoRelation.children->Array.length > 0 {
-            if todo.modes_shown->Array.length == 0 {
-              <button
-                className="mr-4 text-[var(--t5)]"
-                onClick={_ => setTodoModesShown(todo.id, a => a->arrayToggle(Working))}>
-                <Icons.ChevronRight />
-              </button>
-            } else {
-              <button
-                className="mr-4  text-[var(--t5)]"
-                onClick={_ => setTodoModesShown(todo.id, _ => [])}>
-                <Icons.ChevronDown />
-              </button>
-            }
+            <div className={"flex flex-row gap-2"}>
+              {if todo.modes_shown->Array.length == 0 {
+                <React.Fragment>
+                  <button
+                    className="mr-4 text-[var(--t5)]"
+                    onClick={_ => setTodoModesShown(todo.id, a => a->arrayToggle(Working))}>
+                    <Icons.ChevronDown />
+                  </button>
+                </React.Fragment>
+              } else {
+                <React.Fragment>
+                  {if todoRelation.hasStashedChildren {
+                    <button
+                      onClick={_ => {
+                        setTodoModesShown(todo.id, a => a->arrayToggle(Stashed))
+                      }}
+                      className={[
+                        todo.modes_shown->Array.includes(Stashed)
+                          ? "text-[var(--t7)]"
+                          : "text-[var(--t3)]",
+                        " flex flex-row items-center justify-center rounded ",
+                      ]->Array.join(" ")}>
+                      // {"S"->React.string}
+                      <Icons.Bookmark />
+                    </button>
+                  } else {
+                    React.null
+                  }}
+                  {if todoRelation.hasArchivedChildren {
+                    <button
+                      onClick={_ => {
+                        setTodoModesShown(todo.id, a => a->arrayToggle(Archive))
+                      }}
+                      className={[
+                        todo.modes_shown->Array.includes(Archive)
+                          ? " text-[var(--t7)]"
+                          : "text-[var(--t3)]",
+                        " flex flex-row items-center justify-center rounded",
+                      ]->Array.join(" ")}>
+                      // {"A"->React.string}
+                      <Icons.Archive />
+                    </button>
+                  } else {
+                    React.null
+                  }}
+                  <button
+                    className="mr-4  text-[var(--t5)]"
+                    onClick={_ => setTodoModesShown(todo.id, _ => [])}>
+                    <Icons.ChevronUp />
+                  </button>
+                </React.Fragment>
+              }}
+            </div>
           } else {
             React.null
           }}

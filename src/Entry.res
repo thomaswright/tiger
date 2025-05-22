@@ -56,6 +56,14 @@ let make = (~input: array<todo>, ~logout) => {
     !(arr->Array.every(x => c.modes_shown->Array.includes(x.mode)))
   }
 
+  let checkIfArchivedChildren = (arr, c) => {
+    arr->Array.some(v => v.mode == Archive)
+  }
+
+  let checkIfStashedChildren = (arr, c) => {
+    arr->Array.some(v => v.mode == Stashed)
+  }
+
   let rec recurse = (
     sibs: array<todo>,
     depth: int,
@@ -164,6 +172,8 @@ let make = (~input: array<todo>, ~logout) => {
         index,
         children,
         sibs,
+        hasArchivedChildren: checkIfArchivedChildren(children, self),
+        hasStashedChildren: checkIfStashedChildren(children, self),
         hasHiddenChildren: showAll ? false : checkIfHiddenChildren(children, self),
       }
       a->Array.concat([newItem])->Array.concat(des)

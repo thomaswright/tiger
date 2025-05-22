@@ -4,11 +4,8 @@ import * as Todo from "./Todo.res.mjs";
 import * as Types from "./Types.res.mjs";
 import * as React from "react";
 import * as Common from "./Common.res.mjs";
-import * as ModeMgr from "./ModeMgr.res.mjs";
 import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
-import * as Settings from "./Settings.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
-import * as DisplayTodo from "./DisplayTodo.res.mjs";
 import * as StorageKeys from "./StorageKeys.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as Belt_SetString from "rescript/lib/es6/belt_SetString.js";
@@ -24,30 +21,28 @@ function Dashboard(props) {
   var match$1 = Common.useSessionStorage(StorageKeys.displayElement, undefined);
   var setDisplayElement = match$1[1];
   var displayElement = match$1[0];
-  var match$2 = Common.useSessionStorage(StorageKeys.view, "Settings");
-  var setView = match$2[1];
-  var view = match$2[0];
-  var match$3 = Common.useSessionStorage(StorageKeys.showCheckboxes, false);
-  var setShowCheckboxes = match$3[1];
-  var showCheckboxes = match$3[0];
+  Common.useSessionStorage(StorageKeys.view, "Settings");
+  var match$2 = Common.useSessionStorage(StorageKeys.showCheckboxes, false);
+  var setShowCheckboxes = match$2[1];
+  var showCheckboxes = match$2[0];
+  var match$3 = React.useState(function () {
+        
+      });
+  var setChecked = match$3[1];
+  var checked = match$3[0];
   var match$4 = React.useState(function () {
         
       });
-  var setChecked = match$4[1];
-  var checked = match$4[0];
+  var setFocusClassNext = match$4[1];
+  var focusClassNext = match$4[0];
   var match$5 = React.useState(function () {
         
       });
-  var setFocusClassNext = match$5[1];
-  var focusClassNext = match$5[0];
-  var match$6 = React.useState(function () {
-        
-      });
-  var setFocusIdNext = match$6[1];
-  var focusIdNext = match$6[0];
+  var setFocusIdNext = match$5[1];
+  var focusIdNext = match$5[0];
   var aaParentRef = React.useRef(null);
-  var match$7 = Common.useLocalStorage(StorageKeys.baseColor, "var(--blueBase)");
-  var baseColor = match$7[0];
+  var match$6 = Common.useLocalStorage(StorageKeys.baseColor, "var(--blueBase)");
+  var baseColor = match$6[0];
   React.useEffect((function () {
           document.documentElement.style.setProperty("--tBase", baseColor);
         }), [baseColor]);
@@ -69,145 +64,73 @@ function Dashboard(props) {
                     });
               }));
       });
-  var tmp;
-  tmp = Core__Option.isSome(displayElement) || Core__Option.isSome(selectedElement) ? JsxRuntime.jsx(React.Fragment, {
-          children: displayElement !== undefined ? Core__Option.mapOr(allTodos.find(function (t) {
-                      return t.self.id === displayElement;
-                    }), null, (function (todoRelation) {
-                    return JsxRuntime.jsx(DisplayTodo.make, {
-                                todoRelation: todoRelation,
-                                setFocusIdNext: setFocusIdNext
-                              });
-                  })) : null
-        }) : (
-      view !== undefined ? (
-          view === "Settings" ? JsxRuntime.jsx(Settings.make, {
-                  setBaseColor: match$7[1],
-                  logout: props.logout
-                }) : JsxRuntime.jsx("div", {
-                  children: JsxRuntime.jsx(ModeMgr.make, {
-                        todo: undefined
-                      }),
-                  className: "overflow-y-scroll"
-                })
-        ) : null
-    );
-  return JsxRuntime.jsxs("div", {
-              children: [
-                JsxRuntime.jsxs("div", {
-                      children: [
-                        JsxRuntime.jsxs("div", {
-                              children: [
-                                JsxRuntime.jsx("button", {
-                                      children: "Show Checkboxes",
-                                      className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
-                                      onClick: (function (param) {
-                                          setShowCheckboxes(function (v) {
-                                                return !v;
-                                              });
-                                          if (showCheckboxes) {
-                                            return setChecked(function (param) {
-                                                        
-                                                      });
-                                          }
-                                          
-                                        })
-                                    }),
-                                JsxRuntime.jsx("div", {
-                                      children: JsxRuntime.jsx("button", {
-                                            children: "New Project",
-                                            className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
-                                            onClick: (function (param) {
-                                                var newId = Common.addTodo("", Core__Option.mapOr(allTodos[0], null, (function (x) {
-                                                            return x.self.id;
-                                                          })));
-                                                setFocusIdNext(function (param) {
-                                                      return Types.getTodoInputId(newId);
+  return JsxRuntime.jsx("div", {
+              children: JsxRuntime.jsxs("div", {
+                    children: [
+                      JsxRuntime.jsxs("div", {
+                            children: [
+                              JsxRuntime.jsx("button", {
+                                    children: "Show Checkboxes",
+                                    className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
+                                    onClick: (function (param) {
+                                        setShowCheckboxes(function (v) {
+                                              return !v;
+                                            });
+                                        if (showCheckboxes) {
+                                          return setChecked(function (param) {
+                                                      
                                                     });
-                                              })
-                                          }),
-                                      className: "flex flex-row items-center justify-center gap-2"
-                                    })
-                              ],
-                              className: "flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b border-[var(--t3)] px-2"
-                            }),
-                        JsxRuntime.jsx("ul", {
-                              children: todos.map(function (todoRelation) {
-                                    return JsxRuntime.jsx(Todo.make, {
-                                                todoRelation: todoRelation,
-                                                getTodos: (function () {
-                                                    return todos;
-                                                  }),
-                                                isSelected: Caml_obj.equal(selectedElement, todoRelation.self.id),
-                                                setSelectedElement: setSelectedElement,
-                                                isDisplayElement: Caml_obj.equal(displayElement, todoRelation.self.id),
-                                                setDisplayElement: setDisplayElement,
-                                                showCheckboxes: showCheckboxes,
-                                                setFocusIdNext: setFocusIdNext,
-                                                isChecked: Belt_SetString.has(checked, todoRelation.self.id),
-                                                setChecked: setChecked,
-                                                itemToMoveHandleMouseDown: (function (param, param$1) {
-                                                    
-                                                  }),
-                                                itemToMoveHandleMouseEnter: (function (param, param$1, param$2) {
-                                                    
-                                                  })
-                                              }, todoRelation.self.id);
+                                        }
+                                        
+                                      })
                                   }),
-                              ref: Caml_option.some(aaParentRef),
-                              className: "pb-5 flex-1 overflow-y-scroll"
-                            })
-                      ],
-                      className: "flex-1 flex flex-col overflow-hidden sm:h-full border-t sm:border-t-0"
-                    }),
-                JsxRuntime.jsxs("div", {
-                      children: [
-                        JsxRuntime.jsxs("div", {
-                              children: [
-                                JsxRuntime.jsx("button", {
-                                      children: "Top Level",
-                                      className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
-                                      onClick: (function (param) {
-                                          setView(function (param) {
-                                                return "ProjectList";
-                                              });
-                                          setDisplayElement(function (param) {
-                                                
-                                              });
-                                          setSelectedElement(function (param) {
-                                                
-                                              });
-                                        })
-                                    }),
-                                JsxRuntime.jsx("div", {
-                                      className: "flex-1"
-                                    }),
-                                JsxRuntime.jsx("button", {
-                                      children: JsxRuntime.jsx("img", {
-                                            className: "py-0.5 ",
-                                            src: Common.logoUrl,
-                                            width: "24"
-                                          }),
-                                      onClick: (function (param) {
-                                          setView(function (param) {
-                                                return "Settings";
-                                              });
-                                          setDisplayElement(function (param) {
-                                                
-                                              });
-                                          setSelectedElement(function (param) {
-                                                
-                                              });
-                                        })
-                                    })
-                              ],
-                              className: "flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b border-[var(--t3)] px-2"
-                            }),
-                        tmp
-                      ],
-                      className: " border-l border-[var(--t3)] flex-none h-60 sticky sm:static sm:flex-1 bg-white top-0 flex flex-col overflow-hidden sm:h-full"
-                    })
-              ],
+                              JsxRuntime.jsx("div", {
+                                    children: JsxRuntime.jsx("button", {
+                                          children: "New Project",
+                                          className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
+                                          onClick: (function (param) {
+                                              var newId = Common.addTodo("", Core__Option.mapOr(allTodos[0], null, (function (x) {
+                                                          return x.self.id;
+                                                        })));
+                                              setFocusIdNext(function (param) {
+                                                    return Types.getTodoInputId(newId);
+                                                  });
+                                            })
+                                        }),
+                                    className: "flex flex-row items-center justify-center gap-2"
+                                  })
+                            ],
+                            className: "flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b border-[var(--t3)] px-2"
+                          }),
+                      JsxRuntime.jsx("ul", {
+                            children: todos.map(function (todoRelation) {
+                                  return JsxRuntime.jsx(Todo.make, {
+                                              todoRelation: todoRelation,
+                                              getTodos: (function () {
+                                                  return todos;
+                                                }),
+                                              isSelected: Caml_obj.equal(selectedElement, todoRelation.self.id),
+                                              setSelectedElement: setSelectedElement,
+                                              isDisplayElement: Caml_obj.equal(displayElement, todoRelation.self.id),
+                                              setDisplayElement: setDisplayElement,
+                                              showCheckboxes: showCheckboxes,
+                                              setFocusIdNext: setFocusIdNext,
+                                              isChecked: Belt_SetString.has(checked, todoRelation.self.id),
+                                              setChecked: setChecked,
+                                              itemToMoveHandleMouseDown: (function (param, param$1) {
+                                                  
+                                                }),
+                                              itemToMoveHandleMouseEnter: (function (param, param$1, param$2) {
+                                                  
+                                                })
+                                            }, todoRelation.self.id);
+                                }),
+                            ref: Caml_option.some(aaParentRef),
+                            className: "pb-5 flex-1 overflow-y-scroll"
+                          })
+                    ],
+                    className: "flex-1 flex flex-col overflow-hidden sm:h-full border-t sm:border-t-0"
+                  }),
               className: "flex flex-col-reverse justify-end sm:justify-start sm:flex-row  text-[var(--t10)] h-dvh"
             });
 }

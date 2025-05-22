@@ -29,6 +29,16 @@ function Entry(props) {
                 return c.modes_shown.includes(x.mode);
               });
   };
+  var checkIfArchivedChildren = function (arr, c) {
+    return arr.some(function (v) {
+                return v.mode === "Archive";
+              });
+  };
+  var checkIfStashedChildren = function (arr, c) {
+    return arr.some(function (v) {
+                return v.mode === "Stashed";
+              });
+  };
   var recurse = function (sibs, depth, parent, tios, parentIndex, showAll) {
     return Core__Array.reduceWithIndex(sibs, [], (function (a, self, index) {
                   var match = Core__Option.mapOr(Belt_MapString.get(todos, self.id), [
@@ -108,12 +118,16 @@ function Entry(props) {
                         }));
                   var children = match[0];
                   var newItem_hasHiddenChildren = showAll ? false : checkIfHiddenChildren(children, self);
+                  var newItem_hasArchivedChildren = checkIfArchivedChildren(children, self);
+                  var newItem_hasStashedChildren = checkIfStashedChildren(children, self);
                   var newItem = {
                     self: self,
                     depth: depth,
                     index: index,
                     parent: parent,
                     hasHiddenChildren: newItem_hasHiddenChildren,
+                    hasArchivedChildren: newItem_hasArchivedChildren,
+                    hasStashedChildren: newItem_hasStashedChildren,
                     parentIndex: parentIndex,
                     tios: tios,
                     sibs: sibs,

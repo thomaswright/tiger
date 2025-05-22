@@ -56,6 +56,8 @@ type todoRelation = {
   index: int,
   parent: Nullable.t<todo>,
   hasHiddenChildren: bool,
+  hasArchivedChildren: bool,
+  hasStashedChildren: bool,
   parentIndex: int,
   tios: array<todo>,
   sibs: array<todo>,
