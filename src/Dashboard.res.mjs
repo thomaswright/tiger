@@ -13,6 +13,7 @@ import * as JsxRuntime from "react/jsx-runtime";
 import * as React$1 from "@legendapp/state/react";
 
 function Dashboard(props) {
+  var root = props.root;
   var allTodos = props.allTodos;
   var todos = props.todos;
   var match = Common.useSessionStorage(StorageKeys.selectedElement, undefined);
@@ -98,6 +99,19 @@ function Dashboard(props) {
                                             })
                                         }),
                                     className: "flex flex-row items-center justify-center gap-2"
+                                  })
+                            ],
+                            className: "flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b border-[var(--t3)] px-2"
+                          }),
+                      JsxRuntime.jsxs("div", {
+                            children: [
+                              JsxRuntime.jsx("div", {
+                                    className: "flex-1"
+                                  }),
+                              JsxRuntime.jsx(Todo.TopCollapseControls.make, {
+                                    todo: root.self,
+                                    todoRelation: root,
+                                    todos: todos
                                   })
                             ],
                             className: "flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b border-[var(--t3)] px-2"

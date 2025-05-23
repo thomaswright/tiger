@@ -179,21 +179,21 @@ let make = (~input: array<todo>, ~logout) => {
       a->Array.concat([newItem])->Array.concat(des)
     })
   }
-
-  let todosToDisplay =
-    todos
-    ->SMap.get("root")
-    ->Option.mapOr([], root =>
-      recurse(root->Array.filter(x => x.mode == Working), 0, Null, [], 0, false)
-    )
-    ->Array.filter(x => x.depth != 0)
-
-  let allTodos =
-    todos
-    ->SMap.get("root")
-    ->Option.mapOr([], root => recurse(root, 0, Null, [], 0, true))
-
-  <Dashboard allTodos={allTodos} todos={todosToDisplay} logout={logout} />
+  todos
+  ->SMap.get("root")
+  ->Option.mapOr(React.null, root => {
+    let todosToDisplay = recurse(root->Array.filter(x => x.mode == Working), 0, Null, [], 0, false)
+    todosToDisplay
+    ->Array.find(x => x.depth == 0)
+    ->Option.mapOr(React.null, rootTodo => {
+      <Dashboard
+        allTodos={recurse(root, 0, Null, [], 0, true)}
+        todos={todosToDisplay->Array.filter(x => x.depth != 0)}
+        logout={logout}
+        root={rootTodo}
+      />
+    })
+  })
 }
 
 let default = make

@@ -9,9 +9,143 @@ import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as Belt_SetString from "rescript/lib/es6/belt_SetString.js";
 import * as Tb from "react-icons/tb";
+import * as State from "@legendapp/state";
 import * as JsxRuntime from "react/jsx-runtime";
 import FormatISO from "date-fns/formatISO";
 import ReactTextareaAutosize from "react-textarea-autosize";
+
+function Todo$TopCollapseControls(props) {
+  var todos = props.todos;
+  var todoRelation = props.todoRelation;
+  var todo = props.todo;
+  var someExpanded = todos.some(function (v) {
+        if (v.depth === 1) {
+          return v.self.modes_shown.length > 0;
+        } else {
+          return false;
+        }
+      });
+  return JsxRuntime.jsxs("div", {
+              children: [
+                todoRelation.hasStashedChildren ? JsxRuntime.jsx("button", {
+                        children: JsxRuntime.jsx(Tb.TbBookmark, {}),
+                        className: [
+                            todo.modes_shown.includes("Stashed") ? "text-[var(--t7)]" : "text-[var(--t3)]",
+                            " flex flex-row items-center justify-center rounded "
+                          ].join(" "),
+                        onClick: (function (param) {
+                            Common.setTodoModesShown(todo.id, (function (a) {
+                                    return Common.arrayToggle(a, "Stashed");
+                                  }));
+                          })
+                      }) : null,
+                todoRelation.hasArchivedChildren ? JsxRuntime.jsx("button", {
+                        children: JsxRuntime.jsx(Tb.TbArchive, {}),
+                        className: [
+                            todo.modes_shown.includes("Archive") ? " text-[var(--t7)]" : "text-[var(--t3)]",
+                            " flex flex-row items-center justify-center rounded"
+                          ].join(" "),
+                        onClick: (function (param) {
+                            Common.setTodoModesShown(todo.id, (function (a) {
+                                    return Common.arrayToggle(a, "Archive");
+                                  }));
+                          })
+                      }) : null,
+                someExpanded ? JsxRuntime.jsx("button", {
+                        children: JsxRuntime.jsx(Tb.TbChevronDown, {}),
+                        className: "mr-4  text-[var(--t5)]  text-sm w-20",
+                        onClick: (function (param) {
+                            State.batch(function () {
+                                  todos.forEach(function (t) {
+                                        Common.setTodoModesShown(t.self.id, (function (param) {
+                                                return [];
+                                              }));
+                                      });
+                                });
+                          })
+                      }) : JsxRuntime.jsx("button", {
+                        children: JsxRuntime.jsx(Tb.TbMinus, {}),
+                        className: "mr-4 text-[var(--t5)] text-sm w-20",
+                        onClick: (function (param) {
+                            State.batch(function () {
+                                  todos.forEach(function (t) {
+                                        Common.setTodoModesShown(t.self.id, (function (param) {
+                                                return ["Working"];
+                                              }));
+                                      });
+                                });
+                          })
+                      })
+              ],
+              className: "flex flex-row gap-2"
+            });
+}
+
+var TopCollapseControls = {
+  make: Todo$TopCollapseControls
+};
+
+function Todo$CollapseControls(props) {
+  var todoRelation = props.todoRelation;
+  if (todoRelation.children.length <= 0) {
+    return null;
+  }
+  var todo = props.todo;
+  return JsxRuntime.jsx("div", {
+              children: todo.modes_shown.length === 0 ? JsxRuntime.jsx(React.Fragment, {
+                      children: JsxRuntime.jsx("button", {
+                            children: JsxRuntime.jsx(Tb.TbChevronDown, {}),
+                            className: "mr-4 text-[var(--t5)]",
+                            onClick: (function (param) {
+                                Common.setTodoModesShown(todo.id, (function (a) {
+                                        return Common.arrayToggle(a, "Working");
+                                      }));
+                              })
+                          })
+                    }) : JsxRuntime.jsxs(React.Fragment, {
+                      children: [
+                        todoRelation.hasStashedChildren ? JsxRuntime.jsx("button", {
+                                children: JsxRuntime.jsx(Tb.TbBookmark, {}),
+                                className: [
+                                    todo.modes_shown.includes("Stashed") ? "text-[var(--t7)]" : "text-[var(--t3)]",
+                                    " flex flex-row items-center justify-center rounded "
+                                  ].join(" "),
+                                onClick: (function (param) {
+                                    Common.setTodoModesShown(todo.id, (function (a) {
+                                            return Common.arrayToggle(a, "Stashed");
+                                          }));
+                                  })
+                              }) : null,
+                        todoRelation.hasArchivedChildren ? JsxRuntime.jsx("button", {
+                                children: JsxRuntime.jsx(Tb.TbArchive, {}),
+                                className: [
+                                    todo.modes_shown.includes("Archive") ? " text-[var(--t7)]" : "text-[var(--t3)]",
+                                    " flex flex-row items-center justify-center rounded"
+                                  ].join(" "),
+                                onClick: (function (param) {
+                                    Common.setTodoModesShown(todo.id, (function (a) {
+                                            return Common.arrayToggle(a, "Archive");
+                                          }));
+                                  })
+                              }) : null,
+                        JsxRuntime.jsx("button", {
+                              children: JsxRuntime.jsx(Tb.TbMinus, {}),
+                              className: "mr-4  text-[var(--t5)]",
+                              onClick: (function (param) {
+                                  Common.setTodoModesShown(todo.id, (function (param) {
+                                          return [];
+                                        }));
+                                })
+                            })
+                      ]
+                    }),
+              className: "flex flex-row gap-2"
+            });
+}
+
+var CollapseControls = {
+  make: Todo$CollapseControls
+};
 
 function Todo(props) {
   var setChecked = props.setChecked;
@@ -199,8 +333,8 @@ function Todo(props) {
   return JsxRuntime.jsx(React.Fragment, {
               children: JsxRuntime.jsxs("li", {
                     children: [
-                      Core__Array.make(todoRelation.depth - 1 | 0, false).map(function (param, i) {
-                            if (i !== (todoRelation.depth - 2 | 0)) {
+                      Core__Array.make(todoRelation.depth - 0 | 0, false).map(function (param, i) {
+                            if (i !== (todoRelation.depth - 1 | 0)) {
                               return JsxRuntime.jsx("div", {
                                           className: "self-stretch w-2 ml-2 border-l border-[var(--t3)] "
                                         }, i.toString());
@@ -283,56 +417,10 @@ function Todo(props) {
                                                 }),
                                               className: "mr-1 ml-1"
                                             }) : null,
-                                      todoRelation.children.length > 0 ? JsxRuntime.jsx("div", {
-                                              children: todo.modes_shown.length === 0 ? JsxRuntime.jsx(React.Fragment, {
-                                                      children: JsxRuntime.jsx("button", {
-                                                            children: JsxRuntime.jsx(Tb.TbChevronDown, {}),
-                                                            className: "mr-4 text-[var(--t5)]",
-                                                            onClick: (function (param) {
-                                                                Common.setTodoModesShown(todo.id, (function (a) {
-                                                                        return Common.arrayToggle(a, "Working");
-                                                                      }));
-                                                              })
-                                                          })
-                                                    }) : JsxRuntime.jsxs(React.Fragment, {
-                                                      children: [
-                                                        todoRelation.hasStashedChildren ? JsxRuntime.jsx("button", {
-                                                                children: JsxRuntime.jsx(Tb.TbBookmark, {}),
-                                                                className: [
-                                                                    todo.modes_shown.includes("Stashed") ? "text-[var(--t7)]" : "text-[var(--t3)]",
-                                                                    " flex flex-row items-center justify-center rounded "
-                                                                  ].join(" "),
-                                                                onClick: (function (param) {
-                                                                    Common.setTodoModesShown(todo.id, (function (a) {
-                                                                            return Common.arrayToggle(a, "Stashed");
-                                                                          }));
-                                                                  })
-                                                              }) : null,
-                                                        todoRelation.hasArchivedChildren ? JsxRuntime.jsx("button", {
-                                                                children: JsxRuntime.jsx(Tb.TbArchive, {}),
-                                                                className: [
-                                                                    todo.modes_shown.includes("Archive") ? " text-[var(--t7)]" : "text-[var(--t3)]",
-                                                                    " flex flex-row items-center justify-center rounded"
-                                                                  ].join(" "),
-                                                                onClick: (function (param) {
-                                                                    Common.setTodoModesShown(todo.id, (function (a) {
-                                                                            return Common.arrayToggle(a, "Archive");
-                                                                          }));
-                                                                  })
-                                                              }) : null,
-                                                        JsxRuntime.jsx("button", {
-                                                              children: JsxRuntime.jsx(Tb.TbMinus, {}),
-                                                              className: "mr-4  text-[var(--t5)]",
-                                                              onClick: (function (param) {
-                                                                  Common.setTodoModesShown(todo.id, (function (param) {
-                                                                          return [];
-                                                                        }));
-                                                                })
-                                                            })
-                                                      ]
-                                                    }),
-                                              className: "flex flex-row gap-2"
-                                            }) : null,
+                                      JsxRuntime.jsx(Todo$CollapseControls, {
+                                            todo: todo,
+                                            todoRelation: todoRelation
+                                          }),
                                       props.showCheckboxes ? JsxRuntime.jsx("div", {
                                               children: JsxRuntime.jsx("input", {
                                                     className: ["border-[var(--t4)] bg-[var(--t0)] rounded text-blue-400 dark:text-blue-800 w-4 h-4 focus:ring-offset-0 focus:ring-blue-500"].join(" "),
@@ -395,6 +483,8 @@ function Todo(props) {
 var make = Todo;
 
 export {
+  TopCollapseControls ,
+  CollapseControls ,
   make ,
 }
 /* Types Not a pure module */

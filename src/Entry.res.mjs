@@ -9,6 +9,7 @@ import * as Belt_MapString from "rescript/lib/es6/belt_MapString.js";
 import * as JsxRuntime from "react/jsx-runtime";
 
 function Entry(props) {
+  var logout = props.logout;
   var todos = Core__Array.reduce(props.input, undefined, (function (a, c) {
           var key = Core__Option.getOr(Caml_option.nullable_to_opt(c.parent_todo), "root");
           return Belt_MapString.update(a, key, (function (o) {
@@ -136,21 +137,23 @@ function Entry(props) {
                   return a.concat([newItem]).concat(match[1]);
                 }));
   };
-  var todosToDisplay = Core__Option.mapOr(Belt_MapString.get(todos, "root"), [], (function (root) {
-            return recurse(root.filter(function (x) {
-                            return x.mode === "Working";
-                          }), 0, null, [], 0, false);
-          })).filter(function (x) {
-        return x.depth !== 0;
-      });
-  var allTodos = Core__Option.mapOr(Belt_MapString.get(todos, "root"), [], (function (root) {
-          return recurse(root, 0, null, [], 0, true);
-        }));
-  return JsxRuntime.jsx(Dashboard.make, {
-              todos: todosToDisplay,
-              allTodos: allTodos,
-              logout: props.logout
-            });
+  return Core__Option.mapOr(Belt_MapString.get(todos, "root"), null, (function (root) {
+                var todosToDisplay = recurse(root.filter(function (x) {
+                          return x.mode === "Working";
+                        }), 0, null, [], 0, false);
+                return Core__Option.mapOr(todosToDisplay.find(function (x) {
+                                return x.depth === 0;
+                              }), null, (function (rootTodo) {
+                              return JsxRuntime.jsx(Dashboard.make, {
+                                          todos: todosToDisplay.filter(function (x) {
+                                                return x.depth !== 0;
+                                              }),
+                                          allTodos: recurse(root, 0, null, [], 0, true),
+                                          root: rootTodo,
+                                          logout: logout
+                                        });
+                            }));
+              }));
 }
 
 var make = Entry;

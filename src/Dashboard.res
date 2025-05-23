@@ -3,7 +3,12 @@ open Common
 open Types
 
 @react.component
-let make = (~todos: array<todoRelation>, ~allTodos: array<todoRelation>, ~logout: unit => unit) => {
+let make = (
+  ~todos: array<todoRelation>,
+  ~allTodos: array<todoRelation>,
+  ~root: todoRelation,
+  ~logout: unit => unit,
+) => {
   let (selectedElement, setSelectedElement, _) = useSessionStorage(
     StorageKeys.selectedElement,
     None,
@@ -109,6 +114,11 @@ let make = (~todos: array<todoRelation>, ~allTodos: array<todoRelation>, ~logout
             {"New Project"->React.string}
           </button>
         </div>
+      </div>
+      <div
+        className="flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b border-[var(--t3)] px-2">
+        <div className="flex-1" />
+        <Todo.TopCollapseControls todos={todos} todo={root.self} todoRelation={root} />
       </div>
       <ul className="pb-5 flex-1 overflow-y-scroll" ref={ReactDOM.Ref.domRef(aaParentRef)}>
         {todos

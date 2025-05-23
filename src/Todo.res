@@ -2,6 +2,132 @@ open Webapi.Dom
 open Common
 open Types
 
+module TopCollapseControls = {
+  @react.component
+  let make = (~todo, ~todoRelation, ~todos) => {
+    let someExpanded = todos->Array.some(v => {
+      if v.depth == 1 {
+        v.self.modes_shown->Array.length > 0
+      } else {
+        false
+      }
+    })
+    <div className={"flex flex-row gap-2"}>
+      {if todoRelation.hasStashedChildren {
+        <button
+          onClick={_ => {
+            setTodoModesShown(todo.id, a => a->arrayToggle(Stashed))
+          }}
+          className={[
+            todo.modes_shown->Array.includes(Stashed) ? "text-[var(--t7)]" : "text-[var(--t3)]",
+            " flex flex-row items-center justify-center rounded ",
+          ]->Array.join(" ")}>
+          <Icons.Bookmark />
+        </button>
+      } else {
+        React.null
+      }}
+      {if todoRelation.hasArchivedChildren {
+        <button
+          onClick={_ => {
+            setTodoModesShown(todo.id, a => a->arrayToggle(Archive))
+          }}
+          className={[
+            todo.modes_shown->Array.includes(Archive) ? " text-[var(--t7)]" : "text-[var(--t3)]",
+            " flex flex-row items-center justify-center rounded",
+          ]->Array.join(" ")}>
+          <Icons.Archive />
+        </button>
+      } else {
+        React.null
+      }}
+      {if !someExpanded {
+        <button
+          className="mr-4 text-[var(--t5)] text-sm w-20"
+          onClick={_ =>
+            batch(() => {
+              todos->Array.forEach(t => {
+                setTodoModesShown(t.self.id, _ => [Working])
+              })
+            })}>
+          <Icons.Minus />
+        </button>
+      } else {
+        <button
+          className="mr-4  text-[var(--t5)]  text-sm w-20"
+          onClick={_ =>
+            batch(() => {
+              todos->Array.forEach(t => {
+                setTodoModesShown(t.self.id, _ => [])
+              })
+            })}>
+          <Icons.ChevronDown />
+        </button>
+      }}
+    </div>
+  }
+}
+
+module CollapseControls = {
+  @react.component
+  let make = (~todo, ~todoRelation) => {
+    if todoRelation.children->Array.length > 0 {
+      <div className={"flex flex-row gap-2"}>
+        {if todo.modes_shown->Array.length == 0 {
+          <React.Fragment>
+            <button
+              className="mr-4 text-[var(--t5)]"
+              onClick={_ => setTodoModesShown(todo.id, a => a->arrayToggle(Working))}>
+              <Icons.ChevronDown />
+            </button>
+          </React.Fragment>
+        } else {
+          <React.Fragment>
+            {if todoRelation.hasStashedChildren {
+              <button
+                onClick={_ => {
+                  setTodoModesShown(todo.id, a => a->arrayToggle(Stashed))
+                }}
+                className={[
+                  todo.modes_shown->Array.includes(Stashed)
+                    ? "text-[var(--t7)]"
+                    : "text-[var(--t3)]",
+                  " flex flex-row items-center justify-center rounded ",
+                ]->Array.join(" ")}>
+                <Icons.Bookmark />
+              </button>
+            } else {
+              React.null
+            }}
+            {if todoRelation.hasArchivedChildren {
+              <button
+                onClick={_ => {
+                  setTodoModesShown(todo.id, a => a->arrayToggle(Archive))
+                }}
+                className={[
+                  todo.modes_shown->Array.includes(Archive)
+                    ? " text-[var(--t7)]"
+                    : "text-[var(--t3)]",
+                  " flex flex-row items-center justify-center rounded",
+                ]->Array.join(" ")}>
+                <Icons.Archive />
+              </button>
+            } else {
+              React.null
+            }}
+            <button
+              className="mr-4  text-[var(--t5)]" onClick={_ => setTodoModesShown(todo.id, _ => [])}>
+              <Icons.Minus />
+            </button>
+          </React.Fragment>
+        }}
+      </div>
+    } else {
+      React.null
+    }
+  }
+}
+
 @react.component
 let make = (
   ~todoRelation: todoRelation,
@@ -284,13 +410,6 @@ let make = (
     />
 
   <React.Fragment>
-    // {switch todo.is_first_of_mode {
-    // | Some(Stashed) =>
-    //   <li className=" text-xs px-4 font-bold  border-b w-full"> {"Stash"->React.string} </li>
-    // | Some(Archive) =>
-    //   <li className=" text-xs px-4 font-bold border-b w-full"> {"Archive"->React.string} </li>
-    // | _ => React.null
-    // }}
     <li
       id={getTodoId(todo.id)}
       tabIndex={0}
@@ -313,9 +432,9 @@ let make = (
 
         " flex flex-row justify-start items-center outline-none ",
       ]->Array.join(" ")}>
-      {Array.make(~length=todoRelation.depth - 1, false)
+      {Array.make(~length=todoRelation.depth - 0, false)
       ->Array.mapWithIndex((_, i) => {
-        if i == todoRelation.depth - 2 {
+        if i == todoRelation.depth - 1 {
           // <div
           //   key={i->Int.toString} className="self-stretch w-2 ml-2 border-l border-[var(--t3)] "
           // />
@@ -358,49 +477,12 @@ let make = (
             // ? "bg-sky-200 dark:bg-sky-900"
             : "",
           isSelected ? "outline outline-2 -outline-offset-2 " : "",
-          // switch todo.mode {
-          // | Archive => "text-[#6d8eb2]"
-          // | Stashed => "text-[#b0832f]"
-          // | Working => "text-[var(--t10)]"
-          // },
-          // switch todo.mode {
-          // | Archive => "text-[var(--t5)]"
-          // | Stashed => "text-[var(--t5)]"
-          // | Working => "text-[var(--t10)]"
-          // },
         ]->Array.join(" ")}>
-        // {switch todo.outfit {
-        // | Project => <div className="w-10 h-5 bg-teal-500 rounded-full" />
-        // | Group => <div className="" />
-        // | Todo => <div className="w-10 h-5 bg-blue-200 rounded" />
-        // }}
         statusSelect
         <div
           className={[
             "relative flex-1 flex flex-row h-full justify-start items-center ",
           ]->Array.join(" ")}>
-          // {if todoRelation.hasHiddenChildren {
-          //   <div
-          //     className="absolute  text-[var(--darkPurple)] bg-[var(--lightPurple)]
-          //     text-xs h-3 w-3 -left-3 -top-0 flex flex-row items-center justify-center rounded-full">
-          //     <Icons.Archive />
-          //   </div>
-          // } else {
-          //   React.null
-          // }}
-
-          // <div className="w-3 flex flex-row justify-center items-center ">
-          //   <button
-          //     className={[
-          //       " w-2 h-2 rounded-full",
-          //       switch todo.mode {
-          //       | Archive => "bg-[#f4deb2]"
-          //       | Stashed => "bg-[#cbe1a8]"
-          //       | Working => "bg-[var(--t4)]"
-          //       },
-          //     ]->Array.join(" ")}
-          //   />
-          // </div>
           {isSelected
             ? React.null
             : <div className="h-px w-full absolute bg-[var(--t2)] -bottom-1" />}
@@ -411,13 +493,6 @@ let make = (
               todoInputClass,
               // todoRelation.depth == 0 ? "font-black" : "text-sm",
               "mx-1 block w-full h-5 border-0 pl-0 py-0 focus:ring-0  bg-transparent text-xs font-medium",
-              // stagedForDelete
-              //   ? "bg-red-200 dark:bg-red-950"
-              //   : isChecked
-              //   ? "bg-sky-50 dark:bg-sky-950"
-              //   : isDisplayElement && !isSelected
-              //   ? "bg-sky-200 dark:bg-sky-900"
-              //   : "bg-[var(--t0)]",
             ]->Array.join(" ")}
             placeholder={todoRelation.depth == 0 ? "Untitled Project" : ""}
             style={{resize: "none"}}
@@ -430,8 +505,6 @@ let make = (
             onKeyDown={onKeyDownInput}
             onChange={e => setText(ReactEvent.Form.target(e)["value"])}
           />
-          // {todoRelation.depth == 0 ? statusSelect : React.null}
-          // {todoRelation.depth == 0 ? <div className="w-2" /> : React.null}
           {todo.target_date->Nullable.toOption->Option.isSome
             ? <Common.DateSelect
                 className="mr-1 ml-1"
@@ -450,101 +523,9 @@ let make = (
                   )}
               />
             : React.null}
-          // <div className="w-5 flex flex-row justify-center items-center ">
-          //   <button
-          //     className={[
-          //       " w-4 h-4 rounded-full",
-          //       switch todo.mode {
-          //       | Archive => "bg-[#f4deb2]"
-          //       | Stashed => "bg-[#cbe1a8]"
-          //       | Working => "bg-[var(--t2)]"
-          //       },
-          //     ]->Array.join(" ")}
-          //   />
-          // </div>
-          // {switch todo.mode {
-          // | Archive =>
-          //   <div
-          //     className=" text-[var(--t6)] bg-transparent flex flex-row items-center justify-center rounded-full mr-1">
-          //     <Icons.Archive className={"w-3"} />
-          //   </div>
-
-          // | Stashed =>
-          //   <div
-          //     className=" text-[var(--t6)] bg-transparent flex flex-row items-center justify-center rounded-full mr-1">
-          //     <Icons.Bookmark className={"w-3"} />
-          //   </div>
-
-          // | Working => React.null
-          // }}
-          {if todoRelation.children->Array.length > 0 {
-            <div className={"flex flex-row gap-2"}>
-              {if todo.modes_shown->Array.length == 0 {
-                <React.Fragment>
-                  <button
-                    className="mr-4 text-[var(--t5)]"
-                    onClick={_ => setTodoModesShown(todo.id, a => a->arrayToggle(Working))}>
-                    <Icons.ChevronDown />
-                  </button>
-                </React.Fragment>
-              } else {
-                <React.Fragment>
-                  {if todoRelation.hasStashedChildren {
-                    <button
-                      onClick={_ => {
-                        setTodoModesShown(todo.id, a => a->arrayToggle(Stashed))
-                      }}
-                      className={[
-                        todo.modes_shown->Array.includes(Stashed)
-                          ? "text-[var(--t7)]"
-                          : "text-[var(--t3)]",
-                        " flex flex-row items-center justify-center rounded ",
-                      ]->Array.join(" ")}>
-                      // {"S"->React.string}
-                      <Icons.Bookmark />
-                    </button>
-                  } else {
-                    React.null
-                  }}
-                  {if todoRelation.hasArchivedChildren {
-                    <button
-                      onClick={_ => {
-                        setTodoModesShown(todo.id, a => a->arrayToggle(Archive))
-                      }}
-                      className={[
-                        todo.modes_shown->Array.includes(Archive)
-                          ? " text-[var(--t7)]"
-                          : "text-[var(--t3)]",
-                        " flex flex-row items-center justify-center rounded",
-                      ]->Array.join(" ")}>
-                      // {"A"->React.string}
-                      <Icons.Archive />
-                    </button>
-                  } else {
-                    React.null
-                  }}
-                  <button
-                    className="mr-4  text-[var(--t5)]"
-                    onClick={_ => setTodoModesShown(todo.id, _ => [])}>
-                    <Icons.Minus />
-                  </button>
-                </React.Fragment>
-              }}
-            </div>
-          } else {
-            React.null
-          }}
+          <CollapseControls todo todoRelation />
           {showCheckboxes
-            ? <div
-                className={[
-                  " h-full pr-2 pl-1 flex flex-row items-center",
-                  // isChecked ? "flex" : " hidden group-hover:flex",
-                ]->Array.join(" ")}>
-                // <div
-                //   onMouseDown={e => itemToMoveHandleMouseDown(todo.id, e)}
-                //   className={" w-4 h-4 text-[var(--t4)] hidden group-hover:block bg-[var(--t0)] rounded-sm 0 "}>
-                //   <Icons.DragDrop />
-                // </div>
+            ? <div className={[" h-full pr-2 pl-1 flex flex-row items-center"]->Array.join(" ")}>
                 <input
                   onChange={_ => {
                     setChecked(v =>
@@ -560,9 +541,105 @@ let make = (
               </div>
             : React.null}
         </div>
-
-        // {todoRelation.depth > 0 ? statusSelect : React.null}
       </div>
     </li>
   </React.Fragment>
 }
+
+// {switch todo.is_first_of_mode {
+// | Some(Stashed) =>
+//   <li className=" text-xs px-4 font-bold  border-b w-full"> {"Stash"->React.string} </li>
+// | Some(Archive) =>
+//   <li className=" text-xs px-4 font-bold border-b w-full"> {"Archive"->React.string} </li>
+// | _ => React.null
+// }}
+
+// switch todo.mode {
+// | Archive => "text-[#6d8eb2]"
+// | Stashed => "text-[#b0832f]"
+// | Working => "text-[var(--t10)]"
+// },
+// switch todo.mode {
+// | Archive => "text-[var(--t5)]"
+// | Stashed => "text-[var(--t5)]"
+// | Working => "text-[var(--t10)]"
+// },
+
+// {switch todo.outfit {
+// | Project => <div className="w-10 h-5 bg-teal-500 rounded-full" />
+// | Group => <div className="" />
+// | Todo => <div className="w-10 h-5 bg-blue-200 rounded" />
+// }}
+
+// {if todoRelation.hasHiddenChildren {
+//   <div
+//     className="absolute  text-[var(--darkPurple)] bg-[var(--lightPurple)]
+//     text-xs h-3 w-3 -left-3 -top-0 flex flex-row items-center justify-center rounded-full">
+//     <Icons.Archive />
+//   </div>
+// } else {
+//   React.null
+// }}
+
+// <div className="w-3 flex flex-row justify-center items-center ">
+//   <button
+//     className={[
+//       " w-2 h-2 rounded-full",
+//       switch todo.mode {
+//       | Archive => "bg-[#f4deb2]"
+//       | Stashed => "bg-[#cbe1a8]"
+//       | Working => "bg-[var(--t4)]"
+//       },
+//     ]->Array.join(" ")}
+//   />
+// </div>
+// {"S"->React.string}
+// {"A"->React.string}
+
+// stagedForDelete
+//   ? "bg-red-200 dark:bg-red-950"
+//   : isChecked
+//   ? "bg-sky-50 dark:bg-sky-950"
+//   : isDisplayElement && !isSelected
+//   ? "bg-sky-200 dark:bg-sky-900"
+//   : "bg-[var(--t0)]",
+
+// {todoRelation.depth == 0 ? statusSelect : React.null}
+// {todoRelation.depth == 0 ? <div className="w-2" /> : React.null}
+// isChecked ? "flex" : " hidden group-hover:flex",
+
+// <div
+//   onMouseDown={e => itemToMoveHandleMouseDown(todo.id, e)}
+//   className={" w-4 h-4 text-[var(--t4)] hidden group-hover:block bg-[var(--t0)] rounded-sm 0 "}>
+//   <Icons.DragDrop />
+// </div>
+
+// {todoRelation.depth > 0 ? statusSelect : React.null}
+
+// <div className="w-5 flex flex-row justify-center items-center ">
+//   <button
+//     className={[
+//       " w-4 h-4 rounded-full",
+//       switch todo.mode {
+//       | Archive => "bg-[#f4deb2]"
+//       | Stashed => "bg-[#cbe1a8]"
+//       | Working => "bg-[var(--t2)]"
+//       },
+//     ]->Array.join(" ")}
+//   />
+// </div>
+// {switch todo.mode {
+// | Archive =>
+//   <div
+//     className=" text-[var(--t6)] bg-transparent flex flex-row items-center justify-center rounded-full mr-1">
+//     <Icons.Archive className={"w-3"} />
+//   </div>
+
+// | Stashed =>
+//   <div
+//     className=" text-[var(--t6)] bg-transparent flex flex-row items-center justify-center rounded-full mr-1">
+//     <Icons.Bookmark className={"w-3"} />
+//   </div>
+
+// | Working => React.null
+// }}
