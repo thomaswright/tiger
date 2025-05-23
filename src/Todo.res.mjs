@@ -195,10 +195,14 @@ function Todo(props) {
       e.preventDefault();
       State.batch(function () {
             Core__Option.mapOr(todoRelation.sibs[todoRelation.index - 1 | 0], undefined, (function (prevSib) {
-                    Common.setTodoParent(todo.id, prevSib.id);
-                    Common.setTodoOrder(prevSib.id, (function (order) {
-                            return order.concat([todo.id]);
-                          }));
+                    if (prevSib.mode !== todo.mode) {
+                      return ;
+                    } else {
+                      Common.setTodoParent(todo.id, prevSib.id);
+                      return Common.setTodoOrder(prevSib.id, (function (order) {
+                                    return order.concat([todo.id]);
+                                  }));
+                    }
                   }));
           });
     }

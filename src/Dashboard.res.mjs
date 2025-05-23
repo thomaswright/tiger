@@ -142,9 +142,9 @@ function Dashboard(props) {
                             className: "pb-5 flex-1 overflow-y-scroll"
                           })
                     ],
-                    className: "flex-1 flex flex-col overflow-hidden sm:h-full border-t sm:border-t-0"
+                    className: "flex-1 flex flex-col overflow-hidden sm:h-full border-t sm:border-t-0 md:border-r max-w-4xl "
                   }),
-              className: "flex flex-col-reverse justify-end sm:justify-start sm:flex-row  text-[var(--t10)] h-dvh"
+              className: "flex flex-col justify-center text-[var(--t10)] h-dvh"
             });
 }
 

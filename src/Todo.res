@@ -184,10 +184,14 @@ let make = (
         todoRelation.sibs
         ->Array.get(todoRelation.index - 1)
         ->Option.mapOr((), prevSib => {
-          setTodoParent(todo.id, prevSib.id)
-          setTodoOrder(prevSib.id, order => Array.concat(order, [todo.id]))
+          if prevSib.mode != todo.mode {
+            ()
+          } else {
+            setTodoParent(todo.id, prevSib.id)
+            setTodoOrder(prevSib.id, order => Array.concat(order, [todo.id]))
 
-          // todoRelation.children->Array.forEach(child => setTodoParent(child.id, prevSib.id))
+            // todoRelation.children->Array.forEach(child => setTodoParent(child.id, prevSib.id))
+          }
         })
       })
     }

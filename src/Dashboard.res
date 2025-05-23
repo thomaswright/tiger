@@ -84,9 +84,9 @@ let make = (
   //   })
   // }
 
-  <div
-    className="flex flex-col-reverse justify-end sm:justify-start sm:flex-row  text-[var(--t10)] h-dvh">
-    <div className="flex-1 flex flex-col overflow-hidden sm:h-full border-t sm:border-t-0">
+  <div className="flex flex-col justify-center text-[var(--t10)] h-dvh">
+    <div
+      className="flex-1 flex flex-col overflow-hidden sm:h-full border-t sm:border-t-0 md:border-r max-w-4xl ">
       <div
         className="flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b border-[var(--t3)] px-2">
         // <CheckedSummary checked={checked} projects={projects} setChecked={setChecked} setProjects />
