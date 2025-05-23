@@ -104,11 +104,7 @@ let make = (
           <button
             className="px-2 bg-[var(--t2)] rounded text-sm h-5"
             onClick={_ => {
-              let newId = addTodo(
-                "",
-                allTodos->Array.get(0)->Option.mapOr(Nullable.Null, x => x.self.id->Value),
-                // todos->Array.get(0)->Option.mapOr(0., t => t.self.position) -. 1.,
-              )
+              let newId = addTodo("", root.self.id, (order, id) => Array.concat([id], order))
               setFocusIdNext(_ => Some(getTodoInputId(newId)))
             }}>
             {"New Project"->React.string}

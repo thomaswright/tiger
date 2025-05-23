@@ -53,8 +53,8 @@ function focusNextClass(prim0, prim1) {
   OtherJs.focusNextClass(prim0, prim1);
 }
 
-function addTodo(prim0, prim1) {
-  return SupaLegendTs.addTodo(prim0, prim1);
+function addTodo(prim0, prim1, prim2) {
+  return SupaLegendTs.addTodo(prim0, prim1, prim2);
 }
 
 function setTodoText(prim0, prim1) {
@@ -81,8 +81,12 @@ function setTodoStatus(prim0, prim1) {
   SupaLegendTs.setTodoStatus(prim0, prim1);
 }
 
-function setTodoPosition(prim0, prim1) {
-  SupaLegendTs.setTodoPosition(prim0, prim1);
+function setTodoParent(prim0, prim1) {
+  SupaLegendTs.setTodoParent(prim0, prim1);
+}
+
+function setTodoOrder(prim0, prim1) {
+  SupaLegendTs.setTodoOrder(prim0, prim1);
 }
 
 function deleteTodo(prim0, prim1) {
@@ -96,8 +100,13 @@ function deleteTodoAndMoveChildren(todoRelation) {
   State.batch(function () {
         Core__Option.mapOr(Caml_option.nullable_to_opt(todo.parent_todo), undefined, (function (parent_todo) {
                 SupaLegendTs.deleteTodo(todo.id, parent_todo);
+                SupaLegendTs.setTodoOrder(parent_todo, (function (order) {
+                        return Core__Array.reduce(order, [], (function (a, c) {
+                                      return a.concat(c === todo.id ? todo.order : [c]);
+                                    }));
+                      }));
                 todoRelation.children.forEach(function (child, _i) {
-                      SupaLegendTs.setTodoPosition(child.id, parent_todo);
+                      SupaLegendTs.setTodoParent(child.id, parent_todo);
                     });
               }));
       });
@@ -186,7 +195,8 @@ export {
   setTodoMode ,
   setTodoModesShown ,
   setTodoStatus ,
-  setTodoPosition ,
+  setTodoParent ,
+  setTodoOrder ,
   deleteTodo ,
   logoUrl ,
   deleteTodoAndMoveChildren ,

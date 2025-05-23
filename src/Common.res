@@ -38,7 +38,7 @@ external focusNextClass: (string, Dom.element) => unit = "focusNextClass"
 external observer: React.component<'a> => React.component<'a> = "observer"
 
 @module("./utils/SupaLegend.ts")
-external addTodo: (string, Nullable.t<string>) => string = "addTodo"
+external addTodo: (string, string, (array<string>, string) => array<string>) => string = "addTodo"
 
 // @module("./utils/SupaLegend.ts")
 // external addTodoByImport: (string, string, Nullable.t<string>, float, status) => unit =
@@ -69,7 +69,13 @@ external setTodoModesShown: (string, array<mode> => array<mode>) => unit = "setT
 external setTodoStatus: (string, status) => unit = "setTodoStatus"
 
 @module("./utils/SupaLegend.ts")
-external setTodoPosition: (string, string) => unit = "setTodoPosition"
+external setTodoParent: (string, string) => unit = "setTodoParent"
+
+@module("./utils/SupaLegend.ts")
+external setTodoOrder: (string, array<string> => array<string>) => unit = "setTodoOrder"
+
+// @module("./utils/SupaLegend.ts")
+// external setTodoPosition: (string, string) => unit = "setTodoPosition"
 
 // @module("./utils/SupaLegend.ts")
 // external toggleDone: string => unit = "toggleDone"
@@ -90,24 +96,14 @@ let deleteTodoAndMoveChildren = todoRelation => {
     ->Option.mapOr((), parent_todo => {
       deleteTodo(todo.id, parent_todo)
 
+      setTodoOrder(
+        parent_todo,
+        order =>
+          order->Array.reduce([], (a, c) => Array.concat(a, c == todo.id ? todo.order : [c])),
+      )
       todoRelation.children->Array.forEachWithIndex(
         (child, _i) => {
-          setTodoPosition(
-            child.id,
-            parent_todo,
-
-            // todoRelation.sibs
-            // ->Array.get(todoRelation.index + 1)
-            // ->Option.mapOr(
-            //   todo.position +. i->Int.toFloat,
-            //   sib => {
-            //     let step =
-            //       (sib.position -. todo.position) /.
-            //         (todoRelation.children->Array.length->Int.toFloat +. 1.)
-            //     todo.position +. step *. i->Int.toFloat
-            //   },
-            // ),
-          )
+          setTodoParent(child.id, parent_todo)
         },
       )
     })

@@ -131,7 +131,7 @@ module CollapseControls = {
 @react.component
 let make = (
   ~todoRelation: todoRelation,
-  ~getTodos as _: unit => array<todoRelation>,
+  ~getTodos: unit => array<todoRelation>,
   ~isSelected,
   ~setSelectedElement,
   ~isDisplayElement,
@@ -169,102 +169,66 @@ let make = (
     })
   }
 
-  // let indentation = e => {
-  //   if e->ReactEvent.Keyboard.key == "Tab" {
-  //     e->ReactEvent.Keyboard.preventDefault
-  //   }
+  let indentation = e => {
+    if e->ReactEvent.Keyboard.key == "Tab" {
+      e->ReactEvent.Keyboard.preventDefault
+    }
 
-  //   // Indents
-  //   if (
-  //     (e->ReactEvent.Keyboard.key == "Tab" && !(e->ReactEvent.Keyboard.shiftKey)) ||
-  //       (e->ReactEvent.Keyboard.key == "]" && e->ReactEvent.Keyboard.metaKey)
-  //   ) {
-  //     e->ReactEvent.Keyboard.preventDefault
-  //     batch(() => {
-  //       todoRelation.sibs
-  //       ->Array.get(todoRelation.index - 1)
-  //       ->Option.mapOr((), x => {
-  //         getTodos()
-  //         ->Array.find(t => t.self.id == x.id)
-  //         ->Option.mapOr(
-  //           (),
-  //           prevSib => {
-  //             prevSib.children
-  //             ->Array.get(prevSib.children->Array.length - 1)
-  //             ->Option.mapOr(
-  //               {
-  //                 setTodoPosition(todo.id, Value(x.id), 1.)
-  //               },
-  //               prevSibLastChild => {
-  //                 setTodoPosition(todo.id, Value(x.id), prevSibLastChild.position +. 1.)
-  //               },
-  //             )
-  //           },
-  //         )
-  //         todoRelation.children->Array.forEach(
-  //           v => {
-  //             setTodoPosition(v.id, Value(x.id), todo.position +. v.position)
-  //           },
-  //         )
-  //       })
-  //     })
-  //   }
+    // Indents
+    if (
+      (e->ReactEvent.Keyboard.key == "Tab" && !(e->ReactEvent.Keyboard.shiftKey)) ||
+        (e->ReactEvent.Keyboard.key == "]" && e->ReactEvent.Keyboard.metaKey)
+    ) {
+      e->ReactEvent.Keyboard.preventDefault
+      batch(() => {
+        todoRelation.sibs
+        ->Array.get(todoRelation.index - 1)
+        ->Option.mapOr((), prevSib => {
+          setTodoParent(todo.id, prevSib.id)
+          setTodoOrder(prevSib.id, order => Array.concat(order, [todo.id]))
 
-  //   // De Indents
-  //   if (
-  //     ((e->ReactEvent.Keyboard.key == "Tab" && e->ReactEvent.Keyboard.shiftKey) ||
-  //       (e->ReactEvent.Keyboard.key == "[" && e->ReactEvent.Keyboard.metaKey)) &&
-  //       !(todo.parent_todo->Nullable.isNullable)
-  //   ) {
-  //     e->ReactEvent.Keyboard.preventDefault
+          // todoRelation.children->Array.forEach(child => setTodoParent(child.id, prevSib.id))
+        })
+      })
+    }
 
-  //     batch(() => {
-  //       let newTodoParent =
-  //         todoRelation.parent
-  //         ->Nullable.toOption
-  //         ->Option.flatMap(x => x.parent_todo->Nullable.toOption)
-  //         ->toNullableNull
+    // De Indents
+    if (
+      ((e->ReactEvent.Keyboard.key == "Tab" && e->ReactEvent.Keyboard.shiftKey) ||
+        (e->ReactEvent.Keyboard.key == "[" && e->ReactEvent.Keyboard.metaKey)) &&
+        !(todo.parent_todo->Nullable.isNullable)
+    ) {
+      e->ReactEvent.Keyboard.preventDefault
 
-  //       let newTodoPosition = switch (
-  //         todoRelation.parent->Nullable.toOption,
-  //         todoRelation.tios->Array.get(todoRelation.parentIndex + 1),
-  //       ) {
-  //       | (Some(parent), Some(parentsNextSib)) => (parent.position +. parentsNextSib.position) /. 2.
-  //       | (Some(parent), _) => parent.position +. 1.
-  //       | (_, Some(parentsNextSib)) => parentsNextSib.position -. 1.
-  //       | _ => 1.
-  //       }
-  //       setTodoPosition(todo.id, newTodoParent, newTodoPosition)
-
-  //       todoRelation.sibs
-  //       ->Array.sliceToEnd(~start=todoRelation.index + 1)
-  //       ->Array.forEach(v => {
-  //         let newPosition =
-  //           todoRelation.children
-  //           ->Array.get(todoRelation.children->Array.length - 1)
-  //           ->Option.mapOr(0., c => c.position) +. v.position
-
-  //         setTodoPosition(v.id, todo.id->Value, newPosition)
-  //       })
-  //     })
-  //   }
-  // }
+      batch(() => {
+        todoRelation.parent
+        ->Nullable.toOption
+        ->Option.flatMap(x => x.parent_todo->Nullable.toOption)
+        ->Option.mapOr((), newTodoParent => {
+          setTodoParent(todo.id, newTodoParent)
+          setTodoOrder(
+            newTodoParent,
+            order => {
+              order->Array.reduce(
+                [],
+                (a, c) => Array.concat(a, c == todo.id ? [c, ...todo.order] : [c]),
+              )
+            },
+          )
+        })
+      })
+    }
+  }
 
   let makeNewTodo = () => {
-    // let newPosition =
-    //   todoRelation.depth == 0 || todoRelation.children->Array.length > 0
-    //     ? todoRelation.children->Array.get(0)->Option.mapOr(0., x => x.position -. 1.)
-    //     : todoRelation.sibs
-    //       ->Array.get(todoRelation.index + 1)
-    //       ->Option.mapOr(todo.position +. 1., nextSib => (nextSib.position +. todo.position) /. 2.)
-
-    let newParent =
-      todoRelation.depth == 1 || todoRelation.children->Array.length > 0
-        ? todo.id->Nullable.Value
-        : todo.parent_todo
-
-    let newId = addTodo("", newParent)
-    setFocusIdNext(_ => Some(getTodoInputId(newId)))
+    todo.parent_todo
+    ->Nullable.toOption
+    ->Option.mapOr((), parent_todo => {
+      let newId = addTodo("", parent_todo, (order, id) => {
+        order->Array.reduce([], (a, c) => Array.concat(a, c == todo.id ? [c, id] : [c]))
+      })
+      setFocusIdNext(_ => Some(getTodoInputId(newId)))
+    })
   }
 
   let onKeyDownContainer = e => {
@@ -343,7 +307,7 @@ let make = (
     setStagedForDelete(_ => false)
 
     inputRef.current->mapNullable(dom => {
-      // indentation(e)
+      indentation(e)
 
       let cursorPosition = dom->Obj.magic->HtmlInputElement.selectionStart->Option.getOr(0)
       let inputValueLength = dom->Obj.magic->HtmlInputElement.value->String.length

@@ -14,7 +14,6 @@ import * as React$1 from "@legendapp/state/react";
 
 function Dashboard(props) {
   var root = props.root;
-  var allTodos = props.allTodos;
   var todos = props.todos;
   var match = Common.useSessionStorage(StorageKeys.selectedElement, undefined);
   var setSelectedElement = match[1];
@@ -90,9 +89,9 @@ function Dashboard(props) {
                                           children: "New Project",
                                           className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
                                           onClick: (function (param) {
-                                              var newId = Common.addTodo("", Core__Option.mapOr(allTodos[0], null, (function (x) {
-                                                          return x.self.id;
-                                                        })));
+                                              var newId = Common.addTodo("", root.self.id, (function (order, id) {
+                                                      return [id].concat(order);
+                                                    }));
                                               setFocusIdNext(function (param) {
                                                     return Types.getTodoInputId(newId);
                                                   });

@@ -69,14 +69,12 @@ export const todos$ = observable(
 
 export function addTodo(
   text: string,
-  parent_todo: string | null
+  parent_todo: string,
+  setOrder: (prev: string[], id: string) => string[]
   // position: number
 ) {
   const id = generateId();
-  // Add keyed by id to the todos$ observable to trigger a create in Supabase
-  if (parent_todo !== null) {
-    todos$[parent_todo].order.set((prev) => [id, ...(prev ?? [])]);
-  }
+  todos$[parent_todo].order.set((prev) => setOrder(prev, id));
 
   todos$[id].assign({
     id,
@@ -140,20 +138,33 @@ export function setTodoStatus(
   todos$[id].status.set(status);
 }
 
-export function setTodoPosition(
-  id: string,
-  newParent: string
-  // newPosition: number
-) {
-  let oldParent = todos$[id].parent_todo.peek();
-  if (oldParent !== null) {
-    todos$[oldParent].order.set((prev) => prev.filter((v) => v !== id));
-  }
-  todos$[newParent].order.set((prev) => [id, ...(prev ?? [])]);
+export function setTodoParent(id: string, newParent: string) {
   todos$[id].assign({
     parent_todo: newParent,
   });
 }
+
+export function setTodoOrder(
+  id: string,
+  setOrder: (prev: string[]) => string[]
+) {
+  todos$[id].order.set(setOrder);
+}
+
+// export function setTodoPosition(
+//   id: string,
+//   newParent: string
+//   // newPosition: number
+// ) {
+//   let oldParent = todos$[id].parent_todo.peek();
+//   if (oldParent !== null) {
+//     todos$[oldParent].order.set((prev) => prev.filter((v) => v !== id));
+//   }
+//   todos$[newParent].order.set((prev) => [id, ...(prev ?? [])]);
+//   todos$[id].assign({
+//     parent_todo: newParent,
+//   });
+// }
 
 // export function toggleDone(id: string) {
 //   todos$[id].done.set((prev) => !prev);

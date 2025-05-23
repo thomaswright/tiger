@@ -132,6 +132,7 @@ const Dropdown = ({
               <button
                 onClick={(_) => {
                   setMode("Working");
+                  focusTodo();
                 }}
                 className={[
                   mode == "Working" ? " text-[var(--t9)]" : "text-[var(--t3)]",
@@ -143,6 +144,7 @@ const Dropdown = ({
               <button
                 onClick={(_) => {
                   setMode("Stashed");
+                  focusTodo();
                 }}
                 className={[
                   mode == "Stashed" ? "text-[var(--t9)]" : "text-[var(--t3)]",
@@ -154,6 +156,7 @@ const Dropdown = ({
               <button
                 onClick={(_) => {
                   setMode("Archive");
+                  focusTodo();
                 }}
                 className={[
                   mode == "Archive" ? " text-[var(--t9)]" : "text-[var(--t3)]",
