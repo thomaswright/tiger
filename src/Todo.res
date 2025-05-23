@@ -374,6 +374,35 @@ let make = (
     />
 
   <React.Fragment>
+    {switch todo.is_first_of_mode {
+    | Some(Archive) =>
+      <li className=" text-[var(--t5)] bg-transparent flex flex-row items-center">
+        {Array.make(~length=todoRelation.depth - 1, false)
+        ->Array.mapWithIndex((_, i) => {
+          <div
+            key={i->Int.toString} className="self-stretch w-2 ml-2 border-l border-[var(--t3)] "
+          />
+        })
+        ->React.array}
+        <Icons.Archive className={"w-3 ml-1.5"} />
+        <span className="text-2xs ml-1.5"> {"Archived"->React.string} </span>
+      </li>
+
+    | Some(Stashed) =>
+      <li className=" text-[var(--t5)] bg-transparent flex flex-row items-center ">
+        {Array.make(~length=todoRelation.depth - 1, false)
+        ->Array.mapWithIndex((_, i) => {
+          <div
+            key={i->Int.toString} className="self-stretch w-2 ml-2 border-l border-[var(--t3)] "
+          />
+        })
+        ->React.array}
+        <Icons.Bookmark className={"w-3 ml-1.5"} />
+        <span className="text-2xs ml-1.5"> {"Stashed"->React.string} </span>
+      </li>
+
+    | _ => React.null
+    }}
     <li
       id={getTodoId(todo.id)}
       tabIndex={0}
@@ -396,35 +425,37 @@ let make = (
 
         " flex flex-row justify-start items-center outline-none ",
       ]->Array.join(" ")}>
-      {Array.make(~length=todoRelation.depth - 0, false)
+      {Array.make(~length=todoRelation.depth - 1, false)
       ->Array.mapWithIndex((_, i) => {
-        if i == todoRelation.depth - 1 {
-          // <div
-          //   key={i->Int.toString} className="self-stretch w-2 ml-2 border-l border-[var(--t3)] "
-          // />
-          switch todo.is_first_of_mode {
-          | Some(Archive) =>
-            <div
-              className=" text-[var(--t5)] bg-transparent flex flex-row items-center justify-center mx-0.5">
-              <Icons.Archive className={"w-3"} />
-            </div>
+        <div key={i->Int.toString} className="self-stretch w-2 ml-2 border-l border-[var(--t3)] " />
 
-          | Some(Stashed) =>
-            <div
-              className=" text-[var(--t5)] bg-transparent flex flex-row items-center justify-center mx-0.5">
-              <Icons.Bookmark className={"w-3"} />
-            </div>
+        // if i == todoRelation.depth - 1 {
+        //   // <div
+        //   //   key={i->Int.toString} className="self-stretch w-2 ml-2 border-l border-[var(--t3)] "
+        //   // />
+        //   switch todo.is_first_of_mode {
+        //   | Some(Archive) =>
+        //     <div
+        //       className=" text-[var(--t5)] bg-transparent flex flex-row items-center justify-center mx-0.5">
+        //       <Icons.Archive className={"w-3"} />
+        //     </div>
 
-          | _ =>
-            <div
-              key={i->Int.toString} className="self-stretch w-2 ml-2 border-l border-[var(--t3)] "
-            />
-          }
-        } else {
-          <div
-            key={i->Int.toString} className="self-stretch w-2 ml-2 border-l border-[var(--t3)] "
-          />
-        }
+        //   | Some(Stashed) =>
+        //     <div
+        //       className=" text-[var(--t5)] bg-transparent flex flex-row items-center justify-center mx-0.5">
+        //       <Icons.Bookmark className={"w-3"} />
+        //     </div>
+
+        //   | _ =>
+        //     <div
+        //       key={i->Int.toString} className="self-stretch w-2 ml-2 border-l border-[var(--t3)] "
+        //     />
+        //   }
+        // } else {
+        //   <div
+        //     key={i->Int.toString} className="self-stretch w-2 ml-2 border-l border-[var(--t3)] "
+        //   />
+        // }
       })
       ->React.array}
       <div
