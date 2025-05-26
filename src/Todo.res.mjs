@@ -375,6 +375,7 @@ function Todo(props) {
             Common.setTodoMode(todo.id, m);
           })
       });
+  var isLast = todoRelation.index === (todoRelation.sibs.length - 1 | 0);
   var match$3 = todo.is_first_of_mode;
   var tmp;
   if (match$3 !== undefined) {
@@ -448,9 +449,13 @@ function Todo(props) {
                                 JsxRuntime.jsxs("div", {
                                       children: [
                                         JsxRuntime.jsx("div", {
-                                              className: "opacity-0 absolute drag-marker top-[19px] -left-2 z-10 h-0.5 w-full bg-amber-500",
+                                              className: "opacity-0 absolute drag-marker -top-[5px] -left-2 z-10 h-0.5 w-full bg-amber-500",
                                               id: Types.getDropId(todo.id)
                                             }),
+                                        isLast ? JsxRuntime.jsx("div", {
+                                                className: "opacity-0 absolute drag-marker drag-marker-bottom top-[18px] -left-2 z-10 h-0.5 w-full bg-amber-500",
+                                                id: Types.getDropId(todo.id)
+                                              }) : null,
                                         isSelected ? null : JsxRuntime.jsx("div", {
                                                 className: "h-px w-full absolute bg-[var(--t2)] -bottom-1"
                                               }),

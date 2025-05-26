@@ -22,6 +22,7 @@ let elementPosition = element => {
 
 @send @scope("classList") external addClass: (Dom.element, string) => unit = "add"
 @send @scope("classList") external removeClass: (Dom.element, string) => unit = "remove"
+@send @scope("classList") external hasClass: (Dom.element, string) => bool = "contains"
 
 @react.component
 let make = (
@@ -130,6 +131,7 @@ let make = (
                           order => order->Array.filter(v => v != dragItem.self.id),
                         ),
                     )
+                    let bottomMarker = dropItemElement->hasClass("drag-marker-bottom")
                     // add to new parent order
                     setTodoOrder(
                       parent.id,
@@ -137,7 +139,12 @@ let make = (
                         order->Array.reduce(
                           [],
                           (a, c) =>
-                            Array.concat(a, c == dropItem.self.id ? [c, dragItem.self.id] : [c]),
+                            Array.concat(
+                              a,
+                              c == dropItem.self.id
+                                ? bottomMarker ? [c, dragItem.self.id] : [dragItem.self.id, c]
+                                : [c],
+                            ),
                         ),
                     )
                   },

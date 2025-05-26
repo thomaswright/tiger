@@ -92,39 +92,49 @@ function Dashboard(props) {
   var moveItem = function () {
     var match = dragItem.current;
     var match$1 = dropItem.current;
-    if (match !== undefined && match$1 !== undefined) {
-      return Core__Option.mapOr(Types.getIdFromId(Caml_option.valFromOption(match$1).id), undefined, (function (dropItemId) {
-                    Core__Option.mapOr(todos.find(function (todo) {
-                              return todo.self.id === dropItemId;
-                            }), undefined, (function (dropItem) {
-                            if (dropItem.self.id !== match.self.id && !dropItem.parents.includes(match.self.id)) {
-                              return Core__Option.mapOr(Caml_option.nullable_to_opt(dropItem.parent), undefined, (function (parent) {
-                                            console.log("move3", dropItem.self.text, match.self.text);
-                                            State.batch(function () {
-                                                  Common.setTodoParent(match.self.id, parent.id);
-                                                  Core__Option.mapOr(Caml_option.nullable_to_opt(match.parent), undefined, (function (formerDragParent) {
-                                                          Common.setTodoOrder(formerDragParent.id, (function (order) {
-                                                                  return order.filter(function (v) {
-                                                                              return v !== match.self.id;
-                                                                            });
-                                                                }));
-                                                        }));
-                                                  Common.setTodoOrder(parent.id, (function (order) {
-                                                          return Core__Array.reduce(order, [], (function (a, c) {
-                                                                        return a.concat(c === dropItem.self.id ? [
-                                                                                      c,
-                                                                                      match.self.id
-                                                                                    ] : [c]);
-                                                                      }));
-                                                        }));
-                                                });
-                                          }));
-                            }
-                            
-                          }));
-                  }));
+    if (match === undefined) {
+      return ;
     }
-    
+    if (match$1 === undefined) {
+      return ;
+    }
+    var dropItemElement = Caml_option.valFromOption(match$1);
+    Core__Option.mapOr(Types.getIdFromId(dropItemElement.id), undefined, (function (dropItemId) {
+            Core__Option.mapOr(todos.find(function (todo) {
+                      return todo.self.id === dropItemId;
+                    }), undefined, (function (dropItem) {
+                    if (dropItem.self.id !== match.self.id && !dropItem.parents.includes(match.self.id)) {
+                      return Core__Option.mapOr(Caml_option.nullable_to_opt(dropItem.parent), undefined, (function (parent) {
+                                    console.log("move3", dropItem.self.text, match.self.text);
+                                    State.batch(function () {
+                                          Common.setTodoParent(match.self.id, parent.id);
+                                          Core__Option.mapOr(Caml_option.nullable_to_opt(match.parent), undefined, (function (formerDragParent) {
+                                                  Common.setTodoOrder(formerDragParent.id, (function (order) {
+                                                          return order.filter(function (v) {
+                                                                      return v !== match.self.id;
+                                                                    });
+                                                        }));
+                                                }));
+                                          var bottomMarker = dropItemElement.classList.contains("drag-marker-bottom");
+                                          Common.setTodoOrder(parent.id, (function (order) {
+                                                  return Core__Array.reduce(order, [], (function (a, c) {
+                                                                return a.concat(c === dropItem.self.id ? (
+                                                                              bottomMarker ? [
+                                                                                  c,
+                                                                                  match.self.id
+                                                                                ] : [
+                                                                                  match.self.id,
+                                                                                  c
+                                                                                ]
+                                                                            ) : [c]);
+                                                              }));
+                                                }));
+                                        });
+                                  }));
+                    }
+                    
+                  }));
+          }));
   };
   var onMouseUp = function (param) {
     Array.prototype.slice.call(document.getElementsByClassName("drag-marker")).forEach(function (v) {

@@ -375,6 +375,8 @@ let make = (
     />
   let moveIsOn = true
 
+  let isLast = todoRelation.index == todoRelation.sibs->Array.length - 1
+
   <React.Fragment>
     {switch todo.is_first_of_mode {
     | Some(Archive) =>
@@ -471,10 +473,19 @@ let make = (
           // <div className="w-4 h-4  -left-4">
           //   <Icons.DragDrop />
           // </div>
+
           <div
             id={getDropId(todo.id)}
-            className="opacity-0 absolute drag-marker top-[19px] -left-2 z-10 h-0.5 w-full bg-amber-500"
+            className="opacity-0 absolute drag-marker -top-[5px] -left-2 z-10 h-0.5 w-full bg-amber-500"
           />
+          {if isLast {
+            <div
+              id={getDropId(todo.id)}
+              className="opacity-0 absolute drag-marker drag-marker-bottom top-[18px] -left-2 z-10 h-0.5 w-full bg-amber-500"
+            />
+          } else {
+            React.null
+          }}
           {isSelected
             ? React.null
             : <div className="h-px w-full absolute bg-[var(--t2)] -bottom-1" />}
