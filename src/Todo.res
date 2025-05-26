@@ -429,7 +429,8 @@ let make = (
       ]->Array.join(" ")}>
       {if moveIsOn {
         <div
-          className={"inset-0 absolute bg-amber-400 opacity-0 cursor-move z-10"}
+          id={getDragId(todo.id)}
+          className={"inset-0 absolute bg-amber-400 opacity-0 cursor-move z-10 drag-mask"}
           onMouseDown={_ => {
             setDrag()
           }}

@@ -136,6 +136,10 @@ function getDropId(s) {
   return "drop-" + s;
 }
 
+function getDragId(s) {
+  return "drag-" + s;
+}
+
 function getIdFromId(s) {
   if (s.includes("todo-")) {
     return Core__Option.map(s.split("todo-")[1], (function (v) {
@@ -175,6 +179,7 @@ export {
   getTodoId ,
   getTodoInputId ,
   getDropId ,
+  getDragId ,
   getIdFromId ,
   listItemClass ,
   todoInputClass ,

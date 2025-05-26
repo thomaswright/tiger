@@ -130,6 +130,10 @@ function Dashboard(props) {
     Array.prototype.slice.call(document.getElementsByClassName("drag-marker")).forEach(function (v) {
           v.classList.add("opacity-0");
         });
+    Array.prototype.slice.call(document.getElementsByClassName("drag-mask")).forEach(function (v) {
+          v.classList.remove("opacity-20");
+          v.classList.add("opacity-0");
+        });
     moveItem();
     dragItem.current = undefined;
   };
@@ -227,6 +231,10 @@ function Dashboard(props) {
                                               setDrag: (function () {
                                                   console.log("set drag", todoRelation.self.text);
                                                   dragItem.current = todoRelation;
+                                                  Core__Option.mapOr(Caml_option.nullable_to_opt(document.getElementById(Types.getDragId(todoRelation.self.id))), undefined, (function (element) {
+                                                          element.classList.remove("opacity-0");
+                                                          element.classList.add("opacity-20");
+                                                        }));
                                                 })
                                             }, todoRelation.self.id);
                                 }),

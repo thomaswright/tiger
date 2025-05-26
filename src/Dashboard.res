@@ -158,6 +158,23 @@ let make = (
     ->Array.forEach(v => {
       v->addClass("opacity-0")
     })
+    document
+    ->Webapi.Dom.Document.getElementsByClassName("drag-mask")
+    ->HtmlCollection.toArray
+    ->Array.forEach(v => {
+      // v->addClass("opacity-0")
+      v->removeClass("opacity-20")
+      v->addClass("opacity-0")
+    })
+
+    // dragItem.current->Option.mapOr((), dragItem => {
+    //   document
+    //   ->Document.getElementById(getDragId(dragItem.self.id))
+    //   ->Option.mapOr((), element => {
+    //     element->removeClass("opacity-20")
+    //     element->addClass("opacity-0")
+    //   })
+    // })
 
     moveItem()
     dragItem.current = None
@@ -252,6 +269,12 @@ let make = (
             setDrag={_ => {
               Console.log2("set drag", todoRelation.self.text)
               dragItem.current = Some(todoRelation)
+              document
+              ->Document.getElementById(getDragId(todoRelation.self.id))
+              ->Option.mapOr((), element => {
+                element->removeClass("opacity-0")
+                element->addClass("opacity-20")
+              })
 
               // setDragItem(_ => Some(todoRelation))
             }}

@@ -431,7 +431,8 @@ function Todo(props) {
                 JsxRuntime.jsxs("li", {
                       children: [
                         JsxRuntime.jsx("div", {
-                              className: "inset-0 absolute bg-amber-400 opacity-0 cursor-move z-10",
+                              className: "inset-0 absolute bg-amber-400 opacity-0 cursor-move z-10 drag-mask",
+                              id: Types.getDragId(todo.id),
                               onMouseDown: (function (param) {
                                   setDrag();
                                 })

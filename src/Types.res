@@ -157,6 +157,7 @@ let statusColorText = _ => "white"
 let getTodoId = s => "todo-" ++ s
 let getTodoInputId = s => "todoInput-" ++ s
 let getDropId = s => "drop-" ++ s
+let getDragId = s => "drag-" ++ s
 
 // let getProjectId = s => "project-" ++ s
 // let getProjectInputId = s => "project-input-" ++ s
