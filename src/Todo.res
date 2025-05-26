@@ -131,17 +131,18 @@ module CollapseControls = {
 @react.component
 let make = (
   ~todoRelation: todoRelation,
-  ~getTodos: unit => array<todoRelation>,
+  ~getTodos as _: unit => array<todoRelation>,
   ~isSelected,
   ~setSelectedElement,
-  ~isDisplayElement,
+  ~isDisplayElement as _,
   ~setDisplayElement,
   ~showCheckboxes,
   ~setFocusIdNext,
   ~isChecked,
   ~setChecked,
-  ~itemToMoveHandleMouseDown as _,
-  ~itemToMoveHandleMouseEnter as _,
+  // ~itemToMoveHandleMouseDown,
+  // ~itemToMoveHandleMouseEnter as _,
+  ~setDrag,
 ) => {
   let todo = todoRelation.self
   let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
@@ -212,12 +213,11 @@ let make = (
           setTodoParent(todo.id, newTodoParent)
           setTodoOrder(
             newTodoParent,
-            order => {
+            order =>
               order->Array.reduce(
                 [],
                 (a, c) => Array.concat(a, c == todo.id ? [c, ...todo.order] : [c]),
-              )
-            },
+              ),
           )
         })
       })
@@ -359,12 +359,9 @@ let make = (
       hasHidden={todoRelation.hasHiddenChildren}
       isOpen={statusSelectIsOpen}
       onOpenChange={v => {
-        if !v {
-          setStatusSelectIsOpen(_ => v)
-        } else {
-          setStatusSelectIsOpen(_ => v)
-        }
+        setStatusSelectIsOpen(_ => v)
       }}
+      // setOpen={v => setStatusSelectIsOpen(_ => v)}
       status={Some(todo.status)}
       mode={todo.mode}
       setMode={m => setTodoMode(todo.id, m)}
@@ -376,6 +373,7 @@ let make = (
       }}
       setStatus={newStatus => setTodoStatus(todo.id, newStatus)}
     />
+  let moveIsOn = true
 
   <React.Fragment>
     {switch todo.is_first_of_mode {
@@ -427,39 +425,21 @@ let make = (
         listItemClass,
         // todoRelation.depth == 0 ? "" : "pl-1",
 
-        " flex flex-row justify-start items-center outline-none ",
+        "relative flex flex-row justify-start items-center outline-none ",
       ]->Array.join(" ")}>
+      {if moveIsOn {
+        <div
+          className={"inset-0 absolute bg-amber-400 opacity-0 cursor-move z-10"}
+          onMouseDown={_ => {
+            setDrag()
+          }}
+        />
+      } else {
+        React.null
+      }}
       {Array.make(~length=todoRelation.depth - 1, false)
       ->Array.mapWithIndex((_, i) => {
         <div key={i->Int.toString} className="self-stretch w-2 ml-2 border-l border-[var(--t3)] " />
-
-        // if i == todoRelation.depth - 1 {
-        //   // <div
-        //   //   key={i->Int.toString} className="self-stretch w-2 ml-2 border-l border-[var(--t3)] "
-        //   // />
-        //   switch todo.is_first_of_mode {
-        //   | Some(Archive) =>
-        //     <div
-        //       className=" text-[var(--t5)] bg-transparent flex flex-row items-center justify-center mx-0.5">
-        //       <Icons.Archive className={"w-3"} />
-        //     </div>
-
-        //   | Some(Stashed) =>
-        //     <div
-        //       className=" text-[var(--t5)] bg-transparent flex flex-row items-center justify-center mx-0.5">
-        //       <Icons.Bookmark className={"w-3"} />
-        //     </div>
-
-        //   | _ =>
-        //     <div
-        //       key={i->Int.toString} className="self-stretch w-2 ml-2 border-l border-[var(--t3)] "
-        //     />
-        //   }
-        // } else {
-        //   <div
-        //     key={i->Int.toString} className="self-stretch w-2 ml-2 border-l border-[var(--t3)] "
-        //   />
-        // }
       })
       ->React.array}
       <div
@@ -478,10 +458,22 @@ let make = (
           isSelected ? "outline outline-2 -outline-offset-2 " : "",
         ]->Array.join(" ")}>
         statusSelect
+        // <div
+        //   onMouseDown={e => itemToMoveHandleMouseDown(e, todo.id)}
+        //   className={" w-4 h-4 text-[var(--t4)] rounded-sm 0 "}>
+        //   <Icons.DragDrop />
+        // </div>
         <div
           className={[
             "relative flex-1 flex flex-row h-full justify-start items-center ",
           ]->Array.join(" ")}>
+          // <div className="w-4 h-4  -left-4">
+          //   <Icons.DragDrop />
+          // </div>
+          <div
+            id={getDropId(todo.id)}
+            className="opacity-0 absolute drag-marker top-[19px] -left-2 z-10 h-0.5 w-full bg-amber-500"
+          />
           {isSelected
             ? React.null
             : <div className="h-px w-full absolute bg-[var(--t2)] -bottom-1" />}
@@ -545,6 +537,33 @@ let make = (
   </React.Fragment>
 }
 
+// if i == todoRelation.depth - 1 {
+//   // <div
+//   //   key={i->Int.toString} className="self-stretch w-2 ml-2 border-l border-[var(--t3)] "
+//   // />
+//   switch todo.is_first_of_mode {
+//   | Some(Archive) =>
+//     <div
+//       className=" text-[var(--t5)] bg-transparent flex flex-row items-center justify-center mx-0.5">
+//       <Icons.Archive className={"w-3"} />
+//     </div>
+
+//   | Some(Stashed) =>
+//     <div
+//       className=" text-[var(--t5)] bg-transparent flex flex-row items-center justify-center mx-0.5">
+//       <Icons.Bookmark className={"w-3"} />
+//     </div>
+
+//   | _ =>
+//     <div
+//       key={i->Int.toString} className="self-stretch w-2 ml-2 border-l border-[var(--t3)] "
+//     />
+//   }
+// } else {
+//   <div
+//     key={i->Int.toString} className="self-stretch w-2 ml-2 border-l border-[var(--t3)] "
+//   />
+// }
 // {switch todo.is_first_of_mode {
 // | Some(Stashed) =>
 //   <li className=" text-xs px-4 font-bold  border-b w-full"> {"Stash"->React.string} </li>

@@ -6,11 +6,23 @@ import * as React from "react";
 import * as Common from "./Common.res.mjs";
 import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
+import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as StorageKeys from "./StorageKeys.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as Belt_SetString from "rescript/lib/es6/belt_SetString.js";
+import * as State from "@legendapp/state";
 import * as JsxRuntime from "react/jsx-runtime";
 import * as React$1 from "@legendapp/state/react";
+
+function elementPosition(element) {
+  var a = element.getBoundingClientRect();
+  return {
+          top: a.top,
+          right: a.right,
+          bottom: a.bottom,
+          left: a.left
+        };
+}
 
 function Dashboard(props) {
   var root = props.root;
@@ -21,7 +33,6 @@ function Dashboard(props) {
   var match$1 = Common.useSessionStorage(StorageKeys.displayElement, undefined);
   var setDisplayElement = match$1[1];
   var displayElement = match$1[0];
-  Common.useSessionStorage(StorageKeys.view, "Settings");
   var match$2 = Common.useSessionStorage(StorageKeys.showCheckboxes, false);
   var setShowCheckboxes = match$2[1];
   var showCheckboxes = match$2[0];
@@ -43,6 +54,89 @@ function Dashboard(props) {
   var aaParentRef = React.useRef(null);
   var match$6 = Common.useLocalStorage(StorageKeys.baseColor, "var(--blueBase)");
   var baseColor = match$6[0];
+  var dragItem = React.useRef(undefined);
+  var dropItem = React.useRef(undefined);
+  var onMouseMove = function ($$event) {
+    var match = dragItem.current;
+    if (match === undefined) {
+      return ;
+    }
+    var mouseTop = $$event.clientY;
+    var closest = {
+      contents: undefined
+    };
+    Array.prototype.slice.call(document.getElementsByClassName("drag-marker")).forEach(function (v) {
+          var best = closest.contents;
+          if (best !== undefined) {
+            var bestPos = elementPosition(Caml_option.valFromOption(best));
+            var bestDist = Math.abs(bestPos.top - mouseTop);
+            var pos = elementPosition(v);
+            var dist = Math.abs(pos.top - mouseTop);
+            if (dist < bestDist) {
+              closest.contents = Caml_option.some(v);
+            }
+            
+          } else {
+            closest.contents = Caml_option.some(v);
+          }
+          v.classList.add("opacity-0");
+        });
+    var best = closest.contents;
+    if (best === undefined) {
+      return ;
+    }
+    var best$1 = Caml_option.valFromOption(best);
+    dropItem.current = Caml_option.some(best$1);
+    best$1.classList.remove("opacity-0");
+  };
+  var moveItem = function () {
+    var match = dragItem.current;
+    var match$1 = dropItem.current;
+    if (match !== undefined && match$1 !== undefined) {
+      return Core__Option.mapOr(Types.getIdFromId(Caml_option.valFromOption(match$1).id), undefined, (function (dropItemId) {
+                    Core__Option.mapOr(todos.find(function (todo) {
+                              return todo.self.id === dropItemId;
+                            }), undefined, (function (dropItem) {
+                            if (dropItem.self.id !== match.self.id && !dropItem.parents.includes(match.self.id)) {
+                              return Core__Option.mapOr(Caml_option.nullable_to_opt(dropItem.parent), undefined, (function (parent) {
+                                            console.log("move3", dropItem.self.text, match.self.text);
+                                            State.batch(function () {
+                                                  Common.setTodoParent(match.self.id, parent.id);
+                                                  Core__Option.mapOr(Caml_option.nullable_to_opt(match.parent), undefined, (function (formerDragParent) {
+                                                          Common.setTodoOrder(formerDragParent.id, (function (order) {
+                                                                  return order.filter(function (v) {
+                                                                              return v !== match.self.id;
+                                                                            });
+                                                                }));
+                                                        }));
+                                                  Common.setTodoOrder(parent.id, (function (order) {
+                                                          return Core__Array.reduce(order, [], (function (a, c) {
+                                                                        return a.concat(c === dropItem.self.id ? [
+                                                                                      c,
+                                                                                      match.self.id
+                                                                                    ] : [c]);
+                                                                      }));
+                                                        }));
+                                                });
+                                          }));
+                            }
+                            
+                          }));
+                  }));
+    }
+    
+  };
+  var onMouseUp = function (param) {
+    Array.prototype.slice.call(document.getElementsByClassName("drag-marker")).forEach(function (v) {
+          v.classList.add("opacity-0");
+        });
+    moveItem();
+    dragItem.current = undefined;
+  };
+  React.useEffect((function () {
+          window.addEventListener("mousemove", onMouseMove);
+          window.addEventListener("mouseup", onMouseUp);
+        }), []);
   React.useEffect((function () {
           document.documentElement.style.setProperty("--tBase", baseColor);
         }), [baseColor]);
@@ -130,11 +224,9 @@ function Dashboard(props) {
                                               setFocusIdNext: setFocusIdNext,
                                               isChecked: Belt_SetString.has(checked, todoRelation.self.id),
                                               setChecked: setChecked,
-                                              itemToMoveHandleMouseDown: (function (param, param$1) {
-                                                  
-                                                }),
-                                              itemToMoveHandleMouseEnter: (function (param, param$1, param$2) {
-                                                  
+                                              setDrag: (function () {
+                                                  console.log("set drag", todoRelation.self.text);
+                                                  dragItem.current = todoRelation;
                                                 })
                                             }, todoRelation.self.id);
                                 }),
@@ -153,6 +245,7 @@ var make = React$1.observer(Dashboard);
 var $$default = make;
 
 export {
+  elementPosition ,
   make ,
   $$default as default,
 }

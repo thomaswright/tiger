@@ -153,3 +153,8 @@ module Clock = {
   @react.component @module("react-icons/fa")
   external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "FaClock"
 }
+
+module Hand = {
+  @react.component @module("react-icons/fa")
+  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "FaHandPointLeft"
+}

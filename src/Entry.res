@@ -56,11 +56,11 @@ let make = (~input: array<todo>, ~logout) => {
     !(arr->Array.every(x => c.modes_shown->Array.includes(x.mode)))
   }
 
-  let checkIfArchivedChildren = (arr, c) => {
+  let checkIfArchivedChildren = (arr, _c) => {
     arr->Array.some(v => v.mode == Archive)
   }
 
-  let checkIfStashedChildren = (arr, c) => {
+  let checkIfStashedChildren = (arr, _c) => {
     arr->Array.some(v => v.mode == Stashed)
   }
 
@@ -71,6 +71,7 @@ let make = (~input: array<todo>, ~logout) => {
     tios: array<todo>,
     parentIndex: int,
     showAll: bool,
+    parents,
   ) => {
     sibs->Array.reduceWithIndex([], (a, self, index) => {
       let (children, des) =
@@ -159,6 +160,7 @@ let make = (~input: array<todo>, ~logout) => {
               sibs,
               index,
               showAll,
+              [...parents, self.id],
             ),
           )
         })
@@ -168,6 +170,7 @@ let make = (~input: array<todo>, ~logout) => {
         depth,
         parent,
         parentIndex,
+        parents,
         tios,
         index,
         children,
@@ -182,12 +185,20 @@ let make = (~input: array<todo>, ~logout) => {
   todos
   ->SMap.get("root")
   ->Option.mapOr(React.null, root => {
-    let todosToDisplay = recurse(root->Array.filter(x => x.mode == Working), 0, Null, [], 0, false)
+    let todosToDisplay = recurse(
+      root->Array.filter(x => x.mode == Working),
+      0,
+      Null,
+      [],
+      0,
+      false,
+      [],
+    )
     todosToDisplay
     ->Array.find(x => x.depth == 0)
     ->Option.mapOr(React.null, rootTodo => {
       <Dashboard
-        allTodos={recurse(root, 0, Null, [], 0, true)}
+        allTodos={recurse(root, 0, Null, [], 0, true, [])}
         todos={todosToDisplay->Array.filter(x => x.depth != 0)}
         logout={logout}
         root={rootTodo}

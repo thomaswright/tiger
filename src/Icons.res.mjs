@@ -63,6 +63,8 @@ var Future = {};
 
 var Clock = {};
 
+var Hand = {};
+
 export {
   EyeClosed ,
   Eye ,
@@ -95,5 +97,6 @@ export {
   Question ,
   Future ,
   Clock ,
+  Hand ,
 }
 /* No side effect */

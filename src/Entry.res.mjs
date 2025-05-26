@@ -2,6 +2,7 @@
 
 import * as Types from "./Types.res.mjs";
 import * as Dashboard from "./Dashboard.res.mjs";
+import * as Belt_Array from "rescript/lib/es6/belt_Array.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
@@ -30,17 +31,17 @@ function Entry(props) {
                 return c.modes_shown.includes(x.mode);
               });
   };
-  var checkIfArchivedChildren = function (arr, c) {
+  var checkIfArchivedChildren = function (arr, _c) {
     return arr.some(function (v) {
                 return v.mode === "Archive";
               });
   };
-  var checkIfStashedChildren = function (arr, c) {
+  var checkIfStashedChildren = function (arr, _c) {
     return arr.some(function (v) {
                 return v.mode === "Stashed";
               });
   };
-  var recurse = function (sibs, depth, parent, tios, parentIndex, showAll) {
+  var recurse = function (sibs, depth, parent, tios, parentIndex, showAll, parents) {
     return Core__Array.reduceWithIndex(sibs, [], (function (a, self, index) {
                   var match = Core__Option.mapOr(Belt_MapString.get(todos, self.id), [
                         [],
@@ -114,7 +115,10 @@ function Entry(props) {
                               });
                           return [
                                   children$1,
-                                  recurse(showAll ? children$1 : filterer(children$1, self), depth + 1 | 0, self, sibs, index, showAll)
+                                  recurse(showAll ? children$1 : filterer(children$1, self), depth + 1 | 0, self, sibs, index, showAll, Belt_Array.concatMany([
+                                            parents,
+                                            [self.id]
+                                          ]))
                                 ];
                         }));
                   var children = match[0];
@@ -126,6 +130,7 @@ function Entry(props) {
                     depth: depth,
                     index: index,
                     parent: parent,
+                    parents: parents,
                     hasHiddenChildren: newItem_hasHiddenChildren,
                     hasArchivedChildren: newItem_hasArchivedChildren,
                     hasStashedChildren: newItem_hasStashedChildren,
@@ -140,7 +145,7 @@ function Entry(props) {
   return Core__Option.mapOr(Belt_MapString.get(todos, "root"), null, (function (root) {
                 var todosToDisplay = recurse(root.filter(function (x) {
                           return x.mode === "Working";
-                        }), 0, null, [], 0, false);
+                        }), 0, null, [], 0, false, []);
                 return Core__Option.mapOr(todosToDisplay.find(function (x) {
                                 return x.depth === 0;
                               }), null, (function (rootTodo) {
@@ -148,7 +153,7 @@ function Entry(props) {
                                           todos: todosToDisplay.filter(function (x) {
                                                 return x.depth !== 0;
                                               }),
-                                          allTodos: recurse(root, 0, null, [], 0, true),
+                                          allTodos: recurse(root, 0, null, [], 0, true, []),
                                           root: rootTodo,
                                           logout: logout
                                         });

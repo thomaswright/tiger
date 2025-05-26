@@ -2,32 +2,174 @@ open Webapi.Dom
 open Common
 open Types
 
+type position = {
+  top: float,
+  right: float,
+  bottom: float,
+  left: float,
+}
+
+let elementPosition = element => {
+  let a = element->Element.getBoundingClientRect
+
+  {
+    top: a->DomRect.top,
+    right: a->DomRect.right,
+    bottom: a->DomRect.bottom,
+    left: a->DomRect.left,
+  }
+}
+
+@send @scope("classList") external addClass: (Dom.element, string) => unit = "add"
+@send @scope("classList") external removeClass: (Dom.element, string) => unit = "remove"
+
 @react.component
 let make = (
   ~todos: array<todoRelation>,
-  ~allTodos: array<todoRelation>,
+  ~allTodos as _: array<todoRelation>,
   ~root: todoRelation,
-  ~logout: unit => unit,
+  ~logout as _: unit => unit,
 ) => {
   let (selectedElement, setSelectedElement, _) = useSessionStorage(
     StorageKeys.selectedElement,
     None,
   )
   let (displayElement, setDisplayElement, _) = useSessionStorage(StorageKeys.displayElement, None)
-  let (view, setView, _) = useSessionStorage(StorageKeys.view, Some(Settings))
+  // let (view, setView, _) = useSessionStorage(StorageKeys.view, Some(Settings))
   let (showCheckboxes, setShowCheckboxes, _) = useSessionStorage(StorageKeys.showCheckboxes, false)
 
   let (checked, setChecked) = React.useState(() => SSet.empty)
+  // let (dragItem, setDragItem) = React.useState(() => None)
 
   let (focusClassNext, setFocusClassNext) = React.useState(_ => None)
   let (focusIdNext, setFocusIdNext) = React.useState(_ => None)
 
   let aaParentRef: React.ref<RescriptCore.Nullable.t<Dom.element>> = React.useRef(Nullable.null)
 
-  let (baseColor, setBaseColor, _) = Common.useLocalStorage(
+  let (baseColor, _setBaseColor, _) = Common.useLocalStorage(
     StorageKeys.baseColor,
     "var(--blueBase)",
   )
+  let dragItem = React.useRef(None)
+
+  let dropItem = React.useRef(None)
+
+  let onMouseMove = event => {
+    switch dragItem.current {
+    | None => ()
+    | Some(_) => {
+        let _mouseLeft = event->MouseEvent.clientX->Int.toFloat
+        let mouseTop = event->MouseEvent.clientY->Int.toFloat
+        let closest = ref(None)
+
+        document
+        ->Webapi.Dom.Document.getElementsByClassName("drag-marker")
+        ->HtmlCollection.toArray
+        ->Array.forEach(v => {
+          switch closest.contents {
+          | None => closest.contents = Some(v)
+          | Some(best) => {
+              let bestPos = best->elementPosition
+              let bestDist = Math.abs(bestPos.top -. mouseTop)
+              // let bestDist = Math.hypot(bestPos.top -. mouseTop, bestPos.left -. mouseLeft)
+
+              let pos = v->elementPosition
+              let dist = Math.abs(pos.top -. mouseTop)
+
+              // let dist = Math.hypot(pos.top -. mouseTop, pos.left -. mouseLeft)
+              if dist < bestDist {
+                closest.contents = Some(v)
+              }
+            }
+          }
+          v->addClass("opacity-0")
+        })
+
+        switch closest.contents {
+        | None => ()
+        | Some(best) => {
+            dropItem.current = Some(best)
+            best->removeClass("opacity-0")
+          }
+        }
+      }
+    }
+  }
+
+  let moveItem = () => {
+    switch (dragItem.current, dropItem.current) {
+    | (Some(dragItem), Some(dropItemElement)) =>
+      // Console.log3("move1", dragItem, getIdFromId(dropItemElement->Element.id))
+
+      getIdFromId(dropItemElement->Element.id)->Option.mapOr((), dropItemId => {
+        todos
+        ->Array.find(todo => todo.self.id == dropItemId)
+        ->Option.mapOr((), dropItem => {
+          if (
+            dropItem.self.id != dragItem.self.id &&
+              !(dropItem.parents->Array.includes(dragItem.self.id))
+          ) {
+            dropItem.parent
+            ->Nullable.toOption
+            ->Option.mapOr(
+              (),
+              parent => {
+                Console.log3("move3", dropItem.self.text, dragItem.self.text)
+                batch(
+                  () => {
+                    // set new parent
+                    setTodoParent(dragItem.self.id, parent.id)
+                    // remove from old parent order
+                    dragItem.parent
+                    ->Nullable.toOption
+                    ->Option.mapOr(
+                      (),
+                      formerDragParent =>
+                        setTodoOrder(
+                          formerDragParent.id,
+                          order => order->Array.filter(v => v != dragItem.self.id),
+                        ),
+                    )
+                    // add to new parent order
+                    setTodoOrder(
+                      parent.id,
+                      order =>
+                        order->Array.reduce(
+                          [],
+                          (a, c) =>
+                            Array.concat(a, c == dropItem.self.id ? [c, dragItem.self.id] : [c]),
+                        ),
+                    )
+                  },
+                )
+              },
+            )
+          }
+        })
+      })
+    | _ => ()
+    }
+  }
+
+  let onMouseUp = _ => {
+    document
+    ->Webapi.Dom.Document.getElementsByClassName("drag-marker")
+    ->HtmlCollection.toArray
+    ->Array.forEach(v => {
+      v->addClass("opacity-0")
+    })
+
+    moveItem()
+    dragItem.current = None
+    // setDragItem(_ => None)
+  }
+
+  React.useEffect0(() => {
+    window->Window.addMouseMoveEventListener(onMouseMove)
+    window->Window.addMouseUpEventListener(onMouseUp)
+
+    None
+  })
 
   React.useEffect1(() => {
     Common.setRootStyleProperty("--tBase", baseColor)
@@ -57,32 +199,6 @@ let make = (
 
     None
   })
-
-  // let onImportJson = json => {
-  //   let maxPosition = allTodos->Array.reduce(0., (a, c) => Math.max(a, c.self.position))
-  //   batch(() => {
-  //     let idMap = json->Array.map(v => (v["id"], uuid()))
-
-  //     json->Array.forEachWithIndex((v, i) => {
-  //       addTodoByImport(
-  //         idMap
-  //         ->Array.find(((oldId, _)) => oldId == v["id"])
-  //         ->Option.mapOr(uuid(), ((_, newId)) => newId),
-  //         v["text"],
-  //         switch (v["parent_todo"]: Nullable.t<string>) {
-  //         | Undefined => Null
-  //         | Null => Null
-  //         | Value(x) =>
-  //           idMap
-  //           ->Array.find(((oldId, _)) => oldId == x)
-  //           ->Option.mapOr(Nullable.Null, ((_, newId)) => Value(newId))
-  //         },
-  //         maxPosition +. i->Int.toFloat,
-  //         v["status"],
-  //       )
-  //     })
-  //   })
-  // }
 
   <div className="flex flex-col justify-center text-[var(--t10)] h-dvh">
     <div
@@ -131,8 +247,14 @@ let make = (
             setFocusIdNext
             isChecked={checked->SSet.has(todoRelation.self.id)}
             setChecked
-            itemToMoveHandleMouseDown={(_, _) => ()}
-            itemToMoveHandleMouseEnter={(_, _, _) => ()}
+            // itemToMoveHandleMouseDown={(_, todoId) => dragItem.contents = Some(todoId)}
+            // itemToMoveHandleMouseEnter={(_, _, _) => ()}
+            setDrag={_ => {
+              Console.log2("set drag", todoRelation.self.text)
+              dragItem.current = Some(todoRelation)
+
+              // setDragItem(_ => Some(todoRelation))
+            }}
           />
         })
         ->React.array}
@@ -144,6 +266,32 @@ let make = (
 let make = observer(make)
 
 let default = make
+
+// let onImportJson = json => {
+//   let maxPosition = allTodos->Array.reduce(0., (a, c) => Math.max(a, c.self.position))
+//   batch(() => {
+//     let idMap = json->Array.map(v => (v["id"], uuid()))
+
+//     json->Array.forEachWithIndex((v, i) => {
+//       addTodoByImport(
+//         idMap
+//         ->Array.find(((oldId, _)) => oldId == v["id"])
+//         ->Option.mapOr(uuid(), ((_, newId)) => newId),
+//         v["text"],
+//         switch (v["parent_todo"]: Nullable.t<string>) {
+//         | Undefined => Null
+//         | Null => Null
+//         | Value(x) =>
+//           idMap
+//           ->Array.find(((oldId, _)) => oldId == x)
+//           ->Option.mapOr(Nullable.Null, ((_, newId)) => Value(newId))
+//         },
+//         maxPosition +. i->Int.toFloat,
+//         v["status"],
+//       )
+//     })
+//   })
+// }
 
 // <div
 //       className=" border-l border-[var(--t3)] flex-none h-60 sticky sm:static sm:flex-1 bg-white top-0 flex flex-col overflow-hidden sm:h-full">

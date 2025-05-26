@@ -55,6 +55,7 @@ type todoRelation = {
   depth: int,
   index: int,
   parent: Nullable.t<todo>,
+  parents: array<string>,
   hasHiddenChildren: bool,
   hasArchivedChildren: bool,
   hasStashedChildren: bool,
@@ -154,7 +155,8 @@ let statusColorText = _ => "white"
 // }
 
 let getTodoId = s => "todo-" ++ s
-let getTodoInputId = s => "todo-input-" ++ s
+let getTodoInputId = s => "todoInput-" ++ s
+let getDropId = s => "drop-" ++ s
 
 // let getProjectId = s => "project-" ++ s
 // let getProjectInputId = s => "project-input-" ++ s
@@ -165,9 +167,14 @@ let getIdFromId = s => {
     ->String.split("todo-")
     ->Array.get(1)
     ->Option.map(v => v)
-  } else if s->String.includes("project-") {
+  } else if s->String.includes("todoInput-") {
     s
-    ->String.split("project-")
+    ->String.split("todoInput-")
+    ->Array.get(1)
+    ->Option.map(v => v)
+  } else if s->String.includes("drop-") {
+    s
+    ->String.split("drop-")
     ->Array.get(1)
     ->Option.map(v => v)
   } else {

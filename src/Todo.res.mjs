@@ -149,6 +149,7 @@ var CollapseControls = {
 };
 
 function Todo(props) {
+  var setDrag = props.setDrag;
   var setChecked = props.setChecked;
   var isChecked = props.isChecked;
   var setFocusIdNext = props.setFocusIdNext;
@@ -364,15 +365,9 @@ function Todo(props) {
           }),
         isOpen: match[0],
         onOpenChange: (function (v) {
-            if (v) {
-              return setStatusSelectIsOpen(function (param) {
-                          return v;
-                        });
-            } else {
-              return setStatusSelectIsOpen(function (param) {
-                          return v;
-                        });
-            }
+            setStatusSelectIsOpen(function (param) {
+                  return v;
+                });
           }),
         hasHidden: todoRelation.hasHiddenChildren,
         mode: todo.mode,
@@ -435,6 +430,12 @@ function Todo(props) {
                 tmp,
                 JsxRuntime.jsxs("li", {
                       children: [
+                        JsxRuntime.jsx("div", {
+                              className: "inset-0 absolute bg-amber-400 opacity-0 cursor-move z-10",
+                              onMouseDown: (function (param) {
+                                  setDrag();
+                                })
+                            }),
                         Core__Array.make(todoRelation.depth - 1 | 0, false).map(function (param, i) {
                               return JsxRuntime.jsx("div", {
                                           className: "self-stretch w-2 ml-2 border-l border-[var(--t3)] "
@@ -445,6 +446,10 @@ function Todo(props) {
                                 statusSelect,
                                 JsxRuntime.jsxs("div", {
                                       children: [
+                                        JsxRuntime.jsx("div", {
+                                              className: "opacity-0 absolute drag-marker top-[19px] -left-2 z-10 h-0.5 w-full bg-amber-500",
+                                              id: Types.getDropId(todo.id)
+                                            }),
                                         isSelected ? null : JsxRuntime.jsx("div", {
                                                 className: "h-px w-full absolute bg-[var(--t2)] -bottom-1"
                                               }),
@@ -530,7 +535,7 @@ function Todo(props) {
                       ref: Caml_option.some(containerRef),
                       className: [
                           Types.listItemClass,
-                          " flex flex-row justify-start items-center outline-none "
+                          "relative flex flex-row justify-start items-center outline-none "
                         ].join(" "),
                       id: Types.getTodoId(todo.id),
                       tabIndex: 0,

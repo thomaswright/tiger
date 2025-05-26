@@ -129,7 +129,11 @@ function getTodoId(s) {
 }
 
 function getTodoInputId(s) {
-  return "todo-input-" + s;
+  return "todoInput-" + s;
+}
+
+function getDropId(s) {
+  return "drop-" + s;
 }
 
 function getIdFromId(s) {
@@ -137,8 +141,12 @@ function getIdFromId(s) {
     return Core__Option.map(s.split("todo-")[1], (function (v) {
                   return v;
                 }));
-  } else if (s.includes("project-")) {
-    return Core__Option.map(s.split("project-")[1], (function (v) {
+  } else if (s.includes("todoInput-")) {
+    return Core__Option.map(s.split("todoInput-")[1], (function (v) {
+                  return v;
+                }));
+  } else if (s.includes("drop-")) {
+    return Core__Option.map(s.split("drop-")[1], (function (v) {
                   return v;
                 }));
   } else {
@@ -166,6 +174,7 @@ export {
   statusColorText ,
   getTodoId ,
   getTodoInputId ,
+  getDropId ,
   getIdFromId ,
   listItemClass ,
   todoInputClass ,
