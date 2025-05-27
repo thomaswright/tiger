@@ -4,7 +4,6 @@ import * as Types from "./Types.res.mjs";
 import * as React from "react";
 import * as Common from "./Common.res.mjs";
 import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
-import * as Belt_Array from "rescript/lib/es6/belt_Array.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
@@ -210,17 +209,22 @@ function Todo(props) {
     if ((e.key === "Tab" && e.shiftKey || e.key === "[" && e.metaKey) && !(todo.parent_todo == null)) {
       e.preventDefault();
       State.batch(function () {
-            Core__Option.mapOr(Core__Option.flatMap(Caml_option.nullable_to_opt(todoRelation.parent), (function (x) {
-                        return Caml_option.nullable_to_opt(x.parent_todo);
-                      })), undefined, (function (newTodoParent) {
-                    Common.setTodoParent(todo.id, newTodoParent);
-                    Common.setTodoOrder(newTodoParent, (function (order) {
-                            return Core__Array.reduce(order, [], (function (a, c) {
-                                          return a.concat(c === todo.id ? Belt_Array.concatMany([
-                                                            [c],
-                                                            todo.order
-                                                          ]) : [c]);
-                                        }));
+            Core__Option.mapOr(Caml_option.nullable_to_opt(todoRelation.parent), undefined, (function (parent) {
+                    Core__Option.mapOr(Caml_option.nullable_to_opt(parent.parent_todo), undefined, (function (grandParent) {
+                            Common.setTodoParent(todo.id, grandParent);
+                            Common.setTodoOrder(parent.id, (function (order) {
+                                    return order.filter(function (v) {
+                                                return v !== todo.id;
+                                              });
+                                  }));
+                            Common.setTodoOrder(grandParent, (function (order) {
+                                    return Core__Array.reduce(order, [], (function (a, c) {
+                                                  return a.concat(c === parent.id ? [
+                                                                c,
+                                                                todo.id
+                                                              ] : [c]);
+                                                }));
+                                  }));
                           }));
                   }));
           });
@@ -229,7 +233,7 @@ function Todo(props) {
     
   };
   var makeNewTodo = function () {
-    if (todoRelation.children.length <= 0) {
+    if (!(todoRelation.children.length > 0 && todoRelation.self.modes_shown.length > 0)) {
       return Core__Option.mapOr(Caml_option.nullable_to_opt(todo.parent_todo), undefined, (function (parent_todo) {
                     var newId = Common.addTodo("", parent_todo, (function (order, id) {
                             return Core__Array.reduce(order, [], (function (a, c) {

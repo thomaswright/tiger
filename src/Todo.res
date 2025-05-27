@@ -209,16 +209,23 @@ let make = (
       batch(() => {
         todoRelation.parent
         ->Nullable.toOption
-        ->Option.flatMap(x => x.parent_todo->Nullable.toOption)
-        ->Option.mapOr((), newTodoParent => {
-          setTodoParent(todo.id, newTodoParent)
-          setTodoOrder(
-            newTodoParent,
-            order =>
-              order->Array.reduce(
-                [],
-                (a, c) => Array.concat(a, c == todo.id ? [c, ...todo.order] : [c]),
-              ),
+        ->Option.mapOr((), parent => {
+          parent.parent_todo
+          ->Nullable.toOption
+          ->Option.mapOr(
+            (),
+            grandParent => {
+              setTodoParent(todo.id, grandParent)
+              setTodoOrder(parent.id, order => order->Array.filter(v => v != todo.id))
+              setTodoOrder(
+                grandParent,
+                order =>
+                  order->Array.reduce(
+                    [],
+                    (a, c) => Array.concat(a, c == parent.id ? [c, todo.id] : [c]),
+                  ),
+              )
+            },
           )
         })
       })
@@ -226,7 +233,7 @@ let make = (
   }
 
   let makeNewTodo = () => {
-    if todoRelation.children->Array.length > 0 {
+    if todoRelation.children->Array.length > 0 && todoRelation.self.modes_shown->Array.length > 0 {
       setTodoModesShown(todo.id, a => a->Array.includes(Working) ? a : Array.concat(a, [Working]))
 
       let newId = addTodo("", todo.id, (order, id) => Array.concat([id], order))
