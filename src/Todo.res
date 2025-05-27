@@ -381,9 +381,20 @@ let make = (
         setFocusIdNext(_ => Some(getTodoId(todo.id)))
       }}
       setStatus={newStatus => setTodoStatus(todo.id, newStatus)}
+      date={todo.target_date->Nullable.toOption->Option.map(Date.fromString)}
+      setDate={newDate =>
+        setTodoDate(
+          todo.id,
+          newDate
+          ->Option.map(x =>
+            x->DateFns.formatISOOpt({
+              representation: "date"->Some,
+              format: None,
+            })
+          )
+          ->toNullableNull,
+        )}
     />
-
-  let isLast = todoRelation.index == todoRelation.sibs->Array.length - 1
 
   <React.Fragment>
     {switch todo.is_first_of_mode {

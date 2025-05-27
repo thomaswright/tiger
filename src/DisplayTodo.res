@@ -70,18 +70,18 @@ let make = (~todoRelation: todoRelation, ~setFocusIdNext) => {
     </div>
     <div
       className="flex flex-row flex-wrap border-y border-[var(--t3)] items-center gap-2 p-1 px-2">
-      <Common.StatusSelect
-        isOpen={statusSelectIsOpen}
-        hasHidden={todoRelation.hasHiddenChildren}
-        onOpenChange={v => {
-          setStatusSelectIsOpen(_ => v)
-        }}
-        status={Some(todo.status)}
-        mode={todo.mode}
-        setMode={m => setTodoMode(todo.id, m)}
-        focusTodo={() => ()}
-        setStatus={newStatus => setTodoStatus(todo.id, newStatus)}
-      />
+      // <Common.StatusSelect
+      //   isOpen={statusSelectIsOpen}
+      //   hasHidden={todoRelation.hasHiddenChildren}
+      //   onOpenChange={v => {
+      //     setStatusSelectIsOpen(_ => v)
+      //   }}
+      //   status={Some(todo.status)}
+      //   mode={todo.mode}
+      //   setMode={m => setTodoMode(todo.id, m)}
+      //   focusTodo={() => ()}
+      //   setStatus={newStatus => setTodoStatus(todo.id, newStatus)}
+      // />
       {switch todo.mode {
       | Archive =>
         <div className=" text-[var(--t6)] bg-transparent flex flex-row items-center justify-center">

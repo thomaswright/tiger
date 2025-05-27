@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import "./dropdown.css";
+import DateSelect from "./DateSelect";
 import {
   statusString,
   statusColor,
@@ -31,6 +32,8 @@ const Dropdown = ({
   onOpenChange,
   mode,
   setMode,
+  date,
+  setDate,
 }) => {
   const item = (s) => {
     return (
@@ -116,7 +119,7 @@ const Dropdown = ({
           className="DropdownMenuContent"
           sideOffset={5}
         >
-          <div className="p-2">
+          <div className=" flex flex-col items-center gap-2 p-2">
             <div className="grid grid-cols-2 gap-2 ">
               {item("Unsorted")}
               {item("Future")}
@@ -127,8 +130,7 @@ const Dropdown = ({
               {item("ResolveDone")}
               {item("ResolveNo")}
             </div>
-
-            <div className="flex flex-row rounded justify-center pt-2 gap-2">
+            <div className="flex flex-row rounded justify-center gap-2">
               <button
                 onClick={(_) => {
                   setMode("Working");
@@ -165,6 +167,13 @@ const Dropdown = ({
               >
                 <Archive className="w-5 h-5" />
               </button>
+            </div>
+            <div className="flex flex-row justify-center items-center h-6">
+              <DateSelect
+                className="mr-1 ml-1"
+                value={date}
+                onClick={setDate}
+              />
             </div>
           </div>
         </DropdownMenu.Content>

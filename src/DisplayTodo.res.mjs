@@ -30,10 +30,9 @@ function DisplayTodo(props) {
                 }));
         }), 1000);
   var setAdditionalText = match$1[1];
-  var match$2 = React.useState(function () {
+  React.useState(function () {
         return false;
       });
-  var setStatusSelectIsOpen = match$2[1];
   React.useEffect((function () {
           if (Caml_obj.notequal(Caml_option.nullable_to_opt(additionalTextRef.current), Caml_option.nullable_to_opt(document.activeElement))) {
             setAdditionalText(function (param) {
@@ -50,9 +49,9 @@ function DisplayTodo(props) {
           }
           
         }), [todo.text]);
-  var match$3 = todo.mode;
+  var match$2 = todo.mode;
   var tmp;
-  switch (match$3) {
+  switch (match$2) {
     case "Working" :
         tmp = JsxRuntime.jsx("div", {
               children: JsxRuntime.jsx(Tb.TbInbox, {
@@ -110,26 +109,6 @@ function DisplayTodo(props) {
                     }),
                 JsxRuntime.jsxs("div", {
                       children: [
-                        JsxRuntime.jsx(Common.StatusSelect.make, {
-                              status: todo.status,
-                              setStatus: (function (newStatus) {
-                                  Common.setTodoStatus(todo.id, newStatus);
-                                }),
-                              focusTodo: (function () {
-                                  
-                                }),
-                              isOpen: match$2[0],
-                              onOpenChange: (function (v) {
-                                  setStatusSelectIsOpen(function (param) {
-                                        return v;
-                                      });
-                                }),
-                              hasHidden: todoRelation.hasHiddenChildren,
-                              mode: todo.mode,
-                              setMode: (function (m) {
-                                  Common.setTodoMode(todo.id, m);
-                                })
-                            }),
                         tmp,
                         JsxRuntime.jsx(Common.DateSelect.make, {
                               value: Core__Option.map(Caml_option.nullable_to_opt(todo.target_date), (function (prim) {

@@ -121,6 +121,8 @@ module StatusSelect = {
     ~hasHidden: bool,
     ~mode: mode,
     ~setMode: mode => unit,
+    ~date: option<Date.t>,
+    ~setDate: option<Date.t> => unit,
   ) => React.element = "default"
 }
 

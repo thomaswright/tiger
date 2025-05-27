@@ -389,6 +389,17 @@ function Todo(props) {
         mode: todo.mode,
         setMode: (function (m) {
             Common.setTodoMode(todo.id, m);
+          }),
+        date: Core__Option.map(Caml_option.nullable_to_opt(todo.target_date), (function (prim) {
+                return new Date(prim);
+              })),
+        setDate: (function (newDate) {
+            Common.setTodoDate(todo.id, Common.toNullableNull(Core__Option.map(newDate, (function (x) {
+                            return FormatISO(x, {
+                                        format: undefined,
+                                        representation: "date"
+                                      });
+                          }))));
           })
       });
   var match$3 = todo.is_first_of_mode;
