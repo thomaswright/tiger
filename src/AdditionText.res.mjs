@@ -37,7 +37,7 @@ function AdditionText(props) {
   return JsxRuntime.jsx("div", {
               children: JsxRuntime.jsx(ReactTextareaAutosize, {
                     ref: Caml_option.some(additionalTextRef),
-                    className: ["placeholder:text-[var(--t5)] text-sm flex-1 border-none text-[var(--t10)] w-full outline-none \n          focus:ring-0 font-medium"].join(" "),
+                    className: ["bg-[var(--t0)] placeholder:text-[var(--t5)] text-sm flex-1 border-none text-[var(--t10)] w-full outline-none \n          focus:ring-0 font-medium"].join(" "),
                     id: "id-display-title",
                     style: {
                       resize: "none"

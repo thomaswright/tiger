@@ -2,9 +2,11 @@
 
 import * as Theme from "./Theme.res.mjs";
 import * as Common from "./Common.res.mjs";
+import * as Tb from "react-icons/tb";
 import * as JsxRuntime from "react/jsx-runtime";
 
 function Settings(props) {
+  var backToTodos = props.backToTodos;
   var logout = props.logout;
   var setBaseColor = props.setBaseColor;
   var match = Theme.useTheme();
@@ -12,46 +14,62 @@ function Settings(props) {
   var theme = match[0];
   return JsxRuntime.jsxs("div", {
               children: [
+                JsxRuntime.jsx("button", {
+                      children: JsxRuntime.jsx(Tb.TbArrowLeft, {}),
+                      className: "my-2",
+                      onClick: (function (param) {
+                          backToTodos();
+                        })
+                    }),
                 JsxRuntime.jsxs("div", {
                       children: [
                         JsxRuntime.jsx("img", {
-                              className: "py-0.5 ",
+                              className: "py-0.5",
                               src: Common.logoUrl,
-                              width: "40"
+                              width: "24"
                             }),
                         JsxRuntime.jsx("div", {
                               children: "Tiger Todo",
-                              className: "font-black text-5xl tracking-tighter"
+                              className: "font-bold text-2xl"
                             })
                       ],
-                      className: "flex flex-row gap-3 ml-0.5"
+                      className: "flex flex-row gap-2 items-center"
                     }),
                 JsxRuntime.jsx("div", {
                       children: JsxRuntime.jsx("div", {
-                            children: "Tiger is a todo app with one special feature: it is designed exclusively for my girlfriend.\n            You can use it too if you like it.\n            ",
-                            className: " mb-4 mt-2"
+                            children: "This todo app has one special feature: it is designed exclusively for my girlfriend.\n            You can use it too if you like it.\n            ",
+                            className: "pt-3 max-w-sm"
                           }),
                       className: "font-normal text-sm"
-                    }),
-                JsxRuntime.jsx("div", {
-                      children: JsxRuntime.jsx("button", {
-                            children: "Logout",
-                            className: "text-sm px-2 bg-[var(--t2)] rounded",
-                            onClick: (function (param) {
-                                logout();
-                              })
-                          }),
-                      className: "flex flex-row justify-end w-full"
-                    }),
-                JsxRuntime.jsx("div", {
-                      children: "Settings",
-                      className: "font-black text-xl"
                     }),
                 JsxRuntime.jsxs("div", {
                       children: [
                         JsxRuntime.jsx("div", {
-                              children: "Color Theme",
-                              className: "font-bold pb-1"
+                              children: "Theme",
+                              className: "font-bold leading-none"
+                            }),
+                        JsxRuntime.jsxs("div", {
+                              children: [
+                                JsxRuntime.jsx("button", {
+                                      children: "Dark",
+                                      className: "text-sm px-3 py-0.5 bg-[var(--t2)] rounded",
+                                      onClick: (function (param) {
+                                          setTheme(function (param) {
+                                                return "dark";
+                                              });
+                                        })
+                                    }),
+                                JsxRuntime.jsx("button", {
+                                      children: "Light",
+                                      className: "text-sm px-3 py-0.5 bg-[var(--t2)] rounded",
+                                      onClick: (function (param) {
+                                          setTheme(function (param) {
+                                                return "light";
+                                              });
+                                        })
+                                    })
+                              ],
+                              className: "flex flex-row gap-2 "
                             }),
                         JsxRuntime.jsx("div", {
                               children: [
@@ -76,40 +94,20 @@ function Settings(props) {
                                                   })
                                               }, v);
                                   }),
-                              className: "flex flex-row gap-2 py-1"
-                            }),
-                        JsxRuntime.jsxs("div", {
-                              children: [
-                                JsxRuntime.jsx("button", {
-                                      children: "Dark Mode",
-                                      className: "text-sm px-2 bg-[var(--t2)] rounded",
-                                      onClick: (function (param) {
-                                          setTheme(function (param) {
-                                                return "dark";
-                                              });
-                                        })
-                                    }),
-                                JsxRuntime.jsx("button", {
-                                      children: "Light Mode",
-                                      className: "text-sm px-2 bg-[var(--t2)] rounded",
-                                      onClick: (function (param) {
-                                          setTheme(function (param) {
-                                                return "light";
-                                              });
-                                        })
-                                    })
-                              ],
-                              className: "flex flex-row gap-2 py-2"
+                              className: "flex flex-row gap-2"
                             })
                       ],
-                      className: ""
+                      className: "flex flex-col gap-3  py-3"
                     }),
                 JsxRuntime.jsx("div", {
-                      children: "Backup",
-                      className: "font-bold"
-                    }),
-                JsxRuntime.jsx("div", {
-                      className: "flex flex-row gap-2 mb-2"
+                      children: JsxRuntime.jsx("button", {
+                            children: "Logout",
+                            className: "text-sm px-3 py-0.5 bg-[var(--t2)] rounded",
+                            onClick: (function (param) {
+                                logout();
+                              })
+                          }),
+                      className: "flex flex-row justify-start py-2"
                     }),
                 JsxRuntime.jsxs("div", {
                       children: [
@@ -122,10 +120,10 @@ function Settings(props) {
                               href: "https://github.com/thomaswright/tiger"
                             })
                       ],
-                      className: "text-xs text-right w-full py-3 px-2 font-bold "
+                      className: "text-xs w-full font-bold py-3 "
                     })
               ],
-              className: "flex-1 overflow-y-scroll px-3 py-2 flex flex-col gap-2 items-start pb-2"
+              className: "flex-1 overflow-y-scroll px-3 py-2 flex flex-col items-start"
             });
 }
 

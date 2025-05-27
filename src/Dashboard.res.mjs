@@ -5,6 +5,7 @@ import * as Types from "./Types.res.mjs";
 import * as React from "react";
 import * as Common from "./Common.res.mjs";
 import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
+import * as Settings from "./Settings.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as StorageKeys from "./StorageKeys.res.mjs";
@@ -35,32 +36,35 @@ function Dashboard(props) {
   var match$1 = Common.useSessionStorage(StorageKeys.displayElement, undefined);
   var setDisplayElement = match$1[1];
   var displayElement = match$1[0];
-  var match$2 = Common.useSessionStorage(StorageKeys.showCheckboxes, false);
-  var setShowCheckboxes = match$2[1];
-  var showCheckboxes = match$2[0];
-  var match$3 = React.useState(function () {
+  var match$2 = Common.useSessionStorage(StorageKeys.view, undefined);
+  var setView = match$2[1];
+  var view = match$2[0];
+  var match$3 = Common.useSessionStorage(StorageKeys.showCheckboxes, false);
+  var setShowCheckboxes = match$3[1];
+  var showCheckboxes = match$3[0];
+  var match$4 = React.useState(function () {
         
       });
-  var setChecked = match$3[1];
-  var checked = match$3[0];
-  var match$4 = React.useState(function () {
+  var setChecked = match$4[1];
+  var checked = match$4[0];
+  var match$5 = React.useState(function () {
         return false;
       });
-  var setMoveActive = match$4[1];
-  var moveActive = match$4[0];
-  var match$5 = React.useState(function () {
-        
-      });
-  var setFocusClassNext = match$5[1];
-  var focusClassNext = match$5[0];
+  var setMoveActive = match$5[1];
+  var moveActive = match$5[0];
   var match$6 = React.useState(function () {
         
       });
-  var setFocusIdNext = match$6[1];
-  var focusIdNext = match$6[0];
+  var setFocusClassNext = match$6[1];
+  var focusClassNext = match$6[0];
+  var match$7 = React.useState(function () {
+        
+      });
+  var setFocusIdNext = match$7[1];
+  var focusIdNext = match$7[0];
   var aaParentRef = React.useRef(null);
-  var match$7 = Common.useLocalStorage(StorageKeys.baseColor, "var(--blueBase)");
-  var baseColor = match$7[0];
+  var match$8 = Common.useLocalStorage(StorageKeys.baseColor, "var(--blueBase)");
+  var baseColor = match$8[0];
   var dragItem = React.useRef(undefined);
   var dropItem = React.useRef(undefined);
   var onMouseMove = function ($$event) {
@@ -195,11 +199,37 @@ function Dashboard(props) {
                     });
               }));
       });
+  if (view === "Settings") {
+    return JsxRuntime.jsx(Settings.make, {
+                setBaseColor: match$8[1],
+                logout: props.logout,
+                backToTodos: (function () {
+                    setView(function (param) {
+                          
+                        });
+                  })
+              });
+  }
   return JsxRuntime.jsx("div", {
               children: JsxRuntime.jsxs("div", {
                     children: [
                       JsxRuntime.jsxs("div", {
                             children: [
+                              JsxRuntime.jsx("button", {
+                                    children: JsxRuntime.jsx("img", {
+                                          className: "py-0.5 ",
+                                          src: Common.logoUrl,
+                                          width: "24"
+                                        }),
+                                    onClick: (function (param) {
+                                        setView(function (param) {
+                                              return "Settings";
+                                            });
+                                      })
+                                  }),
+                              JsxRuntime.jsx("div", {
+                                    className: "border-l border-[var(--t3)] mx-1 h-full bg-green-400"
+                                  }),
                               JsxRuntime.jsx("button", {
                                     children: "Show Checkboxes",
                                     className: "px-2 bg-[var(--t2)] rounded text-sm h-5",

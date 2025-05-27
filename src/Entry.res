@@ -155,6 +155,7 @@ let make = (~input: array<todo>, ~logout) => {
       a->Array.concat([newItem])->Array.concat(des)
     })
   }
+
   todos
   ->SMap.get("root")
   ->Option.mapOr(React.null, root => {

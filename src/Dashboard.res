@@ -29,14 +29,14 @@ let make = (
   ~todos: array<todoRelation>,
   ~allTodos as _: array<todoRelation>,
   ~root: todoRelation,
-  ~logout as _: unit => unit,
+  ~logout: unit => unit,
 ) => {
   let (selectedElement, setSelectedElement, _) = useSessionStorage(
     StorageKeys.selectedElement,
     None,
   )
   let (displayElement, setDisplayElement, _) = useSessionStorage(StorageKeys.displayElement, None)
-  // let (view, setView, _) = useSessionStorage(StorageKeys.view, Some(Settings))
+  let (view, setView, _) = useSessionStorage(StorageKeys.view, None) //  React.useState(() => None)
   let (showCheckboxes, setShowCheckboxes, _) = useSessionStorage(StorageKeys.showCheckboxes, false)
 
   let (checked, setChecked) = React.useState(() => SSet.empty)
@@ -48,7 +48,7 @@ let make = (
 
   let aaParentRef: React.ref<RescriptCore.Nullable.t<Dom.element>> = React.useRef(Nullable.null)
 
-  let (baseColor, _setBaseColor, _) = Common.useLocalStorage(
+  let (baseColor, setBaseColor, _) = Common.useLocalStorage(
     StorageKeys.baseColor,
     "var(--blueBase)",
   )
@@ -232,80 +232,91 @@ let make = (
     None
   })
 
-  <div className="flex flex-col justify-center text-[var(--t10)] h-dvh">
-    <div
-      className="flex-1 flex flex-col overflow-hidden sm:h-full border-t sm:border-t-0 md:border-r max-w-4xl ">
+  switch view {
+  | Some(Settings) => <Settings setBaseColor logout backToTodos={() => setView(_ => None)} />
+  | _ =>
+    <div className="flex flex-col justify-center text-[var(--t10)] h-dvh">
       <div
-        className="flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b border-[var(--t3)] px-2">
-        // <CheckedSummary checked={checked} projects={projects} setChecked={setChecked} setProjects />
-        <button
-          className="px-2 bg-[var(--t2)] rounded text-sm h-5"
-          onClick={_ => {
-            setShowCheckboxes(v => !v)
-            if showCheckboxes {
-              setChecked(_ => SSet.empty)
-            }
-          }}>
-          {"Show Checkboxes"->React.string}
-        </button>
-        <div className="flex-1" />
-        <button
-          className="px-2 bg-[var(--t2)] rounded text-sm h-5"
-          onClick={_ => {
-            let newId = addTodo("", root.self.id, (order, id) => Array.concat([id], order))
-            setFocusIdNext(_ => Some(getTodoInputId(newId)))
-          }}>
-          <Icons.Plus />
-        </button>
-        <Todo.TopCollapseControls todos={todos} todo={root.self} todoRelation={root} />
-      </div>
-      <ul className="pb-5 flex-1 overflow-y-scroll" ref={ReactDOM.Ref.domRef(aaParentRef)}>
-        {todos
-        ->Array.map(todoRelation => {
-          <Todo
-            key={todoRelation.self.id}
-            getTodos={_ => todos}
-            moveActive
-            todoRelation={todoRelation}
-            isSelected={selectedElement == Some(todoRelation.self.id)}
-            setSelectedElement
-            isDisplayElement={displayElement == Some(todoRelation.self.id)}
-            setDisplayElement
-            showCheckboxes
-            setFocusIdNext
-            isChecked={checked->SSet.has(todoRelation.self.id)}
-            setChecked
-            // itemToMoveHandleMouseDown={(_, todoId) => dragItem.contents = Some(todoId)}
-            // itemToMoveHandleMouseEnter={(_, _, _) => ()}
-            setDrag={_ => {
-              dragItem.current = Some(todoRelation)
-              document
-              ->Document.getElementById(getDragId(todoRelation.self.id))
-              ->Option.mapOr((), element => {
-                element->removeClass("opacity-0")
-                element->addClass("opacity-20")
-              })
+        className="flex-1 flex flex-col overflow-hidden sm:h-full border-t sm:border-t-0 md:border-r max-w-4xl ">
+        <div
+          className="flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b border-[var(--t3)] px-2">
+          // <CheckedSummary checked={checked} projects={projects} setChecked={setChecked} setProjects />
+          <button
+            onClick={_ => {
+              setView(_ => Some(Settings))
+            }}>
+            <img src={Common.logoUrl} width={"24"} className="py-0.5 " />
+          </button>
+          <div className="border-l border-[var(--t3)] mx-1 h-full bg-green-400" />
+          <button
+            className="px-2 bg-[var(--t2)] rounded text-sm h-5"
+            onClick={_ => {
+              setShowCheckboxes(v => !v)
+              if showCheckboxes {
+                setChecked(_ => SSet.empty)
+              }
+            }}>
+            {"Show Checkboxes"->React.string}
+          </button>
+          <div className="flex-1" />
+          <button
+            className="px-2 bg-[var(--t2)] rounded text-sm h-5"
+            onClick={_ => {
+              let newId = addTodo("", root.self.id, (order, id) => Array.concat([id], order))
+              setFocusIdNext(_ => Some(getTodoInputId(newId)))
+            }}>
+            <Icons.Plus />
+          </button>
+          <Todo.TopCollapseControls todos={todos} todo={root.self} todoRelation={root} />
+        </div>
+        <ul className="pb-5 flex-1 overflow-y-scroll" ref={ReactDOM.Ref.domRef(aaParentRef)}>
+          {todos
+          ->Array.map(todoRelation => {
+            <Todo
+              key={todoRelation.self.id}
+              getTodos={_ => todos}
+              moveActive
+              todoRelation={todoRelation}
+              isSelected={selectedElement == Some(todoRelation.self.id)}
+              setSelectedElement
+              isDisplayElement={displayElement == Some(todoRelation.self.id)}
+              setDisplayElement
+              showCheckboxes
+              setFocusIdNext
+              isChecked={checked->SSet.has(todoRelation.self.id)}
+              setChecked
+              // itemToMoveHandleMouseDown={(_, todoId) => dragItem.contents = Some(todoId)}
+              // itemToMoveHandleMouseEnter={(_, _, _) => ()}
+              setDrag={_ => {
+                dragItem.current = Some(todoRelation)
+                document
+                ->Document.getElementById(getDragId(todoRelation.self.id))
+                ->Option.mapOr((), element => {
+                  element->removeClass("opacity-0")
+                  element->addClass("opacity-20")
+                })
 
-              // setDragItem(_ => Some(todoRelation))
-            }}
-          />
-        })
-        ->React.array}
-      </ul>
-      <div
-        className="flex-none flex flex-row gap-2 justify-between items-center w-full h-20 border-t border-[var(--t3)]">
-        {switch displayElement {
-        | Some(todoId) =>
-          todos
-          ->Array.find(t => t.self.id == todoId)
-          ->Option.mapOr(React.null, todoRelation => {
-            <AdditionText todoRelation />
+                // setDragItem(_ => Some(todoRelation))
+              }}
+            />
           })
-        | _ => React.null
-        }}
+          ->React.array}
+        </ul>
+        <div
+          className="flex-none flex flex-row gap-2 justify-between items-center w-full h-20 border-t border-[var(--t3)]">
+          {switch displayElement {
+          | Some(todoId) =>
+            todos
+            ->Array.find(t => t.self.id == todoId)
+            ->Option.mapOr(React.null, todoRelation => {
+              <AdditionText todoRelation />
+            })
+          | _ => React.null
+          }}
+        </div>
       </div>
     </div>
-  </div>
+  }
 }
 
 let make = observer(make)

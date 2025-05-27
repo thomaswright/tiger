@@ -39,7 +39,7 @@ let make = (~todoRelation: todoRelation) => {
       }}
       id="id-display-title"
       className={[
-        "placeholder:text-[var(--t5)] text-sm flex-1 border-none text-[var(--t10)] w-full outline-none 
+        "bg-[var(--t0)] placeholder:text-[var(--t5)] text-sm flex-1 border-none text-[var(--t10)] w-full outline-none 
           focus:ring-0 font-medium",
       ]->Array.join(" ")}
       placeholder={"Additional details for \"" ++
