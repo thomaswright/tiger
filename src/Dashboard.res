@@ -248,20 +248,15 @@ let make = (
           }}>
           {"Show Checkboxes"->React.string}
         </button>
-        <div className="flex flex-row items-center justify-center gap-2">
-          <button
-            className="px-2 bg-[var(--t2)] rounded text-sm h-5"
-            onClick={_ => {
-              let newId = addTodo("", root.self.id, (order, id) => Array.concat([id], order))
-              setFocusIdNext(_ => Some(getTodoInputId(newId)))
-            }}>
-            {"New Project"->React.string}
-          </button>
-        </div>
-      </div>
-      <div
-        className="flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b border-[var(--t3)] px-2">
         <div className="flex-1" />
+        <button
+          className="px-2 bg-[var(--t2)] rounded text-sm h-5"
+          onClick={_ => {
+            let newId = addTodo("", root.self.id, (order, id) => Array.concat([id], order))
+            setFocusIdNext(_ => Some(getTodoInputId(newId)))
+          }}>
+          <Icons.Plus />
+        </button>
         <Todo.TopCollapseControls todos={todos} todo={root.self} todoRelation={root} />
       </div>
       <ul className="pb-5 flex-1 overflow-y-scroll" ref={ReactDOM.Ref.domRef(aaParentRef)}>
@@ -297,6 +292,18 @@ let make = (
         })
         ->React.array}
       </ul>
+      <div
+        className="flex-none flex flex-row gap-2 justify-between items-center w-full h-20 border-t border-[var(--t3)]">
+        {switch displayElement {
+        | Some(todoId) =>
+          todos
+          ->Array.find(t => t.self.id == todoId)
+          ->Option.mapOr(React.null, todoRelation => {
+            <AdditionText todoRelation />
+          })
+        | _ => React.null
+        }}
+      </div>
     </div>
   </div>
 }

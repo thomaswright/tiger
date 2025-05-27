@@ -8,8 +8,10 @@ import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as StorageKeys from "./StorageKeys.res.mjs";
+import * as AdditionText from "./AdditionText.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as Belt_SetString from "rescript/lib/es6/belt_SetString.js";
+import * as Tb from "react-icons/tb";
 import * as State from "@legendapp/state";
 import * as JsxRuntime from "react/jsx-runtime";
 import * as React$1 from "@legendapp/state/react";
@@ -214,27 +216,19 @@ function Dashboard(props) {
                                       })
                                   }),
                               JsxRuntime.jsx("div", {
-                                    children: JsxRuntime.jsx("button", {
-                                          children: "New Project",
-                                          className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
-                                          onClick: (function (param) {
-                                              var newId = Common.addTodo("", root.self.id, (function (order, id) {
-                                                      return [id].concat(order);
-                                                    }));
-                                              setFocusIdNext(function (param) {
-                                                    return Types.getTodoInputId(newId);
-                                                  });
-                                            })
-                                        }),
-                                    className: "flex flex-row items-center justify-center gap-2"
-                                  })
-                            ],
-                            className: "flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b border-[var(--t3)] px-2"
-                          }),
-                      JsxRuntime.jsxs("div", {
-                            children: [
-                              JsxRuntime.jsx("div", {
                                     className: "flex-1"
+                                  }),
+                              JsxRuntime.jsx("button", {
+                                    children: JsxRuntime.jsx(Tb.TbPlus, {}),
+                                    className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
+                                    onClick: (function (param) {
+                                        var newId = Common.addTodo("", root.self.id, (function (order, id) {
+                                                return [id].concat(order);
+                                              }));
+                                        setFocusIdNext(function (param) {
+                                              return Types.getTodoInputId(newId);
+                                            });
+                                      })
                                   }),
                               JsxRuntime.jsx(Todo.TopCollapseControls.make, {
                                     todo: root.self,
@@ -271,6 +265,16 @@ function Dashboard(props) {
                                 }),
                             ref: Caml_option.some(aaParentRef),
                             className: "pb-5 flex-1 overflow-y-scroll"
+                          }),
+                      JsxRuntime.jsx("div", {
+                            children: displayElement !== undefined ? Core__Option.mapOr(todos.find(function (t) {
+                                        return t.self.id === displayElement;
+                                      }), null, (function (todoRelation) {
+                                      return JsxRuntime.jsx(AdditionText.make, {
+                                                  todoRelation: todoRelation
+                                                });
+                                    })) : null,
+                            className: "flex-none flex flex-row gap-2 justify-between items-center w-full h-20 border-t border-[var(--t3)]"
                           })
                     ],
                     className: "flex-1 flex flex-col overflow-hidden sm:h-full border-t sm:border-t-0 md:border-r max-w-4xl "

@@ -54,7 +54,7 @@ function Todo$TopCollapseControls(props) {
                       }) : null,
                 someExpanded ? JsxRuntime.jsx("button", {
                         children: JsxRuntime.jsx(Tb.TbChevronDown, {}),
-                        className: "mr-4  text-[var(--t5)]  text-sm w-20",
+                        className: "mr-4  text-[var(--t5)]  text-sm",
                         onClick: (function (param) {
                             State.batch(function () {
                                   todos.forEach(function (t) {
@@ -66,7 +66,7 @@ function Todo$TopCollapseControls(props) {
                           })
                       }) : JsxRuntime.jsx("button", {
                         children: JsxRuntime.jsx(Tb.TbMinus, {}),
-                        className: "mr-4 text-[var(--t5)] text-sm w-20",
+                        className: "mr-4 text-[var(--t5)] text-sm",
                         onClick: (function (param) {
                             State.batch(function () {
                                   todos.forEach(function (t) {
@@ -154,6 +154,7 @@ function Todo(props) {
   var isChecked = props.isChecked;
   var setFocusIdNext = props.setFocusIdNext;
   var setDisplayElement = props.setDisplayElement;
+  var isDisplayElement = props.isDisplayElement;
   var setSelectedElement = props.setSelectedElement;
   var isSelected = props.isSelected;
   var todoRelation = props.todoRelation;
@@ -497,7 +498,7 @@ function Todo(props) {
                                                 className: "opacity-0 absolute drag-marker drag-marker-bottom top-[18px] -left-2 z-10 h-0.5 w-full bg-amber-500",
                                                 id: Types.getDropId(todo.id)
                                               }) : null,
-                                        isSelected ? null : JsxRuntime.jsx("div", {
+                                        isSelected || isDisplayElement ? null : JsxRuntime.jsx("div", {
                                                 className: "h-px w-full absolute bg-[var(--t2)] -bottom-1"
                                               }),
                                         JsxRuntime.jsx(ReactTextareaAutosize, {
@@ -571,11 +572,11 @@ function Todo(props) {
                               ],
                               className: [
                                   " flex group flex-row justify-start items-center h-full flex-1 rounded-sm  py-1 pl-1",
-                                  stagedForDelete ? "outline-red-700 dark:outline-red-500" : "focus-within:outline-purple-500 outline-blue-500 ",
+                                  stagedForDelete ? "outline-red-700 dark:outline-red-500" : " outline-blue-500 ",
                                   stagedForDelete ? "bg-red-200 dark:bg-red-950" : (
                                       isChecked ? "bg-sky-50 dark:bg-sky-950" : ""
                                     ),
-                                  isSelected ? "outline outline-2 -outline-offset-2 " : ""
+                                  isSelected || isDisplayElement ? "outline outline-2 -outline-offset-2 " : ""
                                 ].join(" ")
                             })
                       ],

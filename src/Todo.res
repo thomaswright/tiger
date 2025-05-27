@@ -43,7 +43,7 @@ module TopCollapseControls = {
       }}
       {if !someExpanded {
         <button
-          className="mr-4 text-[var(--t5)] text-sm w-20"
+          className="mr-4 text-[var(--t5)] text-sm"
           onClick={_ =>
             batch(() => {
               todos->Array.forEach(t => {
@@ -54,7 +54,7 @@ module TopCollapseControls = {
         </button>
       } else {
         <button
-          className="mr-4  text-[var(--t5)]  text-sm w-20"
+          className="mr-4  text-[var(--t5)]  text-sm"
           onClick={_ =>
             batch(() => {
               todos->Array.forEach(t => {
@@ -134,7 +134,7 @@ let make = (
   ~getTodos as _: unit => array<todoRelation>,
   ~isSelected,
   ~setSelectedElement,
-  ~isDisplayElement as _,
+  ~isDisplayElement,
   ~setDisplayElement,
   ~showCheckboxes,
   ~setFocusIdNext,
@@ -478,17 +478,15 @@ let make = (
       <div
         className={[
           " flex group flex-row justify-start items-center h-full flex-1 rounded-sm  py-1 pl-1",
-          stagedForDelete
-            ? "outline-red-700 dark:outline-red-500"
-            : "focus-within:outline-purple-500 outline-blue-500 ",
+          stagedForDelete ? "outline-red-700 dark:outline-red-500" : " outline-blue-500 ",
           stagedForDelete
             ? "bg-red-200 dark:bg-red-950"
             : isChecked
             ? "bg-sky-50 dark:bg-sky-950"
             // : isDisplayElement && !isSelected
-            // ? "bg-sky-200 dark:bg-sky-900"
+            // ? "outline-blue-500"
             : "",
-          isSelected ? "outline outline-2 -outline-offset-2 " : "",
+          isSelected || isDisplayElement ? "outline outline-2 -outline-offset-2 " : "",
         ]->Array.join(" ")}>
         statusSelect
         // <div
@@ -516,7 +514,7 @@ let make = (
           } else {
             React.null
           }}
-          {isSelected
+          {isSelected || isDisplayElement
             ? React.null
             : <div className="h-px w-full absolute bg-[var(--t2)] -bottom-1" />}
           <Common.TextareaAutosize
