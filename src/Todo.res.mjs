@@ -4,6 +4,7 @@ import * as Types from "./Types.res.mjs";
 import * as React from "react";
 import * as Common from "./Common.res.mjs";
 import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
+import * as Belt_Array from "rescript/lib/es6/belt_Array.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
@@ -199,6 +200,16 @@ function Todo(props) {
                       return ;
                     } else {
                       Common.setTodoParent(todo.id, prevSib.id);
+                      Common.setTodoModesShown(prevSib.id, (function (modes) {
+                              if (modes.includes("Working")) {
+                                return modes;
+                              } else {
+                                return Belt_Array.concatMany([
+                                            modes,
+                                            ["Working"]
+                                          ]);
+                              }
+                            }));
                       return Common.setTodoOrder(prevSib.id, (function (order) {
                                     return order.concat([todo.id]);
                                   }));

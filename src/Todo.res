@@ -190,6 +190,10 @@ let make = (
             ()
           } else {
             setTodoParent(todo.id, prevSib.id)
+            setTodoModesShown(
+              prevSib.id,
+              modes => modes->Array.includes(Working) ? modes : [...modes, Working],
+            )
             setTodoOrder(prevSib.id, order => Array.concat(order, [todo.id]))
 
             // todoRelation.children->Array.forEach(child => setTodoParent(child.id, prevSib.id))
