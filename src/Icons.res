@@ -160,8 +160,8 @@ module Hand = {
 }
 
 module Star = {
-  @react.component @module("react-icons/fa")
-  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "FaStar"
+  @react.component @module("react-icons/tb")
+  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "TbFlare"
 }
 
 module Hourglass = {

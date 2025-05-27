@@ -124,36 +124,40 @@ let statusString = s => {
 let statusColor = s =>
   switch s {
   | Unsorted => "var(--t3)"
-  | Future => "#54A6FF"
-  | NowIfTime => "#66380F"
-  | NowMustDo => "#FFAA00"
-  | Underway => "#1E931C"
-  | Paused => "#FF6411"
-  | ResolveDone => "#073CC1"
+  | Future => "#FF7EAE"
+  | NowIfTime => "#ffb300"
+  | NowMustDo => "#ffb300"
+  | Underway => "#3FBA53"
+  | Paused => "#3FBA53"
+  | ResolveDone => "#3677F8"
   | ResolveNo => "#888"
   }
-// switch s {
-// | Unsorted => "var(--t2)"
-// | Future => "var(--lightBlue)"
-// | NowIfTime => "var(--lightOrange)"
-// | NowMustDo => "var(--lightOrange)"
-// | Underway => "var(--lightGreen)"
-// | Paused => "var(--lightGreen)"
-// | ResolveDone => "var(--lightPurple)"
-// | ResolveNo => "var(--lightPurple)"
-// }
 
 let statusColorText = _ => "white"
-// switch s {
-// | Unsorted => "var(--t8)"
-// | Future => "var(--darkBlue)"
-// | NowIfTime => "var(--darkOrange)"
-// | NowMustDo => "var(--darkOrange)"
-// | Underway => "var(--darkGreen)"
-// | Paused => "var(--darkGreen)"
-// | ResolveDone => "var(--darkPurple)"
-// | ResolveNo => "var(--darkPurple)"
-// }
+
+// let statusColor = s =>
+//   switch s {
+//   | Unsorted => "var(--t2)"
+//   | Future => "var(--lightBlue)"
+//   | NowIfTime => "var(--lightOrange)"
+//   | NowMustDo => "var(--lightOrange)"
+//   | Underway => "var(--lightGreen)"
+//   | Paused => "var(--lightGreen)"
+//   | ResolveDone => "var(--lightPurple)"
+//   | ResolveNo => "var(--lightPurple)"
+//   }
+
+// let statusColorText = s =>
+//   switch s {
+//   | Unsorted => "var(--t8)"
+//   | Future => "var(--darkBlue)"
+//   | NowIfTime => "var(--darkOrange)"
+//   | NowMustDo => "var(--darkOrange)"
+//   | Underway => "var(--darkGreen)"
+//   | Paused => "var(--darkGreen)"
+//   | ResolveDone => "var(--darkPurple)"
+//   | ResolveNo => "var(--darkPurple)"
+//   }
 
 let getTodoId = s => "todo-" ++ s
 let getTodoInputId = s => "todoInput-" ++ s

@@ -103,17 +103,15 @@ function statusColor(s) {
     case "Unsorted" :
         return "var(--t3)";
     case "Future" :
-        return "#54A6FF";
+        return "#FF7EAE";
     case "NowIfTime" :
-        return "#66380F";
     case "NowMustDo" :
-        return "#FFAA00";
+        return "#ffb300";
     case "Underway" :
-        return "#1E931C";
     case "Paused" :
-        return "#FF6411";
+        return "#3FBA53";
     case "ResolveDone" :
-        return "#073CC1";
+        return "#3677F8";
     case "ResolveNo" :
         return "#888";
     
