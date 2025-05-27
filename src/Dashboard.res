@@ -233,7 +233,15 @@ let make = (
   })
 
   switch view {
-  | Some(Settings) => <Settings setBaseColor logout backToTodos={() => setView(_ => None)} />
+  | Some(Settings) =>
+    <Settings
+      setBaseColor
+      logout={() => {
+        setView(_ => None)
+        logout()
+      }}
+      backToTodos={() => setView(_ => None)}
+    />
   | _ =>
     <div className="flex flex-col justify-center text-[var(--t10)] h-dvh">
       <div

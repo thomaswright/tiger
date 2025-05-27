@@ -32,7 +32,15 @@ const DashboardWrapper = observer(({ session }) => {
     return { ...v, id: k };
   });
 
-  return <Entry input={todos} logout={() => supabase.auth.signOut()} />;
+  return (
+    <Entry
+      input={todos}
+      logout={() => {
+        supabase.auth.signOut();
+        localStorage.clear();
+      }}
+    />
+  );
 });
 
 function App() {

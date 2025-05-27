@@ -28,6 +28,7 @@ function elementPosition(element) {
 }
 
 function Dashboard(props) {
+  var logout = props.logout;
   var root = props.root;
   var todos = props.todos;
   var match = Common.useSessionStorage(StorageKeys.selectedElement, undefined);
@@ -202,7 +203,12 @@ function Dashboard(props) {
   if (view === "Settings") {
     return JsxRuntime.jsx(Settings.make, {
                 setBaseColor: match$8[1],
-                logout: props.logout,
+                logout: (function () {
+                    setView(function (param) {
+                          
+                        });
+                    logout();
+                  }),
                 backToTodos: (function () {
                     setView(function (param) {
                           
