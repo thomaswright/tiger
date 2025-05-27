@@ -114,7 +114,7 @@ let statusString = s => {
   | Future => "Future"
   | NowIfTime => "If Time"
   | NowMustDo => "Must Do"
-  | Underway => "Doing"
+  | Underway => "Underway"
   | Paused => "Paused"
   | ResolveDone => "Done"
   | ResolveNo => "No"
@@ -124,11 +124,11 @@ let statusString = s => {
 let statusColor = s =>
   switch s {
   | Unsorted => "var(--t3)"
-  | Future => "#6EB4FF"
-  | NowIfTime => "#ED4E90"
-  | NowMustDo => "#FFA600"
-  | Underway => "#00A1AC"
-  | Paused => "#125683"
+  | Future => "#54A6FF"
+  | NowIfTime => "#FEA500"
+  | NowMustDo => "#FF4B0F"
+  | Underway => "#1A47E8"
+  | Paused => "#FF7DC4"
   | ResolveDone => "#029000"
   | ResolveNo => "#888"
   }

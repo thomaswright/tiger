@@ -87,7 +87,7 @@ function statusString(s) {
     case "NowMustDo" :
         return "Must Do";
     case "Underway" :
-        return "Doing";
+        return "Underway";
     case "Paused" :
         return "Paused";
     case "ResolveDone" :
@@ -103,15 +103,15 @@ function statusColor(s) {
     case "Unsorted" :
         return "var(--t3)";
     case "Future" :
-        return "#6EB4FF";
+        return "#54A6FF";
     case "NowIfTime" :
-        return "#ED4E90";
+        return "#FEA500";
     case "NowMustDo" :
-        return "#FFA600";
+        return "#FF4B0F";
     case "Underway" :
-        return "#00A1AC";
+        return "#1A47E8";
     case "Paused" :
-        return "#125683";
+        return "#FF7DC4";
     case "ResolveDone" :
         return "#029000";
     case "ResolveNo" :
