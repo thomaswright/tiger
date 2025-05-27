@@ -229,19 +229,35 @@ function Todo(props) {
     
   };
   var makeNewTodo = function () {
-    Core__Option.mapOr(Caml_option.nullable_to_opt(todo.parent_todo), undefined, (function (parent_todo) {
-            var newId = Common.addTodo("", parent_todo, (function (order, id) {
-                    return Core__Array.reduce(order, [], (function (a, c) {
-                                  return a.concat(c === todo.id ? [
-                                                c,
-                                                id
-                                              ] : [c]);
-                                }));
+    if (todoRelation.children.length <= 0) {
+      return Core__Option.mapOr(Caml_option.nullable_to_opt(todo.parent_todo), undefined, (function (parent_todo) {
+                    var newId = Common.addTodo("", parent_todo, (function (order, id) {
+                            return Core__Array.reduce(order, [], (function (a, c) {
+                                          return a.concat(c === todo.id ? [
+                                                        c,
+                                                        id
+                                                      ] : [c]);
+                                        }));
+                          }));
+                    Common.setTodoMode(newId, todo.mode);
+                    setFocusIdNext(function (param) {
+                          return Types.getTodoInputId(newId);
+                        });
                   }));
-            setFocusIdNext(function (param) {
-                  return Types.getTodoInputId(newId);
-                });
+    }
+    Common.setTodoModesShown(todo.id, (function (a) {
+            if (a.includes("Working")) {
+              return a;
+            } else {
+              return a.concat(["Working"]);
+            }
           }));
+    var newId = Common.addTodo("", todo.id, (function (order, id) {
+            return [id].concat(order);
+          }));
+    setFocusIdNext(function (param) {
+          return Types.getTodoInputId(newId);
+        });
   };
   var onKeyDownContainer = function (e) {
     if (isSelected && Caml_obj.equal(Caml_option.nullable_to_opt(containerRef.current), Caml_option.nullable_to_opt(document.activeElement))) {

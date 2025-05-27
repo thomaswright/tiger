@@ -226,14 +226,22 @@ let make = (
   }
 
   let makeNewTodo = () => {
-    todo.parent_todo
-    ->Nullable.toOption
-    ->Option.mapOr((), parent_todo => {
-      let newId = addTodo("", parent_todo, (order, id) => {
-        order->Array.reduce([], (a, c) => Array.concat(a, c == todo.id ? [c, id] : [c]))
-      })
+    if todoRelation.children->Array.length > 0 {
+      setTodoModesShown(todo.id, a => a->Array.includes(Working) ? a : Array.concat(a, [Working]))
+
+      let newId = addTodo("", todo.id, (order, id) => Array.concat([id], order))
       setFocusIdNext(_ => Some(getTodoInputId(newId)))
-    })
+    } else {
+      todo.parent_todo
+      ->Nullable.toOption
+      ->Option.mapOr((), parent_todo => {
+        let newId = addTodo("", parent_todo, (order, id) => {
+          order->Array.reduce([], (a, c) => Array.concat(a, c == todo.id ? [c, id] : [c]))
+        })
+        setTodoMode(newId, todo.mode)
+        setFocusIdNext(_ => Some(getTodoInputId(newId)))
+      })
+    }
   }
 
   let onKeyDownContainer = e => {
