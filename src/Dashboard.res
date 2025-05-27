@@ -41,6 +41,7 @@ let make = (
 
   let (checked, setChecked) = React.useState(() => SSet.empty)
   // let (dragItem, setDragItem) = React.useState(() => None)
+  let (moveActive, setMoveActive) = React.useState(() => false)
 
   let (focusClassNext, setFocusClassNext) = React.useState(_ => None)
   let (focusIdNext, setFocusIdNext) = React.useState(_ => None)
@@ -115,7 +116,6 @@ let make = (
             ->Option.mapOr(
               (),
               parent => {
-                Console.log3("move3", dropItem.self.text, dragItem.self.text)
                 batch(
                   () => {
                     // set new parent
@@ -191,7 +191,16 @@ let make = (
   React.useEffect0(() => {
     window->Window.addMouseMoveEventListener(onMouseMove)
     window->Window.addMouseUpEventListener(onMouseUp)
-
+    window->Window.addKeyDownEventListener(event => {
+      if event->KeyboardEvent.key == "Meta" {
+        setMoveActive(_ => true)
+      }
+    })
+    window->Window.addKeyUpEventListener(event => {
+      if event->KeyboardEvent.key == "Meta" {
+        setMoveActive(_ => false)
+      }
+    })
     None
   })
 
@@ -262,6 +271,7 @@ let make = (
           <Todo
             key={todoRelation.self.id}
             getTodos={_ => todos}
+            moveActive
             todoRelation={todoRelation}
             isSelected={selectedElement == Some(todoRelation.self.id)}
             setSelectedElement

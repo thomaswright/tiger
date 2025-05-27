@@ -140,6 +140,7 @@ let make = (
   ~setFocusIdNext,
   ~isChecked,
   ~setChecked,
+  ~moveActive,
   // ~itemToMoveHandleMouseDown,
   // ~itemToMoveHandleMouseEnter as _,
   ~setDrag,
@@ -373,7 +374,6 @@ let make = (
       }}
       setStatus={newStatus => setTodoStatus(todo.id, newStatus)}
     />
-  let moveIsOn = true
 
   let isLast = todoRelation.index == todoRelation.sibs->Array.length - 1
 
@@ -429,7 +429,7 @@ let make = (
 
         "relative flex flex-row justify-start items-center outline-none ",
       ]->Array.join(" ")}>
-      {if moveIsOn {
+      {if moveActive {
         <div
           id={getDragId(todo.id)}
           className={"inset-0 absolute bg-amber-400 opacity-0 cursor-move z-10 drag-mask"}

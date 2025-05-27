@@ -42,18 +42,23 @@ function Dashboard(props) {
   var setChecked = match$3[1];
   var checked = match$3[0];
   var match$4 = React.useState(function () {
-        
+        return false;
       });
-  var setFocusClassNext = match$4[1];
-  var focusClassNext = match$4[0];
+  var setMoveActive = match$4[1];
+  var moveActive = match$4[0];
   var match$5 = React.useState(function () {
         
       });
-  var setFocusIdNext = match$5[1];
-  var focusIdNext = match$5[0];
+  var setFocusClassNext = match$5[1];
+  var focusClassNext = match$5[0];
+  var match$6 = React.useState(function () {
+        
+      });
+  var setFocusIdNext = match$6[1];
+  var focusIdNext = match$6[0];
   var aaParentRef = React.useRef(null);
-  var match$6 = Common.useLocalStorage(StorageKeys.baseColor, "var(--blueBase)");
-  var baseColor = match$6[0];
+  var match$7 = Common.useLocalStorage(StorageKeys.baseColor, "var(--blueBase)");
+  var baseColor = match$7[0];
   var dragItem = React.useRef(undefined);
   var dropItem = React.useRef(undefined);
   var onMouseMove = function ($$event) {
@@ -105,7 +110,6 @@ function Dashboard(props) {
                     }), undefined, (function (dropItem) {
                     if (dropItem.self.id !== match.self.id && !dropItem.parents.includes(match.self.id)) {
                       return Core__Option.mapOr(Caml_option.nullable_to_opt(dropItem.parent), undefined, (function (parent) {
-                                    console.log("move3", dropItem.self.text, match.self.text);
                                     State.batch(function () {
                                           Common.setTodoParent(match.self.id, parent.id);
                                           Core__Option.mapOr(Caml_option.nullable_to_opt(match.parent), undefined, (function (formerDragParent) {
@@ -150,6 +154,22 @@ function Dashboard(props) {
   React.useEffect((function () {
           window.addEventListener("mousemove", onMouseMove);
           window.addEventListener("mouseup", onMouseUp);
+          window.addEventListener("keydown", (function ($$event) {
+                  if ($$event.key === "Meta") {
+                    return setMoveActive(function (param) {
+                                return true;
+                              });
+                  }
+                  
+                }));
+          window.addEventListener("keyup", (function ($$event) {
+                  if ($$event.key === "Meta") {
+                    return setMoveActive(function (param) {
+                                return false;
+                              });
+                  }
+                  
+                }));
         }), []);
   React.useEffect((function () {
           document.documentElement.style.setProperty("--tBase", baseColor);
@@ -238,6 +258,7 @@ function Dashboard(props) {
                                               setFocusIdNext: setFocusIdNext,
                                               isChecked: Belt_SetString.has(checked, todoRelation.self.id),
                                               setChecked: setChecked,
+                                              moveActive: moveActive,
                                               setDrag: (function () {
                                                   console.log("set drag", todoRelation.self.text);
                                                   dragItem.current = todoRelation;

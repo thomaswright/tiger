@@ -431,13 +431,13 @@ function Todo(props) {
                 tmp,
                 JsxRuntime.jsxs("li", {
                       children: [
-                        JsxRuntime.jsx("div", {
-                              className: "inset-0 absolute bg-amber-400 opacity-0 cursor-move z-10 drag-mask",
-                              id: Types.getDragId(todo.id),
-                              onMouseDown: (function (param) {
-                                  setDrag();
-                                })
-                            }),
+                        props.moveActive ? JsxRuntime.jsx("div", {
+                                className: "inset-0 absolute bg-amber-400 opacity-0 cursor-move z-10 drag-mask",
+                                id: Types.getDragId(todo.id),
+                                onMouseDown: (function (param) {
+                                    setDrag();
+                                  })
+                              }) : null,
                         Core__Array.make(todoRelation.depth - 1 | 0, false).map(function (param, i) {
                               return JsxRuntime.jsx("div", {
                                           className: "self-stretch w-2 ml-2 border-l border-[var(--t3)] "
