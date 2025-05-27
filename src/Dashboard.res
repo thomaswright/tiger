@@ -256,16 +256,16 @@ let make = (
             <img src={Common.logoUrl} width={"24"} className="py-0.5 " />
           </button>
           <div className="border-l border-[var(--t3)] mx-1 h-full bg-green-400" />
-          <button
-            className="px-2 bg-[var(--t2)] rounded text-sm h-5"
-            onClick={_ => {
-              setShowCheckboxes(v => !v)
-              if showCheckboxes {
-                setChecked(_ => SSet.empty)
-              }
-            }}>
-            {"Show Checkboxes"->React.string}
-          </button>
+          // <button
+          //   className="px-2 bg-[var(--t2)] rounded text-sm h-5"
+          //   onClick={_ => {
+          //     setShowCheckboxes(v => !v)
+          //     if showCheckboxes {
+          //       setChecked(_ => SSet.empty)
+          //     }
+          //   }}>
+          //   {"Show Checkboxes"->React.string}
+          // </button>
           <div className="flex-1" />
           <button
             className="px-2 bg-[var(--t2)] rounded text-sm h-5"

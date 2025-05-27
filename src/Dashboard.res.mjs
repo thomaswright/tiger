@@ -41,7 +41,6 @@ function Dashboard(props) {
   var setView = match$2[1];
   var view = match$2[0];
   var match$3 = Common.useSessionStorage(StorageKeys.showCheckboxes, false);
-  var setShowCheckboxes = match$3[1];
   var showCheckboxes = match$3[0];
   var match$4 = React.useState(function () {
         
@@ -235,21 +234,6 @@ function Dashboard(props) {
                                   }),
                               JsxRuntime.jsx("div", {
                                     className: "border-l border-[var(--t3)] mx-1 h-full bg-green-400"
-                                  }),
-                              JsxRuntime.jsx("button", {
-                                    children: "Show Checkboxes",
-                                    className: "px-2 bg-[var(--t2)] rounded text-sm h-5",
-                                    onClick: (function (param) {
-                                        setShowCheckboxes(function (v) {
-                                              return !v;
-                                            });
-                                        if (showCheckboxes) {
-                                          return setChecked(function (param) {
-                                                      
-                                                    });
-                                        }
-                                        
-                                      })
                                   }),
                               JsxRuntime.jsx("div", {
                                     className: "flex-1"
