@@ -44,13 +44,11 @@ let make = (~onClick, ~value: option<Js.Date.t>) => {
   ))
 
   React.useEffect0(() => {
-    Console.log("load")
     value
     ->Option.getOr(now)
     ->calDateId
     ->getElementByIdOp
     ->Option.mapOr((), element => {
-      Console.log("scroll")
       element->scrollIntoView({
         "behavior": "smooth",
         "block": "start",

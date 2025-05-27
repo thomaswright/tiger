@@ -70,10 +70,8 @@ function Calendar(props) {
   var endAdj = match$1[1];
   var startAdj = match$1[0];
   React.useEffect((function () {
-          console.log("load");
           var s = calDateId(Core__Option.getOr(value, now));
           Core__Option.mapOr(Caml_option.nullable_to_opt(document.getElementById(s)), undefined, (function (element) {
-                  console.log("scroll");
                   element.scrollIntoView({
                         behavior: "smooth",
                         block: "start"

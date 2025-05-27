@@ -261,7 +261,6 @@ function Dashboard(props) {
                                               setChecked: setChecked,
                                               moveActive: moveActive,
                                               setDrag: (function () {
-                                                  console.log("set drag", todoRelation.self.text);
                                                   dragItem.current = todoRelation;
                                                   Core__Option.mapOr(Caml_option.nullable_to_opt(document.getElementById(Types.getDragId(todoRelation.self.id))), undefined, (function (element) {
                                                           element.classList.remove("opacity-0");

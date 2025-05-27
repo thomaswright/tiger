@@ -101,8 +101,6 @@ let make = (
   let moveItem = () => {
     switch (dragItem.current, dropItem.current) {
     | (Some(dragItem), Some(dropItemElement)) =>
-      // Console.log3("move1", dragItem, getIdFromId(dropItemElement->Element.id))
-
       getIdFromId(dropItemElement->Element.id)->Option.mapOr((), dropItemId => {
         todos
         ->Array.find(todo => todo.self.id == dropItemId)
@@ -285,7 +283,6 @@ let make = (
             // itemToMoveHandleMouseDown={(_, todoId) => dragItem.contents = Some(todoId)}
             // itemToMoveHandleMouseEnter={(_, _, _) => ()}
             setDrag={_ => {
-              Console.log2("set drag", todoRelation.self.text)
               dragItem.current = Some(todoRelation)
               document
               ->Document.getElementById(getDragId(todoRelation.self.id))
