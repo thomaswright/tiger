@@ -137,6 +137,20 @@ let statusColorText = _ => "white"
 
 // let statusColor = s =>
 //   switch s {
+//   | Unsorted => "var(--t3)"
+//   | Future => "#DA4F82"
+//   | NowIfTime => "#FFA600"
+//   | NowMustDo => "#FFA600"
+//   | Underway => "#057C19"
+//   | Paused => "#057C19"
+//   | ResolveDone => "#0B41AC"
+//   | ResolveNo => "#888"
+//   }
+
+// let statusColorText = _ => "black"
+
+// let statusColor = s =>
+//   switch s {
 //   | Unsorted => "var(--t2)"
 //   | Future => "var(--lightBlue)"
 //   | NowIfTime => "var(--lightOrange)"
