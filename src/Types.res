@@ -87,7 +87,7 @@ let statusIcon = s => {
   | Unsorted => <div />
   | Future => <Icons.Future />
   | NowIfTime => <Icons.Clock />
-  | NowMustDo => <Icons.Exclamation />
+  | NowMustDo => <Icons.Hourglass />
   | Underway => <Icons.Play />
   | Paused => <Icons.Pause />
   | ResolveDone => <Icons.Check />
@@ -125,11 +125,11 @@ let statusColor = s =>
   switch s {
   | Unsorted => "var(--t3)"
   | Future => "#54A6FF"
-  | NowIfTime => "#FEA500"
-  | NowMustDo => "#FF4B0F"
-  | Underway => "#1A47E8"
-  | Paused => "#FF7DC4"
-  | ResolveDone => "#029000"
+  | NowIfTime => "#66380F"
+  | NowMustDo => "#FFAA00"
+  | Underway => "#1E931C"
+  | Paused => "#FF6411"
+  | ResolveDone => "#073CC1"
   | ResolveNo => "#888"
   }
 // switch s {

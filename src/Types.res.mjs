@@ -41,7 +41,7 @@ function statusIcon(s) {
     case "NowIfTime" :
         return JsxRuntime.jsx(Fa.FaClock, {});
     case "NowMustDo" :
-        return JsxRuntime.jsx(Fa.FaExclamation, {});
+        return JsxRuntime.jsx(Fa.FaHourglass, {});
     case "Underway" :
         return JsxRuntime.jsx(Tb.TbPlayerPlayFilled, {});
     case "Paused" :
@@ -105,15 +105,15 @@ function statusColor(s) {
     case "Future" :
         return "#54A6FF";
     case "NowIfTime" :
-        return "#FEA500";
+        return "#66380F";
     case "NowMustDo" :
-        return "#FF4B0F";
+        return "#FFAA00";
     case "Underway" :
-        return "#1A47E8";
+        return "#1E931C";
     case "Paused" :
-        return "#FF7DC4";
+        return "#FF6411";
     case "ResolveDone" :
-        return "#029000";
+        return "#073CC1";
     case "ResolveNo" :
         return "#888";
     

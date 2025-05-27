@@ -65,6 +65,10 @@ var Clock = {};
 
 var Hand = {};
 
+var Star = {};
+
+var Hourglass = {};
+
 export {
   EyeClosed ,
   Eye ,
@@ -98,5 +102,7 @@ export {
   Future ,
   Clock ,
   Hand ,
+  Star ,
+  Hourglass ,
 }
 /* No side effect */
