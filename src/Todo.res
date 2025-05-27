@@ -486,7 +486,7 @@ let make = (
             id={getDropId(todo.id)}
             className="opacity-0 absolute drag-marker -top-[5px] -left-2 z-10 h-0.5 w-full bg-amber-500"
           />
-          {if isLast {
+          {if todo.is_last_of_mode->Option.isSome {
             <div
               id={getDropId(todo.id)}
               className="opacity-0 absolute drag-marker drag-marker-bottom top-[18px] -left-2 z-10 h-0.5 w-full bg-amber-500"

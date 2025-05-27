@@ -147,6 +147,7 @@ let make = (
                             ),
                         ),
                     )
+                    setTodoMode(dragItem.self.id, dropItem.self.mode)
                   },
                 )
               },

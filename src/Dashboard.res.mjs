@@ -133,6 +133,7 @@ function Dashboard(props) {
                                                                             ) : [c]);
                                                               }));
                                                 }));
+                                          Common.setTodoMode(match.self.id, dropItem.self.mode);
                                         });
                                   }));
                     }

@@ -48,6 +48,7 @@ type todo = {
   mode: mode,
   modes_shown: array<mode>,
   is_first_of_mode: option<mode>,
+  is_last_of_mode: option<mode>,
 }
 
 type todoRelation = {

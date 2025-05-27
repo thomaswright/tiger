@@ -12,41 +12,6 @@ let make = (~input: array<todo>, ~logout) => {
       }
     )
   })
-  // ->SMap.mapWithKey((parent_todo, v) =>
-  //   v->Array.toSorted((a, b) => {
-  //     let result = ref(0.)
-
-  //     // Date
-  //     if result.contents == 0. {
-  //       result :=
-  //         switch (
-  //           a.target_date->Nullable.toOption->Option.map(Date.fromString),
-  //           b.target_date->Nullable.toOption->Option.map(Date.fromString),
-  //         ) {
-  //         | (Some(_), None) => -1.
-  //         | (None, Some(_)) => 1.
-  //         | (None, None) => 0.
-  //         | (Some(a), Some(b)) => Date.compare(a, b)
-  //         }
-  //     }
-
-  //     // Mode
-  //     if result.contents == 0. {
-  //       result := a.mode->modeCompare -. b.mode->modeCompare
-  //     }
-
-  //     Text
-  //     if result.contents == 0. {
-  //       result :=
-  //         String.localeCompare(
-  //           a.text->Nullable.toOption->Option.getOr(""),
-  //           b.text->Nullable.toOption->Option.getOr(""),
-  //         )
-  //     }
-
-  //     result.contents
-  //   })
-  // )
 
   let filterer = (arr, c) => {
     arr->Array.filter(x => c.modes_shown->Array.includes(x.mode))
@@ -78,12 +43,8 @@ let make = (~input: array<todo>, ~logout) => {
         todos
         ->SMap.get(self.id)
         ->Option.mapOr(([], []), children => {
-          let hasStashed = ref(false)
-          let hasArchived = ref(false)
-
-          let children =
-            children
-            ->Array.toSorted(
+          let sort = c =>
+            c->Array.toSorted(
               (a, b) => {
                 let result = ref(0.)
 
@@ -101,10 +62,10 @@ let make = (~input: array<todo>, ~logout) => {
                 //     }
                 // }
 
-                // Mode
-                if result.contents == 0. {
-                  result := a.mode->modeCompare -. b.mode->modeCompare
-                }
+                // // Mode
+                // if result.contents == 0. {
+                //   result := a.mode->modeCompare -. b.mode->modeCompare
+                // }
 
                 // Order
                 if result.contents == 0. {
@@ -129,27 +90,39 @@ let make = (~input: array<todo>, ~logout) => {
                 result.contents
               },
             )
-            ->Array.map(
-              child => {
-                if !hasStashed.contents && child.mode == Stashed {
-                  hasStashed := true
 
-                  {
-                    ...child,
-                    is_first_of_mode: Some(Stashed),
-                  }
-                } else if !hasArchived.contents && child.mode == Archive {
-                  hasArchived := true
+          let filterMode = m =>
+            children
+            ->Array.filter(a => a.mode == m)
+            ->sort
+            ->{
+              x => {
+                let len = x->Array.length - 1
+                x->Array.mapWithIndex(
+                  (el, j) => {
+                    if j == 0 {
+                      {
+                        ...el,
+                        is_first_of_mode: Some(m),
+                      }
+                    } else if j == len {
+                      {
+                        ...el,
+                        is_last_of_mode: Some(m),
+                      }
+                    } else {
+                      el
+                    }
+                  },
+                )
+              }
+            }
 
-                  {
-                    ...child,
-                    is_first_of_mode: Some(Archive),
-                  }
-                } else {
-                  child
-                }
-              },
-            )
+          let children = Array.concatMany(
+            [],
+            [filterMode(Working), filterMode(Stashed), filterMode(Archive)],
+          )
+
           // + (self.mode == Stashed || self.mode == Archive ? 1 : 0)
           (
             children,
@@ -208,3 +181,39 @@ let make = (~input: array<todo>, ~logout) => {
 }
 
 let default = make
+
+// ->SMap.mapWithKey((parent_todo, v) =>
+//   v->Array.toSorted((a, b) => {
+//     let result = ref(0.)
+
+//     // Date
+//     if result.contents == 0. {
+//       result :=
+//         switch (
+//           a.target_date->Nullable.toOption->Option.map(Date.fromString),
+//           b.target_date->Nullable.toOption->Option.map(Date.fromString),
+//         ) {
+//         | (Some(_), None) => -1.
+//         | (None, Some(_)) => 1.
+//         | (None, None) => 0.
+//         | (Some(a), Some(b)) => Date.compare(a, b)
+//         }
+//     }
+
+//     // Mode
+//     if result.contents == 0. {
+//       result := a.mode->modeCompare -. b.mode->modeCompare
+//     }
+
+//     Text
+//     if result.contents == 0. {
+//       result :=
+//         String.localeCompare(
+//           a.text->Nullable.toOption->Option.getOr(""),
+//           b.text->Nullable.toOption->Option.getOr(""),
+//         )
+//     }
+
+//     result.contents
+//   })
+// )
