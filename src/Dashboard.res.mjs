@@ -313,7 +313,7 @@ function Dashboard(props) {
                             className: "flex-none flex flex-row gap-2 justify-between items-center w-full h-20 border-t border-[var(--t3)]"
                           })
                     ],
-                    className: "flex-1 flex flex-col overflow-hidden sm:h-full border-t sm:border-t-0 md:border-r max-w-4xl "
+                    className: "flex-1 flex flex-col overflow-hidden sm:h-full border-t sm:border-t-0 md:border-r max-w-4xl border-[var(--t3)]"
                   }),
               className: "flex flex-col justify-center text-[var(--t10)] h-dvh"
             });
