@@ -103,23 +103,23 @@ function statusColor(s) {
     case "Unsorted" :
         return "var(--t3)";
     case "Future" :
-        return "#FF7EAE";
+        return "var(--pink)";
     case "NowIfTime" :
     case "NowMustDo" :
-        return "#ffb300";
+        return "var(--yellow)";
     case "Underway" :
     case "Paused" :
-        return "#3FBA53";
+        return "var(--green)";
     case "ResolveDone" :
-        return "#3677F8";
+        return "var(--blue)";
     case "ResolveNo" :
-        return "#888";
+        return "var(--t7)";
     
   }
 }
 
 function statusColorText(param) {
-  return "white";
+  return "var(--t0)";
 }
 
 function getTodoId(s) {

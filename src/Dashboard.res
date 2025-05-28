@@ -30,6 +30,8 @@ let make = (
   ~root: todoRelation,
   ~logout: unit => unit,
 ) => {
+  let (theme, setTheme) = Theme.useTheme()
+
   let (selectedElement, setSelectedElement, _) = useSessionStorage(
     StorageKeys.selectedElement,
     None,
@@ -47,10 +49,10 @@ let make = (
 
   let aaParentRef: React.ref<RescriptCore.Nullable.t<Dom.element>> = React.useRef(Nullable.null)
 
-  let (baseColor, setBaseColor, _) = Common.useLocalStorage(
-    StorageKeys.baseColor,
-    "var(--blueBase)",
-  )
+  // let (baseColor, setBaseColor, _) = Common.useLocalStorage(
+  //   StorageKeys.baseColor,
+  //   "var(--blueBase)",
+  // )
 
   let onMouseMove = event => {
     switch dragItem.contents {
@@ -193,11 +195,11 @@ let make = (
     None
   })
 
-  React.useEffect1(() => {
-    Common.setRootStyleProperty("--tBase", baseColor)
+  // React.useEffect1(() => {
+  //   Common.setRootStyleProperty("--tBase", baseColor)
 
-    None
-  }, [baseColor])
+  //   None
+  // }, [baseColor])
 
   React.useEffectOnEveryRender(() => {
     focusClassNext
@@ -225,7 +227,6 @@ let make = (
   switch view {
   | Some(Settings) =>
     <Settings
-      setBaseColor
       logout={() => {
         setView(_ => None)
         logout()
@@ -239,6 +240,7 @@ let make = (
         <div
           className="flex-none flex flex-row gap-2 justify-between items-center w-full h-10 border-b border-[var(--t3)] px-2">
           // <CheckedSummary checked={checked} projects={projects} setChecked={setChecked} setProjects />
+
           <button
             onClick={_ => {
               setView(_ => Some(Settings))
@@ -246,6 +248,11 @@ let make = (
             <img src={Common.logoUrl} width={"24"} className="py-0.5 " />
           </button>
           <div className="border-l border-[var(--t3)] mx-1 h-full bg-green-400" />
+          <button
+            className="text-[var(--t6)] "
+            onClick={_ => setTheme(_ => theme == Dark ? Light : Dark)}>
+            {theme == Dark ? <Icons.Sun className="w-4 h-4" /> : <Icons.Moon className="w-4 h-4" />}
+          </button>
           // <button
           //   className="px-2 bg-[var(--t2)] rounded text-sm h-5"
           //   onClick={_ => {

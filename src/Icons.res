@@ -168,3 +168,13 @@ module Hourglass = {
   @react.component @module("react-icons/fa")
   external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "FaHourglass"
 }
+
+module Sun = {
+  @react.component @module("react-icons/tb")
+  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "TbSun"
+}
+
+module Moon = {
+  @react.component @module("react-icons/tb")
+  external make: (~className: string=?, ~style: JsxDOM.style=?) => React.element = "TbMoon"
+}

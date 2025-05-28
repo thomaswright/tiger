@@ -69,6 +69,10 @@ var Star = {};
 
 var Hourglass = {};
 
+var Sun = {};
+
+var Moon = {};
+
 export {
   EyeClosed ,
   Eye ,
@@ -104,5 +108,7 @@ export {
   Hand ,
   Star ,
   Hourglass ,
+  Sun ,
+  Moon ,
 }
 /* No side effect */

@@ -33,18 +33,14 @@ type todo = {
   counter: int,
   text: Nullable.t<string>,
   additional_text: Nullable.t<string>,
-  // done: bool,
   created_at: string,
   updated_at: string,
   parent_todo: Nullable.t<string>,
   deleted: bool,
   user_id: string,
   order: array<string>,
-  // position: float,
   status: status,
-  // outfit: outfit,
   target_date: Nullable.t<string>,
-  // hidden: bool,
   mode: mode,
   modes_shown: array<mode>,
   is_first_of_mode: option<mode>,
@@ -67,14 +63,6 @@ type todoRelation = {
 }
 
 type view = | @as("Settings") Settings | @as("ProjectList") ProjectList
-
-// nextSibPosition: option<float>,
-// prevSibPosition: option<float>,
-// nextSibId: option<string>,
-// prevSibId: option<string>,
-// nextSibIds: array<string>,
-// lastSibPosition: option<float>,
-// lastChildPosition: option<float>,
 
 let statusToFloat = s => {
   [Unsorted, Future, NowIfTime, NowMustDo, Underway, Paused, ResolveDone, ResolveNo]
@@ -124,62 +112,21 @@ let statusString = s => {
 let statusColor = s =>
   switch s {
   | Unsorted => "var(--t3)"
-  | Future => "#FF7EAE"
-  | NowIfTime => "#ffb300"
-  | NowMustDo => "#ffb300"
-  | Underway => "#3FBA53"
-  | Paused => "#3FBA53"
-  | ResolveDone => "#3677F8"
-  | ResolveNo => "#888"
+  | Future => "var(--pink)"
+  | NowIfTime => "var(--yellow)"
+  | NowMustDo => "var(--yellow)"
+  | Underway => "var(--green)"
+  | Paused => "var(--green)"
+  | ResolveDone => "var(--blue)"
+  | ResolveNo => "var(--t7)"
   }
 
-let statusColorText = _ => "white"
-
-// let statusColor = s =>
-//   switch s {
-//   | Unsorted => "var(--t3)"
-//   | Future => "#DA4F82"
-//   | NowIfTime => "#FFA600"
-//   | NowMustDo => "#FFA600"
-//   | Underway => "#057C19"
-//   | Paused => "#057C19"
-//   | ResolveDone => "#0B41AC"
-//   | ResolveNo => "#888"
-//   }
-
-// let statusColorText = _ => "black"
-
-// let statusColor = s =>
-//   switch s {
-//   | Unsorted => "var(--t2)"
-//   | Future => "var(--lightBlue)"
-//   | NowIfTime => "var(--lightOrange)"
-//   | NowMustDo => "var(--lightOrange)"
-//   | Underway => "var(--lightGreen)"
-//   | Paused => "var(--lightGreen)"
-//   | ResolveDone => "var(--lightPurple)"
-//   | ResolveNo => "var(--lightPurple)"
-//   }
-
-// let statusColorText = s =>
-//   switch s {
-//   | Unsorted => "var(--t8)"
-//   | Future => "var(--darkBlue)"
-//   | NowIfTime => "var(--darkOrange)"
-//   | NowMustDo => "var(--darkOrange)"
-//   | Underway => "var(--darkGreen)"
-//   | Paused => "var(--darkGreen)"
-//   | ResolveDone => "var(--darkPurple)"
-//   | ResolveNo => "var(--darkPurple)"
-//   }
+let statusColorText = _ => "var(--t0)"
 
 let getTodoId = s => "todo-" ++ s
 let getTodoInputId = s => "todoInput-" ++ s
 let getDropId = s => "drop-" ++ s
 let getDragId = s => "drag-" ++ s
-
-// let getProjectId = s => "project-" ++ s
-// let getProjectInputId = s => "project-input-" ++ s
 
 let getIdFromId = s => {
   if s->String.includes("todo-") {
