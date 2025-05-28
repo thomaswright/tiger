@@ -380,7 +380,23 @@ function Todo(props) {
             if (e.key === "Enter" && cursorPosition === inputValueLength) {
               e.preventDefault();
               e.stopPropagation();
-              return makeNewTodo();
+              makeNewTodo();
+            }
+            if (e.key === "Escape") {
+              if (stagedForDelete) {
+                return setStagedForDelete(function (param) {
+                            return false;
+                          });
+              } else {
+                setSelectedElement(function (param) {
+                      
+                    });
+                setDisplayElement(function (param) {
+                      
+                    });
+                dom.blur();
+                return ;
+              }
             }
             
           }));

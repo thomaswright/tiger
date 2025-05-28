@@ -371,6 +371,18 @@ let make = (
         e->stopPropagation
         makeNewTodo()
       }
+
+      if e->key == "Escape" {
+        if stagedForDelete {
+          setStagedForDelete(_ => false)
+        } else {
+          // e->preventDefault // ?
+          setSelectedElement(_ => None)
+          setDisplayElement(_ => None)
+
+          dom->Obj.magic->HtmlElement.blur
+        }
+      }
     })
   }
 
