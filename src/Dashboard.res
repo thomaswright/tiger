@@ -94,13 +94,14 @@ let make = (
     }
   }
 
-  let moveItem = () => {
-    switch (dragItem.current, dropItem.current) {
-    | (Some(dragItem), Some(dropItemElement)) =>
+  let moveItem = dragItem => {
+    switch dropItem.current {
+    | Some(dropItemElement) =>
       getIdFromId(dropItemElement->Element.id)->Option.mapOr((), dropItemId => {
         todos
         ->Array.find(todo => todo.self.id == dropItemId)
         ->Option.mapOr((), dropItem => {
+          // Console.log2(dropItem, dragItem)
           if (
             dropItem.self.id != dragItem.self.id &&
               !(dropItem.parents->Array.includes(dragItem.self.id))
@@ -155,45 +156,37 @@ let make = (
   }
 
   let onMouseUp = _ => {
-    document
-    ->Document.getElementsByClassName("drag-marker")
-    ->HtmlCollection.toArray
-    ->Array.forEach(v => {
-      v->addClass("opacity-0")
+    dragItem.current->Option.mapOr((), d => {
+      let itemToMove = d
+      dragItem.current = None
+      document
+      ->Document.getElementsByClassName("drag-marker")
+      ->HtmlCollection.toArray
+      ->Array.forEach(v => {
+        v->addClass("opacity-0")
+      })
+      document
+      ->Document.getElementsByClassName("drag-mask")
+      ->HtmlCollection.toArray
+      ->Array.forEach(v => {
+        // v->addClass("opacity-0")
+        v->removeClass("opacity-20")
+        v->addClass("opacity-0")
+      })
+      moveItem(itemToMove)
     })
-    document
-    ->Document.getElementsByClassName("drag-mask")
-    ->HtmlCollection.toArray
-    ->Array.forEach(v => {
-      // v->addClass("opacity-0")
-      v->removeClass("opacity-20")
-      v->addClass("opacity-0")
-    })
-
-    // dragItem.current->Option.mapOr((), dragItem => {
-    //   document
-    //   ->Document.getElementById(getDragId(dragItem.self.id))
-    //   ->Option.mapOr((), element => {
-    //     element->removeClass("opacity-20")
-    //     element->addClass("opacity-0")
-    //   })
-    // })
-
-    moveItem()
-    dragItem.current = None
-    // setDragItem(_ => None)
   }
 
   React.useEffect0(() => {
     window->Window.addMouseMoveEventListener(onMouseMove)
     window->Window.addMouseUpEventListener(onMouseUp)
     window->Window.addKeyDownEventListener(event => {
-      if event->KeyboardEvent.key == "Meta" {
+      if event->KeyboardEvent.key == "Alt" {
         setMoveActive(_ => true)
       }
     })
     window->Window.addKeyUpEventListener(event => {
-      if event->KeyboardEvent.key == "Meta" {
+      if event->KeyboardEvent.key == "Alt" {
         setMoveActive(_ => false)
       }
     })

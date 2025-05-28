@@ -100,69 +100,64 @@ function Dashboard(props) {
     dropItem.current = Caml_option.some(best$1);
     best$1.classList.remove("opacity-0");
   };
-  var moveItem = function () {
-    var match = dragItem.current;
-    var match$1 = dropItem.current;
-    if (match === undefined) {
-      return ;
-    }
-    if (match$1 === undefined) {
-      return ;
-    }
-    var dropItemElement = Caml_option.valFromOption(match$1);
-    Core__Option.mapOr(Types.getIdFromId(dropItemElement.id), undefined, (function (dropItemId) {
-            Core__Option.mapOr(todos.find(function (todo) {
-                      return todo.self.id === dropItemId;
-                    }), undefined, (function (dropItem) {
-                    if (dropItem.self.id !== match.self.id && !dropItem.parents.includes(match.self.id)) {
-                      return Core__Option.mapOr(Caml_option.nullable_to_opt(dropItem.parent), undefined, (function (parent) {
-                                    State.batch(function () {
-                                          Common.setTodoParent(match.self.id, parent.id);
-                                          Core__Option.mapOr(Caml_option.nullable_to_opt(match.parent), undefined, (function (formerDragParent) {
-                                                  Common.setTodoOrder(formerDragParent.id, (function (order) {
-                                                          return order.filter(function (v) {
-                                                                      return v !== match.self.id;
-                                                                    });
+  var onMouseUp = function (param) {
+    Core__Option.mapOr(dragItem.current, undefined, (function (d) {
+            dragItem.current = undefined;
+            Array.prototype.slice.call(document.getElementsByClassName("drag-marker")).forEach(function (v) {
+                  v.classList.add("opacity-0");
+                });
+            Array.prototype.slice.call(document.getElementsByClassName("drag-mask")).forEach(function (v) {
+                  v.classList.remove("opacity-20");
+                  v.classList.add("opacity-0");
+                });
+            var dropItemElement = dropItem.current;
+            if (dropItemElement === undefined) {
+              return ;
+            }
+            var dropItemElement$1 = Caml_option.valFromOption(dropItemElement);
+            Core__Option.mapOr(Types.getIdFromId(dropItemElement$1.id), undefined, (function (dropItemId) {
+                    Core__Option.mapOr(todos.find(function (todo) {
+                              return todo.self.id === dropItemId;
+                            }), undefined, (function (dropItem) {
+                            if (dropItem.self.id !== d.self.id && !dropItem.parents.includes(d.self.id)) {
+                              return Core__Option.mapOr(Caml_option.nullable_to_opt(dropItem.parent), undefined, (function (parent) {
+                                            State.batch(function () {
+                                                  Common.setTodoParent(d.self.id, parent.id);
+                                                  Core__Option.mapOr(Caml_option.nullable_to_opt(d.parent), undefined, (function (formerDragParent) {
+                                                          Common.setTodoOrder(formerDragParent.id, (function (order) {
+                                                                  return order.filter(function (v) {
+                                                                              return v !== d.self.id;
+                                                                            });
+                                                                }));
                                                         }));
-                                                }));
-                                          var bottomMarker = dropItemElement.classList.contains("drag-marker-bottom");
-                                          Common.setTodoOrder(parent.id, (function (order) {
-                                                  return Core__Array.reduce(order, [], (function (a, c) {
-                                                                return a.concat(c === dropItem.self.id ? (
-                                                                              bottomMarker ? [
-                                                                                  c,
-                                                                                  match.self.id
-                                                                                ] : [
-                                                                                  match.self.id,
-                                                                                  c
-                                                                                ]
-                                                                            ) : [c]);
-                                                              }));
-                                                }));
-                                          Common.setTodoMode(match.self.id, dropItem.self.mode);
-                                        });
-                                  }));
-                    }
-                    
+                                                  var bottomMarker = dropItemElement$1.classList.contains("drag-marker-bottom");
+                                                  Common.setTodoOrder(parent.id, (function (order) {
+                                                          return Core__Array.reduce(order, [], (function (a, c) {
+                                                                        return a.concat(c === dropItem.self.id ? (
+                                                                                      bottomMarker ? [
+                                                                                          c,
+                                                                                          d.self.id
+                                                                                        ] : [
+                                                                                          d.self.id,
+                                                                                          c
+                                                                                        ]
+                                                                                    ) : [c]);
+                                                                      }));
+                                                        }));
+                                                  Common.setTodoMode(d.self.id, dropItem.self.mode);
+                                                });
+                                          }));
+                            }
+                            
+                          }));
                   }));
           }));
-  };
-  var onMouseUp = function (param) {
-    Array.prototype.slice.call(document.getElementsByClassName("drag-marker")).forEach(function (v) {
-          v.classList.add("opacity-0");
-        });
-    Array.prototype.slice.call(document.getElementsByClassName("drag-mask")).forEach(function (v) {
-          v.classList.remove("opacity-20");
-          v.classList.add("opacity-0");
-        });
-    moveItem();
-    dragItem.current = undefined;
   };
   React.useEffect((function () {
           window.addEventListener("mousemove", onMouseMove);
           window.addEventListener("mouseup", onMouseUp);
           window.addEventListener("keydown", (function ($$event) {
-                  if ($$event.key === "Meta") {
+                  if ($$event.key === "Alt") {
                     return setMoveActive(function (param) {
                                 return true;
                               });
@@ -170,7 +165,7 @@ function Dashboard(props) {
                   
                 }));
           window.addEventListener("keyup", (function ($$event) {
-                  if ($$event.key === "Meta") {
+                  if ($$event.key === "Alt") {
                     return setMoveActive(function (param) {
                                 return false;
                               });
