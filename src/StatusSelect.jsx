@@ -44,38 +44,18 @@ const Dropdown = ({
           backgroundColor: statusColor(s),
         }}
         className={[
-          status === s
-            ? "outline outline-1 outline-inherit focus:outline-2 "
-            : "focus:outline-2 focus:outline-inherit",
           buttonBaseLarge,
-          "select-none",
+          "select-none focus:outline-1 focus:outline-inherit",
         ].join(" ")}
         onSelect={(_) => {
           if (s !== "") {
-            if (s === "Trash") {
-              removeTodo();
-            } else {
-              setStatus(s);
-              focusTodo();
-            }
+            setStatus(s);
+            focusTodo();
           }
         }}
       >
         {statusIcon(s)}
-
         {statusString(s)}
-        {(s == "ArchiveDone" || s == "ArchiveNo") && (
-          <div
-            style={{
-              backgroundColor: statusColor(s),
-              color: statusColorText(s),
-              borderColor: statusColorText(s),
-            }}
-            className="text-xs absolute right-0.5  w-3.5 h-3.5 items-center justify-center flex flex-row "
-          >
-            <Archive />
-          </div>
-        )}
       </DropdownMenu.Item>
     );
   };
