@@ -21,7 +21,7 @@ let make = (~todoRelation: todoRelation, ~setFocusIdNext) => {
     ~delay=1000,
   )
 
-  let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
+  // let (statusSelectIsOpen, setStatusSelectIsOpen) = React.useState(() => false)
 
   // React.useEffect(() => {
   //   setText(_ => todo.text->Nullable.toOption)

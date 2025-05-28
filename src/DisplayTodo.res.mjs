@@ -30,9 +30,6 @@ function DisplayTodo(props) {
                 }));
         }), 1000);
   var setAdditionalText = match$1[1];
-  React.useState(function () {
-        return false;
-      });
   React.useEffect((function () {
           if (Caml_obj.notequal(Caml_option.nullable_to_opt(additionalTextRef.current), Caml_option.nullable_to_opt(document.activeElement))) {
             setAdditionalText(function (param) {

@@ -13,6 +13,10 @@ module TextareaAutosize = {
 let arrayToggle = (v, el) =>
   v->Array.includes(el) ? v->Array.filter(x => x != el) : v->Array.concat([el])
 
+@send @scope("classList") external addClass: (Dom.element, string) => unit = "add"
+@send @scope("classList") external removeClass: (Dom.element, string) => unit = "remove"
+@send @scope("classList") external hasClass: (Dom.element, string) => bool = "contains"
+
 @module("uuid")
 external uuid: unit => string = "v4"
 
@@ -53,17 +57,11 @@ external setTodoAdditionalText: (string, string) => unit = "setTodoAdditionalTex
 @module("./utils/SupaLegend.ts")
 external setTodoDate: (string, Nullable.t<string>) => unit = "setTodoDate"
 
-// @module("./utils/SupaLegend.ts")
-// external setTodoOutfit: (string, outfit) => unit = "setTodoOutfit"
-
 @module("./utils/SupaLegend.ts")
 external setTodoMode: (string, mode) => unit = "setTodoMode"
 
 @module("./utils/SupaLegend.ts")
 external setTodoModesShown: (string, array<mode> => array<mode>) => unit = "setTodoModesShown"
-
-// @module("./utils/SupaLegend.ts")
-// external setTodoHidden: (string, bool) => unit = "setTodoHidden"
 
 @module("./utils/SupaLegend.ts")
 external setTodoStatus: (string, status) => unit = "setTodoStatus"
@@ -73,12 +71,6 @@ external setTodoParent: (string, string) => unit = "setTodoParent"
 
 @module("./utils/SupaLegend.ts")
 external setTodoOrder: (string, array<string> => array<string>) => unit = "setTodoOrder"
-
-// @module("./utils/SupaLegend.ts")
-// external setTodoPosition: (string, string) => unit = "setTodoPosition"
-
-// @module("./utils/SupaLegend.ts")
-// external toggleDone: string => unit = "toggleDone"
 
 @module("./utils/SupaLegend.ts")
 external deleteTodo: (string, string) => unit = "deleteTodo"

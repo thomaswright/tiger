@@ -1,4 +1,4 @@
-open Webapi.Dom
+open! Webapi.Dom
 open Common
 open Types
 
@@ -20,10 +20,6 @@ let elementPosition = element => {
   }
 }
 
-@send @scope("classList") external addClass: (Dom.element, string) => unit = "add"
-@send @scope("classList") external removeClass: (Dom.element, string) => unit = "remove"
-@send @scope("classList") external hasClass: (Dom.element, string) => bool = "contains"
-
 @react.component
 let make = (
   ~todos: array<todoRelation>,
@@ -37,7 +33,7 @@ let make = (
   )
   let (displayElement, setDisplayElement, _) = useSessionStorage(StorageKeys.displayElement, None)
   let (view, setView, _) = useSessionStorage(StorageKeys.view, None) //  React.useState(() => None)
-  let (showCheckboxes, setShowCheckboxes, _) = useSessionStorage(StorageKeys.showCheckboxes, false)
+  let (showCheckboxes, _setShowCheckboxes, _) = useSessionStorage(StorageKeys.showCheckboxes, false)
 
   let (checked, setChecked) = React.useState(() => SSet.empty)
   // let (dragItem, setDragItem) = React.useState(() => None)
@@ -65,7 +61,7 @@ let make = (
         let closest = ref(None)
 
         document
-        ->Webapi.Dom.Document.getElementsByClassName("drag-marker")
+        ->Document.getElementsByClassName("drag-marker")
         ->HtmlCollection.toArray
         ->Array.forEach(v => {
           switch closest.contents {
@@ -84,7 +80,7 @@ let make = (
               }
             }
           }
-          v->addClass("opacity-0")
+          v->Common.addClass("opacity-0")
         })
 
         switch closest.contents {
@@ -109,6 +105,7 @@ let make = (
             dropItem.self.id != dragItem.self.id &&
               !(dropItem.parents->Array.includes(dragItem.self.id))
           ) {
+            // Console.log("move")
             dropItem.parent
             ->Nullable.toOption
             ->Option.mapOr(
@@ -159,13 +156,13 @@ let make = (
 
   let onMouseUp = _ => {
     document
-    ->Webapi.Dom.Document.getElementsByClassName("drag-marker")
+    ->Document.getElementsByClassName("drag-marker")
     ->HtmlCollection.toArray
     ->Array.forEach(v => {
       v->addClass("opacity-0")
     })
     document
-    ->Webapi.Dom.Document.getElementsByClassName("drag-mask")
+    ->Document.getElementsByClassName("drag-mask")
     ->HtmlCollection.toArray
     ->Array.forEach(v => {
       // v->addClass("opacity-0")
@@ -212,7 +209,7 @@ let make = (
   React.useEffectOnEveryRender(() => {
     focusClassNext
     ->Option.flatMap(x =>
-      Webapi.Dom.document
+      document
       ->Document.getElementsByClassName(x)
       ->HtmlCollection.toArray
       ->Array.get(0)
@@ -223,7 +220,7 @@ let make = (
     })
 
     focusIdNext
-    ->Option.flatMap(x => Webapi.Dom.document->Document.getElementById(x))
+    ->Option.flatMap(x => document->Document.getElementById(x))
     ->Option.mapOr((), element => {
       element->Obj.magic->HtmlElement.focus
       setFocusIdNext(_ => None)
