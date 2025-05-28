@@ -27,6 +27,14 @@ function elementPosition(element) {
         };
 }
 
+var dragItem = {
+  contents: undefined
+};
+
+var dropItem = {
+  contents: undefined
+};
+
 function Dashboard(props) {
   var logout = props.logout;
   var root = props.root;
@@ -65,10 +73,8 @@ function Dashboard(props) {
   var aaParentRef = React.useRef(null);
   var match$8 = Common.useLocalStorage(StorageKeys.baseColor, "var(--blueBase)");
   var baseColor = match$8[0];
-  var dragItem = React.useRef(undefined);
-  var dropItem = React.useRef(undefined);
   var onMouseMove = function ($$event) {
-    var match = dragItem.current;
+    var match = dragItem.contents;
     if (match === undefined) {
       return ;
     }
@@ -97,12 +103,12 @@ function Dashboard(props) {
       return ;
     }
     var best$1 = Caml_option.valFromOption(best);
-    dropItem.current = Caml_option.some(best$1);
+    dropItem.contents = Caml_option.some(best$1);
     best$1.classList.remove("opacity-0");
   };
   var onMouseUp = function (param) {
-    Core__Option.mapOr(dragItem.current, undefined, (function (d) {
-            dragItem.current = undefined;
+    Core__Option.mapOr(dragItem.contents, undefined, (function (d) {
+            dragItem.contents = undefined;
             Array.prototype.slice.call(document.getElementsByClassName("drag-marker")).forEach(function (v) {
                   v.classList.add("opacity-0");
                 });
@@ -110,7 +116,7 @@ function Dashboard(props) {
                   v.classList.remove("opacity-20");
                   v.classList.add("opacity-0");
                 });
-            var dropItemElement = dropItem.current;
+            var dropItemElement = dropItem.contents;
             if (dropItemElement === undefined) {
               return ;
             }
@@ -270,7 +276,7 @@ function Dashboard(props) {
                                               setChecked: setChecked,
                                               moveActive: moveActive,
                                               setDrag: (function () {
-                                                  dragItem.current = todoRelation;
+                                                  dragItem.contents = todoRelation;
                                                   Core__Option.mapOr(Caml_option.nullable_to_opt(document.getElementById(Types.getDragId(todoRelation.self.id))), undefined, (function (element) {
                                                           element.classList.remove("opacity-0");
                                                           element.classList.add("opacity-20");
@@ -304,6 +310,8 @@ var $$default = make;
 
 export {
   elementPosition ,
+  dragItem ,
+  dropItem ,
   make ,
   $$default as default,
 }

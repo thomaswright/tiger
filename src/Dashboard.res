@@ -20,6 +20,9 @@ let elementPosition = element => {
   }
 }
 
+let dragItem = ref(None)
+let dropItem = ref(None)
+
 @react.component
 let make = (
   ~todos: array<todoRelation>,
@@ -48,12 +51,9 @@ let make = (
     StorageKeys.baseColor,
     "var(--blueBase)",
   )
-  let dragItem = React.useRef(None)
-
-  let dropItem = React.useRef(None)
 
   let onMouseMove = event => {
-    switch dragItem.current {
+    switch dragItem.contents {
     | None => ()
     | Some(_) => {
         let _mouseLeft = event->MouseEvent.clientX->Int.toFloat
@@ -86,7 +86,7 @@ let make = (
         switch closest.contents {
         | None => ()
         | Some(best) => {
-            dropItem.current = Some(best)
+            dropItem.contents = Some(best)
             best->removeClass("opacity-0")
           }
         }
@@ -95,7 +95,7 @@ let make = (
   }
 
   let moveItem = dragItem => {
-    switch dropItem.current {
+    switch dropItem.contents {
     | Some(dropItemElement) =>
       getIdFromId(dropItemElement->Element.id)->Option.mapOr((), dropItemId => {
         todos
@@ -156,9 +156,9 @@ let make = (
   }
 
   let onMouseUp = _ => {
-    dragItem.current->Option.mapOr((), d => {
+    dragItem.contents->Option.mapOr((), d => {
       let itemToMove = d
-      dragItem.current = None
+      dragItem.contents = None
       document
       ->Document.getElementsByClassName("drag-marker")
       ->HtmlCollection.toArray
@@ -286,7 +286,7 @@ let make = (
               // itemToMoveHandleMouseDown={(_, todoId) => dragItem.contents = Some(todoId)}
               // itemToMoveHandleMouseEnter={(_, _, _) => ()}
               setDrag={_ => {
-                dragItem.current = Some(todoRelation)
+                dragItem.contents = Some(todoRelation)
                 document
                 ->Document.getElementById(getDragId(todoRelation.self.id))
                 ->Option.mapOr((), element => {
