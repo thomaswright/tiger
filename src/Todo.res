@@ -478,7 +478,9 @@ let make = (
       <div
         className={[
           " flex group flex-row justify-start items-center h-full flex-1 rounded-sm  py-1 pl-1",
-          stagedForDelete ? "outline-red-700 dark:outline-red-500" : " outline-blue-500 ",
+          stagedForDelete
+            ? "outline-red-700 dark:outline-red-500"
+            : " outline-blue-500 dark:outline-blue-700",
           stagedForDelete
             ? "bg-red-200 dark:bg-red-950"
             : isChecked
