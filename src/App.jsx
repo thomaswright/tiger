@@ -1,33 +1,14 @@
-import { useState, useEffect } from "react";
-import { observer, useEffectOnce } from "@legendapp/state/react";
-import { batch } from "@legendapp/state";
-import {
-  supabase,
-  todos$ as _todos$,
-  uid$,
-  setTodoModesShown,
-} from "./utils/SupaLegend.ts";
+import { useEffect } from "react";
+import { observer } from "@legendapp/state/react";
+import { supabase, todos$ as _todos$, uid$ } from "./utils/SupaLegend.ts";
 import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa, minimal } from "@supabase/auth-ui-shared";
+import { ThemeSupa } from "@supabase/auth-ui-shared";
 import Entry from "./Entry.res.mjs";
 import useSessionStorage from "./useSessionStorage.js";
 import { jwtDecode } from "jwt-decode";
 import logoUrl from "./assets/tiger.svg";
 
 const DashboardWrapper = observer(({ session }) => {
-  // useEffectOnce(() => {
-  //   let todos = Object.entries(_todos$.get() || {}).map(([k, v]) => {
-  //     return { ...v, id: k };
-  //   });
-
-  //   batch(() => {
-  //     todos.forEach((todo) => {
-  //       setTodoModesShown(todo.id, (v) => ["Working"]);
-  //     });
-  //   });
-  // });
-  // return null;
-
   const todos = Object.entries(_todos$.get() || {}).map(([k, v]) => {
     return { ...v, id: k };
   });
