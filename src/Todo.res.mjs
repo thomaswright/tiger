@@ -211,9 +211,12 @@ function Todo(props) {
                                           ]);
                               }
                             }));
-                      return Common.setTodoOrder(prevSib.id, (function (order) {
-                                    return order.concat([todo.id]);
-                                  }));
+                      Common.setTodoOrder(prevSib.id, (function (order) {
+                              return order.concat([todo.id]);
+                            }));
+                      return Common.setTodoMode(todo.id, prevSib.modes_shown.includes("Archive") ? "Archive" : (
+                                    prevSib.modes_shown.includes("Stashed") ? "Stashed" : "Working"
+                                  ));
                     }
                   }));
           });

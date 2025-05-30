@@ -196,6 +196,15 @@ let make = (
             )
             setTodoOrder(prevSib.id, order => Array.concat(order, [todo.id]))
 
+            setTodoMode(
+              todo.id,
+              prevSib.modes_shown->Array.includes(Archive)
+                ? Archive
+                : prevSib.modes_shown->Array.includes(Stashed)
+                ? Stashed
+                : Working,
+            )
+
             // todoRelation.children->Array.forEach(child => setTodoParent(child.id, prevSib.id))
           }
         })
