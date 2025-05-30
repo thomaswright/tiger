@@ -279,7 +279,6 @@ let make = (
           ->Array.map(todoRelation => {
             <Todo
               key={todoRelation.self.id}
-              getTodos={_ => todos}
               moveActive
               todoRelation={todoRelation}
               isSelected={selectedElement == Some(todoRelation.self.id)}
@@ -290,8 +289,6 @@ let make = (
               setFocusIdNext
               isChecked={checked->SSet.has(todoRelation.self.id)}
               setChecked
-              // itemToMoveHandleMouseDown={(_, todoId) => dragItem.contents = Some(todoId)}
-              // itemToMoveHandleMouseEnter={(_, _, _) => ()}
               setDrag={_ => {
                 dragItem.contents = Some(todoRelation)
                 document
@@ -300,8 +297,6 @@ let make = (
                   element->removeClass("opacity-0")
                   element->addClass("opacity-20")
                 })
-
-                // setDragItem(_ => Some(todoRelation))
               }}
             />
           })

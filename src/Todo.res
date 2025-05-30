@@ -131,7 +131,6 @@ module CollapseControls = {
 @react.component
 let make = (
   ~todoRelation: todoRelation,
-  ~getTodos as _: unit => array<todoRelation>,
   ~isSelected,
   ~setSelectedElement,
   ~isDisplayElement,
@@ -141,8 +140,6 @@ let make = (
   ~isChecked,
   ~setChecked,
   ~moveActive,
-  // ~itemToMoveHandleMouseDown,
-  // ~itemToMoveHandleMouseEnter as _,
   ~setDrag,
 ) => {
   let todo = todoRelation.self
@@ -164,6 +161,27 @@ let make = (
 
     None
   }, [todo.text])
+
+  let deleteTodoAndMoveChildren = () => {
+    todo.parent_todo
+    ->Nullable.toOption
+    ->Option.mapOr((), parent_todo => {
+      batch(() => {
+        deleteTodo(todo.id, parent_todo)
+
+        setTodoOrder(
+          parent_todo,
+          order =>
+            order->Array.reduce([], (a, c) => Array.concat(a, c == todo.id ? todo.order : [c])),
+        )
+        todoRelation.children->Array.forEachWithIndex(
+          (child, _i) => {
+            setTodoParent(child.id, parent_todo)
+          },
+        )
+      })
+    })
+  }
 
   let focusContainer = () => {
     containerRef.current->mapNullable(dom => {
@@ -288,7 +306,7 @@ let make = (
         }
 
         if e->key == "Backspace" && e->metaKey {
-          deleteTodoAndMoveChildren(todoRelation)
+          deleteTodoAndMoveChildren()
 
           containerRef.current->mapNullable(containerEl => {
             Common.focusPreviousClass(listItemClass, containerEl)
@@ -297,7 +315,7 @@ let make = (
 
         if e->key == "Backspace" && !(e->metaKey) {
           if stagedForDelete {
-            deleteTodoAndMoveChildren(todoRelation)
+            deleteTodoAndMoveChildren()
 
             containerRef.current->mapNullable(containerEl => {
               Common.focusPreviousClass(listItemClass, containerEl)
@@ -365,7 +383,7 @@ let make = (
 
       if e->key == "Backspace" && inputValueLength == 0 {
         if stagedForDelete {
-          deleteTodoAndMoveChildren(todoRelation)
+          deleteTodoAndMoveChildren()
 
           containerRef.current->mapNullable(containerEl => {
             Common.focusPreviousClass(listItemClass, containerEl)

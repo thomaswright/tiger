@@ -9,7 +9,6 @@ import ImportJsx from "./Import.jsx";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as Belt_MapString from "rescript/lib/es6/belt_MapString.js";
 import DateSelectJsx from "./DateSelect.jsx";
-import * as State from "@legendapp/state";
 import StatusSelectJsx from "./StatusSelect.jsx";
 import TigerSvg from "./assets/tiger.svg";
 import * as UseLocalStorageJs from "./useLocalStorage.js";
@@ -94,23 +93,6 @@ function deleteTodo(prim0, prim1) {
 }
 
 var logoUrl = TigerSvg;
-
-function deleteTodoAndMoveChildren(todoRelation) {
-  var todo = todoRelation.self;
-  State.batch(function () {
-        Core__Option.mapOr(Caml_option.nullable_to_opt(todo.parent_todo), undefined, (function (parent_todo) {
-                SupaLegendTs.deleteTodo(todo.id, parent_todo);
-                SupaLegendTs.setTodoOrder(parent_todo, (function (order) {
-                        return Core__Array.reduce(order, [], (function (a, c) {
-                                      return a.concat(c === todo.id ? todo.order : [c]);
-                                    }));
-                      }));
-                todoRelation.children.forEach(function (child, _i) {
-                      SupaLegendTs.setTodoParent(child.id, parent_todo);
-                    });
-              }));
-      });
-}
 
 var make = StatusSelectJsx;
 
@@ -199,7 +181,6 @@ export {
   setTodoOrder ,
   deleteTodo ,
   logoUrl ,
-  deleteTodoAndMoveChildren ,
   StatusSelect ,
   DateSelect ,
   toNullableNull ,

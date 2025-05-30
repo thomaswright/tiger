@@ -278,9 +278,6 @@ function Dashboard(props) {
                             children: todos.map(function (todoRelation) {
                                   return JsxRuntime.jsx(Todo.make, {
                                               todoRelation: todoRelation,
-                                              getTodos: (function () {
-                                                  return todos;
-                                                }),
                                               isSelected: Caml_obj.equal(selectedElement, todoRelation.self.id),
                                               setSelectedElement: setSelectedElement,
                                               isDisplayElement: Caml_obj.equal(displayElement, todoRelation.self.id),

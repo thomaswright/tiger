@@ -184,6 +184,21 @@ function Todo(props) {
           }
           
         }), [todo.text]);
+  var deleteTodoAndMoveChildren = function () {
+    Core__Option.mapOr(Caml_option.nullable_to_opt(todo.parent_todo), undefined, (function (parent_todo) {
+            State.batch(function () {
+                  Common.deleteTodo(todo.id, parent_todo);
+                  Common.setTodoOrder(parent_todo, (function (order) {
+                          return Core__Array.reduce(order, [], (function (a, c) {
+                                        return a.concat(c === todo.id ? todo.order : [c]);
+                                      }));
+                        }));
+                  todoRelation.children.forEach(function (child, _i) {
+                        Common.setTodoParent(child.id, parent_todo);
+                      });
+                });
+          }));
+  };
   var focusContainer = function () {
     Common.mapNullable(containerRef.current, (function (dom) {
             dom.focus();
@@ -296,14 +311,14 @@ function Todo(props) {
                       Common.focusNextClass(Types.listItemClass, dom);
                     }
                     if (e.key === "Backspace" && e.metaKey) {
-                      Common.deleteTodoAndMoveChildren(todoRelation);
+                      deleteTodoAndMoveChildren();
                       Common.mapNullable(containerRef.current, (function (containerEl) {
                               Common.focusPreviousClass(Types.listItemClass, containerEl);
                             }));
                     }
                     if (e.key === "Backspace" && !e.metaKey) {
                       if (stagedForDelete) {
-                        Common.deleteTodoAndMoveChildren(todoRelation);
+                        deleteTodoAndMoveChildren();
                         Common.mapNullable(containerRef.current, (function (containerEl) {
                                 Common.focusPreviousClass(Types.listItemClass, containerEl);
                               }));
@@ -370,7 +385,7 @@ function Todo(props) {
             }
             if (e.key === "Backspace" && inputValueLength === 0) {
               if (stagedForDelete) {
-                Common.deleteTodoAndMoveChildren(todoRelation);
+                deleteTodoAndMoveChildren();
                 Common.mapNullable(containerRef.current, (function (containerEl) {
                         Common.focusPreviousClass(Types.listItemClass, containerEl);
                       }));
