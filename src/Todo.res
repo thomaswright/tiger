@@ -43,7 +43,7 @@ module TopCollapseControls = {
       }}
       {if !someExpanded {
         <button
-          className="mr-4 text-[var(--t5)] text-sm"
+          className="mr-2 text-[var(--t5)]"
           onClick={_ =>
             batch(() => {
               todos->Array.forEach(t => {
@@ -54,7 +54,7 @@ module TopCollapseControls = {
         </button>
       } else {
         <button
-          className="mr-4  text-[var(--t5)]  text-sm"
+          className="mr-2  text-[var(--t5)]"
           onClick={_ =>
             batch(() => {
               todos->Array.forEach(t => {

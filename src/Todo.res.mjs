@@ -54,7 +54,7 @@ function Todo$TopCollapseControls(props) {
                       }) : null,
                 someExpanded ? JsxRuntime.jsx("button", {
                         children: JsxRuntime.jsx(Tb.TbChevronDown, {}),
-                        className: "mr-4  text-[var(--t5)]  text-sm",
+                        className: "mr-2  text-[var(--t5)]",
                         onClick: (function (param) {
                             State.batch(function () {
                                   todos.forEach(function (t) {
@@ -66,7 +66,7 @@ function Todo$TopCollapseControls(props) {
                           })
                       }) : JsxRuntime.jsx("button", {
                         children: JsxRuntime.jsx(Tb.TbMinus, {}),
-                        className: "mr-4 text-[var(--t5)] text-sm",
+                        className: "mr-2 text-[var(--t5)]",
                         onClick: (function (param) {
                             State.batch(function () {
                                   todos.forEach(function (t) {
