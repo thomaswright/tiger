@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { observer } from "@legendapp/state/react";
-import { supabase, todos$ as _todos$, uid$ } from "./utils/SupaLegend.ts";
+import { supabase, todos$ as _todos$, uid$ } from "./SupaLegend.ts";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import Entry from "./Entry.res.mjs";
@@ -8,7 +8,7 @@ import useSessionStorage from "./useSessionStorage.js";
 import { jwtDecode } from "jwt-decode";
 import logoUrl from "./assets/tiger.svg";
 
-const DashboardWrapper = observer(({ session }) => {
+const EntryWrapper = observer(({ session }) => {
   const todos = Object.entries(_todos$.get() || {}).map(([k, v]) => {
     return { ...v, id: k };
   });
@@ -83,33 +83,7 @@ function App() {
       </div>
     );
   } else {
-    // let jwt = jwtDecode(session.access_token);
-    // if (jwt.app_metadata.tiger_plan !== "FOREVER") {
-    //   return (
-    //     <div className="p-6 max-w-lg">
-    //       <div className="flex flex-row gap-3 ml-0.5">
-    //         <img src={logoUrl} width={"40"} className="py-0.5 " />
-    //         <div className="font-black text-5xl tracking-tighter">
-    //           {"Tiger Todo"}
-    //         </div>
-    //       </div>
-    //       <div className="pt-2">
-    //         <div>We're currently under limited release.</div>
-    //         <div>Stay apprised for coming details.</div>
-    //       </div>
-    //       <div>
-    //         <button
-    //           className="text-sm px-2 bg-[var(--t2)] rounded"
-    //           onClick={(_) => supabase.auth.signOut()}
-    //         >
-    //           {"Logout"}
-    //         </button>
-    //       </div>
-    //     </div>
-    //   );
-    // } else {
-    return <DashboardWrapper session={session} />;
-    // }
+    return <EntryWrapper session={session} />;
   }
 }
 

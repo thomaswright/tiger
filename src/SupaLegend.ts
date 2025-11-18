@@ -10,7 +10,7 @@ import { Database } from "./database.types";
 
 export const supabase = createClient<Database>(
   import.meta.env.VITE_PUBLIC_SUPABASE_URL,
-  import.meta.env.VITE_PUBLIC_SUPABASE_ANON_KEY
+  import.meta.env.VITE_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 );
 
 const generateId = () => uuidv4();
@@ -150,67 +150,3 @@ export function setTodoOrder(
 ) {
   todos$[id].order.set(setOrder);
 }
-
-// export function setTodoPosition(
-//   id: string,
-//   newParent: string
-//   // newPosition: number
-// ) {
-//   let oldParent = todos$[id].parent_todo.peek();
-//   if (oldParent !== null) {
-//     todos$[oldParent].order.set((prev) => prev.filter((v) => v !== id));
-//   }
-//   todos$[newParent].order.set((prev) => [id, ...(prev ?? [])]);
-//   todos$[id].assign({
-//     parent_todo: newParent,
-//   });
-// }
-
-// export function toggleDone(id: string) {
-//   todos$[id].done.set((prev) => !prev);
-// }
-
-// export function setTodoOutfit(
-//   id: string,
-//   outfit: "Todo" | "Project" | "Group"
-// ) {
-//   todos$[id].outfit.set(outfit);
-// }
-
-// export function setTodoHidden(id: string, isHidden: boolean) {
-//   todos$[id].hidden.set(isHidden);
-// }
-
-// type status =
-//   | "Unsorted"
-//   | "Future"
-//   | "NowIfTime"
-//   | "NowMustDo"
-//   | "Underway"
-//   | "Paused"
-//   | "ResolveDone"
-//   | "ResolveNo"
-//   | "ArchiveDone"
-//   | "ArchiveNo"
-//   | undefined;
-
-// export function addTodoByImport(
-//   id: string,
-//   text: string,
-//   parent_todo: string | null,
-//   // position: number,
-//   status: status
-// ) {
-//   // const id = generateId();
-//   // Add keyed by id to the todos$ observable to trigger a create in Supabase
-//   todos$[id].assign({
-//     id,
-//     text,
-//     user_id: uid$.get(),
-//     // position,
-//     parent_todo: parent_todo,
-//     mode: "Working",
-//     modes_shown: ["Working"],
-//     status,
-//   });
-// }
