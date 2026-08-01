@@ -82,3 +82,30 @@ let make = (~logout, ~backToTodos) => {
 // </button>
 // <Common.ImportButton onImportJson />
 // </div>
+
+// let onExportJsonToBacked = () => {
+//   projects
+//   ->Array.reduce([], (a, p) =>
+//     a
+//     ->Array.concat([
+//       {
+//         "id": p.id,
+//         "text": p.name,
+//         "status": Unsorted,
+//         "parent_todo": None,
+//       },
+//     ])
+//     ->Array.concat(
+//       p.todos->Array.map(t => {
+//         {
+//           "id": t.id,
+//           "text": t.text,
+//           "status": t.status,
+//           "parent_todo": t.parentTodo->Option.getOr(t.project)->Some,
+//         }
+//       }),
+//     )
+//   )
+//   ->Js.Json.stringifyAny
+//   ->Option.mapOr((), Common.exportToJsonFile)
+// }
