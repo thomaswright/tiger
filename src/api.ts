@@ -1,12 +1,15 @@
 import type {
   ApiErrorResponse,
   CreateTodoInput,
+  DeleteTodoInput,
+  DeleteTodoResponse,
   ListsResponse,
   MeResponse,
   MoveTodoInput,
   Todo,
   TodosResponse,
   UpdateTodoInput,
+  RestoreTodosResponse,
 } from "./shared/domain";
 
 export class ApiError extends Error {
@@ -61,4 +64,18 @@ export const moveTodo = (todoId: string, input: MoveTodoInput) =>
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(input),
+  });
+
+export const deleteTodo = (todoId: string, input: DeleteTodoInput) =>
+  requestJson<DeleteTodoResponse>(`/api/todos/${encodeURIComponent(todoId)}`, {
+    method: "DELETE",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(input),
+  });
+
+export const restoreTodos = (deletionToken: string) =>
+  requestJson<RestoreTodosResponse>("/api/todos/restore", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ deletionToken }),
   });

@@ -1,6 +1,8 @@
 import {
   TODO_STATUSES,
   type CreateTodoInput,
+  type DeleteTodoInput,
+  type DeleteTodoResponse,
   type MoveTodoInput,
   type PersonalList,
   type Todo,
@@ -275,7 +277,37 @@ export function parseUpdateTodoInput(value: unknown): UpdateTodoInput {
     update.status = input.status;
   }
 
-  if (update.title === undefined && update.status === undefined) {
+  if (input.notes !== undefined) {
+    if (typeof input.notes !== "string" || input.notes.length > 10000) {
+      throw new DataError("Todo notes are too long", 400);
+    }
+    update.notes = input.notes;
+  }
+
+  if (input.dueDate !== undefined) {
+    const parsedDate =
+      typeof input.dueDate === "string"
+        ? new Date(`${input.dueDate}T00:00:00Z`)
+        : null;
+    if (
+      input.dueDate !== null &&
+      (typeof input.dueDate !== "string" ||
+        !/^\d{4}-\d{2}-\d{2}$/.test(input.dueDate) ||
+        !parsedDate ||
+        Number.isNaN(parsedDate.valueOf()) ||
+        parsedDate.toISOString().slice(0, 10) !== input.dueDate)
+    ) {
+      throw new DataError("Invalid due date", 400);
+    }
+    update.dueDate = input.dueDate;
+  }
+
+  if (
+    update.title === undefined &&
+    update.status === undefined &&
+    update.notes === undefined &&
+    update.dueDate === undefined
+  ) {
     throw new DataError("Todo update is empty", 400);
   }
 
@@ -336,13 +368,15 @@ export async function updateTodo(
   const result = await db
     .prepare(
       `UPDATE todos
-       SET title = ?, status = ?, version = version + 1,
+       SET title = ?, status = ?, notes = ?, due_date = ?, version = version + 1,
            updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
        WHERE id = ? AND owner_id = ? AND version = ? AND deleted_at IS NULL`,
     )
     .bind(
       input.title ?? current.title,
       input.status ?? current.status,
+      input.notes ?? current.notes,
+      input.dueDate === undefined ? current.due_date : input.dueDate,
       todoId,
       user.id,
       input.version,
@@ -354,6 +388,120 @@ export async function updateTodo(
   }
 
   return mapTodo(await getOwnedTodoRow(db, user.id, todoId));
+}
+
+export function parseDeleteTodoInput(value: unknown): DeleteTodoInput {
+  if (!value || typeof value !== "object") {
+    throw new DataError("Invalid todo deletion", 400);
+  }
+  const input = value as Partial<DeleteTodoInput>;
+  if (typeof input.deletionToken !== "string" || !isUuid(input.deletionToken)) {
+    throw new DataError("Invalid deletion token", 400);
+  }
+  return {
+    deletionToken: input.deletionToken,
+    version: parseVersion(input.version),
+  };
+}
+
+export function parseRestoreTodosInput(value: unknown): string {
+  if (!value || typeof value !== "object") {
+    throw new DataError("Invalid restore request", 400);
+  }
+  const token = (value as { deletionToken?: unknown }).deletionToken;
+  if (typeof token !== "string" || !isUuid(token)) {
+    throw new DataError("Invalid deletion token", 400);
+  }
+  return token;
+}
+
+export async function deleteTodo(
+  db: D1Database,
+  user: UserIdentity,
+  todoId: string,
+  input: DeleteTodoInput,
+): Promise<DeleteTodoResponse> {
+  const current = await getOwnedTodoRow(db, user.id, todoId);
+  if (current.version !== input.version) {
+    throw new DataError("Todo changed elsewhere; refresh and try again", 409);
+  }
+
+  const result = await db
+    .prepare(
+      `WITH RECURSIVE subtree(id) AS (
+         SELECT id FROM todos
+         WHERE id = ? AND owner_id = ? AND version = ? AND deleted_at IS NULL
+         UNION ALL
+         SELECT child.id FROM todos child
+         JOIN subtree parent ON child.parent_id = parent.id
+         WHERE child.owner_id = ? AND child.list_id = ? AND child.deleted_at IS NULL
+       )
+       UPDATE todos
+       SET deleted_at = ?, version = version + 1,
+           updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
+       WHERE id IN (SELECT id FROM subtree) AND owner_id = ?`,
+    )
+    .bind(
+      todoId,
+      user.id,
+      input.version,
+      user.id,
+      current.list_id,
+      input.deletionToken,
+      user.id,
+    )
+    .run();
+
+  if (result.meta.changes === 0) {
+    throw new DataError("Todo changed elsewhere; refresh and try again", 409);
+  }
+
+  const deleted = await db
+    .prepare(
+      "SELECT id FROM todos WHERE owner_id = ? AND deleted_at = ? ORDER BY id",
+    )
+    .bind(user.id, input.deletionToken)
+    .all<{ id: string }>();
+  return {
+    deletedIds: deleted.results.map((row) => row.id),
+    deletionToken: input.deletionToken,
+  };
+}
+
+export async function restoreTodos(
+  db: D1Database,
+  user: UserIdentity,
+  deletionToken: string,
+): Promise<Todo[]> {
+  const deleted = await db
+    .prepare(
+      `SELECT id FROM todos WHERE owner_id = ? AND deleted_at = ? ORDER BY id`,
+    )
+    .bind(user.id, deletionToken)
+    .all<{ id: string }>();
+  if (deleted.results.length === 0) {
+    throw new DataError("Deleted todos not found", 404);
+  }
+
+  await db
+    .prepare(
+      `UPDATE todos
+       SET deleted_at = NULL, version = version + 1,
+           updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
+       WHERE owner_id = ? AND deleted_at = ?`,
+    )
+    .bind(user.id, deletionToken)
+    .run();
+
+  const restored = await db
+    .prepare(
+      `${todoSelect}
+       WHERE owner_id = ? AND id IN (SELECT value FROM json_each(?))`,
+    )
+    .bind(user.id, JSON.stringify(deleted.results.map((row) => row.id)))
+    .all<TodoRow>();
+
+  return restored.results.map(mapTodo);
 }
 
 const getDestinationSibling = async (

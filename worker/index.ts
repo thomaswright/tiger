@@ -9,13 +9,17 @@ import type {
 import { authenticate, AuthError, type AuthEnv } from "./auth";
 import {
   createTodo,
+  deleteTodo,
   DataError,
   getLists,
   getTodos,
   moveTodo,
   parseCreateTodoInput,
+  parseDeleteTodoInput,
+  parseRestoreTodosInput,
   parseMoveTodoInput,
   parseUpdateTodoInput,
+  restoreTodos,
   updateTodo,
 } from "./data";
 
@@ -29,7 +33,8 @@ type JsonBody =
   | ListsResponse
   | MeResponse
   | Todo
-  | TodosResponse;
+  | TodosResponse
+  | { deletedIds: string[]; deletionToken: string };
 
 const json = (body: JsonBody, status = 200) =>
   Response.json(body, {
@@ -101,14 +106,47 @@ export default {
         }
       }
 
+      if (
+        request.method === "POST" &&
+        url.pathname === "/api/todos/restore"
+      ) {
+        let body: unknown;
+        try {
+          body = await request.json();
+        } catch {
+          throw new DataError("Request body must be JSON", 400);
+        }
+        return json({
+          todos: await restoreTodos(
+            env.DB,
+            user,
+            parseRestoreTodosInput(body),
+          ),
+        });
+      }
+
       const todoMatch = url.pathname.match(/^\/api\/todos\/([^/]+)$/);
-      if (todoMatch && request.method === "PATCH") {
+      if (
+        todoMatch &&
+        (request.method === "PATCH" || request.method === "DELETE")
+      ) {
         const todoId = decodeURIComponent(todoMatch[1]);
         let body: unknown;
         try {
           body = await request.json();
         } catch {
           throw new DataError("Request body must be JSON", 400);
+        }
+
+        if (request.method === "DELETE") {
+          return json(
+            await deleteTodo(
+              env.DB,
+              user,
+              todoId,
+              parseDeleteTodoInput(body),
+            ),
+          );
         }
 
         return json(

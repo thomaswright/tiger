@@ -3,6 +3,10 @@
 Tiger is a personal todo application built with React, Cloudflare Workers, D1,
 and Cloudflare Access.
 
+Todos can be nested, reordered, indented, collapsed, and edited in place.
+Status, due date, and notes changes are optimistic. Deleting a todo soft-deletes
+its complete subtree and offers a ten-second Undo action tied to that deletion.
+
 ## Local development
 
 Install dependencies:

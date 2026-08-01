@@ -1,11 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useEffect, useRef, useState } from "react";
 import {
   createTodo,
+  deleteTodo,
   getLists,
   getMe,
   getTodos,
   moveTodo,
+  restoreTodos,
   updateTodo,
 } from "./api";
 import logoUrl from "./assets/tiger.svg";
@@ -17,14 +19,25 @@ import type {
   UpdateTodoInput,
 } from "./shared/domain";
 import TodoTree from "./TodoTree";
-import { applyMove, getSiblings } from "./tree";
+import { applyMove, getSiblings, getSubtree } from "./tree";
 
 const todoQueryKey = (listId: string) => ["todos", listId] as const;
+
+interface UndoDeletion {
+  deletionToken: string;
+  todos: Todo[];
+}
 
 function App() {
   const queryClient = useQueryClient();
   const [title, setTitle] = useState("");
   const [newTodoParentId, setNewTodoParentId] = useState<string | null>(null);
+  const [undoDeletion, setUndoDeletion] = useState<UndoDeletion | null>(null);
+  const undoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => {
+    if (undoTimer.current) clearTimeout(undoTimer.current);
+  }, []);
 
   const meQuery = useQuery({ queryKey: ["me"], queryFn: getMe });
   const listsQuery = useQuery({ queryKey: ["lists"], queryFn: getLists });
@@ -154,6 +167,72 @@ function App() {
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: ({ todoId, deletionToken, version }: {
+      todoId: string;
+      deletionToken: string;
+      version: number;
+      removedTodos: Todo[];
+    }) => deleteTodo(todoId, { deletionToken, version }),
+    onMutate: async ({ deletionToken, removedTodos }) => {
+      if (!activeList) return undefined;
+      const key = todoQueryKey(activeList.id);
+      await queryClient.cancelQueries({ queryKey: key });
+      const previous = queryClient.getQueryData<TodosResponse>(key);
+      const removedIds = new Set(removedTodos.map((todo) => todo.id));
+      queryClient.setQueryData<TodosResponse>(key, {
+        todos: (previous?.todos ?? []).filter((todo) => !removedIds.has(todo.id)),
+      });
+      setUndoDeletion({ deletionToken, todos: removedTodos });
+      if (undoTimer.current) clearTimeout(undoTimer.current);
+      return { key, previous };
+    },
+    onError: (_error, _variables, context) => {
+      if (context) queryClient.setQueryData(context.key, context.previous);
+      setUndoDeletion(null);
+    },
+    onSuccess: (_response, variables) => {
+      undoTimer.current = setTimeout(() => {
+        setUndoDeletion((current) =>
+          current?.deletionToken === variables.deletionToken ? null : current,
+        );
+      }, 10_000);
+    },
+    onSettled: () => {
+      if (activeList) void queryClient.invalidateQueries({ queryKey: todoQueryKey(activeList.id) });
+    },
+  });
+
+  const restoreMutation = useMutation({
+    mutationFn: ({ deletionToken }: UndoDeletion) => restoreTodos(deletionToken),
+    onMutate: async (deletion) => {
+      if (!activeList) return undefined;
+      const key = todoQueryKey(activeList.id);
+      await queryClient.cancelQueries({ queryKey: key });
+      const previous = queryClient.getQueryData<TodosResponse>(key);
+      queryClient.setQueryData<TodosResponse>(key, {
+        todos: [...(previous?.todos ?? []), ...deletion.todos],
+      });
+      setUndoDeletion(null);
+      if (undoTimer.current) clearTimeout(undoTimer.current);
+      return { key, previous };
+    },
+    onError: (_error, deletion, context) => {
+      if (context) queryClient.setQueryData(context.key, context.previous);
+      setUndoDeletion(deletion);
+    },
+    onSuccess: ({ todos: restored }) => {
+      if (!activeList) return;
+      const restoredById = new Map(restored.map((todo) => [todo.id, todo]));
+      queryClient.setQueryData<TodosResponse>(todoQueryKey(activeList.id), (current) => ({
+        todos: (current?.todos ?? []).map((todo) => restoredById.get(todo.id) ?? todo),
+      }));
+    },
+    onSettled: () => {
+      if (activeList) void queryClient.invalidateQueries({ queryKey: todoQueryKey(activeList.id) });
+    },
+  });
+
   const submitTodo = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const nextTitle = title.trim();
@@ -178,7 +257,8 @@ function App() {
     : undefined;
   const startupError = meQuery.error ?? listsQuery.error ?? todosQuery.error;
   const mutationError =
-    createMutation.error ?? updateMutation.error ?? moveMutation.error;
+    createMutation.error ?? updateMutation.error ?? moveMutation.error ??
+    deleteMutation.error ?? restoreMutation.error;
 
   return (
     <main className="mx-auto min-h-dvh max-w-3xl p-6 text-[var(--t10)]">
@@ -202,7 +282,7 @@ function App() {
             <h2 className="text-sm font-semibold text-[var(--t7)]">
               {activeList.name}
             </h2>
-            {(updateMutation.isPending || moveMutation.isPending) && (
+            {(updateMutation.isPending || moveMutation.isPending || deleteMutation.isPending || restoreMutation.isPending) && (
               <span className="ml-auto text-2xs text-[var(--t5)]">Saving…</span>
             )}
           </div>
@@ -242,6 +322,18 @@ function App() {
             <TodoTree
               todos={todos}
               onAddChild={(todo) => setNewTodoParentId(todo.id)}
+              onDelete={(todo) => {
+                const removedTodos = getSubtree(todos, todo.id);
+                deleteMutation.mutate({
+                  todoId: todo.id,
+                  deletionToken: crypto.randomUUID(),
+                  version: todo.version,
+                  removedTodos,
+                });
+                if (removedTodos.some((removed) => removed.id === newTodoParentId)) {
+                  setNewTodoParentId(null);
+                }
+              }}
               onMove={(todoId, input) =>
                 moveMutation.mutate({ todoId, input })
               }
@@ -261,6 +353,25 @@ function App() {
             <p className="mt-6 text-center text-sm text-[var(--t5)]">
               Nothing here yet.
             </p>
+          )}
+
+          {undoDeletion && (
+            <div
+              className="fixed bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-4 rounded bg-[var(--t9)] px-4 py-3 text-sm text-[var(--t0)] shadow-lg"
+              role="status"
+            >
+              <span>
+                Deleted {undoDeletion.todos.length === 1 ? "todo" : `${undoDeletion.todos.length} todos`}
+              </span>
+              <button
+                className="font-semibold underline disabled:opacity-50"
+                disabled={deleteMutation.isPending || restoreMutation.isPending}
+                onClick={() => restoreMutation.mutate(undoDeletion)}
+                type="button"
+              >
+                {deleteMutation.isPending ? "Deleting…" : "Undo"}
+              </button>
+            </div>
           )}
         </section>
       )}

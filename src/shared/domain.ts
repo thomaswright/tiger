@@ -61,6 +61,8 @@ export interface CreateTodoInput {
 export interface UpdateTodoInput {
   title?: string;
   status?: TodoStatus;
+  notes?: string;
+  dueDate?: string | null;
   version: number;
 }
 
@@ -69,6 +71,20 @@ export interface MoveTodoInput {
   previousId: string | null;
   nextId: string | null;
   version: number;
+}
+
+export interface DeleteTodoInput {
+  deletionToken: string;
+  version: number;
+}
+
+export interface DeleteTodoResponse {
+  deletedIds: string[];
+  deletionToken: string;
+}
+
+export interface RestoreTodosResponse {
+  todos: Todo[];
 }
 
 export interface ApiErrorResponse {

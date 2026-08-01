@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { Todo } from "./shared/domain";
 import {
   applyMove,
+  getSubtree,
   planDirectionalMove,
   planMoveTo,
 } from "./tree";
@@ -22,6 +23,22 @@ const todo = (
   version: 1,
   createdAt: "2026-01-01T00:00:00.000Z",
   updatedAt: "2026-01-01T00:00:00.000Z",
+});
+
+describe("todo subtrees", () => {
+  it("includes descendants but not unrelated siblings", () => {
+    const todos = [
+      todo("root", null, 100),
+      todo("child", "root", 100),
+      todo("grandchild", "child", 100),
+      todo("other", null, 200),
+    ];
+    expect(getSubtree(todos, "root").map((item) => item.id)).toEqual([
+      "root",
+      "child",
+      "grandchild",
+    ]);
+  });
 });
 
 describe("tree move planning", () => {

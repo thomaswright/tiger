@@ -20,11 +20,9 @@ import {
 interface TodoTreeProps {
   todos: Todo[];
   onAddChild: (todo: Todo) => void;
+  onDelete: (todo: Todo) => void;
   onMove: (todoId: string, move: MoveTodoInput) => void;
-  onUpdate: (
-    todoId: string,
-    update: Omit<UpdateTodoInput, "version">,
-  ) => void;
+  onUpdate: (todoId: string, update: Omit<UpdateTodoInput, "version">) => void;
 }
 
 interface TodoNodeProps extends TodoTreeProps {
@@ -41,11 +39,16 @@ function TodoNode({
   depth,
   ancestors,
   onAddChild,
+  onDelete,
   onMove,
   onUpdate,
 }: TodoNodeProps) {
   const [draft, setDraft] = useState(todo.title);
+  const [notesDraft, setNotesDraft] = useState(todo.notes);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const notesRef = useRef<HTMLTextAreaElement>(null);
   const { ref, handleRef, isDragging } = useSortable({
     id: todo.id,
     index,
@@ -53,32 +56,24 @@ function TodoNode({
   });
 
   useEffect(() => {
-    if (document.activeElement !== inputRef.current) {
-      setDraft(todo.title);
-    }
+    if (document.activeElement !== inputRef.current) setDraft(todo.title);
   }, [todo.title]);
+  useEffect(() => {
+    if (document.activeElement !== notesRef.current) setNotesDraft(todo.notes);
+  }, [todo.notes]);
 
   const commitTitle = () => {
     const title = draft.trim();
-    if (!title) {
-      setDraft(todo.title);
-      return;
-    }
-    if (title !== todo.title) {
-      onUpdate(todo.id, { title });
-    }
+    if (!title) setDraft(todo.title);
+    else if (title !== todo.title) onUpdate(todo.id, { title });
   };
-
   const move = (direction: MoveDirection) => {
     const planned = planDirectionalMove(todos, todo.id, direction);
-    if (planned) {
-      onMove(todo.id, planned);
-    }
+    if (planned) onMove(todo.id, planned);
   };
-
   const canMove = (direction: MoveDirection) =>
     planDirectionalMove(todos, todo.id, direction) !== null;
-
+  const children = getSiblings(todos, todo.id);
   const nextAncestors = new Set(ancestors).add(todo.id);
 
   return (
@@ -97,6 +92,17 @@ function TodoNode({
         >
           ⠿
         </button>
+        <button
+          className="flex h-7 w-5 items-center justify-center text-xs text-[var(--t6)] disabled:invisible"
+          disabled={children.length === 0}
+          onClick={() => setCollapsed((value) => !value)}
+          aria-expanded={children.length > 0 ? !collapsed : undefined}
+          aria-label={`${collapsed ? "Expand" : "Collapse"} ${todo.title}`}
+          title={collapsed ? "Expand children" : "Collapse children"}
+          type="button"
+        >
+          {collapsed ? "▸" : "▾"}
+        </button>
         <input
           ref={inputRef}
           className="min-w-0 flex-1 border-0 bg-transparent px-1 py-1 text-sm focus:ring-0"
@@ -104,9 +110,7 @@ function TodoNode({
           onBlur={commitTitle}
           onChange={(event) => setDraft(event.target.value)}
           onKeyDown={(event) => {
-            if (event.key === "Enter") {
-              event.currentTarget.blur();
-            }
+            if (event.key === "Enter") event.currentTarget.blur();
             if (event.key === "Escape") {
               setDraft(todo.title);
               event.currentTarget.blur();
@@ -114,58 +118,97 @@ function TodoNode({
           }}
           aria-label="Todo title"
         />
+        {todo.dueDate && (
+          <span className="hidden text-2xs text-[var(--t6)] sm:inline">{todo.dueDate}</span>
+        )}
         <select
           className="h-7 w-28 rounded border-[var(--t3)] bg-[var(--t0)] py-0 pl-2 pr-6 text-2xs focus:ring-0"
           value={todo.status}
-          onChange={(event) =>
-            onUpdate(todo.id, { status: event.target.value as TodoStatus })
-          }
+          onChange={(event) => onUpdate(todo.id, { status: event.target.value as TodoStatus })}
           aria-label={`Status for ${todo.title}`}
         >
-          {TODO_STATUSES.map((status) => (
-            <option key={status} value={status}>
-              {status}
-            </option>
-          ))}
+          {TODO_STATUSES.map((status) => <option key={status}>{status}</option>)}
         </select>
         <div className="flex items-center opacity-30 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
-          {(["outdent", "indent", "up", "down"] as const).map(
-            (direction) => (
-              <button
-                key={direction}
-                className="h-7 w-6 rounded text-xs hover:bg-[var(--t2)] disabled:opacity-20"
-                disabled={!canMove(direction)}
-                onClick={() => move(direction)}
-                title={direction}
-                aria-label={`${direction} ${todo.title}`}
-                type="button"
-              >
-                {{ outdent: "←", indent: "→", up: "↑", down: "↓" }[
-                  direction
-                ]}
-              </button>
-            ),
-          )}
+          {(["outdent", "indent", "up", "down"] as const).map((direction) => (
+            <button
+              key={direction}
+              className="h-7 w-6 rounded text-xs hover:bg-[var(--t2)] disabled:opacity-20"
+              disabled={!canMove(direction)}
+              onClick={() => move(direction)}
+              title={direction}
+              aria-label={`${direction} ${todo.title}`}
+              type="button"
+            >
+              {{ outdent: "←", indent: "→", up: "↑", down: "↓" }[direction]}
+            </button>
+          ))}
           <button
             className="h-7 w-6 rounded text-sm hover:bg-[var(--t2)]"
-            onClick={() => onAddChild(todo)}
+            onClick={() => {
+              setCollapsed(false);
+              onAddChild(todo);
+            }}
             title="Add child"
             aria-label={`Add child under ${todo.title}`}
             type="button"
-          >
-            +
-          </button>
+          >+</button>
+          <button
+            className={`h-7 w-6 rounded text-sm hover:bg-[var(--t2)] ${detailsOpen ? "bg-[var(--t2)]" : ""}`}
+            onClick={() => setDetailsOpen((value) => !value)}
+            title="Details"
+            aria-label={`Details for ${todo.title}`}
+            aria-expanded={detailsOpen}
+            type="button"
+          >…</button>
         </div>
       </div>
-      <TodoBranch
-        ancestors={nextAncestors}
-        depth={depth + 1}
-        parentId={todo.id}
-        todos={todos}
-        onAddChild={onAddChild}
-        onMove={onMove}
-        onUpdate={onUpdate}
-      />
+      {detailsOpen && (
+        <div
+          className="grid gap-2 border-b border-[var(--t2)] bg-[var(--t1)] p-2 sm:grid-cols-[9rem_1fr_auto]"
+          style={{ marginLeft: `${depth * 20 + 26}px` }}
+        >
+          <label className="text-2xs text-[var(--t6)]">
+            Due date
+            <input
+              className="mt-1 block h-8 w-full rounded border-[var(--t3)] bg-[var(--t0)] px-2 text-xs focus:ring-0"
+              type="date"
+              value={todo.dueDate ?? ""}
+              onChange={(event) => onUpdate(todo.id, { dueDate: event.target.value || null })}
+            />
+          </label>
+          <label className="text-2xs text-[var(--t6)]">
+            Notes
+            <textarea
+              ref={notesRef}
+              className="mt-1 block min-h-8 w-full resize-y rounded border-[var(--t3)] bg-[var(--t0)] px-2 py-1 text-xs focus:ring-0"
+              rows={1}
+              value={notesDraft}
+              onChange={(event) => setNotesDraft(event.target.value)}
+              onBlur={() => {
+                if (notesDraft !== todo.notes) onUpdate(todo.id, { notes: notesDraft });
+              }}
+            />
+          </label>
+          <button
+            className="self-end rounded px-2 py-1.5 text-xs text-red-700 hover:bg-red-50"
+            onClick={() => onDelete(todo)}
+            type="button"
+          >Delete</button>
+        </div>
+      )}
+      {!collapsed && (
+        <TodoBranch
+          ancestors={nextAncestors}
+          depth={depth + 1}
+          parentId={todo.id}
+          todos={todos}
+          onAddChild={onAddChild}
+          onDelete={onDelete}
+          onMove={onMove}
+          onUpdate={onUpdate}
+        />
+      )}
     </li>
   );
 }
@@ -176,36 +219,20 @@ interface TodoBranchProps extends TodoTreeProps {
   ancestors: ReadonlySet<string>;
 }
 
-function TodoBranch({
-  parentId,
-  depth,
-  ancestors,
-  todos,
-  onAddChild,
-  onMove,
-  onUpdate,
-}: TodoBranchProps) {
-  const siblings = getSiblings(todos, parentId).filter(
-    (todo) => !ancestors.has(todo.id),
-  );
-
-  if (siblings.length === 0) {
-    return null;
-  }
-
+function TodoBranch({ parentId, depth, ancestors, todos, ...actions }: TodoBranchProps) {
+  const siblings = getSiblings(todos, parentId).filter((todo) => !ancestors.has(todo.id));
+  if (siblings.length === 0) return null;
   return (
     <ul>
       {siblings.map((todo, index) => (
         <TodoNode
           key={todo.id}
+          {...actions}
           ancestors={ancestors}
           depth={depth}
           index={index}
           todo={todo}
           todos={todos}
-          onAddChild={onAddChild}
-          onMove={onMove}
-          onUpdate={onUpdate}
         />
       ))}
     </ul>
@@ -216,15 +243,9 @@ export default function TodoTree(props: TodoTreeProps) {
   return (
     <DragDropProvider
       onDragEnd={(event) => {
-        if (event.canceled) {
-          return;
-        }
-
+        if (event.canceled) return;
         const source = event.operation.source;
-        if (!isSortable(source)) {
-          return;
-        }
-
+        if (!isSortable(source)) return;
         const todoId = String(source.id);
         const move = planMoveTo(
           props.todos,
@@ -232,17 +253,10 @@ export default function TodoTree(props: TodoTreeProps) {
           parentForGroup(source.group),
           source.index,
         );
-        if (move) {
-          props.onMove(todoId, move);
-        }
+        if (move) props.onMove(todoId, move);
       }}
     >
-      <TodoBranch
-        {...props}
-        ancestors={new Set()}
-        depth={0}
-        parentId={null}
-      />
+      <TodoBranch {...props} ancestors={new Set()} depth={0} parentId={null} />
     </DragDropProvider>
   );
 }

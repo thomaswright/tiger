@@ -23,6 +23,21 @@ export const getSiblings = (
   );
 };
 
+export const getSubtree = (todos: Todo[], todoId: string): Todo[] => {
+  const ids = new Set([todoId]);
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const todo of todos) {
+      if (todo.parentId && ids.has(todo.parentId) && !ids.has(todo.id)) {
+        ids.add(todo.id);
+        changed = true;
+      }
+    }
+  }
+  return todos.filter((todo) => ids.has(todo.id));
+};
+
 export function planMoveTo(
   todos: Todo[],
   todoId: string,
