@@ -184,12 +184,52 @@ function TodoNode({
         </button>
         <input
           id={`todo-title-${todo.id}`}
+          data-todo-title={todo.id}
           ref={inputRef}
           className="min-w-0 flex-1 border-0 bg-transparent px-1 py-1 text-sm focus:ring-0"
           value={draft}
           onBlur={commitTitle}
           onChange={(event) => setDraft(event.target.value)}
           onKeyDown={(event) => {
+            const selectionIsCollapsed =
+              event.currentTarget.selectionStart ===
+              event.currentTarget.selectionEnd;
+            const arrowDirection =
+              event.key === "ArrowDown" &&
+              selectionIsCollapsed &&
+              event.currentTarget.selectionEnd ===
+                event.currentTarget.value.length
+                ? 1
+                : event.key === "ArrowUp" &&
+                    selectionIsCollapsed &&
+                    event.currentTarget.selectionStart === 0
+                  ? -1
+                  : 0;
+            if (
+              arrowDirection &&
+              !event.altKey &&
+              !event.ctrlKey &&
+              !event.metaKey &&
+              !event.shiftKey
+            ) {
+              const tree = event.currentTarget.closest("[data-todo-tree]");
+              const inputs = tree
+                ? Array.from(
+                    tree.querySelectorAll<HTMLInputElement>(
+                      "input[data-todo-title]",
+                    ),
+                  )
+                : [];
+              const currentIndex = inputs.indexOf(event.currentTarget);
+              const destination = inputs[currentIndex + arrowDirection];
+              if (destination) {
+                event.preventDefault();
+                destination.focus();
+                const caret = arrowDirection > 0 ? destination.value.length : 0;
+                destination.setSelectionRange(caret, caret);
+              }
+              return;
+            }
             if (
               event.key === "Tab" &&
               event.currentTarget.selectionStart === 0 &&
@@ -551,7 +591,7 @@ export default function TodoTree(props: TodoTreeProps) {
   );
 
   return (
-    <>
+    <div data-todo-tree>
       <TodoBranch
         {...props}
         activeTodoId={activeTodoId}
@@ -562,6 +602,6 @@ export default function TodoTree(props: TodoTreeProps) {
         todos={visibleTodos}
         onMove={moveVisually}
       />
-    </>
+    </div>
   );
 }
