@@ -153,7 +153,16 @@ function App() {
         todoQueryKey(activeList.id),
         (current) => ({
           todos: (current?.todos ?? []).map((todo) =>
-            todo.id === savedTodo.id ? savedTodo : todo,
+            todo.id === savedTodo.id
+              ? {
+                  ...savedTodo,
+                  // The optimistic move normalizes every destination sibling's
+                  // sort key. Keep this item on that same temporary scale until
+                  // the invalidation below fetches all canonical D1 sort keys.
+                  parentId: todo.parentId,
+                  sortKey: todo.sortKey,
+                }
+              : todo,
           ),
         }),
       );
