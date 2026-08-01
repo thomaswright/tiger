@@ -1,13 +1,7 @@
 import { DragDropProvider } from "@dnd-kit/react";
 import { Feedback } from "@dnd-kit/dom";
-import {
-  isSortable,
-  OptimisticSortingPlugin,
-} from "@dnd-kit/dom/sortable";
-import {
-  type UseSortableInput,
-  useSortable,
-} from "@dnd-kit/react/sortable";
+import { isSortable } from "@dnd-kit/dom/sortable";
+import { useSortable } from "@dnd-kit/react/sortable";
 import { type ComponentProps, useEffect, useRef, useState } from "react";
 import {
   TODO_STATUSES,
@@ -18,7 +12,6 @@ import {
 } from "./shared/domain";
 import {
   applyMove,
-  destinationIndexFromTarget,
   getSiblings,
   groupForParent,
   parentForGroup,
@@ -36,17 +29,6 @@ const configureDragFeedback: DragDropPlugins = (defaults) => [
   ...defaults,
   Feedback.configure({ dropAnimation: null }),
 ];
-
-type SortablePluginCustomizer = Exclude<
-  NonNullable<UseSortableInput["plugins"]>,
-  unknown[]
->;
-
-const withoutOptimisticDomSorting: SortablePluginCustomizer = (defaults) =>
-  defaults.filter((entry) => {
-    const plugin = typeof entry === "function" ? entry : entry.plugin;
-    return plugin !== OptimisticSortingPlugin;
-  });
 
 interface TodoTreeProps {
   todos: Todo[];
@@ -84,7 +66,6 @@ function TodoNode({
     id: todo.id,
     index,
     group: groupForParent(todo.parentId),
-    plugins: withoutOptimisticDomSorting,
   });
 
   useEffect(() => {
@@ -275,6 +256,11 @@ function TodoBranch({ parentId, depth, ancestors, todos, ...actions }: TodoBranc
 
 export default function TodoTree(props: TodoTreeProps) {
   const [dragActive, setDragActive] = useState(false);
+  const dragOrigin = useRef<{
+    element: Element;
+    parent: Node;
+    nextSibling: ChildNode | null;
+  } | null>(null);
   const [visualTree, setVisualTree] = useState(() => ({
     sourceTodos: props.todos,
     todos: props.todos,
@@ -296,45 +282,64 @@ export default function TodoTree(props: TodoTreeProps) {
     props.onMove(todoId, move);
   };
 
+  const restoreDraggedElement = () => {
+    const origin = dragOrigin.current;
+    dragOrigin.current = null;
+    if (!origin) return;
+
+    const anchor =
+      origin.nextSibling?.parentNode === origin.parent
+        ? origin.nextSibling
+        : null;
+    if (
+      origin.element.parentNode !== origin.parent ||
+      origin.element.nextSibling !== anchor
+    ) {
+      origin.parent.insertBefore(origin.element, anchor);
+    }
+  };
+
   return (
     <DragDropProvider
       plugins={configureDragFeedback}
-      onDragStart={() => {
+      onDragStart={(event) => {
+        const source = event.operation.source;
+        if (isSortable(source) && source.element?.parentNode) {
+          dragOrigin.current = {
+            element: source.element,
+            parent: source.element.parentNode,
+            nextSibling: source.element.nextSibling,
+          };
+        }
         setDragActive(true);
       }}
       onDragEnd={(event) => {
         setDragActive(false);
         if (event.canceled) {
+          dragOrigin.current = null;
           setVisualTree({ sourceTodos: props.todos, todos: props.todos });
           return;
         }
+
         const source = event.operation.source;
-        const target = event.operation.target;
-        if (!isSortable(source) || !isSortable(target)) return;
+        if (!isSortable(source)) {
+          restoreDraggedElement();
+          return;
+        }
+
         const todoId = String(source.id);
-        if (target.id === source.id) return;
-
-        const dragCenter =
-          event.operation.shape?.current.center ??
-          event.operation.position.current;
-        const belowTarget = target.shape
-          ? dragCenter.y > target.shape.center.y
-          : false;
-        const destinationIndex = destinationIndexFromTarget(
-          target.index,
-          belowTarget,
-          source.initialGroup === target.group,
-          source.initialIndex,
-        );
-
         const move = planProjectedMove(
           visibleTodos,
           todoId,
-          parentForGroup(target.group),
-          destinationIndex,
+          parentForGroup(source.group),
+          source.index,
           event.operation.position.current.x -
             event.operation.position.initial.x,
         );
+
+        // OptimisticSortingPlugin physically moves the source node. Put it back
+        // where React last rendered it before reconciling the new data tree.
+        restoreDraggedElement();
         if (move) moveVisually(todoId, move);
       }}
     >
