@@ -145,7 +145,9 @@ function TodoNode({
   };
   const move = (direction: MoveDirection) => {
     const planned = planDirectionalMove(todos, todo.id, direction);
-    if (planned) onMove(todo.id, planned);
+    if (!planned) return false;
+    onMove(todo.id, planned);
+    return true;
   };
   const canMove = (direction: MoveDirection) =>
     planDirectionalMove(todos, todo.id, direction) !== null;
@@ -181,12 +183,34 @@ function TodoNode({
           {collapsed ? "▸" : "▾"}
         </button>
         <input
+          id={`todo-title-${todo.id}`}
           ref={inputRef}
           className="min-w-0 flex-1 border-0 bg-transparent px-1 py-1 text-sm focus:ring-0"
           value={draft}
           onBlur={commitTitle}
           onChange={(event) => setDraft(event.target.value)}
           onKeyDown={(event) => {
+            if (
+              event.key === "Tab" &&
+              event.currentTarget.selectionStart === 0 &&
+              event.currentTarget.selectionEnd === 0
+            ) {
+              const direction = event.shiftKey ? "outdent" : "indent";
+              if (canMove(direction)) {
+                event.preventDefault();
+                move(direction);
+                requestAnimationFrame(() => {
+                  const input = document.getElementById(
+                    `todo-title-${todo.id}`,
+                  );
+                  if (input instanceof HTMLInputElement) {
+                    input.focus();
+                    input.setSelectionRange(0, 0);
+                  }
+                });
+              }
+              return;
+            }
             if (event.key === "Enter") event.currentTarget.blur();
             if (event.key === "Escape") {
               setDraft(todo.title);
