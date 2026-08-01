@@ -9,6 +9,7 @@ import {
   type UpdateTodoInput,
 } from "./shared/domain";
 import {
+  applyMove,
   getSiblings,
   groupForParent,
   parentForGroup,
@@ -240,6 +241,27 @@ function TodoBranch({ parentId, depth, ancestors, todos, ...actions }: TodoBranc
 }
 
 export default function TodoTree(props: TodoTreeProps) {
+  const [visualTree, setVisualTree] = useState(() => ({
+    sourceTodos: props.todos,
+    todos: props.todos,
+  }));
+
+  // DnD releases its temporary layout before React Query notifies subscribers.
+  // Keep the dropped order locally so the old order is never painted in between.
+  let visibleTodos = visualTree.todos;
+  if (visualTree.sourceTodos !== props.todos) {
+    visibleTodos = props.todos;
+    setVisualTree({ sourceTodos: props.todos, todos: props.todos });
+  }
+
+  const moveVisually = (todoId: string, move: MoveTodoInput) => {
+    setVisualTree({
+      sourceTodos: props.todos,
+      todos: applyMove(visibleTodos, todoId, move),
+    });
+    props.onMove(todoId, move);
+  };
+
   return (
     <DragDropProvider
       onDragEnd={(event) => {
@@ -248,15 +270,22 @@ export default function TodoTree(props: TodoTreeProps) {
         if (!isSortable(source)) return;
         const todoId = String(source.id);
         const move = planMoveTo(
-          props.todos,
+          visibleTodos,
           todoId,
           parentForGroup(source.group),
           source.index,
         );
-        if (move) props.onMove(todoId, move);
+        if (move) moveVisually(todoId, move);
       }}
     >
-      <TodoBranch {...props} ancestors={new Set()} depth={0} parentId={null} />
+      <TodoBranch
+        {...props}
+        ancestors={new Set()}
+        depth={0}
+        parentId={null}
+        todos={visibleTodos}
+        onMove={moveVisually}
+      />
     </DragDropProvider>
   );
 }
