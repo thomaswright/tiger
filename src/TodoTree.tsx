@@ -34,6 +34,7 @@ import {
   TODO_INDENTATION_WIDTH,
   type MoveDirection,
 } from "./tree";
+import DateSelect from "./DateSelect";
 
 const TODO_DRAG_TYPE = "tiger-todo";
 
@@ -324,9 +325,10 @@ function TodoNode({
           }}
           aria-label="Todo title"
         />
-        {todo.dueDate && (
-          <span className="hidden text-2xs text-[var(--t6)] sm:inline">{todo.dueDate}</span>
-        )}
+        <DateSelect
+          value={todo.dueDate}
+          onChange={(dueDate) => onUpdate(todo.id, { dueDate })}
+        />
         <select
           className="h-7 w-28 rounded border-[var(--t3)] bg-[var(--t0)] py-0 pl-2 pr-6 text-2xs focus:ring-0"
           value={todo.status}
@@ -371,20 +373,11 @@ function TodoNode({
       </div>
       {detailsOpen && (
         <div
-          className={`grid gap-2 border-b border-[var(--t2)] p-2 transition-colors sm:grid-cols-[9rem_1fr_auto] ${isDeleteHighlighted ? "bg-red-50" : "bg-[var(--t1)]"}`}
+          className={`grid gap-2 border-b border-[var(--t2)] p-2 transition-colors sm:grid-cols-[1fr_auto] ${isDeleteHighlighted ? "bg-red-50" : "bg-[var(--t1)]"}`}
           style={{
             marginLeft: `${depth * TODO_INDENTATION_WIDTH + 26}px`,
           }}
         >
-          <label className="text-2xs text-[var(--t6)]">
-            Due date
-            <input
-              className="mt-1 block h-8 w-full rounded border-[var(--t3)] bg-[var(--t0)] px-2 text-xs focus:ring-0"
-              type="date"
-              value={todo.dueDate ?? ""}
-              onChange={(event) => onUpdate(todo.id, { dueDate: event.target.value || null })}
-            />
-          </label>
           <label className="text-2xs text-[var(--t6)]">
             Notes
             <textarea

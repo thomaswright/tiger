@@ -97,7 +97,7 @@ module StatusSelect = {
 }
 
 module DateSelect = {
-  @react.component @module("./DateSelect.jsx")
+  @react.component @module("./DateSelect")
   external make: (
     ~value: option<Date.t>,
     ~onClick: option<Date.t> => unit,

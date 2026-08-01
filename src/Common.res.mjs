@@ -8,7 +8,7 @@ import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import ImportJsx from "./Import.jsx";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as Belt_MapString from "rescript/lib/es6/belt_MapString.js";
-import DateSelectJsx from "./DateSelect.jsx";
+import DateSelectJsx from "./DateSelect";
 import StatusSelectJsx from "./StatusSelect.jsx";
 import TigerSvg from "./assets/tiger.svg";
 import * as UseLocalStorageJs from "./useLocalStorage.js";
