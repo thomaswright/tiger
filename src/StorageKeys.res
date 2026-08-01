@@ -1,6 +1,0 @@
-let theme = "tiger-theme"
-let baseColor = "tiger-baseColor"
-let selectedElement = "tiger-selected-element"
-let displayElement = "tiger-display-element"
-let view = "tiger-view"
-let showCheckboxes = "tiger-show-checkboxes"
