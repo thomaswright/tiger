@@ -1,70 +1,54 @@
 # Tiger
 
-Tiger is a todo app.
+Tiger is a personal todo application built with React, Cloudflare Workers, D1,
+and Cloudflare Access.
 
-See more at: https://thomaswright.github.io/tiger
+## Local development
 
-## Development
-
-Run ReScript in dev mode:
+Install dependencies:
 
 ```sh
-npm run res:dev
+npm install
 ```
 
-In another tab, run the Vite dev server:
+Create the local-only identity configuration:
+
+```sh
+cp .dev.vars.example .dev.vars
+```
+
+Apply pending migrations to the local D1 database:
+
+```sh
+npm run db:migrate:local
+```
+
+Start the React client and Worker runtime together:
 
 ```sh
 npm run dev
 ```
 
-## React + TypeScript + Vite
+The development identity is accepted only for requests whose hostname is
+`localhost`, `127.0.0.1`, or `::1`. Non-local requests require a valid
+Cloudflare Access JWT.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Checks
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-});
+```sh
+npm run build
+npm run lint
+npm audit
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Production configuration
 
-```js
-// eslint.config.js
-import react from "eslint-plugin-react";
+Before deployment:
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: "18.3" } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs["jsx-runtime"].rules,
-  },
-});
-```
+1. Create the production D1 database and replace the placeholder database ID
+   in `wrangler.jsonc`.
+2. Apply D1 migrations with Wrangler's `--remote` flag.
+3. Put the application hostname behind Cloudflare Access.
+4. Configure `TEAM_DOMAIN` and `POLICY_AUD` for the Worker.
+
+The Worker validates `Cf-Access-Jwt-Assertion` before serving personal data.

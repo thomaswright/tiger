@@ -1,10 +1,33 @@
-import type { HealthResponse } from "../src/shared/domain";
+import type {
+  ApiErrorResponse,
+  HealthResponse,
+  ListsResponse,
+  MeResponse,
+  Todo,
+  TodosResponse,
+} from "../src/shared/domain";
+import { authenticate, AuthError, type AuthEnv } from "./auth";
+import {
+  createTodo,
+  DataError,
+  getLists,
+  getTodos,
+  parseCreateTodoInput,
+} from "./data";
 
-interface Env {
+interface Env extends AuthEnv {
   DB: D1Database;
 }
 
-const json = (body: HealthResponse | { error: string }, status = 200) =>
+type JsonBody =
+  | ApiErrorResponse
+  | HealthResponse
+  | ListsResponse
+  | MeResponse
+  | Todo
+  | TodosResponse;
+
+const json = (body: JsonBody, status = 200) =>
   Response.json(body, {
     status,
     headers: {
@@ -31,10 +54,57 @@ export default {
       return json({ status: "ok", database: "ready" });
     }
 
-    if (url.pathname.startsWith("/api/")) {
-      return json({ error: "Not found" }, 404);
+    if (!url.pathname.startsWith("/api/")) {
+      return new Response(null, { status: 404 });
     }
 
-    return new Response(null, { status: 404 });
+    try {
+      const user = await authenticate(request, env);
+
+      if (request.method === "GET" && url.pathname === "/api/me") {
+        return json({ user });
+      }
+
+      if (request.method === "GET" && url.pathname === "/api/lists") {
+        return json({ lists: await getLists(env.DB, user) });
+      }
+
+      const todosMatch = url.pathname.match(
+        /^\/api\/lists\/([^/]+)\/todos$/,
+      );
+      if (todosMatch) {
+        const listId = decodeURIComponent(todosMatch[1]);
+
+        if (request.method === "GET") {
+          return json({ todos: await getTodos(env.DB, user, listId) });
+        }
+
+        if (request.method === "POST") {
+          let body: unknown;
+          try {
+            body = await request.json();
+          } catch {
+            throw new DataError("Request body must be JSON", 400);
+          }
+
+          const todo = await createTodo(
+            env.DB,
+            user,
+            listId,
+            parseCreateTodoInput(body),
+          );
+          return json(todo, 201);
+        }
+      }
+
+      return json({ error: "Not found" }, 404);
+    } catch (error) {
+      if (error instanceof AuthError || error instanceof DataError) {
+        return json({ error: error.message }, error.status);
+      }
+
+      console.error("Unhandled API error", error);
+      return json({ error: "Internal server error" }, 500);
+    }
   },
 } satisfies ExportedHandler<Env>;

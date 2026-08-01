@@ -1,0 +1,7 @@
+# Used only by the localhost development identity.
+TIGER_DEV_USER_ID=local-user
+TIGER_DEV_USER_EMAIL=local@tiger.invalid
+
+# Required in production for Cloudflare Access JWT validation.
+TEAM_DOMAIN=https://your-team.cloudflareaccess.com
+POLICY_AUD=your-access-application-audience
