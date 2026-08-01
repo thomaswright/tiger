@@ -62,6 +62,7 @@ type RegisterRow = (todoId: string, element: HTMLDivElement | null) => void;
 
 interface TreeRenderProps extends TodoTreeProps {
   activeTodoId: string | null;
+  deleteHighlighted: boolean;
   registerRow: RegisterRow;
 }
 
@@ -82,12 +83,14 @@ function TodoNode({
   onMove,
   onUpdate,
   activeTodoId,
+  deleteHighlighted,
   registerRow,
 }: TodoNodeProps) {
   const [draft, setDraft] = useState(todo.title);
   const [notesDraft, setNotesDraft] = useState(todo.notes);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [deleteArmed, setDeleteArmed] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const notesRef = useRef<HTMLTextAreaElement>(null);
   const rowRef = useRef<HTMLDivElement | null>(null);
@@ -153,14 +156,42 @@ function TodoNode({
   };
   const canMove = (direction: MoveDirection) =>
     planDirectionalMove(todos, todo.id, direction) !== null;
+  const deleteWithFocus = () => {
+    const tree = rowRef.current?.closest("[data-todo-tree]");
+    const inputs = tree
+      ? Array.from(
+          tree.querySelectorAll<HTMLInputElement>("input[data-todo-title]"),
+        )
+      : [];
+    const currentIndex = inputs.indexOf(inputRef.current!);
+    const previousInput = currentIndex > 0 ? inputs[currentIndex - 1] : null;
+
+    if (previousInput) {
+      previousInput.focus();
+      const caret = previousInput.value.length;
+      previousInput.setSelectionRange(caret, caret);
+    }
+    onDelete(todo);
+  };
   const children = getSiblings(todos, todo.id);
   const nextAncestors = new Set(ancestors).add(todo.id);
+  const isDeleteHighlighted = deleteHighlighted || deleteArmed;
 
   return (
-    <li className={activeTodoId === todo.id ? "opacity-40" : undefined}>
+    <li
+      className={`${activeTodoId === todo.id ? "opacity-40" : ""} ${isDeleteHighlighted ? "bg-red-50" : ""}`}
+      onKeyDownCapture={(event) => {
+        if (deleteArmed && event.target !== inputRef.current) {
+          setDeleteArmed(false);
+        }
+      }}
+      onPointerDownCapture={() => {
+        if (deleteArmed) setDeleteArmed(false);
+      }}
+    >
       <div
         ref={setRowRef}
-        className="group flex min-h-10 items-center gap-1 border-b border-[var(--t2)] py-1"
+        className={`group flex min-h-10 items-center gap-1 border-b border-[var(--t2)] py-1 transition-colors ${isDeleteHighlighted ? "bg-red-50" : ""}`}
         style={{ paddingLeft: `${depth * TODO_INDENTATION_WIDTH}px` }}
       >
         <button
@@ -190,9 +221,26 @@ function TodoNode({
           ref={inputRef}
           className="min-w-0 flex-1 border-0 bg-transparent px-1 py-1 text-sm focus:ring-0"
           value={draft}
-          onBlur={commitTitle}
+          onBlur={() => {
+            setDeleteArmed(false);
+            commitTitle();
+          }}
           onChange={(event) => setDraft(event.target.value)}
           onKeyDown={(event) => {
+            const plainBackspace =
+              event.key === "Backspace" &&
+              !event.altKey &&
+              !event.ctrlKey &&
+              !event.metaKey &&
+              !event.shiftKey;
+            if (plainBackspace && event.currentTarget.value.length === 0) {
+              event.preventDefault();
+              if (deleteArmed) deleteWithFocus();
+              else setDeleteArmed(true);
+              return;
+            }
+            if (deleteArmed) setDeleteArmed(false);
+
             const selectionIsCollapsed =
               event.currentTarget.selectionStart ===
               event.currentTarget.selectionEnd;
@@ -323,7 +371,7 @@ function TodoNode({
       </div>
       {detailsOpen && (
         <div
-          className="grid gap-2 border-b border-[var(--t2)] bg-[var(--t1)] p-2 sm:grid-cols-[9rem_1fr_auto]"
+          className={`grid gap-2 border-b border-[var(--t2)] p-2 transition-colors sm:grid-cols-[9rem_1fr_auto] ${isDeleteHighlighted ? "bg-red-50" : "bg-[var(--t1)]"}`}
           style={{
             marginLeft: `${depth * TODO_INDENTATION_WIDTH + 26}px`,
           }}
@@ -352,7 +400,7 @@ function TodoNode({
           </label>
           <button
             className="self-end rounded px-2 py-1.5 text-xs text-red-700 hover:bg-red-50"
-            onClick={() => onDelete(todo)}
+            onClick={deleteWithFocus}
             type="button"
           >Delete</button>
         </div>
@@ -369,6 +417,7 @@ function TodoNode({
           onMove={onMove}
           onUpdate={onUpdate}
           activeTodoId={activeTodoId}
+          deleteHighlighted={isDeleteHighlighted}
           registerRow={registerRow}
         />
       )}
@@ -614,6 +663,7 @@ export default function TodoTree(props: TodoTreeProps) {
         {...props}
         activeTodoId={activeTodoId}
         ancestors={new Set()}
+        deleteHighlighted={false}
         depth={0}
         parentId={null}
         registerRow={registerRow}
