@@ -2,9 +2,11 @@ import { describe, expect, it } from "vitest";
 import type { Todo } from "./shared/domain";
 import {
   applyMove,
+  destinationIndexFromTarget,
   getSubtree,
   planDirectionalMove,
   planMoveTo,
+  planProjectedMove,
 } from "./tree";
 
 const todo = (
@@ -38,6 +40,61 @@ describe("todo subtrees", () => {
       "child",
       "grandchild",
     ]);
+  });
+});
+
+describe("drag projection", () => {
+  const todos = [
+    todo("previous", null, 100),
+    todo("previous-child", "previous", 100),
+    todo("parent", null, 200),
+    todo("moving-child", "parent", 100),
+    todo("next", null, 300),
+  ];
+
+  it("outdents a child above its former parent when dragged left", () => {
+    expect(
+      planProjectedMove(todos, "moving-child", "previous", 1, -20),
+    ).toMatchObject({
+      parentId: null,
+      previousId: "previous",
+      nextId: "parent",
+    });
+  });
+
+  it("makes the same vertical drop a child when kept indented", () => {
+    expect(
+      planProjectedMove(todos, "moving-child", "previous", 1, 0),
+    ).toMatchObject({
+      parentId: "previous",
+      previousId: "previous-child",
+      nextId: null,
+    });
+  });
+
+  it("indents a root todo beneath the item above it when dragged right", () => {
+    const roots = [todo("a", null, 100), todo("b", null, 200)];
+    expect(planProjectedMove(roots, "b", null, 1, 20)).toMatchObject({
+      parentId: "a",
+      previousId: null,
+      nextId: null,
+    });
+  });
+
+  it("never projects a parent into its own subtree", () => {
+    expect(planProjectedMove(todos, "parent", "moving-child", 0, 20)).toBeNull();
+  });
+});
+
+describe("drop target indexing", () => {
+  it("accounts for removing the source before a same-group insertion", () => {
+    expect(destinationIndexFromTarget(1, false, true, 0)).toBe(0);
+    expect(destinationIndexFromTarget(1, true, true, 0)).toBe(1);
+  });
+
+  it("uses the target index directly when changing parents", () => {
+    expect(destinationIndexFromTarget(1, false, false, 0)).toBe(1);
+    expect(destinationIndexFromTarget(1, true, false, 0)).toBe(2);
   });
 });
 

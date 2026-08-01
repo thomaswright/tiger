@@ -1,6 +1,14 @@
 import { DragDropProvider } from "@dnd-kit/react";
-import { isSortable, useSortable } from "@dnd-kit/react/sortable";
-import { useEffect, useRef, useState } from "react";
+import { Feedback } from "@dnd-kit/dom";
+import {
+  isSortable,
+  OptimisticSortingPlugin,
+} from "@dnd-kit/dom/sortable";
+import {
+  type UseSortableInput,
+  useSortable,
+} from "@dnd-kit/react/sortable";
+import { type ComponentProps, useEffect, useRef, useState } from "react";
 import {
   TODO_STATUSES,
   type MoveTodoInput,
@@ -10,13 +18,35 @@ import {
 } from "./shared/domain";
 import {
   applyMove,
+  destinationIndexFromTarget,
   getSiblings,
   groupForParent,
   parentForGroup,
   planDirectionalMove,
-  planMoveTo,
+  planProjectedMove,
+  TODO_INDENTATION_WIDTH,
   type MoveDirection,
 } from "./tree";
+
+type DragDropPlugins = NonNullable<
+  ComponentProps<typeof DragDropProvider>["plugins"]
+>;
+
+const configureDragFeedback: DragDropPlugins = (defaults) => [
+  ...defaults,
+  Feedback.configure({ dropAnimation: null }),
+];
+
+type SortablePluginCustomizer = Exclude<
+  NonNullable<UseSortableInput["plugins"]>,
+  unknown[]
+>;
+
+const withoutOptimisticDomSorting: SortablePluginCustomizer = (defaults) =>
+  defaults.filter((entry) => {
+    const plugin = typeof entry === "function" ? entry : entry.plugin;
+    return plugin !== OptimisticSortingPlugin;
+  });
 
 interface TodoTreeProps {
   todos: Todo[];
@@ -54,6 +84,7 @@ function TodoNode({
     id: todo.id,
     index,
     group: groupForParent(todo.parentId),
+    plugins: withoutOptimisticDomSorting,
   });
 
   useEffect(() => {
@@ -81,14 +112,14 @@ function TodoNode({
     <li ref={ref} className={isDragging ? "opacity-40" : undefined}>
       <div
         className="group flex min-h-10 items-center gap-1 border-b border-[var(--t2)] py-1"
-        style={{ paddingLeft: `${depth * 20}px` }}
+        style={{ paddingLeft: `${depth * TODO_INDENTATION_WIDTH}px` }}
       >
         <button
           ref={handleRef}
           className="flex h-7 w-5 cursor-grab items-center justify-center text-[var(--t5)] active:cursor-grabbing"
           style={{ touchAction: "none" }}
           aria-label={`Drag ${todo.title}`}
-          title="Drag to reorder"
+          title="Drag vertically to reorder; move left or right to change nesting"
           type="button"
         >
           ⠿
@@ -167,7 +198,9 @@ function TodoNode({
       {detailsOpen && (
         <div
           className="grid gap-2 border-b border-[var(--t2)] bg-[var(--t1)] p-2 sm:grid-cols-[9rem_1fr_auto]"
-          style={{ marginLeft: `${depth * 20 + 26}px` }}
+          style={{
+            marginLeft: `${depth * TODO_INDENTATION_WIDTH + 26}px`,
+          }}
         >
           <label className="text-2xs text-[var(--t6)]">
             Due date
@@ -241,6 +274,7 @@ function TodoBranch({ parentId, depth, ancestors, todos, ...actions }: TodoBranc
 }
 
 export default function TodoTree(props: TodoTreeProps) {
+  const [dragActive, setDragActive] = useState(false);
   const [visualTree, setVisualTree] = useState(() => ({
     sourceTodos: props.todos,
     todos: props.todos,
@@ -249,7 +283,7 @@ export default function TodoTree(props: TodoTreeProps) {
   // DnD releases its temporary layout before React Query notifies subscribers.
   // Keep the dropped order locally so the old order is never painted in between.
   let visibleTodos = visualTree.todos;
-  if (visualTree.sourceTodos !== props.todos) {
+  if (!dragActive && visualTree.sourceTodos !== props.todos) {
     visibleTodos = props.todos;
     setVisualTree({ sourceTodos: props.todos, todos: props.todos });
   }
@@ -264,16 +298,42 @@ export default function TodoTree(props: TodoTreeProps) {
 
   return (
     <DragDropProvider
+      plugins={configureDragFeedback}
+      onDragStart={() => {
+        setDragActive(true);
+      }}
       onDragEnd={(event) => {
-        if (event.canceled) return;
+        setDragActive(false);
+        if (event.canceled) {
+          setVisualTree({ sourceTodos: props.todos, todos: props.todos });
+          return;
+        }
         const source = event.operation.source;
-        if (!isSortable(source)) return;
+        const target = event.operation.target;
+        if (!isSortable(source) || !isSortable(target)) return;
         const todoId = String(source.id);
-        const move = planMoveTo(
+        if (target.id === source.id) return;
+
+        const dragCenter =
+          event.operation.shape?.current.center ??
+          event.operation.position.current;
+        const belowTarget = target.shape
+          ? dragCenter.y > target.shape.center.y
+          : false;
+        const destinationIndex = destinationIndexFromTarget(
+          target.index,
+          belowTarget,
+          source.initialGroup === target.group,
+          source.initialIndex,
+        );
+
+        const move = planProjectedMove(
           visibleTodos,
           todoId,
-          parentForGroup(source.group),
-          source.index,
+          parentForGroup(target.group),
+          destinationIndex,
+          event.operation.position.current.x -
+            event.operation.position.initial.x,
         );
         if (move) moveVisually(todoId, move);
       }}

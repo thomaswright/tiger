@@ -3,6 +3,7 @@ import type { MoveTodoInput, Todo } from "./shared/domain";
 export type MoveDirection = "up" | "down" | "indent" | "outdent";
 
 export const ROOT_GROUP = "__tiger_root__";
+export const TODO_INDENTATION_WIDTH = 20;
 
 export const groupForParent = (parentId: string | null) =>
   parentId ?? ROOT_GROUP;
@@ -37,6 +38,125 @@ export const getSubtree = (todos: Todo[], todoId: string): Todo[] => {
   }
   return todos.filter((todo) => ids.has(todo.id));
 };
+
+export interface FlattenedTodo {
+  todo: Todo;
+  depth: number;
+}
+
+export const flattenTodos = (todos: Todo[]): FlattenedTodo[] => {
+  const flattened: FlattenedTodo[] = [];
+  const visited = new Set<string>();
+
+  const visit = (parentId: string | null, depth: number) => {
+    for (const todo of getSiblings(todos, parentId)) {
+      if (visited.has(todo.id)) continue;
+      visited.add(todo.id);
+      flattened.push({ todo, depth });
+      visit(todo.id, depth + 1);
+    }
+  };
+
+  visit(null, 0);
+  return flattened;
+};
+
+const clamp = (value: number, minimum: number, maximum: number) =>
+  Math.max(minimum, Math.min(maximum, value));
+
+export const destinationIndexFromTarget = (
+  targetIndex: number,
+  belowTarget: boolean,
+  sameGroup: boolean,
+  sourceIndex: number,
+) => {
+  let destinationIndex = targetIndex + (belowTarget ? 1 : 0);
+  if (sameGroup && sourceIndex < destinationIndex) destinationIndex -= 1;
+  return destinationIndex;
+};
+
+export function planProjectedMove(
+  todos: Todo[],
+  todoId: string,
+  collisionParentId: string | null,
+  requestedIndex: number,
+  horizontalOffset: number,
+  indentationWidth = TODO_INDENTATION_WIDTH,
+): MoveTodoInput | null {
+  const movingTodo = todos.find((todo) => todo.id === todoId);
+  const originalDepth = flattenTodos(todos).find(
+    ({ todo }) => todo.id === todoId,
+  )?.depth;
+  if (!movingTodo || originalDepth === undefined) return null;
+
+  const removedIds = new Set(getSubtree(todos, todoId).map((todo) => todo.id));
+  if (collisionParentId && removedIds.has(collisionParentId)) return null;
+
+  const remaining = todos.filter((todo) => !removedIds.has(todo.id));
+  const collisionSiblings = getSiblings(remaining, collisionParentId);
+  const collisionIndex = clamp(requestedIndex, 0, collisionSiblings.length);
+  const previousCollisionSibling = collisionSiblings[collisionIndex - 1];
+  const nextCollisionSibling = collisionSiblings[collisionIndex];
+  const flattened = flattenTodos(remaining);
+
+  let insertionIndex = 0;
+  if (nextCollisionSibling) {
+    insertionIndex = flattened.findIndex(
+      ({ todo }) => todo.id === nextCollisionSibling.id,
+    );
+  } else if (previousCollisionSibling) {
+    const previousIndex = flattened.findIndex(
+      ({ todo }) => todo.id === previousCollisionSibling.id,
+    );
+    const previousDepth = flattened[previousIndex]?.depth ?? 0;
+    insertionIndex = previousIndex + 1;
+    while (
+      insertionIndex < flattened.length &&
+      flattened[insertionIndex].depth > previousDepth
+    ) {
+      insertionIndex += 1;
+    }
+  } else if (collisionParentId) {
+    const parentIndex = flattened.findIndex(
+      ({ todo }) => todo.id === collisionParentId,
+    );
+    if (parentIndex < 0) return null;
+    insertionIndex = parentIndex + 1;
+  }
+
+  const previousItem = flattened[insertionIndex - 1];
+  const nextItem = flattened[insertionIndex];
+  const requestedDepth =
+    originalDepth + Math.round(horizontalOffset / indentationWidth);
+  const maximumDepth = previousItem ? previousItem.depth + 1 : 0;
+  const minimumDepth = Math.min(nextItem?.depth ?? 0, maximumDepth);
+  const projectedDepth = clamp(requestedDepth, minimumDepth, maximumDepth);
+
+  let parentId: string | null = null;
+  if (projectedDepth > 0 && previousItem) {
+    if (previousItem.depth === projectedDepth - 1) {
+      parentId = previousItem.todo.id;
+    } else if (previousItem.depth === projectedDepth) {
+      parentId = previousItem.todo.parentId;
+    } else {
+      for (let index = insertionIndex - 1; index >= 0; index -= 1) {
+        if (flattened[index].depth === projectedDepth) {
+          parentId = flattened[index].todo.parentId;
+          break;
+        }
+      }
+    }
+  }
+
+  const flattenedIndex = new Map(
+    flattened.map(({ todo }, index) => [todo.id, index]),
+  );
+  const destinationIndex = getSiblings(remaining, parentId).filter(
+    (todo) => (flattenedIndex.get(todo.id) ?? Number.POSITIVE_INFINITY) < insertionIndex,
+  ).length;
+
+  return planMoveTo(todos, todoId, parentId, destinationIndex);
+}
 
 export function planMoveTo(
   todos: Todo[],
