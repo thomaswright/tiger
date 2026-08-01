@@ -162,7 +162,7 @@ export function parseCreateTodoInput(value: unknown): CreateTodoInput {
   if (typeof input.id !== "string" || !isUuid(input.id)) {
     throw new DataError("Todo id must be a UUID", 400);
   }
-  if (typeof input.title !== "string" || input.title.trim().length === 0) {
+  if (typeof input.title !== "string") {
     throw new DataError("Todo title is required", 400);
   }
   if (input.title.length > 1000) {
@@ -170,6 +170,12 @@ export function parseCreateTodoInput(value: unknown): CreateTodoInput {
   }
   if (input.parentId !== null && typeof input.parentId !== "string") {
     throw new DataError("Invalid parent todo", 400);
+  }
+  if (!isNullableUuid(input.previousId) || !isNullableUuid(input.nextId)) {
+    throw new DataError("Invalid create neighbors", 400);
+  }
+  if (input.previousId && input.previousId === input.nextId) {
+    throw new DataError("Create neighbors must be different", 400);
   }
   if (!isTodoStatus(input.status)) {
     throw new DataError("Invalid todo status", 400);
@@ -179,6 +185,8 @@ export function parseCreateTodoInput(value: unknown): CreateTodoInput {
     id: input.id,
     title: input.title.trim(),
     parentId: input.parentId,
+    previousId: input.previousId,
+    nextId: input.nextId,
     status: input.status,
   };
 }
@@ -205,20 +213,76 @@ export async function createTodo(
     }
   }
 
+  const previous = input.previousId
+    ? await getDestinationSibling(
+        db,
+        user.id,
+        listId,
+        input.parentId,
+        input.previousId,
+      )
+    : null;
+  const next = input.nextId
+    ? await getDestinationSibling(
+        db,
+        user.id,
+        listId,
+        input.parentId,
+        input.nextId,
+      )
+    : null;
+
+  if (previous && next && previous.sort_key >= next.sort_key) {
+    throw new DataError("Create neighbors are out of order", 400);
+  }
+
+  const interveningCondition = previous
+    ? next
+      ? "sort_key > ? AND sort_key < ?"
+      : "sort_key > ?"
+    : next
+      ? "sort_key < ?"
+      : "1 = 1";
+  const positionValues = previous
+    ? next
+      ? [previous.sort_key, next.sort_key]
+      : [previous.sort_key]
+    : next
+      ? [next.sort_key]
+      : [];
+  const intervening = await db
+    .prepare(
+      `SELECT COUNT(*) AS count FROM todos
+       WHERE owner_id = ? AND list_id = ? AND deleted_at IS NULL
+         AND (parent_id = ? OR (parent_id IS NULL AND ? IS NULL))
+         AND ${interveningCondition}`,
+    )
+    .bind(
+      user.id,
+      listId,
+      input.parentId,
+      input.parentId,
+      ...positionValues,
+    )
+    .first<{ count: number }>();
+  if ((intervening?.count ?? 0) > 0) {
+    throw new DataError("Create neighbors are not adjacent", 400);
+  }
+
+  const sortKey = previous
+    ? next
+      ? (previous.sort_key + next.sort_key) / 2
+      : previous.sort_key + 100
+    : next
+      ? next.sort_key - 100
+      : 100;
+
   try {
     await db
       .prepare(
         `INSERT INTO todos
           (id, list_id, owner_id, parent_id, title, status, sort_key)
-         VALUES (
-           ?, ?, ?, ?, ?, ?,
-           COALESCE((
-             SELECT MAX(sort_key) + 100
-             FROM todos
-             WHERE owner_id = ? AND list_id = ? AND deleted_at IS NULL
-               AND (parent_id = ? OR (parent_id IS NULL AND ? IS NULL))
-           ), 100)
-         )`,
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
       )
       .bind(
         input.id,
@@ -227,10 +291,7 @@ export async function createTodo(
         input.parentId,
         input.title,
         input.status,
-        user.id,
-        listId,
-        input.parentId,
-        input.parentId,
+        sortKey,
       )
       .run();
   } catch (error) {

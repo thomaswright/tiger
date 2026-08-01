@@ -52,6 +52,7 @@ const getTodoTarget = (record: DropTargetRecord | undefined) => {
 interface TodoTreeProps {
   todos: Todo[];
   onAddChild: (todo: Todo) => void;
+  onCreateBelow: (todo: Todo) => void;
   onDelete: (todo: Todo) => void;
   onMove: (todoId: string, move: MoveTodoInput) => void;
   onUpdate: (todoId: string, update: Omit<UpdateTodoInput, "version">) => void;
@@ -76,6 +77,7 @@ function TodoNode({
   depth,
   ancestors,
   onAddChild,
+  onCreateBelow,
   onDelete,
   onMove,
   onUpdate,
@@ -251,6 +253,21 @@ function TodoNode({
               }
               return;
             }
+            if (
+              event.key === "Enter" &&
+              selectionIsCollapsed &&
+              event.currentTarget.selectionEnd ===
+                event.currentTarget.value.length &&
+              !event.altKey &&
+              !event.ctrlKey &&
+              !event.metaKey &&
+              !event.shiftKey
+            ) {
+              event.preventDefault();
+              if (children.length > 0) setCollapsed(false);
+              onCreateBelow(todo);
+              return;
+            }
             if (event.key === "Enter") event.currentTarget.blur();
             if (event.key === "Escape") {
               setDraft(todo.title);
@@ -347,6 +364,7 @@ function TodoNode({
           parentId={todo.id}
           todos={todos}
           onAddChild={onAddChild}
+          onCreateBelow={onCreateBelow}
           onDelete={onDelete}
           onMove={onMove}
           onUpdate={onUpdate}

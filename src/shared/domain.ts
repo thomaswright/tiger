@@ -55,6 +55,8 @@ export interface CreateTodoInput {
   id: string;
   title: string;
   parentId: string | null;
+  previousId: string | null;
+  nextId: string | null;
   status: TodoStatus;
 }
 

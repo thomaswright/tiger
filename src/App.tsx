@@ -1,5 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { type FormEvent, useEffect, useRef, useState } from "react";
+import {
+  type FormEvent,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   createTodo,
   deleteTodo,
@@ -28,10 +34,17 @@ interface UndoDeletion {
   todos: Todo[];
 }
 
+interface CreateTodoVariables {
+  listId: string;
+  input: CreateTodoInput;
+  focusTitle?: boolean;
+}
+
 function App() {
   const queryClient = useQueryClient();
   const [title, setTitle] = useState("");
   const [newTodoParentId, setNewTodoParentId] = useState<string | null>(null);
+  const focusTodoId = useRef<string | null>(null);
   const [undoDeletion, setUndoDeletion] = useState<UndoDeletion | null>(null);
   const undoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -49,14 +62,28 @@ function App() {
   });
 
   const createMutation = useMutation({
-    mutationFn: ({ listId, input }: { listId: string; input: CreateTodoInput }) =>
+    mutationFn: ({ listId, input }: CreateTodoVariables) =>
       createTodo(listId, input),
-    onMutate: async ({ listId, input }) => {
+    onMutate: async ({ listId, input, focusTitle }) => {
+      if (focusTitle) focusTodoId.current = input.id;
       const key = todoQueryKey(listId);
       await queryClient.cancelQueries({ queryKey: key });
       const previous = queryClient.getQueryData<TodosResponse>(key);
       const now = new Date().toISOString();
       const siblings = getSiblings(previous?.todos ?? [], input.parentId);
+      const previousSibling = input.previousId
+        ? siblings.find((todo) => todo.id === input.previousId)
+        : null;
+      const nextSibling = input.nextId
+        ? siblings.find((todo) => todo.id === input.nextId)
+        : null;
+      const sortKey = previousSibling
+        ? nextSibling
+          ? (previousSibling.sortKey + nextSibling.sortKey) / 2
+          : previousSibling.sortKey + 100
+        : nextSibling
+          ? nextSibling.sortKey - 100
+          : 100;
       const optimisticTodo: Todo = {
         id: input.id,
         listId,
@@ -65,7 +92,7 @@ function App() {
         notes: "",
         status: input.status,
         dueDate: null,
-        sortKey: (siblings[siblings.length - 1]?.sortKey ?? 0) + 100,
+        sortKey,
         version: 1,
         createdAt: now,
         updatedAt: now,
@@ -76,8 +103,11 @@ function App() {
       });
       return { key, previous };
     },
-    onError: (_error, _variables, context) => {
+    onError: (_error, variables, context) => {
       if (context) queryClient.setQueryData(context.key, context.previous);
+      if (focusTodoId.current === variables.input.id) {
+        focusTodoId.current = null;
+      }
     },
     onSuccess: (savedTodo, { listId, input }) => {
       queryClient.setQueryData<TodosResponse>(todoQueryKey(listId), (current) => ({
@@ -248,19 +278,38 @@ function App() {
     if (!activeList || !nextTitle) return;
 
     setTitle("");
+    const siblings = getSiblings(todosQuery.data?.todos ?? [], newTodoParentId);
     createMutation.mutate({
       listId: activeList.id,
       input: {
         id: crypto.randomUUID(),
         title: nextTitle,
         parentId: newTodoParentId,
+        previousId: siblings[siblings.length - 1]?.id ?? null,
+        nextId: null,
         status: "Unsorted",
       },
     });
     setNewTodoParentId(null);
   };
 
+  useLayoutEffect(() => {
+    const todoId = focusTodoId.current;
+    if (
+      !todoId ||
+      !todosQuery.data?.todos.some((todo) => todo.id === todoId)
+    ) {
+      return;
+    }
+    const input = document.getElementById(`todo-title-${todoId}`);
+    if (!(input instanceof HTMLInputElement)) return;
+    input.focus();
+    input.setSelectionRange(0, input.value.length);
+    focusTodoId.current = null;
+  }, [todosQuery.data]);
+
   const todos = todosQuery.data?.todos ?? [];
+
   const parentTodo = newTodoParentId
     ? todos.find((todo) => todo.id === newTodoParentId)
     : undefined;
@@ -331,6 +380,35 @@ function App() {
             <TodoTree
               todos={todos}
               onAddChild={(todo) => setNewTodoParentId(todo.id)}
+              onCreateBelow={(todo) => {
+                const children = getSiblings(todos, todo.id);
+                const siblings = getSiblings(todos, todo.parentId);
+                const siblingIndex = siblings.findIndex(
+                  (candidate) => candidate.id === todo.id,
+                );
+                const id = crypto.randomUUID();
+                createMutation.mutate({
+                  listId: activeList.id,
+                  input: children.length
+                    ? {
+                        id,
+                        title: "",
+                        parentId: todo.id,
+                        previousId: null,
+                        nextId: children[0].id,
+                        status: "Unsorted",
+                      }
+                    : {
+                        id,
+                        title: "",
+                        parentId: todo.parentId,
+                        previousId: todo.id,
+                        nextId: siblings[siblingIndex + 1]?.id ?? null,
+                        status: "Unsorted",
+                      },
+                  focusTitle: true,
+                });
+              }}
               onDelete={(todo) => {
                 const removedTodos = getSubtree(todos, todo.id);
                 deleteMutation.mutate({

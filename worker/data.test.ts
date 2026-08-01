@@ -1,12 +1,60 @@
 import { describe, expect, it } from "vitest";
 import {
   DataError,
+  parseCreateTodoInput,
   parseDeleteTodoInput,
   parseRestoreTodosInput,
   parseUpdateTodoInput,
 } from "./data";
 
 const token = "33333333-3333-4333-8333-333333333333";
+const todoId = "11111111-1111-4111-8111-111111111111";
+const neighborId = "22222222-2222-4222-8222-222222222222";
+
+describe("create input", () => {
+  it("allows a blank title for a newly focused inline todo", () => {
+    expect(parseCreateTodoInput({
+      id: todoId,
+      title: "",
+      parentId: null,
+      previousId: null,
+      nextId: null,
+      status: "Unsorted",
+    }).title).toBe("");
+  });
+
+  it("accepts semantic placement neighbors", () => {
+    expect(parseCreateTodoInput({
+      id: todoId,
+      title: "New todo",
+      parentId: null,
+      previousId: neighborId,
+      nextId: null,
+      status: "Unsorted",
+    })).toMatchObject({
+      id: todoId,
+      previousId: neighborId,
+      nextId: null,
+    });
+  });
+
+  it("rejects invalid or identical placement neighbors", () => {
+    const input = {
+      id: todoId,
+      title: "New todo",
+      parentId: null,
+      previousId: neighborId,
+      nextId: neighborId,
+      status: "Unsorted",
+    };
+    expect(() => parseCreateTodoInput(input)).toThrow(
+      new DataError("Create neighbors must be different", 400),
+    );
+    expect(() => parseCreateTodoInput({ ...input, nextId: "invalid" })).toThrow(
+      new DataError("Invalid create neighbors", 400),
+    );
+  });
+});
 
 describe("todo detail input", () => {
   it("accepts notes, a real calendar date, and clearing the date", () => {
