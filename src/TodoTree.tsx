@@ -1,8 +1,24 @@
-import { DragDropProvider } from "@dnd-kit/react";
-import { Feedback } from "@dnd-kit/dom";
-import { isSortable } from "@dnd-kit/dom/sortable";
-import { useSortable } from "@dnd-kit/react/sortable";
-import { type ComponentProps, useEffect, useRef, useState } from "react";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import {
+  draggable,
+  dropTargetForElements,
+  monitorForElements,
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import type {
+  DragLocation,
+  DropTargetRecord,
+} from "@atlaskit/pragmatic-drag-and-drop/types";
+import {
+  attachClosestEdge,
+  extractClosestEdge,
+} from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   TODO_STATUSES,
   type MoveTodoInput,
@@ -13,22 +29,25 @@ import {
 import {
   applyMove,
   getSiblings,
-  groupForParent,
-  parentForGroup,
   planDirectionalMove,
   planProjectedMove,
   TODO_INDENTATION_WIDTH,
   type MoveDirection,
 } from "./tree";
 
-type DragDropPlugins = NonNullable<
-  ComponentProps<typeof DragDropProvider>["plugins"]
->;
+const TODO_DRAG_TYPE = "tiger-todo";
 
-const configureDragFeedback: DragDropPlugins = (defaults) => [
-  ...defaults,
-  Feedback.configure({ dropAnimation: null }),
-];
+const isTodoDragData = (
+  data: Record<string | symbol, unknown>,
+): data is Record<string | symbol, unknown> & { todoId: string } =>
+  data.type === TODO_DRAG_TYPE && typeof data.todoId === "string";
+
+const getTodoTarget = (record: DropTargetRecord | undefined) => {
+  if (!record || !isTodoDragData(record.data)) return null;
+  const edge = extractClosestEdge(record.data);
+  if (edge !== "top" && edge !== "bottom") return null;
+  return { todoId: record.data.todoId, edge };
+};
 
 interface TodoTreeProps {
   todos: Todo[];
@@ -38,9 +57,15 @@ interface TodoTreeProps {
   onUpdate: (todoId: string, update: Omit<UpdateTodoInput, "version">) => void;
 }
 
-interface TodoNodeProps extends TodoTreeProps {
+type RegisterRow = (todoId: string, element: HTMLDivElement | null) => void;
+
+interface TreeRenderProps extends TodoTreeProps {
+  activeTodoId: string | null;
+  registerRow: RegisterRow;
+}
+
+interface TodoNodeProps extends TreeRenderProps {
   todo: Todo;
-  index: number;
   depth: number;
   ancestors: ReadonlySet<string>;
 }
@@ -48,13 +73,14 @@ interface TodoNodeProps extends TodoTreeProps {
 function TodoNode({
   todo,
   todos,
-  index,
   depth,
   ancestors,
   onAddChild,
   onDelete,
   onMove,
   onUpdate,
+  activeTodoId,
+  registerRow,
 }: TodoNodeProps) {
   const [draft, setDraft] = useState(todo.title);
   const [notesDraft, setNotesDraft] = useState(todo.notes);
@@ -62,11 +88,48 @@ function TodoNode({
   const [collapsed, setCollapsed] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const notesRef = useRef<HTMLTextAreaElement>(null);
-  const { ref, handleRef, isDragging } = useSortable({
-    id: todo.id,
-    index,
-    group: groupForParent(todo.parentId),
-  });
+  const rowRef = useRef<HTMLDivElement | null>(null);
+  const handleRef = useRef<HTMLButtonElement | null>(null);
+  const ancestorsRef = useRef(ancestors);
+
+  useLayoutEffect(() => {
+    ancestorsRef.current = ancestors;
+  }, [ancestors]);
+
+  const setRowRef = useCallback(
+    (element: HTMLDivElement | null) => {
+      rowRef.current = element;
+      registerRow(todo.id, element);
+    },
+    [registerRow, todo.id],
+  );
+
+  useEffect(() => {
+    const element = rowRef.current;
+    const dragHandle = handleRef.current;
+    if (!element || !dragHandle) return;
+
+    return combine(
+      draggable({
+        element,
+        dragHandle,
+        getInitialData: () => ({ type: TODO_DRAG_TYPE, todoId: todo.id }),
+      }),
+      dropTargetForElements({
+        element,
+        canDrop: ({ source }) =>
+          isTodoDragData(source.data) &&
+          source.data.todoId !== todo.id &&
+          !ancestorsRef.current.has(source.data.todoId),
+        getData: ({ input, element: targetElement }) =>
+          attachClosestEdge(
+            { type: TODO_DRAG_TYPE, todoId: todo.id },
+            { element: targetElement, input, allowedEdges: ["top", "bottom"] },
+          ),
+        getIsSticky: () => true,
+      }),
+    );
+  }, [todo.id]);
 
   useEffect(() => {
     if (document.activeElement !== inputRef.current) setDraft(todo.title);
@@ -90,8 +153,9 @@ function TodoNode({
   const nextAncestors = new Set(ancestors).add(todo.id);
 
   return (
-    <li ref={ref} className={isDragging ? "opacity-40" : undefined}>
+    <li className={activeTodoId === todo.id ? "opacity-40" : undefined}>
       <div
+        ref={setRowRef}
         className="group flex min-h-10 items-center gap-1 border-b border-[var(--t2)] py-1"
         style={{ paddingLeft: `${depth * TODO_INDENTATION_WIDTH}px` }}
       >
@@ -222,13 +286,15 @@ function TodoNode({
           onDelete={onDelete}
           onMove={onMove}
           onUpdate={onUpdate}
+          activeTodoId={activeTodoId}
+          registerRow={registerRow}
         />
       )}
     </li>
   );
 }
 
-interface TodoBranchProps extends TodoTreeProps {
+interface TodoBranchProps extends TreeRenderProps {
   parentId: string | null;
   depth: number;
   ancestors: ReadonlySet<string>;
@@ -239,13 +305,12 @@ function TodoBranch({ parentId, depth, ancestors, todos, ...actions }: TodoBranc
   if (siblings.length === 0) return null;
   return (
     <ul>
-      {siblings.map((todo, index) => (
+      {siblings.map((todo) => (
         <TodoNode
           key={todo.id}
           {...actions}
           ancestors={ancestors}
           depth={depth}
-          index={index}
           todo={todo}
           todos={todos}
         />
@@ -256,25 +321,79 @@ function TodoBranch({ parentId, depth, ancestors, todos, ...actions }: TodoBranc
 
 export default function TodoTree(props: TodoTreeProps) {
   const [dragActive, setDragActive] = useState(false);
-  const dragOrigin = useRef<{
-    element: Element;
-    parent: Node;
-    nextSibling: ChildNode | null;
-  } | null>(null);
+  const [activeTodoId, setActiveTodoId] = useState<string | null>(null);
+  const propsRef = useRef(props);
+  const rowElements = useRef(new Map<string, HTMLDivElement>());
+  const pendingLayout = useRef<Map<string, DOMRect> | null>(null);
+  const dragSnapshot = useRef<Todo[] | null>(null);
+  const dragMove = useRef<{ todoId: string; move: MoveTodoInput } | null>(null);
+  const initialPointerX = useRef(0);
+  const lastTarget = useRef<ReturnType<typeof getTodoTarget>>(null);
   const [visualTree, setVisualTree] = useState(() => ({
     sourceTodos: props.todos,
     todos: props.todos,
   }));
 
-  // DnD releases its temporary layout before React Query notifies subscribers.
-  // Keep the dropped order locally so the old order is never painted in between.
+  const registerRow = useCallback<RegisterRow>((todoId, element) => {
+    if (element) rowElements.current.set(todoId, element);
+    else rowElements.current.delete(todoId);
+  }, []);
+
+  useLayoutEffect(() => {
+    const previousLayout = pendingLayout.current;
+    pendingLayout.current = null;
+    if (
+      !previousLayout ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
+
+    for (const [todoId, element] of rowElements.current) {
+      if (todoId === activeTodoId) continue;
+      const previous = previousLayout.get(todoId);
+      if (!previous) continue;
+      const current = element.getBoundingClientRect();
+      const x = previous.left - current.left;
+      const y = previous.top - current.top;
+      if (Math.abs(x) < 1 && Math.abs(y) < 1) continue;
+
+      element.getAnimations().forEach((animation) => animation.cancel());
+      element.animate(
+        [
+          { transform: `translate(${x}px, ${y}px)` },
+          { transform: "translate(0, 0)" },
+        ],
+        { duration: 160, easing: "cubic-bezier(0.25, 1, 0.5, 1)" },
+      );
+    }
+  }, [activeTodoId, visualTree.todos]);
+
+  // Keep the projected and dropped order local so query reconciliation never
+  // paints the previous order between the gesture and the optimistic mutation.
   let visibleTodos = visualTree.todos;
   if (!dragActive && visualTree.sourceTodos !== props.todos) {
     visibleTodos = props.todos;
     setVisualTree({ sourceTodos: props.todos, todos: props.todos });
   }
+  const visibleTodosRef = useRef(visibleTodos);
+
+  useLayoutEffect(() => {
+    propsRef.current = props;
+    visibleTodosRef.current = visibleTodos;
+  }, [props, visibleTodos]);
+
+  const captureLayout = useCallback(() => {
+    pendingLayout.current = new Map(
+      Array.from(rowElements.current, ([id, element]) => [
+        id,
+        element.getBoundingClientRect(),
+      ]),
+    );
+  }, []);
 
   const moveVisually = (todoId: string, move: MoveTodoInput) => {
+    captureLayout();
     setVisualTree({
       sourceTodos: props.todos,
       todos: applyMove(visibleTodos, todoId, move),
@@ -282,75 +401,143 @@ export default function TodoTree(props: TodoTreeProps) {
     props.onMove(todoId, move);
   };
 
-  const restoreDraggedElement = () => {
-    const origin = dragOrigin.current;
-    dragOrigin.current = null;
-    if (!origin) return;
+  const projectDrag = useCallback(
+    (todoId: string, location: DragLocation) => {
+      const currentTarget = getTodoTarget(location.dropTargets[0]);
+      if (currentTarget) lastTarget.current = currentTarget;
+      const target = currentTarget ?? lastTarget.current;
+      if (!target) return null;
 
-    const anchor =
-      origin.nextSibling?.parentNode === origin.parent
-        ? origin.nextSibling
-        : null;
-    if (
-      origin.element.parentNode !== origin.parent ||
-      origin.element.nextSibling !== anchor
-    ) {
-      origin.parent.insertBefore(origin.element, anchor);
-    }
-  };
+      const todos = dragSnapshot.current ?? visibleTodosRef.current;
+      const movingTodo = todos.find((todo) => todo.id === todoId);
+      const targetTodo = todos.find((todo) => todo.id === target.todoId);
+      if (!movingTodo || !targetTodo) return null;
+
+      const targetSiblings = getSiblings(todos, targetTodo.parentId);
+      const targetIndex = targetSiblings.findIndex(
+        (todo) => todo.id === targetTodo.id,
+      );
+      const sourceSiblings = getSiblings(todos, movingTodo.parentId);
+      const sourceIndex = sourceSiblings.findIndex(
+        (todo) => todo.id === movingTodo.id,
+      );
+      let destinationIndex = targetIndex + (target.edge === "bottom" ? 1 : 0);
+      if (
+        movingTodo.parentId === targetTodo.parentId &&
+        sourceIndex < destinationIndex
+      ) {
+        destinationIndex -= 1;
+      }
+
+      return planProjectedMove(
+        dragSnapshot.current ?? todos,
+        todoId,
+        targetTodo.parentId,
+        destinationIndex,
+        location.input.clientX - initialPointerX.current,
+      );
+    },
+    [],
+  );
+
+  const previewDrag = useCallback(
+    (todoId: string, location: DragLocation) => {
+      const move = projectDrag(todoId, location);
+      if (!move) {
+        if (dragMove.current && dragSnapshot.current) {
+          captureLayout();
+          setVisualTree({
+            sourceTodos: propsRef.current.todos,
+            todos: dragSnapshot.current,
+          });
+        }
+        dragMove.current = null;
+        return;
+      }
+
+      const previous = dragMove.current;
+      if (
+        previous?.todoId === todoId &&
+        previous.move.parentId === move.parentId &&
+        previous.move.previousId === move.previousId &&
+        previous.move.nextId === move.nextId
+      ) {
+        return;
+      }
+
+      dragMove.current = { todoId, move };
+      captureLayout();
+      setVisualTree({
+        sourceTodos: propsRef.current.todos,
+        todos: applyMove(dragSnapshot.current ?? visibleTodosRef.current, todoId, move),
+      });
+    },
+    [captureLayout, projectDrag],
+  );
+
+  useEffect(
+    () =>
+      monitorForElements({
+        canMonitor: ({ source }) => isTodoDragData(source.data),
+        onDragStart: ({ source, location }) => {
+          if (!isTodoDragData(source.data)) return;
+          dragSnapshot.current = visibleTodosRef.current;
+          dragMove.current = null;
+          lastTarget.current = null;
+          initialPointerX.current = location.initial.input.clientX;
+          setActiveTodoId(source.data.todoId);
+          setDragActive(true);
+        },
+        onDropTargetChange: ({ source, location }) => {
+          if (isTodoDragData(source.data)) {
+            previewDrag(source.data.todoId, location.current);
+          }
+        },
+        onDrag: ({ source, location }) => {
+          if (isTodoDragData(source.data)) {
+            previewDrag(source.data.todoId, location.current);
+          }
+        },
+        onDrop: ({ source, location }) => {
+          if (!isTodoDragData(source.data)) return;
+          const todoId = source.data.todoId;
+          const hasDropTarget = location.current.dropTargets.length > 0;
+          if (hasDropTarget) previewDrag(todoId, location.current);
+          const committed = hasDropTarget ? dragMove.current : null;
+          const snapshot = dragSnapshot.current ?? propsRef.current.todos;
+
+          setActiveTodoId(null);
+          setDragActive(false);
+          dragSnapshot.current = null;
+          dragMove.current = null;
+          lastTarget.current = null;
+
+          if (committed) {
+            propsRef.current.onMove(committed.todoId, committed.move);
+          } else {
+            captureLayout();
+            setVisualTree({
+              sourceTodos: propsRef.current.todos,
+              todos: snapshot,
+            });
+          }
+        },
+      }),
+    [captureLayout, previewDrag],
+  );
 
   return (
-    <DragDropProvider
-      plugins={configureDragFeedback}
-      onDragStart={(event) => {
-        const source = event.operation.source;
-        if (isSortable(source) && source.element?.parentNode) {
-          dragOrigin.current = {
-            element: source.element,
-            parent: source.element.parentNode,
-            nextSibling: source.element.nextSibling,
-          };
-        }
-        setDragActive(true);
-      }}
-      onDragEnd={(event) => {
-        setDragActive(false);
-        if (event.canceled) {
-          dragOrigin.current = null;
-          setVisualTree({ sourceTodos: props.todos, todos: props.todos });
-          return;
-        }
-
-        const source = event.operation.source;
-        if (!isSortable(source)) {
-          restoreDraggedElement();
-          return;
-        }
-
-        const todoId = String(source.id);
-        const move = planProjectedMove(
-          visibleTodos,
-          todoId,
-          parentForGroup(source.group),
-          source.index,
-          event.operation.position.current.x -
-            event.operation.position.initial.x,
-        );
-
-        // OptimisticSortingPlugin physically moves the source node. Put it back
-        // where React last rendered it before reconciling the new data tree.
-        restoreDraggedElement();
-        if (move) moveVisually(todoId, move);
-      }}
-    >
+    <>
       <TodoBranch
         {...props}
+        activeTodoId={activeTodoId}
         ancestors={new Set()}
         depth={0}
         parentId={null}
+        registerRow={registerRow}
         todos={visibleTodos}
         onMove={moveVisually}
       />
-    </DragDropProvider>
+    </>
   );
 }
