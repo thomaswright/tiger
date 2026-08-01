@@ -1,18 +1,30 @@
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { type FormEvent, useState } from "react";
-import { createTodo, getLists, getMe, getTodos } from "./api";
+import {
+  createTodo,
+  getLists,
+  getMe,
+  getTodos,
+  moveTodo,
+  updateTodo,
+} from "./api";
 import logoUrl from "./assets/tiger.svg";
-import type { CreateTodoInput, Todo, TodosResponse } from "./shared/domain";
+import type {
+  CreateTodoInput,
+  MoveTodoInput,
+  Todo,
+  TodosResponse,
+  UpdateTodoInput,
+} from "./shared/domain";
+import TodoTree from "./TodoTree";
+import { applyMove, getSiblings } from "./tree";
 
 const todoQueryKey = (listId: string) => ["todos", listId] as const;
 
 function App() {
   const queryClient = useQueryClient();
   const [title, setTitle] = useState("");
+  const [newTodoParentId, setNewTodoParentId] = useState<string | null>(null);
 
   const meQuery = useQuery({ queryKey: ["me"], queryFn: getMe });
   const listsQuery = useQuery({ queryKey: ["lists"], queryFn: getLists });
@@ -24,18 +36,14 @@ function App() {
   });
 
   const createMutation = useMutation({
-    mutationFn: ({
-      listId,
-      input,
-    }: {
-      listId: string;
-      input: CreateTodoInput;
-    }) => createTodo(listId, input),
+    mutationFn: ({ listId, input }: { listId: string; input: CreateTodoInput }) =>
+      createTodo(listId, input),
     onMutate: async ({ listId, input }) => {
       const key = todoQueryKey(listId);
       await queryClient.cancelQueries({ queryKey: key });
       const previous = queryClient.getQueryData<TodosResponse>(key);
       const now = new Date().toISOString();
+      const siblings = getSiblings(previous?.todos ?? [], input.parentId);
       const optimisticTodo: Todo = {
         id: input.id,
         listId,
@@ -44,9 +52,7 @@ function App() {
         notes: "",
         status: input.status,
         dueDate: null,
-        sortKey:
-          Math.max(0, ...(previous?.todos.map((todo) => todo.sortKey) ?? [])) +
-          100,
+        sortKey: (siblings[siblings.length - 1]?.sortKey ?? 0) + 100,
         version: 1,
         createdAt: now,
         updatedAt: now,
@@ -55,13 +61,10 @@ function App() {
       queryClient.setQueryData<TodosResponse>(key, {
         todos: [...(previous?.todos ?? []), optimisticTodo],
       });
-
       return { key, previous };
     },
     onError: (_error, _variables, context) => {
-      if (context) {
-        queryClient.setQueryData(context.key, context.previous);
-      }
+      if (context) queryClient.setQueryData(context.key, context.previous);
     },
     onSuccess: (savedTodo, { listId, input }) => {
       queryClient.setQueryData<TodosResponse>(todoQueryKey(listId), (current) => ({
@@ -75,12 +78,86 @@ function App() {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: ({ todoId, input }: { todoId: string; input: UpdateTodoInput }) =>
+      updateTodo(todoId, input),
+    onMutate: async ({ todoId, input }) => {
+      if (!activeList) return undefined;
+      const key = todoQueryKey(activeList.id);
+      await queryClient.cancelQueries({ queryKey: key });
+      const previous = queryClient.getQueryData<TodosResponse>(key);
+      queryClient.setQueryData<TodosResponse>(key, {
+        todos: (previous?.todos ?? []).map((todo) =>
+          todo.id === todoId
+            ? { ...todo, ...input, version: todo.version + 1 }
+            : todo,
+        ),
+      });
+      return { key, previous };
+    },
+    onError: (_error, _variables, context) => {
+      if (context) queryClient.setQueryData(context.key, context.previous);
+    },
+    onSuccess: (savedTodo) => {
+      if (!activeList) return;
+      queryClient.setQueryData<TodosResponse>(
+        todoQueryKey(activeList.id),
+        (current) => ({
+          todos: (current?.todos ?? []).map((todo) =>
+            todo.id === savedTodo.id ? savedTodo : todo,
+          ),
+        }),
+      );
+    },
+    onSettled: () => {
+      if (activeList) {
+        void queryClient.invalidateQueries({
+          queryKey: todoQueryKey(activeList.id),
+        });
+      }
+    },
+  });
+
+  const moveMutation = useMutation({
+    mutationFn: ({ todoId, input }: { todoId: string; input: MoveTodoInput }) =>
+      moveTodo(todoId, input),
+    onMutate: async ({ todoId, input }) => {
+      if (!activeList) return undefined;
+      const key = todoQueryKey(activeList.id);
+      await queryClient.cancelQueries({ queryKey: key });
+      const previous = queryClient.getQueryData<TodosResponse>(key);
+      queryClient.setQueryData<TodosResponse>(key, {
+        todos: applyMove(previous?.todos ?? [], todoId, input),
+      });
+      return { key, previous };
+    },
+    onError: (_error, _variables, context) => {
+      if (context) queryClient.setQueryData(context.key, context.previous);
+    },
+    onSuccess: (savedTodo) => {
+      if (!activeList) return;
+      queryClient.setQueryData<TodosResponse>(
+        todoQueryKey(activeList.id),
+        (current) => ({
+          todos: (current?.todos ?? []).map((todo) =>
+            todo.id === savedTodo.id ? savedTodo : todo,
+          ),
+        }),
+      );
+    },
+    onSettled: () => {
+      if (activeList) {
+        void queryClient.invalidateQueries({
+          queryKey: todoQueryKey(activeList.id),
+        });
+      }
+    },
+  });
+
   const submitTodo = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const nextTitle = title.trim();
-    if (!activeList || !nextTitle) {
-      return;
-    }
+    if (!activeList || !nextTitle) return;
 
     setTitle("");
     createMutation.mutate({
@@ -88,16 +165,23 @@ function App() {
       input: {
         id: crypto.randomUUID(),
         title: nextTitle,
-        parentId: null,
+        parentId: newTodoParentId,
         status: "Unsorted",
       },
     });
+    setNewTodoParentId(null);
   };
 
+  const todos = todosQuery.data?.todos ?? [];
+  const parentTodo = newTodoParentId
+    ? todos.find((todo) => todo.id === newTodoParentId)
+    : undefined;
   const startupError = meQuery.error ?? listsQuery.error ?? todosQuery.error;
+  const mutationError =
+    createMutation.error ?? updateMutation.error ?? moveMutation.error;
 
   return (
-    <main className="mx-auto min-h-dvh max-w-2xl p-6 text-[var(--t10)]">
+    <main className="mx-auto min-h-dvh max-w-3xl p-6 text-[var(--t10)]">
       <header className="flex items-center gap-2 border-b border-[var(--t3)] pb-3">
         <img src={logoUrl} width="24" alt="" />
         <h1 className="text-2xl font-bold">Tiger Todo</h1>
@@ -108,24 +192,35 @@ function App() {
 
       {startupError ? (
         <p className="mt-6 rounded border border-red-300 bg-red-50 p-3 text-sm text-red-800">
-          {startupError instanceof Error
-            ? startupError.message
-            : "Tiger could not start"}
+          {startupError instanceof Error ? startupError.message : "Tiger could not start"}
         </p>
       ) : !activeList ? (
         <p className="mt-6 text-sm text-[var(--t6)]">Loading Tiger…</p>
       ) : (
         <section className="mt-6">
-          <h2 className="text-sm font-semibold text-[var(--t7)]">
-            {activeList.name}
-          </h2>
+          <div className="flex items-center">
+            <h2 className="text-sm font-semibold text-[var(--t7)]">
+              {activeList.name}
+            </h2>
+            {(updateMutation.isPending || moveMutation.isPending) && (
+              <span className="ml-auto text-2xs text-[var(--t5)]">Saving…</span>
+            )}
+          </div>
 
+          {parentTodo && (
+            <div className="mt-3 flex items-center gap-2 text-xs text-[var(--t6)]">
+              Adding under “{parentTodo.title}”
+              <button type="button" onClick={() => setNewTodoParentId(null)}>
+                Cancel
+              </button>
+            </div>
+          )}
           <form className="mt-3 flex gap-2" onSubmit={submitTodo}>
             <input
               className="min-w-0 flex-1 rounded border border-[var(--t3)] bg-[var(--t0)] px-3 py-2 text-sm focus:border-[var(--t6)] focus:ring-0"
               value={title}
               onChange={(event) => setTitle(event.target.value)}
-              placeholder="Add a todo"
+              placeholder={parentTodo ? "Add a child todo" : "Add a todo"}
               aria-label="Todo title"
             />
             <button
@@ -137,26 +232,32 @@ function App() {
             </button>
           </form>
 
-          {createMutation.error && (
+          {mutationError && (
             <p className="mt-2 text-xs text-red-600">
-              {createMutation.error.message}. Your todo was restored to its
-              previous state.
+              {mutationError.message}. The local change was rolled back.
             </p>
           )}
 
-          <ul className="mt-4 divide-y divide-[var(--t2)]">
-            {(todosQuery.data?.todos ?? []).map((todo) => (
-              <li className="flex items-center gap-3 py-3" key={todo.id}>
-                <span className="h-3 w-3 rounded-full bg-[var(--t3)]" />
-                <span className="min-w-0 flex-1 text-sm">{todo.title}</span>
-                <span className="text-2xs text-[var(--t6)]">
-                  {todo.status}
-                </span>
-              </li>
-            ))}
-          </ul>
+          <div className="mt-4">
+            <TodoTree
+              todos={todos}
+              onAddChild={(todo) => setNewTodoParentId(todo.id)}
+              onMove={(todoId, input) =>
+                moveMutation.mutate({ todoId, input })
+              }
+              onUpdate={(todoId, update) => {
+                const todo = todos.find((candidate) => candidate.id === todoId);
+                if (todo) {
+                  updateMutation.mutate({
+                    todoId,
+                    input: { ...update, version: todo.version },
+                  });
+                }
+              }}
+            />
+          </div>
 
-          {todosQuery.data?.todos.length === 0 && (
+          {todos.length === 0 && (
             <p className="mt-6 text-center text-sm text-[var(--t5)]">
               Nothing here yet.
             </p>

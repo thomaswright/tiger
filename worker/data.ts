@@ -1,9 +1,11 @@
 import {
   TODO_STATUSES,
   type CreateTodoInput,
+  type MoveTodoInput,
   type PersonalList,
   type Todo,
   type TodoStatus,
+  type UpdateTodoInput,
 } from "../src/shared/domain";
 import type { UserIdentity } from "../src/shared/domain";
 
@@ -139,6 +141,16 @@ const isUuid = (value: string) =>
     value,
   );
 
+const isNullableUuid = (value: unknown): value is string | null =>
+  value === null || (typeof value === "string" && isUuid(value));
+
+const parseVersion = (value: unknown) => {
+  if (!Number.isInteger(value) || (value as number) < 1) {
+    throw new DataError("Invalid todo version", 400);
+  }
+  return value as number;
+};
+
 export function parseCreateTodoInput(value: unknown): CreateTodoInput {
   if (!value || typeof value !== "object") {
     throw new DataError("Invalid todo", 400);
@@ -236,4 +248,275 @@ export async function createTodo(
   }
 
   return mapTodo(todo);
+}
+
+export function parseUpdateTodoInput(value: unknown): UpdateTodoInput {
+  if (!value || typeof value !== "object") {
+    throw new DataError("Invalid todo update", 400);
+  }
+
+  const input = value as Partial<UpdateTodoInput>;
+  const update: UpdateTodoInput = { version: parseVersion(input.version) };
+
+  if (input.title !== undefined) {
+    if (typeof input.title !== "string" || input.title.trim().length === 0) {
+      throw new DataError("Todo title is required", 400);
+    }
+    if (input.title.length > 1000) {
+      throw new DataError("Todo title is too long", 400);
+    }
+    update.title = input.title.trim();
+  }
+
+  if (input.status !== undefined) {
+    if (!isTodoStatus(input.status)) {
+      throw new DataError("Invalid todo status", 400);
+    }
+    update.status = input.status;
+  }
+
+  if (update.title === undefined && update.status === undefined) {
+    throw new DataError("Todo update is empty", 400);
+  }
+
+  return update;
+}
+
+export function parseMoveTodoInput(value: unknown): MoveTodoInput {
+  if (!value || typeof value !== "object") {
+    throw new DataError("Invalid todo move", 400);
+  }
+
+  const input = value as Partial<MoveTodoInput>;
+  if (!isNullableUuid(input.parentId)) {
+    throw new DataError("Invalid parent todo", 400);
+  }
+  if (!isNullableUuid(input.previousId) || !isNullableUuid(input.nextId)) {
+    throw new DataError("Invalid move neighbors", 400);
+  }
+  if (input.previousId && input.previousId === input.nextId) {
+    throw new DataError("Move neighbors must be different", 400);
+  }
+
+  return {
+    parentId: input.parentId,
+    previousId: input.previousId,
+    nextId: input.nextId,
+    version: parseVersion(input.version),
+  };
+}
+
+const getOwnedTodoRow = async (
+  db: D1Database,
+  userId: string,
+  todoId: string,
+) => {
+  const todo = await db
+    .prepare(
+      `${todoSelect}
+       WHERE id = ? AND owner_id = ? AND deleted_at IS NULL`,
+    )
+    .bind(todoId, userId)
+    .first<TodoRow>();
+
+  if (!todo) {
+    throw new DataError("Todo not found", 404);
+  }
+
+  return todo;
+};
+
+export async function updateTodo(
+  db: D1Database,
+  user: UserIdentity,
+  todoId: string,
+  input: UpdateTodoInput,
+): Promise<Todo> {
+  const current = await getOwnedTodoRow(db, user.id, todoId);
+  const result = await db
+    .prepare(
+      `UPDATE todos
+       SET title = ?, status = ?, version = version + 1,
+           updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
+       WHERE id = ? AND owner_id = ? AND version = ? AND deleted_at IS NULL`,
+    )
+    .bind(
+      input.title ?? current.title,
+      input.status ?? current.status,
+      todoId,
+      user.id,
+      input.version,
+    )
+    .run();
+
+  if (result.meta.changes !== 1) {
+    throw new DataError("Todo changed elsewhere; refresh and try again", 409);
+  }
+
+  return mapTodo(await getOwnedTodoRow(db, user.id, todoId));
+}
+
+const getDestinationSibling = async (
+  db: D1Database,
+  userId: string,
+  listId: string,
+  parentId: string | null,
+  siblingId: string,
+) => {
+  const sibling = await db
+    .prepare(
+      `SELECT id, sort_key FROM todos
+       WHERE id = ? AND owner_id = ? AND list_id = ? AND deleted_at IS NULL
+         AND (parent_id = ? OR (parent_id IS NULL AND ? IS NULL))`,
+    )
+    .bind(siblingId, userId, listId, parentId, parentId)
+    .first<{ id: string; sort_key: number }>();
+
+  if (!sibling) {
+    throw new DataError("Move neighbor not found", 400);
+  }
+
+  return sibling;
+};
+
+export async function moveTodo(
+  db: D1Database,
+  user: UserIdentity,
+  todoId: string,
+  input: MoveTodoInput,
+): Promise<Todo> {
+  const current = await getOwnedTodoRow(db, user.id, todoId);
+
+  if (input.previousId === todoId || input.nextId === todoId) {
+    throw new DataError("A todo cannot be its own move neighbor", 400);
+  }
+
+  if (input.parentId) {
+    const invalidParent = await db
+      .prepare(
+        `WITH RECURSIVE descendants(id) AS (
+           SELECT id FROM todos
+           WHERE id = ? AND owner_id = ? AND list_id = ? AND deleted_at IS NULL
+           UNION ALL
+           SELECT child.id FROM todos child
+           JOIN descendants parent ON child.parent_id = parent.id
+           WHERE child.owner_id = ? AND child.list_id = ?
+             AND child.deleted_at IS NULL
+         )
+         SELECT id FROM descendants WHERE id = ? LIMIT 1`,
+      )
+      .bind(
+        todoId,
+        user.id,
+        current.list_id,
+        user.id,
+        current.list_id,
+        input.parentId,
+      )
+      .first<{ id: string }>();
+
+    if (invalidParent) {
+      throw new DataError("A todo cannot be moved into itself or a descendant", 400);
+    }
+
+    const parent = await getOwnedTodoRow(db, user.id, input.parentId);
+    if (parent.list_id !== current.list_id) {
+      throw new DataError("Destination parent belongs to another list", 400);
+    }
+  }
+
+  const previous = input.previousId
+    ? await getDestinationSibling(
+        db,
+        user.id,
+        current.list_id,
+        input.parentId,
+        input.previousId,
+      )
+    : null;
+  const next = input.nextId
+    ? await getDestinationSibling(
+        db,
+        user.id,
+        current.list_id,
+        input.parentId,
+        input.nextId,
+      )
+    : null;
+
+  if (previous && next && previous.sort_key >= next.sort_key) {
+    throw new DataError("Move neighbors are out of order", 400);
+  }
+
+  const interveningCondition = previous
+    ? next
+      ? "sort_key > ? AND sort_key < ?"
+      : "sort_key > ?"
+    : next
+      ? "sort_key < ?"
+      : null;
+  if (interveningCondition) {
+    const positionValues = previous
+      ? next
+        ? [previous.sort_key, next.sort_key]
+        : [previous.sort_key]
+      : [next!.sort_key];
+    const intervening = await db
+      .prepare(
+        `SELECT COUNT(*) AS count FROM todos
+         WHERE owner_id = ? AND list_id = ? AND deleted_at IS NULL
+           AND id <> ?
+           AND (parent_id = ? OR (parent_id IS NULL AND ? IS NULL))
+           AND ${interveningCondition}`,
+      )
+      .bind(
+        user.id,
+        current.list_id,
+        todoId,
+        input.parentId,
+        input.parentId,
+        ...positionValues,
+      )
+      .first<{ count: number }>();
+
+    if ((intervening?.count ?? 0) > 0) {
+      throw new DataError("Move neighbors are not adjacent", 400);
+    }
+  }
+
+  let sortKey: number;
+  if (previous && next) {
+    sortKey = (previous.sort_key + next.sort_key) / 2;
+  } else if (previous) {
+    sortKey = previous.sort_key + 100;
+  } else if (next) {
+    sortKey = next.sort_key - 100;
+  } else {
+    const last = await db
+      .prepare(
+        `SELECT MAX(sort_key) AS sort_key FROM todos
+         WHERE owner_id = ? AND list_id = ? AND deleted_at IS NULL
+           AND id <> ?
+           AND (parent_id = ? OR (parent_id IS NULL AND ? IS NULL))`,
+      )
+      .bind(user.id, current.list_id, todoId, input.parentId, input.parentId)
+      .first<{ sort_key: number | null }>();
+    sortKey = (last?.sort_key ?? 0) + 100;
+  }
+
+  const result = await db
+    .prepare(
+      `UPDATE todos
+       SET parent_id = ?, sort_key = ?, version = version + 1,
+           updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
+       WHERE id = ? AND owner_id = ? AND version = ? AND deleted_at IS NULL`,
+    )
+    .bind(input.parentId, sortKey, todoId, user.id, input.version)
+    .run();
+
+  if (result.meta.changes !== 1) {
+    throw new DataError("Todo changed elsewhere; refresh and try again", 409);
+  }
+
+  return mapTodo(await getOwnedTodoRow(db, user.id, todoId));
 }

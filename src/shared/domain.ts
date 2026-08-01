@@ -58,6 +58,19 @@ export interface CreateTodoInput {
   status: TodoStatus;
 }
 
+export interface UpdateTodoInput {
+  title?: string;
+  status?: TodoStatus;
+  version: number;
+}
+
+export interface MoveTodoInput {
+  parentId: string | null;
+  previousId: string | null;
+  nextId: string | null;
+  version: number;
+}
+
 export interface ApiErrorResponse {
   error: string;
 }

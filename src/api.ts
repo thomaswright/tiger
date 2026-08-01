@@ -3,8 +3,10 @@ import type {
   CreateTodoInput,
   ListsResponse,
   MeResponse,
+  MoveTodoInput,
   Todo,
   TodosResponse,
+  UpdateTodoInput,
 } from "./shared/domain";
 
 export class ApiError extends Error {
@@ -42,6 +44,20 @@ export const getTodos = (listId: string) =>
 
 export const createTodo = (listId: string, input: CreateTodoInput) =>
   requestJson<Todo>(`/api/lists/${encodeURIComponent(listId)}/todos`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(input),
+  });
+
+export const updateTodo = (todoId: string, input: UpdateTodoInput) =>
+  requestJson<Todo>(`/api/todos/${encodeURIComponent(todoId)}`, {
+    method: "PATCH",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(input),
+  });
+
+export const moveTodo = (todoId: string, input: MoveTodoInput) =>
+  requestJson<Todo>(`/api/todos/${encodeURIComponent(todoId)}/move`, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(input),

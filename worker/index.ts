@@ -12,7 +12,11 @@ import {
   DataError,
   getLists,
   getTodos,
+  moveTodo,
   parseCreateTodoInput,
+  parseMoveTodoInput,
+  parseUpdateTodoInput,
+  updateTodo,
 } from "./data";
 
 interface Env extends AuthEnv {
@@ -95,6 +99,46 @@ export default {
           );
           return json(todo, 201);
         }
+      }
+
+      const todoMatch = url.pathname.match(/^\/api\/todos\/([^/]+)$/);
+      if (todoMatch && request.method === "PATCH") {
+        const todoId = decodeURIComponent(todoMatch[1]);
+        let body: unknown;
+        try {
+          body = await request.json();
+        } catch {
+          throw new DataError("Request body must be JSON", 400);
+        }
+
+        return json(
+          await updateTodo(
+            env.DB,
+            user,
+            todoId,
+            parseUpdateTodoInput(body),
+          ),
+        );
+      }
+
+      const moveMatch = url.pathname.match(/^\/api\/todos\/([^/]+)\/move$/);
+      if (moveMatch && request.method === "POST") {
+        const todoId = decodeURIComponent(moveMatch[1]);
+        let body: unknown;
+        try {
+          body = await request.json();
+        } catch {
+          throw new DataError("Request body must be JSON", 400);
+        }
+
+        return json(
+          await moveTodo(
+            env.DB,
+            user,
+            todoId,
+            parseMoveTodoInput(body),
+          ),
+        );
       }
 
       return json({ error: "Not found" }, 404);

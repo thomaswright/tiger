@@ -38,6 +38,7 @@ Cloudflare Access JWT.
 ```sh
 npm run build
 npm run lint
+npm test
 npm audit
 ```
 
