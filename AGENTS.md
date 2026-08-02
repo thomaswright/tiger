@@ -34,11 +34,6 @@ Production infrastructure has **not** been provisioned. The D1 `database_id` in
 configured. Do not deploy, create remote resources, or modify a Cloudflare
 account unless the user explicitly asks.
 
-Some compiled files may remain under `lib/bs/` from the former ReScript app.
-They are not application source and should not influence new work. Removing
-stale generated artifacts is safe only after checking that the user has not put
-uncommitted work there.
-
 ## Architecture map
 
 - `src/App.tsx`: server-state queries and optimistic create/update/move/delete/
@@ -59,8 +54,6 @@ uncommitted work there.
   optimistic concurrency, moves, soft deletion, and restoration.
 - `migrations/`: the active D1 schema history. Never edit an already-applied
   migration for a schema change; add the next numbered migration.
-- `old_migrations/`: historical Supabase material only. Do not use it as the
-  current schema or migrate its data.
 
 The browser uses TanStack Query as the canonical client cache. Mutations cancel
 the relevant query, update it optimistically, roll back on failure, reconcile
