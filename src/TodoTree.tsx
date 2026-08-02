@@ -20,10 +20,8 @@ import {
   useState,
 } from "react";
 import {
-  TODO_STATUSES,
   type MoveTodoInput,
   type Todo,
-  type TodoStatus,
   type UpdateTodoInput,
 } from "./shared/domain";
 import {
@@ -35,6 +33,7 @@ import {
   type MoveDirection,
 } from "./tree";
 import DateSelect from "./DateSelect";
+import StatusSelect from "./StatusSelect";
 
 const TODO_DRAG_TYPE = "tiger-todo";
 
@@ -329,14 +328,11 @@ function TodoNode({
           value={todo.dueDate}
           onChange={(dueDate) => onUpdate(todo.id, { dueDate })}
         />
-        <select
-          className="h-7 w-28 rounded border-[var(--t3)] bg-[var(--t0)] py-0 pl-2 pr-6 text-2xs focus:ring-0"
+        <StatusSelect
           value={todo.status}
-          onChange={(event) => onUpdate(todo.id, { status: event.target.value as TodoStatus })}
-          aria-label={`Status for ${todo.title}`}
-        >
-          {TODO_STATUSES.map((status) => <option key={status}>{status}</option>)}
-        </select>
+          onChange={(status) => onUpdate(todo.id, { status })}
+          todoTitle={todo.title}
+        />
         <div className="flex items-center opacity-30 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
           {(["outdent", "indent", "up", "down"] as const).map((direction) => (
             <button
