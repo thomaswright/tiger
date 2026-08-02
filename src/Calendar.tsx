@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { formatDateValue } from "./date";
 
 interface CalendarProps {
@@ -6,127 +6,194 @@ interface CalendarProps {
   onChange: (value: Date | null) => void;
 }
 
-const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-const monthFormatter = new Intl.DateTimeFormat(undefined, {
-  month: "long",
+const DEFAULT_START_OFFSET = -1;
+const DEFAULT_END_OFFSET = 3;
+const WINDOW_SHIFT = 4;
+
+const rangeFormatter = new Intl.DateTimeFormat(undefined, {
+  month: "short",
   year: "numeric",
 });
-const dayFormatter = new Intl.DateTimeFormat(undefined, {
+const monthFormatter = new Intl.DateTimeFormat(undefined, { month: "short" });
+const accessibleDateFormatter = new Intl.DateTimeFormat(undefined, {
   weekday: "long",
   month: "long",
   day: "numeric",
   year: "numeric",
 });
+
 const startOfMonth = (date: Date) =>
   new Date(date.getFullYear(), date.getMonth(), 1);
+const endOfMonth = (date: Date) =>
+  new Date(date.getFullYear(), date.getMonth() + 1, 0);
 const addMonths = (date: Date, amount: number) =>
   new Date(date.getFullYear(), date.getMonth() + amount, 1);
 const isSameDay = (first: Date, second: Date) =>
   first.getFullYear() === second.getFullYear() &&
   first.getMonth() === second.getMonth() &&
   first.getDate() === second.getDate();
+const getDaysInMonth = (date: Date) => endOfMonth(date).getDate();
+
+const getDays = (start: Date, end: Date) => {
+  const days: Date[] = [];
+  for (
+    let cursor = new Date(start);
+    cursor <= end;
+    cursor = new Date(cursor.getFullYear(), cursor.getMonth(), cursor.getDate() + 1)
+  ) {
+    days.push(cursor);
+  }
+  return days;
+};
+
+const getWeeks = (days: Date[]) => {
+  const weeks: Array<Array<Date | null>> = [];
+  let week: Array<Date | null> = Array.from({ length: 7 }, () => null);
+  for (const day of days) {
+    week[day.getDay()] = day;
+    if (day.getDay() === 6) {
+      weeks.push(week);
+      week = Array.from({ length: 7 }, () => null);
+    }
+  }
+  if (week.some(Boolean)) weeks.push(week);
+  return weeks;
+};
 
 export default function Calendar({ value, onChange }: CalendarProps) {
   const today = new Date();
-  const [visibleMonth, setVisibleMonth] = useState(() =>
-    startOfMonth(value ?? today),
+  const centerDate = value ?? today;
+  const [[startOffset, endOffset], setOffsets] = useState<[number, number]>([
+    DEFAULT_START_OFFSET,
+    DEFAULT_END_OFFSET,
+  ]);
+  const scrollTarget = useRef(formatDateValue(centerDate));
+  const scrollContainer = useRef<HTMLDivElement>(null);
+  const start = startOfMonth(addMonths(centerDate, startOffset));
+  const end = endOfMonth(addMonths(centerDate, endOffset));
+  const weeks = getWeeks(getDays(start, end));
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      const target = scrollContainer.current?.querySelector<HTMLElement>(
+        `[data-calendar-date="${scrollTarget.current}"]`,
+      );
+      target?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  const shiftWindow = (direction: -1 | 1) => {
+    setOffsets(([currentStart, currentEnd]) => [
+      currentStart + WINDOW_SHIFT * direction,
+      currentEnd + WINDOW_SHIFT * direction,
+    ]);
+  };
+
+  const rangeControls = () => (
+    <div className="flex w-full items-center justify-around py-1 text-2xs font-bold">
+      <button
+        className="flex h-6 w-6 items-center justify-center rounded hover:bg-[var(--t2)]"
+        onClick={() => shiftWindow(-1)}
+        aria-label="Show earlier months"
+        type="button"
+      >
+        ←
+      </button>
+      <span aria-live="polite">
+        {rangeFormatter.format(start)} – {rangeFormatter.format(end)}
+      </span>
+      <button
+        className="flex h-6 w-6 items-center justify-center rounded hover:bg-[var(--t2)]"
+        onClick={() => shiftWindow(1)}
+        aria-label="Show later months"
+        type="button"
+      >
+        →
+      </button>
+    </div>
   );
-  const days = Array.from(
-    {
-      length: new Date(
-        visibleMonth.getFullYear(),
-        visibleMonth.getMonth() + 1,
-        0,
-      ).getDate(),
-    },
-    (_, index) =>
-      new Date(visibleMonth.getFullYear(), visibleMonth.getMonth(), index + 1),
-  );
-  const leadingBlanks = visibleMonth.getDay();
 
   return (
     <div
-      className="w-64 rounded-lg border border-[var(--t3)] bg-[var(--t0)] p-3 text-[var(--t10)] shadow-lg"
+      ref={scrollContainer}
+      className="h-64 w-64 overflow-y-scroll rounded border border-[var(--t2)] bg-[var(--t0)] p-3 text-[var(--t10)]"
       aria-label="Choose a due date"
     >
-      <div className="flex items-center justify-between">
-        <button
-          className="h-8 w-8 rounded hover:bg-[var(--t2)]"
-          onClick={() => setVisibleMonth((month) => addMonths(month, -1))}
-          aria-label="Previous month"
-          type="button"
-        >
-          ←
-        </button>
-        <div className="text-xs font-semibold" aria-live="polite">
-          {monthFormatter.format(visibleMonth)}
-        </div>
-        <button
-          className="h-8 w-8 rounded hover:bg-[var(--t2)]"
-          onClick={() => setVisibleMonth((month) => addMonths(month, 1))}
-          aria-label="Next month"
-          type="button"
-        >
-          →
-        </button>
-      </div>
-
-      <div className="mt-2 grid grid-cols-7" role="row">
-        {WEEKDAYS.map((weekday) => (
-          <div
-            className="flex h-6 items-center justify-center text-2xs font-medium text-[var(--t6)]"
-            key={weekday}
-            role="columnheader"
-          >
-            {weekday.slice(0, 1)}
-          </div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-7" role="grid">
-        {Array.from({ length: leadingBlanks }, (_, index) => (
-          <div key={`blank-${index}`} aria-hidden="true" />
-        ))}
-        {days.map((day) => {
-          const selected = value ? isSameDay(day, value) : false;
-          const isToday = isSameDay(day, today);
+      {rangeControls()}
+      <div className="py-2" role="grid">
+        {weeks.map((week) => {
+          const firstDay = week.find((day): day is Date => day !== null);
           return (
-            <button
-              className={`flex h-8 items-center justify-center rounded text-xs hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-                selected
-                  ? "bg-blue-600 font-semibold text-white hover:bg-blue-600"
-                  : isToday
-                    ? "font-bold text-red-600"
-                    : ""
-              }`}
-              key={formatDateValue(day)}
-              onClick={() => onChange(day)}
-              aria-label={dayFormatter.format(day)}
-              aria-pressed={selected}
-              role="gridcell"
-              type="button"
+            <div
+              className="relative grid grid-cols-7 pl-4"
+              key={firstDay ? formatDateValue(firstDay) : "empty-week"}
+              role="row"
             >
-              {day.getDate()}
-            </button>
+              {week.map((day, index) => {
+                if (!day) {
+                  return <div key={`blank-${index}`} aria-hidden="true" />;
+                }
+
+                const dayOfMonth = day.getDate();
+                const daysInMonth = getDaysInMonth(day);
+                const selected = value ? isSameDay(day, value) : false;
+                const monthBoundaryClasses = [
+                  dayOfMonth <= 7 ? "border-t border-t-[var(--t8)]" : "",
+                  dayOfMonth > daysInMonth - 7
+                    ? "border-b border-b-[var(--t8)]"
+                    : "border-b",
+                  dayOfMonth === 1 && day.getDay() > 0
+                    ? "border-l border-l-[var(--t8)]"
+                    : day.getDay() === 0
+                      ? "border-l"
+                      : "",
+                  dayOfMonth === daysInMonth && day.getDay() < 6
+                    ? "border-r-[var(--t8)]"
+                    : "",
+                ].join(" ");
+
+                return (
+                  <Fragment key={formatDateValue(day)}>
+                    <button
+                      data-calendar-date={formatDateValue(day)}
+                      className={`flex h-7 items-center justify-center border-r border-[var(--t3)] text-2xs hover:bg-blue-200 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:hover:bg-blue-800 ${
+                        isSameDay(day, today) ? "font-bold text-red-500" : ""
+                      } ${
+                        selected ? "bg-blue-200 dark:bg-blue-800" : ""
+                      } ${monthBoundaryClasses}`}
+                      onClick={() => onChange(day)}
+                      aria-label={accessibleDateFormatter.format(day)}
+                      aria-pressed={selected}
+                      role="gridcell"
+                      type="button"
+                    >
+                      {dayOfMonth}
+                    </button>
+                    {dayOfMonth === 15 && (
+                      <div
+                        className="absolute left-1 top-0 flex -translate-x-1/2 translate-y-1/2 -rotate-90 gap-1 text-center text-2xs font-bold"
+                        aria-hidden="true"
+                      >
+                        <span>{monthFormatter.format(day)}</span>
+                      </div>
+                    )}
+                  </Fragment>
+                );
+              })}
+            </div>
           );
         })}
       </div>
-
-      <div className="mt-3 flex items-center justify-between border-t border-[var(--t2)] pt-2">
+      {rangeControls()}
+      <div className="flex items-center justify-center pt-1">
         <button
-          className="rounded px-2 py-1 text-xs text-[var(--t7)] hover:bg-[var(--t2)]"
-          onClick={() => onChange(today)}
-          type="button"
-        >
-          Today
-        </button>
-        <button
-          className="rounded px-2 py-1 text-xs text-[var(--t7)] hover:bg-[var(--t2)] disabled:opacity-40"
+          className="rounded px-2 py-1 text-2xs hover:bg-[var(--t2)] disabled:opacity-40"
           disabled={!value}
           onClick={() => onChange(null)}
           type="button"
         >
-          Clear date
+          Clear Date
         </button>
       </div>
     </div>
