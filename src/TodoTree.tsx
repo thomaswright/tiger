@@ -349,9 +349,9 @@ function TodoNode({
           onChange={(status) => onUpdate(todo.id, { status })}
           todoTitle={todo.title}
         />
-        <div className="flex items-center opacity-30 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+        <div className="flex items-center">
           <button
-            className="inline-flex h-7 w-6 items-center justify-center rounded hover:bg-[var(--t2)]"
+            className="inline-flex h-7 w-6 items-center justify-center rounded hover:bg-[var(--t3)]"
             onClick={() => {
               setCollapsed(false);
               onAddChild(todo);
@@ -363,7 +363,7 @@ function TodoNode({
             <TbPlus aria-hidden="true" className="h-4 w-4" />
           </button>
           <button
-            className="inline-flex h-7 w-6 items-center justify-center rounded text-red-700 hover:bg-red-50 dark:text-red-300 dark:hover:bg-red-950"
+            className="inline-flex h-7 w-6 items-center justify-center rounded text-red-500 hover:bg-red-50 dark:text-red-300 dark:hover:bg-red-950"
             onClick={deleteWithFocus}
             title="Delete"
             aria-label={`Delete ${todo.title}`}
@@ -400,7 +400,13 @@ interface TodoBranchProps extends TreeRenderProps {
   ancestors: ReadonlySet<string>;
 }
 
-function TodoBranch({ parentId, depth, ancestors, todos, ...actions }: TodoBranchProps) {
+function TodoBranch({
+  parentId,
+  depth,
+  ancestors,
+  todos,
+  ...actions
+}: TodoBranchProps) {
   const siblings = getSortedSiblings(todos, parentId, actions.sort).filter(
     (todo) => !ancestors.has(todo.id),
   );
@@ -503,44 +509,41 @@ export default function TodoTree(props: TodoTreeProps) {
     props.onMove(todoId, move);
   };
 
-  const projectDrag = useCallback(
-    (todoId: string, location: DragLocation) => {
-      const currentTarget = getTodoTarget(location.dropTargets[0]);
-      if (currentTarget) lastTarget.current = currentTarget;
-      const target = currentTarget ?? lastTarget.current;
-      if (!target) return null;
+  const projectDrag = useCallback((todoId: string, location: DragLocation) => {
+    const currentTarget = getTodoTarget(location.dropTargets[0]);
+    if (currentTarget) lastTarget.current = currentTarget;
+    const target = currentTarget ?? lastTarget.current;
+    if (!target) return null;
 
-      const todos = dragSnapshot.current ?? visibleTodosRef.current;
-      const movingTodo = todos.find((todo) => todo.id === todoId);
-      const targetTodo = todos.find((todo) => todo.id === target.todoId);
-      if (!movingTodo || !targetTodo) return null;
+    const todos = dragSnapshot.current ?? visibleTodosRef.current;
+    const movingTodo = todos.find((todo) => todo.id === todoId);
+    const targetTodo = todos.find((todo) => todo.id === target.todoId);
+    if (!movingTodo || !targetTodo) return null;
 
-      const targetSiblings = getSiblings(todos, targetTodo.parentId);
-      const targetIndex = targetSiblings.findIndex(
-        (todo) => todo.id === targetTodo.id,
-      );
-      const sourceSiblings = getSiblings(todos, movingTodo.parentId);
-      const sourceIndex = sourceSiblings.findIndex(
-        (todo) => todo.id === movingTodo.id,
-      );
-      let destinationIndex = targetIndex + (target.edge === "bottom" ? 1 : 0);
-      if (
-        movingTodo.parentId === targetTodo.parentId &&
-        sourceIndex < destinationIndex
-      ) {
-        destinationIndex -= 1;
-      }
+    const targetSiblings = getSiblings(todos, targetTodo.parentId);
+    const targetIndex = targetSiblings.findIndex(
+      (todo) => todo.id === targetTodo.id,
+    );
+    const sourceSiblings = getSiblings(todos, movingTodo.parentId);
+    const sourceIndex = sourceSiblings.findIndex(
+      (todo) => todo.id === movingTodo.id,
+    );
+    let destinationIndex = targetIndex + (target.edge === "bottom" ? 1 : 0);
+    if (
+      movingTodo.parentId === targetTodo.parentId &&
+      sourceIndex < destinationIndex
+    ) {
+      destinationIndex -= 1;
+    }
 
-      return planProjectedMove(
-        dragSnapshot.current ?? todos,
-        todoId,
-        targetTodo.parentId,
-        destinationIndex,
-        location.input.clientX - initialPointerX.current,
-      );
-    },
-    [],
-  );
+    return planProjectedMove(
+      dragSnapshot.current ?? todos,
+      todoId,
+      targetTodo.parentId,
+      destinationIndex,
+      location.input.clientX - initialPointerX.current,
+    );
+  }, []);
 
   const previewDrag = useCallback(
     (todoId: string, location: DragLocation) => {
@@ -571,7 +574,11 @@ export default function TodoTree(props: TodoTreeProps) {
       captureLayout();
       setVisualTree({
         sourceTodos: propsRef.current.todos,
-        todos: applyMove(dragSnapshot.current ?? visibleTodosRef.current, todoId, move),
+        todos: applyMove(
+          dragSnapshot.current ?? visibleTodosRef.current,
+          todoId,
+          move,
+        ),
       });
     },
     [captureLayout, projectDrag],

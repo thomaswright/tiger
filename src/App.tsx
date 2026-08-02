@@ -393,7 +393,7 @@ function App() {
                 ))}
               </div>
               <button
-                className="flex h-6 w-6 items-center justify-center rounded bg-[var(--t9)] text-base text-[var(--t0)] hover:opacity-85"
+                className="flex h-6 w-6 items-center justify-center rounded  text-base text-[var(--t9)] hover:bg-[var(--t2)]"
                 type="button"
                 onClick={() => createFirstTodo(null)}
                 title="Add todo first"

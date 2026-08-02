@@ -2,6 +2,7 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useState } from "react";
 import Calendar from "./Calendar";
 import { formatDateValue, parseDateValue } from "./date";
+import { TbCalendar } from "react-icons/tb";
 
 interface DateSelectProps {
   value: string | null;
@@ -31,9 +32,7 @@ export default function DateSelect({
     <DropdownMenu.Root open={open} onOpenChange={setOpen} modal={false}>
       <DropdownMenu.Trigger asChild>
         <button
-          className={`flex h-7 min-w-14 items-center justify-center rounded px-2 text-2xs font-medium text-[var(--t8)] hover:bg-[var(--t2)] ${
-            value ? "" : "bg-[var(--t2)]"
-          } ${className}`}
+          className={`flex h-7 min-w-14 items-center justify-center rounded px-2 text-2xs font-medium text-[var(--t8)] hover:bg-[var(--t2)] ${className}`}
           aria-label={
             selectedDate
               ? `Due ${longDateFormatter.format(selectedDate)}`
@@ -41,7 +40,11 @@ export default function DateSelect({
           }
           type="button"
         >
-          {selectedDate ? shortDateFormatter.format(selectedDate) : "Date"}
+          {selectedDate ? (
+            shortDateFormatter.format(selectedDate)
+          ) : (
+            <TbCalendar aria-hidden="true" className="h-4 w-4" />
+          )}
         </button>
       </DropdownMenu.Trigger>
 
