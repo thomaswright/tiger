@@ -1,0 +1,14 @@
+rescript = 1
+rule cp
+  command = cp $i $out
+rule touch
+ command = touch $out
+o Common.cmi : cp ../bs/src/Common.cmi
+o Common.cmj : cp ../bs/src/Common.cmj
+o Common.cmt : cp ../bs/src/Common.cmt
+o Common.res : cp ../../src/Common.res
+o DateFns.cmi : cp ../bs/src/DateFns.cmi
+o DateFns.cmj : cp ../bs/src/DateFns.cmj
+o DateFns.cmt : cp ../bs/src/DateFns.cmt
+o DateFns.res : cp ../../src/DateFns.res
+build install.stamp : touch Common.cmi Common.cmj DateFns.cmi DateFns.cmj 

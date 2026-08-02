@@ -27,9 +27,4 @@ dist-ssr
 *.sln
 *.sw?
 
-# ReScript
-/lib/
-.bsb.lock
-.merlin
-
 _project
