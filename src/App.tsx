@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { TbPlus } from "react-icons/tb";
+import { useLayoutEffect, useRef, useState } from "react";
+import { TbArrowBackUp, TbPlus } from "react-icons/tb";
 import {
   createTodo,
   deleteTodo,
@@ -40,14 +40,6 @@ function App() {
   const [todoSort, setTodoSort] = useState<TodoSort | null>(null);
   const focusTodoId = useRef<string | null>(null);
   const [undoDeletion, setUndoDeletion] = useState<UndoDeletion | null>(null);
-  const undoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(
-    () => () => {
-      if (undoTimer.current) clearTimeout(undoTimer.current);
-    },
-    [],
-  );
 
   const meQuery = useQuery({ queryKey: ["me"], queryFn: getMe });
   const listsQuery = useQuery({ queryKey: ["lists"], queryFn: getLists });
@@ -234,19 +226,11 @@ function App() {
         ),
       });
       setUndoDeletion({ deletionToken, todos: removedTodos });
-      if (undoTimer.current) clearTimeout(undoTimer.current);
       return { key, previous };
     },
     onError: (_error, _variables, context) => {
       if (context) queryClient.setQueryData(context.key, context.previous);
       setUndoDeletion(null);
-    },
-    onSuccess: (_response, variables) => {
-      undoTimer.current = setTimeout(() => {
-        setUndoDeletion((current) =>
-          current?.deletionToken === variables.deletionToken ? null : current,
-        );
-      }, 10_000);
     },
     onSettled: () => {
       if (activeList)
@@ -268,7 +252,6 @@ function App() {
         todos: [...(previous?.todos ?? []), ...deletion.todos],
       });
       setUndoDeletion(null);
-      if (undoTimer.current) clearTimeout(undoTimer.current);
       return { key, previous };
     },
     onError: (_error, deletion, context) => {
@@ -393,6 +376,22 @@ function App() {
                 ))}
               </div>
               <button
+                className="flex h-6 w-6 items-center justify-center rounded text-[var(--t9)] hover:bg-[var(--t2)] disabled:opacity-20"
+                type="button"
+                disabled={
+                  !undoDeletion ||
+                  deleteMutation.isPending ||
+                  restoreMutation.isPending
+                }
+                onClick={() => {
+                  if (undoDeletion) restoreMutation.mutate(undoDeletion);
+                }}
+                title={undoDeletion ? "Undo deletion" : "Nothing to undo"}
+                aria-label="Undo last deletion"
+              >
+                <TbArrowBackUp aria-hidden="true" className="h-4 w-4" />
+              </button>
+              <button
                 className="flex h-6 w-6 items-center justify-center rounded  text-base text-[var(--t9)] hover:bg-[var(--t2)]"
                 type="button"
                 onClick={() => createFirstTodo(null)}
@@ -472,27 +471,6 @@ function App() {
             </p>
           )}
 
-          {undoDeletion && (
-            <div
-              className="fixed bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-4 rounded bg-[var(--t9)] px-4 py-3 text-sm text-[var(--t0)] shadow-lg"
-              role="status"
-            >
-              <span>
-                Deleted{" "}
-                {undoDeletion.todos.length === 1
-                  ? "todo"
-                  : `${undoDeletion.todos.length} todos`}
-              </span>
-              <button
-                className="font-semibold underline disabled:opacity-50"
-                disabled={deleteMutation.isPending || restoreMutation.isPending}
-                onClick={() => restoreMutation.mutate(undoDeletion)}
-                type="button"
-              >
-                {deleteMutation.isPending ? "Deleting…" : "Undo"}
-              </button>
-            </div>
-          )}
         </section>
       )}
     </main>
