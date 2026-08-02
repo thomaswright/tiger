@@ -1,10 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   createTodo,
   deleteTodo,
@@ -24,12 +19,7 @@ import type {
   UpdateTodoInput,
 } from "./shared/domain";
 import TodoTree from "./TodoTree";
-import {
-  applyMove,
-  getSiblings,
-  getSubtree,
-  type TodoSort,
-} from "./tree";
+import { applyMove, getSiblings, getSubtree, type TodoSort } from "./tree";
 
 const todoQueryKey = (listId: string) => ["todos", listId] as const;
 
@@ -51,9 +41,12 @@ function App() {
   const [undoDeletion, setUndoDeletion] = useState<UndoDeletion | null>(null);
   const undoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => () => {
-    if (undoTimer.current) clearTimeout(undoTimer.current);
-  }, []);
+  useEffect(
+    () => () => {
+      if (undoTimer.current) clearTimeout(undoTimer.current);
+    },
+    [],
+  );
 
   const meQuery = useQuery({ queryKey: ["me"], queryFn: getMe });
   const listsQuery = useQuery({ queryKey: ["lists"], queryFn: getLists });
@@ -113,11 +106,14 @@ function App() {
       }
     },
     onSuccess: (savedTodo, { listId, input }) => {
-      queryClient.setQueryData<TodosResponse>(todoQueryKey(listId), (current) => ({
-        todos: (current?.todos ?? []).map((todo) =>
-          todo.id === input.id ? savedTodo : todo,
-        ),
-      }));
+      queryClient.setQueryData<TodosResponse>(
+        todoQueryKey(listId),
+        (current) => ({
+          todos: (current?.todos ?? []).map((todo) =>
+            todo.id === input.id ? savedTodo : todo,
+          ),
+        }),
+      );
     },
     onSettled: (_data, _error, { listId }) => {
       void queryClient.invalidateQueries({ queryKey: todoQueryKey(listId) });
@@ -125,8 +121,13 @@ function App() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ todoId, input }: { todoId: string; input: UpdateTodoInput }) =>
-      updateTodo(todoId, input),
+    mutationFn: ({
+      todoId,
+      input,
+    }: {
+      todoId: string;
+      input: UpdateTodoInput;
+    }) => updateTodo(todoId, input),
     onMutate: async ({ todoId, input }) => {
       if (!activeList) return undefined;
       const key = todoQueryKey(activeList.id);
@@ -210,7 +211,11 @@ function App() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: ({ todoId, deletionToken, version }: {
+    mutationFn: ({
+      todoId,
+      deletionToken,
+      version,
+    }: {
       todoId: string;
       deletionToken: string;
       version: number;
@@ -223,7 +228,9 @@ function App() {
       const previous = queryClient.getQueryData<TodosResponse>(key);
       const removedIds = new Set(removedTodos.map((todo) => todo.id));
       queryClient.setQueryData<TodosResponse>(key, {
-        todos: (previous?.todos ?? []).filter((todo) => !removedIds.has(todo.id)),
+        todos: (previous?.todos ?? []).filter(
+          (todo) => !removedIds.has(todo.id),
+        ),
       });
       setUndoDeletion({ deletionToken, todos: removedTodos });
       if (undoTimer.current) clearTimeout(undoTimer.current);
@@ -241,12 +248,16 @@ function App() {
       }, 10_000);
     },
     onSettled: () => {
-      if (activeList) void queryClient.invalidateQueries({ queryKey: todoQueryKey(activeList.id) });
+      if (activeList)
+        void queryClient.invalidateQueries({
+          queryKey: todoQueryKey(activeList.id),
+        });
     },
   });
 
   const restoreMutation = useMutation({
-    mutationFn: ({ deletionToken }: UndoDeletion) => restoreTodos(deletionToken),
+    mutationFn: ({ deletionToken }: UndoDeletion) =>
+      restoreTodos(deletionToken),
     onMutate: async (deletion) => {
       if (!activeList) return undefined;
       const key = todoQueryKey(activeList.id);
@@ -266,21 +277,26 @@ function App() {
     onSuccess: ({ todos: restored }) => {
       if (!activeList) return;
       const restoredById = new Map(restored.map((todo) => [todo.id, todo]));
-      queryClient.setQueryData<TodosResponse>(todoQueryKey(activeList.id), (current) => ({
-        todos: (current?.todos ?? []).map((todo) => restoredById.get(todo.id) ?? todo),
-      }));
+      queryClient.setQueryData<TodosResponse>(
+        todoQueryKey(activeList.id),
+        (current) => ({
+          todos: (current?.todos ?? []).map(
+            (todo) => restoredById.get(todo.id) ?? todo,
+          ),
+        }),
+      );
     },
     onSettled: () => {
-      if (activeList) void queryClient.invalidateQueries({ queryKey: todoQueryKey(activeList.id) });
+      if (activeList)
+        void queryClient.invalidateQueries({
+          queryKey: todoQueryKey(activeList.id),
+        });
     },
   });
 
   useLayoutEffect(() => {
     const todoId = focusTodoId.current;
-    if (
-      !todoId ||
-      !todosQuery.data?.todos.some((todo) => todo.id === todoId)
-    ) {
+    if (!todoId || !todosQuery.data?.todos.some((todo) => todo.id === todoId)) {
       return;
     }
     const input = document.getElementById(`todo-title-${todoId}`);
@@ -311,8 +327,11 @@ function App() {
 
   const startupError = meQuery.error ?? listsQuery.error ?? todosQuery.error;
   const mutationError =
-    createMutation.error ?? updateMutation.error ?? moveMutation.error ??
-    deleteMutation.error ?? restoreMutation.error;
+    createMutation.error ??
+    updateMutation.error ??
+    moveMutation.error ??
+    deleteMutation.error ??
+    restoreMutation.error;
 
   return (
     <main className="mx-auto min-h-dvh max-w-3xl p-6 text-[var(--t10)]">
@@ -326,7 +345,9 @@ function App() {
 
       {startupError ? (
         <p className="mt-6 rounded border border-red-300 bg-red-50 p-3 text-sm text-red-800">
-          {startupError instanceof Error ? startupError.message : "Tiger could not start"}
+          {startupError instanceof Error
+            ? startupError.message
+            : "Tiger could not start"}
         </p>
       ) : !activeList ? (
         <p className="mt-6 text-sm text-[var(--t6)]">Loading Tiger…</p>
@@ -336,42 +357,51 @@ function App() {
             <h2 className="text-sm font-semibold text-[var(--t7)]">
               {activeList.name}
             </h2>
-            <div className="ml-3 flex gap-1" aria-label="Sort todos">
-              {([
-                ["dueDate", "Due date"],
-                ["status", "Status"],
-              ] as const).map(([sort, label]) => (
-                <button
-                  key={sort}
-                  className={`rounded px-2 py-1 text-2xs font-medium ${
-                    todoSort === sort
-                      ? "bg-[var(--t8)] text-[var(--t0)]"
-                      : "bg-[var(--t2)] text-[var(--t7)] hover:bg-[var(--t3)]"
-                  }`}
-                  type="button"
-                  aria-pressed={todoSort === sort}
-                  onClick={() =>
-                    setTodoSort((current) => current === sort ? null : sort)
-                  }
-                >
-                  {label}
-                </button>
-              ))}
+            <div className="ml-auto flex items-center gap-2">
+              {(updateMutation.isPending ||
+                moveMutation.isPending ||
+                deleteMutation.isPending ||
+                restoreMutation.isPending) && (
+                <span className="text-2xs text-[var(--t5)]">Saving…</span>
+              )}
+              <div
+                className="flex rounded-md border border-[var(--t3)] bg-[var(--t2)] p-0.5"
+                aria-label="Todo order"
+                role="group"
+              >
+                {(
+                  [
+                    [null, "Default"],
+                    ["dueDate", "Due date"],
+                    ["status", "Status"],
+                  ] as const
+                ).map(([sort, label]) => (
+                  <button
+                    key={sort ?? "default"}
+                    className={`rounded px-2 py-1 text-2xs font-medium ${
+                      todoSort === sort
+                        ? "bg-[var(--t0)] text-[var(--t9)] shadow-sm"
+                        : "text-[var(--t6)] hover:text-[var(--t9)]"
+                    }`}
+                    type="button"
+                    aria-pressed={todoSort === sort}
+                    onClick={() => setTodoSort(sort)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <button
+                className="flex h-6 w-6 items-center justify-center rounded bg-[var(--t9)] text-base text-[var(--t0)] hover:opacity-85"
+                type="button"
+                onClick={() => createFirstTodo(null)}
+                title="Add todo first"
+                aria-label="Add todo first"
+              >
+                +
+              </button>
             </div>
-            {(updateMutation.isPending || moveMutation.isPending || deleteMutation.isPending || restoreMutation.isPending) && (
-              <span className="ml-auto text-2xs text-[var(--t5)]">Saving…</span>
-            )}
           </div>
-
-          <button
-            className="mt-3 flex h-9 w-9 items-center justify-center rounded bg-[var(--t9)] text-lg text-[var(--t0)] hover:opacity-85"
-            type="button"
-            onClick={() => createFirstTodo(null)}
-            title="Add todo first"
-            aria-label="Add todo first"
-          >
-            +
-          </button>
 
           {mutationError && (
             <p className="mt-2 text-xs text-red-600">
@@ -422,9 +452,7 @@ function App() {
                   removedTodos,
                 });
               }}
-              onMove={(todoId, input) =>
-                moveMutation.mutate({ todoId, input })
-              }
+              onMove={(todoId, input) => moveMutation.mutate({ todoId, input })}
               onUpdate={(todoId, update) => {
                 const todo = todos.find((candidate) => candidate.id === todoId);
                 if (todo) {
@@ -449,7 +477,10 @@ function App() {
               role="status"
             >
               <span>
-                Deleted {undoDeletion.todos.length === 1 ? "todo" : `${undoDeletion.todos.length} todos`}
+                Deleted{" "}
+                {undoDeletion.todos.length === 1
+                  ? "todo"
+                  : `${undoDeletion.todos.length} todos`}
               </span>
               <button
                 className="font-semibold underline disabled:opacity-50"
