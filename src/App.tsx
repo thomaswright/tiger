@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  type FormEvent,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -47,8 +46,6 @@ interface CreateTodoVariables {
 
 function App() {
   const queryClient = useQueryClient();
-  const [title, setTitle] = useState("");
-  const [newTodoParentId, setNewTodoParentId] = useState<string | null>(null);
   const [todoSort, setTodoSort] = useState<TodoSort | null>(null);
   const focusTodoId = useRef<string | null>(null);
   const [undoDeletion, setUndoDeletion] = useState<UndoDeletion | null>(null);
@@ -278,27 +275,6 @@ function App() {
     },
   });
 
-  const submitTodo = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const nextTitle = title.trim();
-    if (!activeList || !nextTitle) return;
-
-    setTitle("");
-    const siblings = getSiblings(todosQuery.data?.todos ?? [], newTodoParentId);
-    createMutation.mutate({
-      listId: activeList.id,
-      input: {
-        id: crypto.randomUUID(),
-        title: nextTitle,
-        parentId: newTodoParentId,
-        previousId: siblings[siblings.length - 1]?.id ?? null,
-        nextId: null,
-        status: "Unsorted",
-      },
-    });
-    setNewTodoParentId(null);
-  };
-
   useLayoutEffect(() => {
     const todoId = focusTodoId.current;
     if (
@@ -316,9 +292,23 @@ function App() {
 
   const todos = todosQuery.data?.todos ?? [];
 
-  const parentTodo = newTodoParentId
-    ? todos.find((todo) => todo.id === newTodoParentId)
-    : undefined;
+  const createFirstTodo = (parentId: string | null) => {
+    if (!activeList) return;
+    const siblings = getSiblings(todos, parentId);
+    createMutation.mutate({
+      listId: activeList.id,
+      input: {
+        id: crypto.randomUUID(),
+        title: "",
+        parentId,
+        previousId: null,
+        nextId: siblings[0]?.id ?? null,
+        status: "Unsorted",
+      },
+      focusTitle: true,
+    });
+  };
+
   const startupError = meQuery.error ?? listsQuery.error ?? todosQuery.error;
   const mutationError =
     createMutation.error ?? updateMutation.error ?? moveMutation.error ??
@@ -373,30 +363,15 @@ function App() {
             )}
           </div>
 
-          {parentTodo && (
-            <div className="mt-3 flex items-center gap-2 text-xs text-[var(--t6)]">
-              Adding under “{parentTodo.title}”
-              <button type="button" onClick={() => setNewTodoParentId(null)}>
-                Cancel
-              </button>
-            </div>
-          )}
-          <form className="mt-3 flex gap-2" onSubmit={submitTodo}>
-            <input
-              className="min-w-0 flex-1 rounded border border-[var(--t3)] bg-[var(--t0)] px-3 py-2 text-sm focus:border-[var(--t6)] focus:ring-0"
-              value={title}
-              onChange={(event) => setTitle(event.target.value)}
-              placeholder={parentTodo ? "Add a child todo" : "Add a todo"}
-              aria-label="Todo title"
-            />
-            <button
-              className="rounded bg-[var(--t9)] px-4 py-2 text-sm text-[var(--t0)] disabled:opacity-40"
-              disabled={!title.trim()}
-              type="submit"
-            >
-              Add
-            </button>
-          </form>
+          <button
+            className="mt-3 flex h-9 w-9 items-center justify-center rounded bg-[var(--t9)] text-lg text-[var(--t0)] hover:opacity-85"
+            type="button"
+            onClick={() => createFirstTodo(null)}
+            title="Add todo first"
+            aria-label="Add todo first"
+          >
+            +
+          </button>
 
           {mutationError && (
             <p className="mt-2 text-xs text-red-600">
@@ -408,7 +383,7 @@ function App() {
             <TodoTree
               todos={todos}
               sort={todoSort}
-              onAddChild={(todo) => setNewTodoParentId(todo.id)}
+              onAddChild={(todo) => createFirstTodo(todo.id)}
               onCreateBelow={(todo) => {
                 const children = getSiblings(todos, todo.id);
                 const siblings = getSiblings(todos, todo.parentId);
@@ -446,9 +421,6 @@ function App() {
                   version: todo.version,
                   removedTodos,
                 });
-                if (removedTodos.some((removed) => removed.id === newTodoParentId)) {
-                  setNewTodoParentId(null);
-                }
               }}
               onMove={(todoId, input) =>
                 moveMutation.mutate({ todoId, input })
