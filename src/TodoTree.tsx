@@ -351,7 +351,7 @@ function TodoNode({
         />
         <div className="flex items-center">
           <button
-            className="inline-flex h-7 w-6 items-center justify-center rounded hover:bg-plain-300"
+            className="inline-flex h-7 w-6 items-center justify-center rounded hover:bg-plain-200"
             onClick={() => {
               setCollapsed(false);
               onAddChild(todo);
