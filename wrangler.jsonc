@@ -3,15 +3,25 @@
   "name": "tiger",
   "main": "./worker/index.ts",
   "compatibility_date": "2026-08-01",
+  "routes": [
+    {
+      "pattern": "tiger.wrightdeck.com",
+      "custom_domain": true,
+    },
+  ],
   "assets": {
-    "not_found_handling": "single-page-application"
+    "not_found_handling": "single-page-application",
+  },
+  "vars": {
+    "TEAM_DOMAIN": "https://calm-queen-8108.cloudflareaccess.com",
+    "POLICY_AUD": "0087025d8391d501c1a2424ff9a7016d585868d86caff84ac5e7c9f3385f5dc9",
   },
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "tiger",
-      "database_id": "00000000-0000-0000-0000-000000000000",
-      "migrations_dir": "migrations"
-    }
-  ]
+      "database_id": "93c3dcd3-826e-4dd9-a4f5-fc9b3205f5dc",
+      "migrations_dir": "migrations",
+    },
+  ],
 }
