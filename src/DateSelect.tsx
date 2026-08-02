@@ -32,7 +32,7 @@ export default function DateSelect({
     <DropdownMenu.Root open={open} onOpenChange={setOpen} modal={false}>
       <DropdownMenu.Trigger asChild>
         <button
-          className={`flex h-7 min-w-14 items-center justify-center rounded px-2 text-2xs font-medium text-[var(--t8)] hover:bg-[var(--t2)] ${className}`}
+          className={`flex h-7 min-w-14 items-center justify-center rounded px-2 text-2xs font-medium text-plain-800 hover:bg-plain-200 ${className}`}
           aria-label={
             selectedDate
               ? `Due ${longDateFormatter.format(selectedDate)}`
@@ -50,7 +50,7 @@ export default function DateSelect({
 
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          className="z-50 rounded-lg bg-[var(--t0)] outline-none"
+          className="z-50 rounded-lg bg-plain-white outline-none"
           side="bottom"
           align="end"
           sideOffset={5}

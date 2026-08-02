@@ -94,7 +94,7 @@ export default function Calendar({ value, onChange }: CalendarProps) {
   const rangeControls = () => (
     <div className="flex w-full items-center justify-around py-1 text-2xs font-bold">
       <button
-        className="flex h-6 w-6 items-center justify-center rounded hover:bg-[var(--t2)]"
+        className="flex h-6 w-6 items-center justify-center rounded hover:bg-plain-200"
         onClick={() => shiftWindow(-1)}
         aria-label="Show earlier months"
         type="button"
@@ -105,7 +105,7 @@ export default function Calendar({ value, onChange }: CalendarProps) {
         {rangeFormatter.format(start)} – {rangeFormatter.format(end)}
       </span>
       <button
-        className="flex h-6 w-6 items-center justify-center rounded hover:bg-[var(--t2)]"
+        className="flex h-6 w-6 items-center justify-center rounded hover:bg-plain-200"
         onClick={() => shiftWindow(1)}
         aria-label="Show later months"
         type="button"
@@ -118,7 +118,7 @@ export default function Calendar({ value, onChange }: CalendarProps) {
   return (
     <div
       ref={scrollContainer}
-      className="h-64 w-64 overflow-y-scroll rounded border border-[var(--t2)] bg-[var(--t0)] p-3 text-[var(--t10)]"
+      className="h-64 w-64 overflow-y-scroll rounded border border-plain-200 bg-plain-white p-3 text-plain-black"
       aria-label="Choose a due date"
     >
       {rangeControls()}
@@ -140,17 +140,19 @@ export default function Calendar({ value, onChange }: CalendarProps) {
                 const daysInMonth = getDaysInMonth(day);
                 const selected = value ? isSameDay(day, value) : false;
                 const monthBoundaryClasses = [
-                  dayOfMonth <= 7 ? "border-t border-t-[var(--t8)]" : "",
+                  dayOfMonth <= 7
+                    ? "border-t border-t-plain-800"
+                    : "",
                   dayOfMonth > daysInMonth - 7
-                    ? "border-b border-b-[var(--t8)]"
+                    ? "border-b border-b-plain-800"
                     : "border-b",
                   dayOfMonth === 1 && day.getDay() > 0
-                    ? "border-l border-l-[var(--t8)]"
+                    ? "border-l border-l-plain-800"
                     : day.getDay() === 0
                       ? "border-l"
                       : "",
                   dayOfMonth === daysInMonth && day.getDay() < 6
-                    ? "border-r-[var(--t8)]"
+                    ? "border-r-plain-800"
                     : "",
                 ].join(" ");
 
@@ -158,10 +160,10 @@ export default function Calendar({ value, onChange }: CalendarProps) {
                   <Fragment key={formatDateValue(day)}>
                     <button
                       data-calendar-date={formatDateValue(day)}
-                      className={`flex h-7 items-center justify-center border-r border-[var(--t3)] text-2xs hover:bg-blue-200 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:hover:bg-blue-800 ${
+                      className={`flex h-7 items-center justify-center border-r border-plain-300 text-2xs hover:bg-blue-200 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
                         isSameDay(day, today) ? "font-bold text-red-500" : ""
                       } ${
-                        selected ? "bg-blue-200 dark:bg-blue-800" : ""
+                        selected ? "bg-blue-200" : ""
                       } ${monthBoundaryClasses}`}
                       onClick={() => onChange(day)}
                       aria-label={accessibleDateFormatter.format(day)}
@@ -189,7 +191,7 @@ export default function Calendar({ value, onChange }: CalendarProps) {
       {rangeControls()}
       <div className="flex items-center justify-center pt-1">
         <button
-          className="rounded px-2 py-1 text-2xs hover:bg-[var(--t2)] disabled:opacity-40"
+          className="rounded px-2 py-1 text-2xs hover:bg-plain-200 disabled:opacity-40"
           disabled={!value}
           onClick={() => onChange(null)}
           type="button"

@@ -1,49 +1,30 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
 
-html {
-  background-color: white;
-  color: black;
+@theme static {
+  --font-sans: "Inter", sans-serif;
 
-  --tBase: oklch(0.5 0.05 270);
+  --text-2xs: 0.7rem;
+  --text-2xs--line-height: 0.85rem;
+  --text-3xs: 0.6rem;
+  --text-3xs--line-height: 0.75rem;
 
-  --t10: black;
-  --t9: oklch(from var(--tBase) 0.2 c h);
-  --t8: oklch(from var(--tBase) 0.3 c h);
-  --t7: oklch(from var(--tBase) 0.5 c h);
-  --t6: oklch(from var(--tBase) 0.6 c h);
-  --t5: oklch(from var(--tBase) 0.75 c h);
-  --t4: oklch(from var(--tBase) 0.85 c h);
-  --t3: oklch(from var(--tBase) 0.9 c h);
-  --t2: oklch(from var(--tBase) 0.95 c h);
-  --t1: oklch(from var(--tBase) 0.97 c h);
-  --t0: white;
-
-  --pink: #ff7eae;
-  --green: #3fba53;
-  --blue: #3677f8;
-  --yellow: #ffb300;
+  --color-plain-black: black;
+  --color-plain-950: oklch(0.1 0.01 270);
+  --color-plain-900: oklch(0.2 0.02 270);
+  --color-plain-800: oklch(0.3 0.03 270);
+  --color-plain-700: oklch(0.5 0.05 270);
+  --color-plain-600: oklch(0.6 0.07 270);
+  --color-plain-500: oklch(0.75 0.06 270);
+  --color-plain-400: oklch(0.85 0.05 270);
+  --color-plain-300: oklch(0.9 0.04 270);
+  --color-plain-200: oklch(0.95 0.03 270);
+  --color-plain-100: oklch(0.97 0.02 270);
+  --color-plain-50: oklch(0.99 0.01 270);
+  --color-plain-white: white;
 }
 
-.dark {
-  background-color: black;
-  color: white;
-
-  --t0: black;
-  --t1: oklch(from var(--tBase) 0.2 c h);
-  --t2: oklch(from var(--tBase) 0.25 c h);
-  --t3: oklch(from var(--tBase) 0.3 c h);
-  --t4: oklch(from var(--tBase) 0.35 c h);
-  --t5: oklch(from var(--tBase) 0.4 c h);
-  --t6: oklch(from var(--tBase) 0.5 c h);
-  --t7: oklch(from var(--tBase) 0.6 c h);
-  --t8: oklch(from var(--tBase) 0.75 c h);
-  --t9: oklch(from var(--tBase) 0.95 c h);
-  --t10: white;
-
-  --pink: #ff609b;
-  --green: #1a9d2f;
-  --blue: #3677f8;
-  --yellow: #ffa600;
+html {
+  background-color: var(--color-plain-white);
+  color: var(--color-plain-black);
 }

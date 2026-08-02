@@ -19,18 +19,18 @@ const STATUS_LABELS: Record<TodoStatus, string> = {
 };
 
 const STATUS_COLORS: Record<TodoStatus, string> = {
-  Unsorted: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200",
+  Unsorted: "bg-slate-100 text-slate-700",
   Future:
-    "bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-200",
-  NowIfTime: "bg-cyan-100 text-cyan-700 dark:bg-cyan-950 dark:text-cyan-200",
+    "bg-violet-100 text-violet-700",
+  NowIfTime: "bg-cyan-100 text-cyan-700",
   NowMustDo:
-    "bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-200",
-  Underway: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-200",
+    "bg-orange-100 text-orange-700",
+  Underway: "bg-blue-100 text-blue-700",
   Paused:
-    "bg-yellow-100 text-yellow-700 dark:bg-yellow-950 dark:text-yellow-200",
+    "bg-yellow-100 text-yellow-700",
   ResolveDone:
-    "bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-200",
-  ResolveNo: "bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-200",
+    "bg-green-100 text-green-700",
+  ResolveNo: "bg-rose-100 text-rose-700",
 };
 
 export default function StatusSelect({
@@ -52,7 +52,7 @@ export default function StatusSelect({
 
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          className="z-50 grid w-44 grid-cols-2 gap-1 rounded-lg border border-[var(--t3)] bg-[var(--t0)] p-1 shadow-lg outline-none"
+          className="z-50 grid w-44 grid-cols-2 gap-1 rounded-lg border border-plain-300 bg-plain-white p-1 shadow-lg outline-none"
           side="bottom"
           align="end"
           sideOffset={5}

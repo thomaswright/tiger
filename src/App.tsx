@@ -318,11 +318,11 @@ function App() {
     restoreMutation.error;
 
   return (
-    <main className="mx-auto min-h-dvh max-w-3xl p-6 text-[var(--t10)]">
-      <header className="flex items-center gap-2 border-b border-[var(--t3)] pb-3">
+    <main className="mx-auto min-h-dvh max-w-3xl p-6 text-plain-black">
+      <header className="flex items-center gap-2 border-b border-plain-300 pb-3">
         <img src={logoUrl} width="24" alt="" />
         <h1 className="text-2xl font-bold">Tiger Todo</h1>
-        <span className="ml-auto text-xs text-[var(--t6)]">
+        <span className="ml-auto text-xs text-plain-600">
           {meQuery.data?.user.email}
         </span>
       </header>
@@ -334,11 +334,11 @@ function App() {
             : "Tiger could not start"}
         </p>
       ) : !activeList ? (
-        <p className="mt-6 text-sm text-[var(--t6)]">Loading Tiger…</p>
+        <p className="mt-6 text-sm text-plain-600">Loading Tiger…</p>
       ) : (
         <section className="mt-6">
           <div className="flex items-center">
-            <h2 className="text-sm font-semibold text-[var(--t7)]">
+            <h2 className="text-sm font-semibold text-plain-700">
               {activeList.name}
             </h2>
             <div className="ml-auto flex items-center gap-2">
@@ -346,10 +346,10 @@ function App() {
                 moveMutation.isPending ||
                 deleteMutation.isPending ||
                 restoreMutation.isPending) && (
-                <span className="text-2xs text-[var(--t5)]">Saving…</span>
+                <span className="text-2xs text-plain-500">Saving…</span>
               )}
               <div
-                className="flex rounded-md border border-[var(--t3)] bg-[var(--t2)] p-0.5"
+                className="flex rounded-md border border-plain-300 bg-plain-200 p-0.5"
                 aria-label="Todo order"
                 role="group"
               >
@@ -364,8 +364,8 @@ function App() {
                     key={sort ?? "default"}
                     className={`rounded px-2 py-1 text-2xs font-medium ${
                       todoSort === sort
-                        ? "bg-[var(--t0)] text-[var(--t9)] shadow-sm"
-                        : "text-[var(--t6)] hover:text-[var(--t9)]"
+                        ? "bg-plain-white text-plain-900 shadow-sm"
+                        : "text-plain-600 hover:text-plain-900"
                     }`}
                     type="button"
                     aria-pressed={todoSort === sort}
@@ -376,7 +376,7 @@ function App() {
                 ))}
               </div>
               <button
-                className="flex h-6 w-6 items-center justify-center rounded text-[var(--t9)] hover:bg-[var(--t2)] disabled:opacity-20"
+                className="flex h-6 w-6 items-center justify-center rounded text-plain-900 hover:bg-plain-200 disabled:opacity-20"
                 type="button"
                 disabled={
                   !undoDeletion ||
@@ -392,7 +392,7 @@ function App() {
                 <TbArrowBackUp aria-hidden="true" className="h-4 w-4" />
               </button>
               <button
-                className="flex h-6 w-6 items-center justify-center rounded  text-base text-[var(--t9)] hover:bg-[var(--t2)]"
+                className="flex h-6 w-6 items-center justify-center rounded text-base text-plain-900 hover:bg-plain-200"
                 type="button"
                 onClick={() => createFirstTodo(null)}
                 title="Add todo first"
@@ -466,7 +466,7 @@ function App() {
           </div>
 
           {todos.length === 0 && (
-            <p className="mt-6 text-center text-sm text-[var(--t5)]">
+            <p className="mt-6 text-center text-sm text-plain-500">
               Nothing here yet.
             </p>
           )}

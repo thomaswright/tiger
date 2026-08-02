@@ -198,12 +198,12 @@ function TodoNode({
     >
       <div
         ref={setRowRef}
-        className={`group flex min-h-10 items-center gap-1 border-b border-[var(--t2)] py-1 transition-colors ${isDeleteHighlighted ? "bg-red-50" : ""}`}
+        className={`group flex min-h-10 items-center gap-1 border-b border-plain-200 py-1 transition-colors ${isDeleteHighlighted ? "bg-red-50" : ""}`}
         style={{ paddingLeft: `${depth * TODO_INDENTATION_WIDTH}px` }}
       >
         <button
           ref={handleRef}
-          className="flex h-7 w-5 cursor-grab items-center justify-center text-[var(--t5)] active:cursor-grabbing disabled:cursor-default disabled:opacity-30"
+          className="flex h-7 w-5 cursor-grab items-center justify-center text-plain-500 active:cursor-grabbing disabled:cursor-default disabled:opacity-30"
           disabled={sort !== null}
           style={{ touchAction: "none" }}
           aria-label={`Drag ${todo.title}`}
@@ -217,7 +217,7 @@ function TodoNode({
           <TbGripVertical aria-hidden="true" className="h-4 w-4" />
         </button>
         <button
-          className="flex h-7 w-5 items-center justify-center text-xs text-[var(--t6)] disabled:invisible"
+          className="flex h-7 w-5 items-center justify-center text-xs text-plain-600 disabled:invisible"
           disabled={children.length === 0}
           onClick={() => setCollapsed((value) => !value)}
           aria-expanded={children.length > 0 ? !collapsed : undefined}
@@ -351,7 +351,7 @@ function TodoNode({
         />
         <div className="flex items-center">
           <button
-            className="inline-flex h-7 w-6 items-center justify-center rounded hover:bg-[var(--t3)]"
+            className="inline-flex h-7 w-6 items-center justify-center rounded hover:bg-plain-300"
             onClick={() => {
               setCollapsed(false);
               onAddChild(todo);
@@ -363,7 +363,7 @@ function TodoNode({
             <TbPlus aria-hidden="true" className="h-4 w-4" />
           </button>
           <button
-            className="inline-flex h-7 w-6 items-center justify-center rounded text-red-500 hover:bg-red-50 dark:text-red-300 dark:hover:bg-red-950"
+            className="inline-flex h-7 w-6 items-center justify-center rounded text-red-500 hover:bg-red-50"
             onClick={deleteWithFocus}
             title="Delete"
             aria-label={`Delete ${todo.title}`}
