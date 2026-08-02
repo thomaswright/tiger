@@ -91,12 +91,9 @@ function TodoNode({
   sort,
 }: TodoNodeProps) {
   const [draft, setDraft] = useState(todo.title);
-  const [notesDraft, setNotesDraft] = useState(todo.notes);
-  const [detailsOpen, setDetailsOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [deleteArmed, setDeleteArmed] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const notesRef = useRef<HTMLTextAreaElement>(null);
   const rowRef = useRef<HTMLDivElement | null>(null);
   const handleRef = useRef<HTMLButtonElement | null>(null);
   const ancestorsRef = useRef(ancestors);
@@ -144,9 +141,6 @@ function TodoNode({
   useEffect(() => {
     if (document.activeElement !== inputRef.current) setDraft(todo.title);
   }, [todo.title]);
-  useEffect(() => {
-    if (document.activeElement !== notesRef.current) setNotesDraft(todo.notes);
-  }, [todo.notes]);
 
   const commitTitle = () => {
     const title = draft.trim();
@@ -345,19 +339,6 @@ function TodoNode({
           todoTitle={todo.title}
         />
         <div className="flex items-center opacity-30 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
-          {(["outdent", "indent", "up", "down"] as const).map((direction) => (
-            <button
-              key={direction}
-              className="h-7 w-6 rounded text-xs hover:bg-[var(--t2)] disabled:opacity-20"
-              disabled={!canMove(direction)}
-              onClick={() => move(direction)}
-              title={direction}
-              aria-label={`${direction} ${todo.title}`}
-              type="button"
-            >
-              {{ outdent: "←", indent: "→", up: "↑", down: "↓" }[direction]}
-            </button>
-          ))}
           <button
             className="h-7 w-6 rounded text-sm hover:bg-[var(--t2)]"
             onClick={() => {
@@ -369,42 +350,30 @@ function TodoNode({
             type="button"
           >+</button>
           <button
-            className={`h-7 w-6 rounded text-sm hover:bg-[var(--t2)] ${detailsOpen ? "bg-[var(--t2)]" : ""}`}
-            onClick={() => setDetailsOpen((value) => !value)}
-            title="Details"
-            aria-label={`Details for ${todo.title}`}
-            aria-expanded={detailsOpen}
+            className="inline-flex h-7 w-6 items-center justify-center rounded text-red-700 hover:bg-red-50 dark:text-red-300 dark:hover:bg-red-950"
+            onClick={deleteWithFocus}
+            title="Delete"
+            aria-label={`Delete ${todo.title}`}
             type="button"
-          >…</button>
+          >
+            <svg
+              aria-hidden="true"
+              className="h-3.5 w-3.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M4 7h16" />
+              <path d="M9 7V4h6v3" />
+              <path d="M6.5 7l1 13h9l1-13" />
+              <path d="M10 11v5M14 11v5" />
+            </svg>
+          </button>
         </div>
       </div>
-      {detailsOpen && (
-        <div
-          className={`grid gap-2 border-b border-[var(--t2)] p-2 transition-colors sm:grid-cols-[1fr_auto] ${isDeleteHighlighted ? "bg-red-50" : "bg-[var(--t1)]"}`}
-          style={{
-            marginLeft: `${depth * TODO_INDENTATION_WIDTH + 26}px`,
-          }}
-        >
-          <label className="text-2xs text-[var(--t6)]">
-            Notes
-            <textarea
-              ref={notesRef}
-              className="mt-1 block min-h-8 w-full resize-y rounded border-[var(--t3)] bg-[var(--t0)] px-2 py-1 text-xs focus:ring-0"
-              rows={1}
-              value={notesDraft}
-              onChange={(event) => setNotesDraft(event.target.value)}
-              onBlur={() => {
-                if (notesDraft !== todo.notes) onUpdate(todo.id, { notes: notesDraft });
-              }}
-            />
-          </label>
-          <button
-            className="self-end rounded px-2 py-1.5 text-xs text-red-700 hover:bg-red-50"
-            onClick={deleteWithFocus}
-            type="button"
-          >Delete</button>
-        </div>
-      )}
       {!collapsed && (
         <TodoBranch
           ancestors={nextAncestors}
