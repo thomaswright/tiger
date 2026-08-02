@@ -25,7 +25,12 @@ import type {
   UpdateTodoInput,
 } from "./shared/domain";
 import TodoTree from "./TodoTree";
-import { applyMove, getSiblings, getSubtree } from "./tree";
+import {
+  applyMove,
+  getSiblings,
+  getSubtree,
+  type TodoSort,
+} from "./tree";
 
 const todoQueryKey = (listId: string) => ["todos", listId] as const;
 
@@ -44,6 +49,7 @@ function App() {
   const queryClient = useQueryClient();
   const [title, setTitle] = useState("");
   const [newTodoParentId, setNewTodoParentId] = useState<string | null>(null);
+  const [todoSort, setTodoSort] = useState<TodoSort | null>(null);
   const focusTodoId = useRef<string | null>(null);
   const [undoDeletion, setUndoDeletion] = useState<UndoDeletion | null>(null);
   const undoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -340,6 +346,28 @@ function App() {
             <h2 className="text-sm font-semibold text-[var(--t7)]">
               {activeList.name}
             </h2>
+            <div className="ml-3 flex gap-1" aria-label="Sort todos">
+              {([
+                ["dueDate", "Due date"],
+                ["status", "Status"],
+              ] as const).map(([sort, label]) => (
+                <button
+                  key={sort}
+                  className={`rounded px-2 py-1 text-2xs font-medium ${
+                    todoSort === sort
+                      ? "bg-[var(--t8)] text-[var(--t0)]"
+                      : "bg-[var(--t2)] text-[var(--t7)] hover:bg-[var(--t3)]"
+                  }`}
+                  type="button"
+                  aria-pressed={todoSort === sort}
+                  onClick={() =>
+                    setTodoSort((current) => current === sort ? null : sort)
+                  }
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
             {(updateMutation.isPending || moveMutation.isPending || deleteMutation.isPending || restoreMutation.isPending) && (
               <span className="ml-auto text-2xs text-[var(--t5)]">Saving…</span>
             )}
@@ -379,6 +407,7 @@ function App() {
           <div className="mt-4">
             <TodoTree
               todos={todos}
+              sort={todoSort}
               onAddChild={(todo) => setNewTodoParentId(todo.id)}
               onCreateBelow={(todo) => {
                 const children = getSiblings(todos, todo.id);

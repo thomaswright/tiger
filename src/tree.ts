@@ -1,6 +1,11 @@
-import type { MoveTodoInput, Todo } from "./shared/domain";
+import {
+  TODO_STATUSES,
+  type MoveTodoInput,
+  type Todo,
+} from "./shared/domain";
 
 export type MoveDirection = "up" | "down" | "indent" | "outdent";
+export type TodoSort = "dueDate" | "status";
 
 export const ROOT_GROUP = "__tiger_root__";
 export const TODO_INDENTATION_WIDTH = 20;
@@ -22,6 +27,25 @@ export const getSiblings = (
   return siblings.sort(
     (a, b) => a.sortKey - b.sortKey || a.id.localeCompare(b.id),
   );
+};
+
+export const getSortedSiblings = (
+  todos: Todo[],
+  parentId: string | null,
+  sort: TodoSort | null,
+) => {
+  const siblings = getSiblings(todos, parentId);
+  if (sort === null) return siblings;
+
+  return siblings.sort((a, b) => {
+    if (sort === "status") {
+      return TODO_STATUSES.indexOf(a.status) - TODO_STATUSES.indexOf(b.status);
+    }
+    if (a.dueDate === b.dueDate) return 0;
+    if (a.dueDate === null) return 1;
+    if (b.dueDate === null) return -1;
+    return a.dueDate.localeCompare(b.dueDate);
+  });
 };
 
 export const getSubtree = (todos: Todo[], todoId: string): Todo[] => {

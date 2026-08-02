@@ -3,6 +3,7 @@ import type { Todo } from "./shared/domain";
 import {
   applyMove,
   destinationIndexFromTarget,
+  getSortedSiblings,
   getSubtree,
   planDirectionalMove,
   planMoveTo,
@@ -40,6 +41,37 @@ describe("todo subtrees", () => {
       "child",
       "grandchild",
     ]);
+  });
+});
+
+describe("sibling sorting", () => {
+  it("sorts due dates ascending with undated todos last", () => {
+    const todos = [
+      { ...todo("undated", null, 100), dueDate: null },
+      { ...todo("later", null, 200), dueDate: "2026-08-20" },
+      { ...todo("sooner", null, 300), dueDate: "2026-08-05" },
+    ];
+
+    expect(
+      getSortedSiblings(todos, null, "dueDate").map((item) => item.id),
+    ).toEqual(["sooner", "later", "undated"]);
+  });
+
+  it("uses canonical status order and only sorts within a parent", () => {
+    const todos = [
+      { ...todo("root-done", null, 100), status: "ResolveDone" as const },
+      { ...todo("root-future", null, 200), status: "Future" as const },
+      { ...todo("parent", null, 300), status: "Unsorted" as const },
+      { ...todo("child-paused", "parent", 100), status: "Paused" as const },
+      { ...todo("child-underway", "parent", 200), status: "Underway" as const },
+    ];
+
+    expect(
+      getSortedSiblings(todos, null, "status").map((item) => item.id),
+    ).toEqual(["parent", "root-future", "root-done"]);
+    expect(
+      getSortedSiblings(todos, "parent", "status").map((item) => item.id),
+    ).toEqual(["child-underway", "child-paused"]);
   });
 });
 

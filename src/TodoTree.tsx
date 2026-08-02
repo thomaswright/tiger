@@ -26,11 +26,13 @@ import {
 } from "./shared/domain";
 import {
   applyMove,
+  getSortedSiblings,
   getSiblings,
   planDirectionalMove,
   planProjectedMove,
   TODO_INDENTATION_WIDTH,
   type MoveDirection,
+  type TodoSort,
 } from "./tree";
 import DateSelect from "./DateSelect";
 import StatusSelect from "./StatusSelect";
@@ -51,6 +53,7 @@ const getTodoTarget = (record: DropTargetRecord | undefined) => {
 
 interface TodoTreeProps {
   todos: Todo[];
+  sort: TodoSort | null;
   onAddChild: (todo: Todo) => void;
   onCreateBelow: (todo: Todo) => void;
   onDelete: (todo: Todo) => void;
@@ -85,6 +88,7 @@ function TodoNode({
   activeTodoId,
   deleteHighlighted,
   registerRow,
+  sort,
 }: TodoNodeProps) {
   const [draft, setDraft] = useState(todo.title);
   const [notesDraft, setNotesDraft] = useState(todo.notes);
@@ -110,6 +114,7 @@ function TodoNode({
   );
 
   useEffect(() => {
+    if (sort !== null) return;
     const element = rowRef.current;
     const dragHandle = handleRef.current;
     if (!element || !dragHandle) return;
@@ -134,7 +139,7 @@ function TodoNode({
         getIsSticky: () => true,
       }),
     );
-  }, [todo.id]);
+  }, [sort, todo.id]);
 
   useEffect(() => {
     if (document.activeElement !== inputRef.current) setDraft(todo.title);
@@ -149,13 +154,14 @@ function TodoNode({
     else if (title !== todo.title) onUpdate(todo.id, { title });
   };
   const move = (direction: MoveDirection) => {
+    if (sort !== null) return false;
     const planned = planDirectionalMove(todos, todo.id, direction);
     if (!planned) return false;
     onMove(todo.id, planned);
     return true;
   };
   const canMove = (direction: MoveDirection) =>
-    planDirectionalMove(todos, todo.id, direction) !== null;
+    sort === null && planDirectionalMove(todos, todo.id, direction) !== null;
   const deleteWithFocus = () => {
     const tree = rowRef.current?.closest("[data-todo-tree]");
     const inputs = tree
@@ -196,10 +202,15 @@ function TodoNode({
       >
         <button
           ref={handleRef}
-          className="flex h-7 w-5 cursor-grab items-center justify-center text-[var(--t5)] active:cursor-grabbing"
+          className="flex h-7 w-5 cursor-grab items-center justify-center text-[var(--t5)] active:cursor-grabbing disabled:cursor-default disabled:opacity-30"
+          disabled={sort !== null}
           style={{ touchAction: "none" }}
           aria-label={`Drag ${todo.title}`}
-          title="Drag vertically to reorder; move left or right to change nesting"
+          title={
+            sort === null
+              ? "Drag vertically to reorder; move left or right to change nesting"
+              : "Return to manual order to drag todos"
+          }
           type="button"
         >
           ⠿
@@ -408,6 +419,7 @@ function TodoNode({
           activeTodoId={activeTodoId}
           deleteHighlighted={isDeleteHighlighted}
           registerRow={registerRow}
+          sort={sort}
         />
       )}
     </li>
@@ -421,7 +433,9 @@ interface TodoBranchProps extends TreeRenderProps {
 }
 
 function TodoBranch({ parentId, depth, ancestors, todos, ...actions }: TodoBranchProps) {
-  const siblings = getSiblings(todos, parentId).filter((todo) => !ancestors.has(todo.id));
+  const siblings = getSortedSiblings(todos, parentId, actions.sort).filter(
+    (todo) => !ancestors.has(todo.id),
+  );
   if (siblings.length === 0) return null;
   return (
     <ul>
