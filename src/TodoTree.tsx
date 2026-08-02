@@ -20,6 +20,13 @@ import {
   useState,
 } from "react";
 import {
+  TbChevronDown,
+  TbChevronRight,
+  TbGripVertical,
+  TbPlus,
+  TbTrash,
+} from "react-icons/tb";
+import {
   type MoveTodoInput,
   type Todo,
   type UpdateTodoInput,
@@ -207,7 +214,7 @@ function TodoNode({
           }
           type="button"
         >
-          ⠿
+          <TbGripVertical aria-hidden="true" className="h-4 w-4" />
         </button>
         <button
           className="flex h-7 w-5 items-center justify-center text-xs text-[var(--t6)] disabled:invisible"
@@ -218,7 +225,11 @@ function TodoNode({
           title={collapsed ? "Expand children" : "Collapse children"}
           type="button"
         >
-          {collapsed ? "▸" : "▾"}
+          {collapsed ? (
+            <TbChevronRight aria-hidden="true" className="h-4 w-4" />
+          ) : (
+            <TbChevronDown aria-hidden="true" className="h-4 w-4" />
+          )}
         </button>
         <input
           id={`todo-title-${todo.id}`}
@@ -340,7 +351,7 @@ function TodoNode({
         />
         <div className="flex items-center opacity-30 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
           <button
-            className="h-7 w-6 rounded text-sm hover:bg-[var(--t2)]"
+            className="inline-flex h-7 w-6 items-center justify-center rounded hover:bg-[var(--t2)]"
             onClick={() => {
               setCollapsed(false);
               onAddChild(todo);
@@ -348,7 +359,9 @@ function TodoNode({
             title="Add child"
             aria-label={`Add child under ${todo.title}`}
             type="button"
-          >+</button>
+          >
+            <TbPlus aria-hidden="true" className="h-4 w-4" />
+          </button>
           <button
             className="inline-flex h-7 w-6 items-center justify-center rounded text-red-700 hover:bg-red-50 dark:text-red-300 dark:hover:bg-red-950"
             onClick={deleteWithFocus}
@@ -356,21 +369,7 @@ function TodoNode({
             aria-label={`Delete ${todo.title}`}
             type="button"
           >
-            <svg
-              aria-hidden="true"
-              className="h-3.5 w-3.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M4 7h16" />
-              <path d="M9 7V4h6v3" />
-              <path d="M6.5 7l1 13h9l1-13" />
-              <path d="M10 11v5M14 11v5" />
-            </svg>
+            <TbTrash aria-hidden="true" className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>

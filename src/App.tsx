@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { TbPlus } from "react-icons/tb";
 import {
   createTodo,
   deleteTodo,
@@ -398,7 +399,7 @@ function App() {
                 title="Add todo first"
                 aria-label="Add todo first"
               >
-                +
+                <TbPlus aria-hidden="true" className="h-4 w-4" />
               </button>
             </div>
           </div>

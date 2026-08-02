@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useRef, useState } from "react";
+import { TbArrowLeft, TbArrowRight } from "react-icons/tb";
 import { formatDateValue } from "./date";
 
 interface CalendarProps {
@@ -98,7 +99,7 @@ export default function Calendar({ value, onChange }: CalendarProps) {
         aria-label="Show earlier months"
         type="button"
       >
-        ←
+        <TbArrowLeft aria-hidden="true" className="h-4 w-4" />
       </button>
       <span aria-live="polite">
         {rangeFormatter.format(start)} – {rangeFormatter.format(end)}
@@ -109,7 +110,7 @@ export default function Calendar({ value, onChange }: CalendarProps) {
         aria-label="Show later months"
         type="button"
       >
-        →
+        <TbArrowRight aria-hidden="true" className="h-4 w-4" />
       </button>
     </div>
   );
