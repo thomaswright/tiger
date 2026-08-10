@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import { TbPlus } from "react-icons/tb";
+import TextareaAutosize from "react-textarea-autosize";
 import {
   createDailySummary,
   getDailySummaries,
@@ -91,10 +92,11 @@ function SummaryEditor({ summary, isSaving, onSave }: SummaryEditorProps) {
           {date ? dateFormatter.format(date) : summary.date}
         </time>
       </div>
-      <textarea
+      <TextareaAutosize
         id={`daily-summary-body-${summary.id}`}
-        className="mt-3 min-h-32 w-full resize-y border-l-2 border-0 border-plain-300 bg-plain-white py-0  px-3 text-sm leading-6 text-plain-900 placeholder:text-plain-400 focus:border-plain-500 focus:ring-0"
+        className="mt-3 w-full resize-none border-l-2 border-0 border-plain-300 bg-plain-white py-0  px-3 text-sm leading-6 text-plain-900 placeholder:text-plain-400 focus:border-plain-500 focus:ring-0"
         value={body}
+        minRows={5}
         maxLength={20000}
         placeholder="daily summary"
         aria-label={`Body for ${summary.date}`}
