@@ -54,7 +54,6 @@ export interface TodosResponse {
 export interface DailySummary {
   id: string;
   date: string;
-  heading: string;
   body: string;
   version: number;
   createdAt: string;
@@ -68,13 +67,11 @@ export interface DailySummariesResponse {
 export interface CreateDailySummaryInput {
   id: string;
   date: string;
-  heading: string;
   body: string;
 }
 
 export interface UpdateDailySummaryInput {
-  heading?: string;
-  body?: string;
+  body: string;
   version: number;
 }
 

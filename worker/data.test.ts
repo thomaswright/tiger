@@ -19,13 +19,11 @@ describe("daily summary input", () => {
       parseCreateDailySummaryInput({
         id: todoId,
         date: "2026-08-10",
-        heading: "",
         body: "",
       }),
     ).toEqual({
       id: todoId,
       date: "2026-08-10",
-      heading: "",
       body: "",
     });
   });
@@ -35,24 +33,20 @@ describe("daily summary input", () => {
       parseCreateDailySummaryInput({
         id: todoId,
         date: "2026-02-30",
-        heading: "",
         body: "",
       }),
     ).toThrow(new DataError("Invalid daily summary date", 400));
     expect(() =>
-      parseUpdateDailySummaryInput({
-        heading: "x".repeat(501),
-        version: 1,
-      }),
-    ).toThrow(new DataError("Daily summary heading is too long", 400));
+      parseUpdateDailySummaryInput({ body: "x".repeat(20001), version: 1 }),
+    ).toThrow(new DataError("Daily summary body is too long", 400));
   });
 
-  it("requires a version and at least one changed field", () => {
+  it("requires a version and a body", () => {
     expect(
       parseUpdateDailySummaryInput({ body: "Reflection", version: 2 }),
     ).toEqual({ body: "Reflection", version: 2 });
     expect(() => parseUpdateDailySummaryInput({ version: 2 })).toThrow(
-      new DataError("Daily summary update is empty", 400),
+      new DataError("Daily summary body is required", 400),
     );
   });
 });

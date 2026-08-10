@@ -8,6 +8,7 @@ interface DateSelectProps {
   value: string | null;
   onChange: (value: string | null) => void;
   className?: string;
+  ariaLabel?: string;
 }
 
 const shortDateFormatter = new Intl.DateTimeFormat(undefined, {
@@ -24,6 +25,7 @@ export default function DateSelect({
   value,
   onChange,
   className = "",
+  ariaLabel,
 }: DateSelectProps) {
   const [open, setOpen] = useState(false);
   const selectedDate = parseDateValue(value);
@@ -34,7 +36,13 @@ export default function DateSelect({
         <button
           className={`flex h-7 min-w-14 items-center justify-center rounded px-2 text-2xs font-medium text-plain-800 hover:bg-plain-200 ${className}`}
           aria-label={
-            selectedDate
+            ariaLabel
+              ? `${ariaLabel}${
+                  selectedDate
+                    ? `, ${longDateFormatter.format(selectedDate)}`
+                    : ""
+                }`
+              : selectedDate
               ? `Due ${longDateFormatter.format(selectedDate)}`
               : "Set due date"
           }

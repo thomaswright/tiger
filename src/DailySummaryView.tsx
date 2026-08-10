@@ -1,11 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { FormEvent, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { TbPlus } from "react-icons/tb";
 import {
   createDailySummary,
   getDailySummaries,
   updateDailySummary,
 } from "./api";
+import DateSelect from "./DateSelect";
 import { formatDateValue, parseDateValue } from "./date";
 import type {
   CreateDailySummaryInput,
@@ -15,6 +23,7 @@ import type {
 } from "./shared/domain";
 
 const queryKey = ["daily-summaries"] as const;
+const autosaveDelay = 700;
 
 const dateFormatter = new Intl.DateTimeFormat(undefined, {
   weekday: "long",
@@ -26,62 +35,73 @@ const dateFormatter = new Intl.DateTimeFormat(undefined, {
 interface SummaryEditorProps {
   summary: DailySummary;
   isSaving: boolean;
-  onSave: (summary: DailySummary, input: UpdateDailySummaryInput) => void;
+  onSave: (variables: UpdateSummaryVariables) => void;
+}
+
+interface UpdateSummaryVariables {
+  summaryId: string;
+  input: UpdateDailySummaryInput;
 }
 
 function SummaryEditor({ summary, isSaving, onSave }: SummaryEditorProps) {
-  const [heading, setHeading] = useState(summary.heading);
   const [body, setBody] = useState(summary.body);
+  const saveTimer = useRef<number | null>(null);
+  const lastAttemptedBody = useRef<string | null>(null);
 
-  const dirty = heading !== summary.heading || body !== summary.body;
+  const dirty = body !== summary.body;
   const date = parseDateValue(summary.date);
 
-  const save = (event: FormEvent) => {
-    event.preventDefault();
+  const save = useCallback(() => {
     if (!dirty || isSaving) return;
-    onSave(summary, { heading, body, version: summary.version });
+    lastAttemptedBody.current = body;
+    onSave({
+      summaryId: summary.id,
+      input: { body, version: summary.version },
+    });
+  }, [body, dirty, isSaving, onSave, summary.id, summary.version]);
+
+  useEffect(() => {
+    if (!dirty || isSaving || body === lastAttemptedBody.current) {
+      return;
+    }
+
+    const timer = window.setTimeout(save, autosaveDelay);
+    saveTimer.current = timer;
+    return () => {
+      window.clearTimeout(timer);
+      if (saveTimer.current === timer) saveTimer.current = null;
+    };
+  }, [body, dirty, isSaving, save]);
+
+  const saveOnBlur = () => {
+    if (saveTimer.current !== null) {
+      window.clearTimeout(saveTimer.current);
+      saveTimer.current = null;
+    }
+    save();
   };
 
   return (
-    <form
-      className="rounded-lg border border-plain-300 bg-plain-50 p-4"
-      onSubmit={save}
-    >
+    <article className="">
       <div className="flex items-center gap-3">
-        <time className="text-2xs font-medium text-plain-600" dateTime={summary.date}>
+        <time
+          className=" text-2xs font-medium text-plain-600"
+          dateTime={summary.date}
+        >
           {date ? dateFormatter.format(date) : summary.date}
         </time>
-        <span className="ml-auto text-3xs text-plain-500">
-          {isSaving ? "Saving…" : dirty ? "Unsaved" : "Saved"}
-        </span>
       </div>
-      <input
-        id={`daily-summary-heading-${summary.id}`}
-        className="mt-3 w-full border-0 bg-transparent px-0 py-1 text-lg font-semibold text-plain-900 placeholder:text-plain-400 focus:ring-0"
-        value={heading}
-        maxLength={500}
-        placeholder="Heading"
-        aria-label={`Heading for ${summary.date}`}
-        onChange={(event) => setHeading(event.target.value)}
-      />
       <textarea
-        className="mt-2 min-h-32 w-full resize-y rounded-md border border-plain-300 bg-plain-white p-3 text-sm leading-6 text-plain-900 placeholder:text-plain-400 focus:border-plain-500 focus:ring-0"
+        id={`daily-summary-body-${summary.id}`}
+        className="mt-3 min-h-32 w-full resize-y border-l-2 border-0 border-plain-300 bg-plain-white py-0  px-3 text-sm leading-6 text-plain-900 placeholder:text-plain-400 focus:border-plain-500 focus:ring-0"
         value={body}
         maxLength={20000}
-        placeholder="What happened today?"
+        placeholder="daily summary"
         aria-label={`Body for ${summary.date}`}
         onChange={(event) => setBody(event.target.value)}
+        onBlur={saveOnBlur}
       />
-      <div className="mt-2 flex justify-end">
-        <button
-          className="rounded-md bg-plain-900 px-3 py-1.5 text-xs font-medium text-plain-white hover:bg-plain-800 disabled:cursor-default disabled:opacity-30"
-          type="submit"
-          disabled={!dirty || isSaving}
-        >
-          Save
-        </button>
-      </div>
-    </form>
+    </article>
   );
 }
 
@@ -100,21 +120,22 @@ export default function DailySummaryView() {
     onMutate: async (input) => {
       focusSummaryId.current = input.id;
       await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<DailySummariesResponse>(queryKey);
+      const previous =
+        queryClient.getQueryData<DailySummariesResponse>(queryKey);
       const now = new Date().toISOString();
       const optimisticSummary: DailySummary = {
         id: input.id,
         date: input.date,
-        heading: input.heading,
         body: input.body,
         version: 1,
         createdAt: now,
         updatedAt: now,
       };
       queryClient.setQueryData<DailySummariesResponse>(queryKey, {
-        dailySummaries: [...(previous?.dailySummaries ?? []), optimisticSummary].sort(
-          (left, right) => right.date.localeCompare(left.date),
-        ),
+        dailySummaries: [
+          ...(previous?.dailySummaries ?? []),
+          optimisticSummary,
+        ].sort((left, right) => right.date.localeCompare(left.date)),
       });
       return { previous };
     },
@@ -135,16 +156,12 @@ export default function DailySummaryView() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({
-      summaryId,
-      input,
-    }: {
-      summaryId: string;
-      input: UpdateDailySummaryInput;
-    }) => updateDailySummary(summaryId, input),
+    mutationFn: ({ summaryId, input }: UpdateSummaryVariables) =>
+      updateDailySummary(summaryId, input),
     onMutate: async ({ summaryId, input }) => {
       await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<DailySummariesResponse>(queryKey);
+      const previous =
+        queryClient.getQueryData<DailySummariesResponse>(queryKey);
       queryClient.setQueryData<DailySummariesResponse>(queryKey, {
         dailySummaries: (previous?.dailySummaries ?? []).map((summary) =>
           summary.id === summaryId
@@ -185,13 +202,14 @@ export default function DailySummaryView() {
     if (!summaryId || !summaries.some((summary) => summary.id === summaryId)) {
       return;
     }
-    const input = document.getElementById(`daily-summary-heading-${summaryId}`);
-    if (!(input instanceof HTMLInputElement)) return;
+    const input = document.getElementById(`daily-summary-body-${summaryId}`);
+    if (!(input instanceof HTMLTextAreaElement)) return;
     input.focus();
     focusSummaryId.current = null;
   }, [summaries]);
 
-  const error = summariesQuery.error ?? createMutation.error ?? updateMutation.error;
+  const error =
+    summariesQuery.error ?? createMutation.error ?? updateMutation.error;
 
   return (
     <section
@@ -201,26 +219,29 @@ export default function DailySummaryView() {
       aria-labelledby="daily-summary-tab"
     >
       <div className="flex items-center gap-2">
-        <h2 className="text-sm font-semibold text-plain-700">Daily summaries</h2>
+        <h2 className="pl-3 text-sm font-semibold text-plain-700">
+          Daily summaries
+        </h2>
         <div className="ml-auto flex items-center gap-2">
-          <input
-            className="h-7 rounded-md border-plain-300 bg-plain-white py-1 text-2xs text-plain-800 focus:border-plain-500 focus:ring-0"
-            type="date"
-            value={date}
-            aria-label="New daily summary date"
-            onChange={(event) => setDate(event.target.value)}
+          <DateSelect
+            value={date || null}
+            ariaLabel="New daily summary date"
+            onChange={(value) => setDate(value ?? "")}
           />
           <button
             className="flex h-7 w-7 items-center justify-center rounded text-plain-900 hover:bg-plain-200 disabled:opacity-20"
             type="button"
             disabled={!date || dateAlreadyExists || createMutation.isPending}
-            title={dateAlreadyExists ? "A summary already exists for this date" : "Add daily summary"}
+            title={
+              dateAlreadyExists
+                ? "A summary already exists for this date"
+                : "Add daily summary"
+            }
             aria-label="Add daily summary"
             onClick={() =>
               createMutation.mutate({
                 id: crypto.randomUUID(),
                 date,
-                heading: "",
                 body: "",
               })
             }
@@ -246,15 +267,13 @@ export default function DailySummaryView() {
         <div className="mt-4 space-y-3">
           {summaries.map((summary) => (
             <SummaryEditor
-              key={`${summary.id}:${summary.version}`}
+              key={summary.id}
               summary={summary}
               isSaving={
                 updateMutation.isPending &&
                 updateMutation.variables?.summaryId === summary.id
               }
-              onSave={(current, input) =>
-                updateMutation.mutate({ summaryId: current.id, input })
-              }
+              onSave={updateMutation.mutate}
             />
           ))}
         </div>

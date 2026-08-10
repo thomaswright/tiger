@@ -40,7 +40,6 @@ interface TodoRow {
 interface DailySummaryRow {
   id: string;
   summary_date: string;
-  heading: string;
   body: string;
   version: number;
   created_at: string;
@@ -82,7 +81,6 @@ const mapTodo = (row: TodoRow): Todo => ({
 const mapDailySummary = (row: DailySummaryRow): DailySummary => ({
   id: row.id,
   date: row.summary_date,
-  heading: row.heading,
   body: row.body,
   version: row.version,
   createdAt: row.created_at,
@@ -103,7 +101,7 @@ const todoSelect = `
 `;
 
 const dailySummarySelect = `
-  SELECT id, summary_date, heading, body, version, created_at, updated_at
+  SELECT id, summary_date, body, version, created_at, updated_at
   FROM daily_summaries
 `;
 
@@ -203,17 +201,16 @@ export function parseCreateDailySummaryInput(
   if (!isDateValue(input.date)) {
     throw new DataError("Invalid daily summary date", 400);
   }
-  if (typeof input.heading !== "string" || input.heading.length > 500) {
-    throw new DataError("Daily summary heading is too long", 400);
+  if (typeof input.body !== "string") {
+    throw new DataError("Daily summary body is required", 400);
   }
-  if (typeof input.body !== "string" || input.body.length > 20000) {
+  if (input.body.length > 20000) {
     throw new DataError("Daily summary body is too long", 400);
   }
 
   return {
     id: input.id,
     date: input.date,
-    heading: input.heading.trim(),
     body: input.body,
   };
 }
@@ -226,27 +223,15 @@ export function parseUpdateDailySummaryInput(
   }
 
   const input = value as Partial<UpdateDailySummaryInput>;
-  const update: UpdateDailySummaryInput = {
-    version: parseVersion(input.version),
-  };
+  const version = parseVersion(input.version);
 
-  if (input.heading !== undefined) {
-    if (typeof input.heading !== "string" || input.heading.length > 500) {
-      throw new DataError("Daily summary heading is too long", 400);
-    }
-    update.heading = input.heading.trim();
+  if (typeof input.body !== "string") {
+    throw new DataError("Daily summary body is required", 400);
   }
-  if (input.body !== undefined) {
-    if (typeof input.body !== "string" || input.body.length > 20000) {
-      throw new DataError("Daily summary body is too long", 400);
-    }
-    update.body = input.body;
+  if (input.body.length > 20000) {
+    throw new DataError("Daily summary body is too long", 400);
   }
-  if (update.heading === undefined && update.body === undefined) {
-    throw new DataError("Daily summary update is empty", 400);
-  }
-
-  return update;
+  return { body: input.body, version };
 }
 
 export async function getDailySummaries(
@@ -274,10 +259,10 @@ export async function createDailySummary(
     await db
       .prepare(
         `INSERT INTO daily_summaries
-          (id, owner_id, summary_date, heading, body)
-         VALUES (?, ?, ?, ?, ?)`,
+          (id, owner_id, summary_date, body)
+         VALUES (?, ?, ?, ?)`,
       )
-      .bind(input.id, user.id, input.date, input.heading, input.body)
+      .bind(input.id, user.id, input.date, input.body)
       .run();
   } catch (error) {
     if (error instanceof Error && error.message.includes("UNIQUE")) {
@@ -311,17 +296,16 @@ export async function updateDailySummary(
   summaryId: string,
   input: UpdateDailySummaryInput,
 ): Promise<DailySummary> {
-  const current = await getOwnedDailySummary(db, user.id, summaryId);
+  await getOwnedDailySummary(db, user.id, summaryId);
   const result = await db
     .prepare(
       `UPDATE daily_summaries
-       SET heading = ?, body = ?, version = version + 1,
+       SET body = ?, version = version + 1,
            updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
        WHERE id = ? AND owner_id = ? AND version = ?`,
     )
     .bind(
-      input.heading ?? current.heading,
-      input.body ?? current.body,
+      input.body,
       summaryId,
       user.id,
       input.version,
