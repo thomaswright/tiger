@@ -12,6 +12,7 @@ import {
   updateTodo,
 } from "./api";
 import logoUrl from "./assets/tiger.svg";
+import DailySummaryView from "./DailySummaryView";
 import type {
   CreateTodoInput,
   MoveTodoInput,
@@ -37,6 +38,9 @@ interface CreateTodoVariables {
 
 function App() {
   const queryClient = useQueryClient();
+  const [activeView, setActiveView] = useState<"todos" | "daily-summary">(
+    "todos",
+  );
   const [todoSort, setTodoSort] = useState<TodoSort | null>(null);
   const focusTodoId = useRef<string | null>(null);
   const [undoDeletion, setUndoDeletion] = useState<UndoDeletion | null>(null);
@@ -309,7 +313,10 @@ function App() {
     });
   };
 
-  const startupError = meQuery.error ?? listsQuery.error ?? todosQuery.error;
+  const startupError =
+    meQuery.error ??
+    listsQuery.error ??
+    (activeView === "todos" ? todosQuery.error : null);
   const mutationError =
     createMutation.error ??
     updateMutation.error ??
@@ -321,11 +328,41 @@ function App() {
     <main className="mx-auto min-h-dvh max-w-3xl p-6 text-plain-black">
       <header className="flex items-center gap-2 border-b border-plain-300 pb-3">
         <img src={logoUrl} width="24" alt="" />
-        <h1 className="text-2xl font-bold">Tiger Todo</h1>
+        <h1 className="text-2xl font-bold">Tiger</h1>
         <span className="ml-auto text-xs text-plain-600">
           {meQuery.data?.user.email}
         </span>
       </header>
+
+      <nav
+        className="mt-4 flex gap-5 border-b border-plain-300"
+        role="tablist"
+        aria-label="Tiger views"
+      >
+        {(
+          [
+            ["todos", "Todo list", "todo-list-panel"],
+            ["daily-summary", "Daily summary", "daily-summary-panel"],
+          ] as const
+        ).map(([view, label, panelId]) => (
+          <button
+            id={`${view}-tab`}
+            key={view}
+            className={`-mb-px border-b-2 px-0.5 pb-2 text-sm font-medium ${
+              activeView === view
+                ? "border-plain-900 text-plain-900"
+                : "border-transparent text-plain-500 hover:text-plain-800"
+            }`}
+            type="button"
+            role="tab"
+            aria-selected={activeView === view}
+            aria-controls={panelId}
+            onClick={() => setActiveView(view)}
+          >
+            {label}
+          </button>
+        ))}
+      </nav>
 
       {startupError ? (
         <p className="mt-6 rounded border border-red-300 bg-red-50 p-3 text-sm text-red-800">
@@ -335,8 +372,15 @@ function App() {
         </p>
       ) : !activeList ? (
         <p className="mt-6 text-sm text-plain-600">Loading Tiger…</p>
+      ) : activeView === "daily-summary" ? (
+        <DailySummaryView />
       ) : (
-        <section className="mt-6">
+        <section
+          id="todo-list-panel"
+          className="mt-6"
+          role="tabpanel"
+          aria-labelledby="todos-tab"
+        >
           <div className="flex items-center">
             <h2 className="text-sm font-semibold text-plain-700">
               {activeList.name}

@@ -1,6 +1,9 @@
 import type {
   ApiErrorResponse,
+  CreateDailySummaryInput,
   CreateTodoInput,
+  DailySummariesResponse,
+  DailySummary,
   DeleteTodoInput,
   DeleteTodoResponse,
   ListsResponse,
@@ -8,6 +11,7 @@ import type {
   MoveTodoInput,
   Todo,
   TodosResponse,
+  UpdateDailySummaryInput,
   UpdateTodoInput,
   RestoreTodosResponse,
 } from "./shared/domain";
@@ -39,6 +43,29 @@ async function requestJson<T extends object>(
 export const getMe = () => requestJson<MeResponse>("/api/me");
 
 export const getLists = () => requestJson<ListsResponse>("/api/lists");
+
+export const getDailySummaries = () =>
+  requestJson<DailySummariesResponse>("/api/daily-summaries");
+
+export const createDailySummary = (input: CreateDailySummaryInput) =>
+  requestJson<DailySummary>("/api/daily-summaries", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(input),
+  });
+
+export const updateDailySummary = (
+  summaryId: string,
+  input: UpdateDailySummaryInput,
+) =>
+  requestJson<DailySummary>(
+    `/api/daily-summaries/${encodeURIComponent(summaryId)}`,
+    {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(input),
+    },
+  );
 
 export const getTodos = (listId: string) =>
   requestJson<TodosResponse>(

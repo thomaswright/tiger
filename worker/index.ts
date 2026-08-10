@@ -1,5 +1,7 @@
 import type {
   ApiErrorResponse,
+  DailySummariesResponse,
+  DailySummary,
   HealthResponse,
   ListsResponse,
   MeResponse,
@@ -8,18 +10,23 @@ import type {
 } from "../src/shared/domain";
 import { authenticate, AuthError, type AuthEnv } from "./auth";
 import {
+  createDailySummary,
   createTodo,
   deleteTodo,
   DataError,
+  getDailySummaries,
   getLists,
   getTodos,
   moveTodo,
+  parseCreateDailySummaryInput,
   parseCreateTodoInput,
   parseDeleteTodoInput,
   parseRestoreTodosInput,
   parseMoveTodoInput,
+  parseUpdateDailySummaryInput,
   parseUpdateTodoInput,
   restoreTodos,
+  updateDailySummary,
   updateTodo,
 } from "./data";
 
@@ -29,6 +36,8 @@ interface Env extends AuthEnv {
 
 type JsonBody =
   | ApiErrorResponse
+  | DailySummariesResponse
+  | DailySummary
   | HealthResponse
   | ListsResponse
   | MeResponse
@@ -49,11 +58,12 @@ export default {
     const url = new URL(request.url);
 
     if (request.method === "GET" && url.pathname === "/api/health") {
-      const todosTable = await env.DB.prepare(
-        "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'todos'",
-      ).first<{ name: string }>();
+      const requiredTables = await env.DB.prepare(
+        `SELECT COUNT(*) AS count FROM sqlite_master
+         WHERE type = 'table' AND name IN ('todos', 'daily_summaries')`,
+      ).first<{ count: number }>();
 
-      if (!todosTable) {
+      if (requiredTables?.count !== 2) {
         return json(
           { status: "degraded", database: "migration-required" },
           503,
@@ -76,6 +86,51 @@ export default {
 
       if (request.method === "GET" && url.pathname === "/api/lists") {
         return json({ lists: await getLists(env.DB, user) });
+      }
+
+      if (url.pathname === "/api/daily-summaries") {
+        if (request.method === "GET") {
+          return json({
+            dailySummaries: await getDailySummaries(env.DB, user),
+          });
+        }
+
+        if (request.method === "POST") {
+          let body: unknown;
+          try {
+            body = await request.json();
+          } catch {
+            throw new DataError("Request body must be JSON", 400);
+          }
+          return json(
+            await createDailySummary(
+              env.DB,
+              user,
+              parseCreateDailySummaryInput(body),
+            ),
+            201,
+          );
+        }
+      }
+
+      const dailySummaryMatch = url.pathname.match(
+        /^\/api\/daily-summaries\/([^/]+)$/,
+      );
+      if (dailySummaryMatch && request.method === "PATCH") {
+        let body: unknown;
+        try {
+          body = await request.json();
+        } catch {
+          throw new DataError("Request body must be JSON", 400);
+        }
+        return json(
+          await updateDailySummary(
+            env.DB,
+            user,
+            decodeURIComponent(dailySummaryMatch[1]),
+            parseUpdateDailySummaryInput(body),
+          ),
+        );
       }
 
       const todosMatch = url.pathname.match(

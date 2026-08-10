@@ -1,12 +1,15 @@
 import {
   TODO_STATUSES,
+  type CreateDailySummaryInput,
   type CreateTodoInput,
+  type DailySummary,
   type DeleteTodoInput,
   type DeleteTodoResponse,
   type MoveTodoInput,
   type PersonalList,
   type Todo,
   type TodoStatus,
+  type UpdateDailySummaryInput,
   type UpdateTodoInput,
 } from "../src/shared/domain";
 import type { UserIdentity } from "../src/shared/domain";
@@ -29,6 +32,16 @@ interface TodoRow {
   status: TodoStatus;
   due_date: string | null;
   sort_key: number;
+  version: number;
+  created_at: string;
+  updated_at: string;
+}
+
+interface DailySummaryRow {
+  id: string;
+  summary_date: string;
+  heading: string;
+  body: string;
   version: number;
   created_at: string;
   updated_at: string;
@@ -66,6 +79,16 @@ const mapTodo = (row: TodoRow): Todo => ({
   updatedAt: row.updated_at,
 });
 
+const mapDailySummary = (row: DailySummaryRow): DailySummary => ({
+  id: row.id,
+  date: row.summary_date,
+  heading: row.heading,
+  body: row.body,
+  version: row.version,
+  createdAt: row.created_at,
+  updatedAt: row.updated_at,
+});
+
 const listSelect = `
   SELECT id, name, sort_key, is_default, created_at, updated_at
   FROM lists
@@ -77,6 +100,11 @@ const todoSelect = `
   SELECT id, list_id, parent_id, title, notes, status, due_date,
          sort_key, version, created_at, updated_at
   FROM todos
+`;
+
+const dailySummarySelect = `
+  SELECT id, summary_date, heading, body, version, created_at, updated_at
+  FROM daily_summaries
 `;
 
 export async function getLists(
@@ -143,6 +171,14 @@ const isUuid = (value: string) =>
     value,
   );
 
+const isDateValue = (value: unknown): value is string => {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return false;
+  }
+  const date = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(date.valueOf()) && date.toISOString().slice(0, 10) === value;
+};
+
 const isNullableUuid = (value: unknown): value is string | null =>
   value === null || (typeof value === "string" && isUuid(value));
 
@@ -152,6 +188,155 @@ const parseVersion = (value: unknown) => {
   }
   return value as number;
 };
+
+export function parseCreateDailySummaryInput(
+  value: unknown,
+): CreateDailySummaryInput {
+  if (!value || typeof value !== "object") {
+    throw new DataError("Invalid daily summary", 400);
+  }
+
+  const input = value as Partial<CreateDailySummaryInput>;
+  if (typeof input.id !== "string" || !isUuid(input.id)) {
+    throw new DataError("Daily summary id must be a UUID", 400);
+  }
+  if (!isDateValue(input.date)) {
+    throw new DataError("Invalid daily summary date", 400);
+  }
+  if (typeof input.heading !== "string" || input.heading.length > 500) {
+    throw new DataError("Daily summary heading is too long", 400);
+  }
+  if (typeof input.body !== "string" || input.body.length > 20000) {
+    throw new DataError("Daily summary body is too long", 400);
+  }
+
+  return {
+    id: input.id,
+    date: input.date,
+    heading: input.heading.trim(),
+    body: input.body,
+  };
+}
+
+export function parseUpdateDailySummaryInput(
+  value: unknown,
+): UpdateDailySummaryInput {
+  if (!value || typeof value !== "object") {
+    throw new DataError("Invalid daily summary update", 400);
+  }
+
+  const input = value as Partial<UpdateDailySummaryInput>;
+  const update: UpdateDailySummaryInput = {
+    version: parseVersion(input.version),
+  };
+
+  if (input.heading !== undefined) {
+    if (typeof input.heading !== "string" || input.heading.length > 500) {
+      throw new DataError("Daily summary heading is too long", 400);
+    }
+    update.heading = input.heading.trim();
+  }
+  if (input.body !== undefined) {
+    if (typeof input.body !== "string" || input.body.length > 20000) {
+      throw new DataError("Daily summary body is too long", 400);
+    }
+    update.body = input.body;
+  }
+  if (update.heading === undefined && update.body === undefined) {
+    throw new DataError("Daily summary update is empty", 400);
+  }
+
+  return update;
+}
+
+export async function getDailySummaries(
+  db: D1Database,
+  user: UserIdentity,
+): Promise<DailySummary[]> {
+  const result = await db
+    .prepare(
+      `${dailySummarySelect}
+       WHERE owner_id = ?
+       ORDER BY summary_date DESC, id`,
+    )
+    .bind(user.id)
+    .all<DailySummaryRow>();
+
+  return result.results.map(mapDailySummary);
+}
+
+export async function createDailySummary(
+  db: D1Database,
+  user: UserIdentity,
+  input: CreateDailySummaryInput,
+): Promise<DailySummary> {
+  try {
+    await db
+      .prepare(
+        `INSERT INTO daily_summaries
+          (id, owner_id, summary_date, heading, body)
+         VALUES (?, ?, ?, ?, ?)`,
+      )
+      .bind(input.id, user.id, input.date, input.heading, input.body)
+      .run();
+  } catch (error) {
+    if (error instanceof Error && error.message.includes("UNIQUE")) {
+      throw new DataError("A daily summary already exists for this date", 409);
+    }
+    throw error;
+  }
+
+  return getOwnedDailySummary(db, user.id, input.id);
+}
+
+const getOwnedDailySummary = async (
+  db: D1Database,
+  userId: string,
+  summaryId: string,
+): Promise<DailySummary> => {
+  const row = await db
+    .prepare(`${dailySummarySelect} WHERE id = ? AND owner_id = ?`)
+    .bind(summaryId, userId)
+    .first<DailySummaryRow>();
+
+  if (!row) {
+    throw new DataError("Daily summary not found", 404);
+  }
+  return mapDailySummary(row);
+};
+
+export async function updateDailySummary(
+  db: D1Database,
+  user: UserIdentity,
+  summaryId: string,
+  input: UpdateDailySummaryInput,
+): Promise<DailySummary> {
+  const current = await getOwnedDailySummary(db, user.id, summaryId);
+  const result = await db
+    .prepare(
+      `UPDATE daily_summaries
+       SET heading = ?, body = ?, version = version + 1,
+           updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
+       WHERE id = ? AND owner_id = ? AND version = ?`,
+    )
+    .bind(
+      input.heading ?? current.heading,
+      input.body ?? current.body,
+      summaryId,
+      user.id,
+      input.version,
+    )
+    .run();
+
+  if (result.meta.changes !== 1) {
+    throw new DataError(
+      "Daily summary changed elsewhere; refresh and try again",
+      409,
+    );
+  }
+
+  return getOwnedDailySummary(db, user.id, summaryId);
+}
 
 export function parseCreateTodoInput(value: unknown): CreateTodoInput {
   if (!value || typeof value !== "object") {

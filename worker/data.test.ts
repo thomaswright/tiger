@@ -1,15 +1,61 @@
 import { describe, expect, it } from "vitest";
 import {
   DataError,
+  parseCreateDailySummaryInput,
   parseCreateTodoInput,
   parseDeleteTodoInput,
   parseRestoreTodosInput,
+  parseUpdateDailySummaryInput,
   parseUpdateTodoInput,
 } from "./data";
 
 const token = "33333333-3333-4333-8333-333333333333";
 const todoId = "11111111-1111-4111-8111-111111111111";
 const neighborId = "22222222-2222-4222-8222-222222222222";
+
+describe("daily summary input", () => {
+  it("accepts a blank summary for a real calendar date", () => {
+    expect(
+      parseCreateDailySummaryInput({
+        id: todoId,
+        date: "2026-08-10",
+        heading: "",
+        body: "",
+      }),
+    ).toEqual({
+      id: todoId,
+      date: "2026-08-10",
+      heading: "",
+      body: "",
+    });
+  });
+
+  it("rejects impossible dates and oversized content", () => {
+    expect(() =>
+      parseCreateDailySummaryInput({
+        id: todoId,
+        date: "2026-02-30",
+        heading: "",
+        body: "",
+      }),
+    ).toThrow(new DataError("Invalid daily summary date", 400));
+    expect(() =>
+      parseUpdateDailySummaryInput({
+        heading: "x".repeat(501),
+        version: 1,
+      }),
+    ).toThrow(new DataError("Daily summary heading is too long", 400));
+  });
+
+  it("requires a version and at least one changed field", () => {
+    expect(
+      parseUpdateDailySummaryInput({ body: "Reflection", version: 2 }),
+    ).toEqual({ body: "Reflection", version: 2 });
+    expect(() => parseUpdateDailySummaryInput({ version: 2 })).toThrow(
+      new DataError("Daily summary update is empty", 400),
+    );
+  });
+});
 
 describe("create input", () => {
   it("allows a blank title for a newly focused inline todo", () => {

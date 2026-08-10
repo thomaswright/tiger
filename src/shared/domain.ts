@@ -51,6 +51,33 @@ export interface TodosResponse {
   todos: Todo[];
 }
 
+export interface DailySummary {
+  id: string;
+  date: string;
+  heading: string;
+  body: string;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DailySummariesResponse {
+  dailySummaries: DailySummary[];
+}
+
+export interface CreateDailySummaryInput {
+  id: string;
+  date: string;
+  heading: string;
+  body: string;
+}
+
+export interface UpdateDailySummaryInput {
+  heading?: string;
+  body?: string;
+  version: number;
+}
+
 export interface CreateTodoInput {
   id: string;
   title: string;
